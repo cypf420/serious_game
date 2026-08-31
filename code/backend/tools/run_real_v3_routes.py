@@ -11,6 +11,7 @@ import os
 from pathlib import Path
 import sys
 import time
+from typing import Mapping, Sequence
 
 
 BACKEND_ROOT = Path(__file__).resolve().parents[1]
@@ -35,10 +36,131 @@ from tools.full_acceptance.ending_witnesses import (
     validate_witnesses,
 )
 from tools.full_acceptance.persuasion import credible_group_replies
+from tools.run_story_routes_v3_isolated import (
+    build_run_metadata,
+    repository_root_for_backend,
+)
 
 
 PACKAGE_ROOT = BACKEND_ROOT / "content" / "packages" / "pkg_gameplay_v3"
 PROFILE_PATH = PACKAGE_ROOT / "acceptance_route_profiles.json"
+RUN_METADATA_NAME = "route-run-metadata.json"
+
+
+def select_route_profiles(
+    profiles: tuple[EndingWitness, ...],
+    route_id_arguments: Sequence[str] | None,
+) -> tuple[tuple[int, EndingWitness], ...]:
+    """Resolve an optional repeated/comma-separated selection against the catalog."""
+
+    if route_id_arguments is None:
+        return tuple(enumerate(profiles))
+    route_ids = [
+        route_id.strip()
+        for argument in route_id_arguments
+        for route_id in argument.split(",")
+        if route_id.strip()
+    ]
+    if not route_ids:
+        raise ValueError("--route-ids requires at least one route ID")
+    duplicates = sorted(
+        route_id for route_id, count in Counter(route_ids).items() if count > 1
+    )
+    if duplicates:
+        raise ValueError(f"duplicate route ID: {', '.join(duplicates)}")
+    indexed = {profile.route_id: (index, profile) for index, profile in enumerate(profiles)}
+    unknown = sorted(set(route_ids) - indexed.keys())
+    if unknown:
+        raise ValueError(f"unknown route ID: {', '.join(unknown)}")
+    return tuple(indexed[route_id] for route_id in route_ids)
+
+
+def build_route_run_metadata(
+    *,
+    selected_route_ids: Sequence[str],
+    catalog_profile_count: int,
+    provenance: Mapping[str, object],
+) -> dict[str, object]:
+    return {
+        "scope": (
+            "full_catalog"
+            if len(selected_route_ids) == catalog_profile_count
+            else "selected_subset"
+        ),
+        "catalog_profile_count": catalog_profile_count,
+        "selected_route_ids": list(selected_route_ids),
+        "git_sha": provenance["git_sha"],
+        "workspace_fingerprint": provenance["workspace_fingerprint"],
+        "v3_hash": provenance["v3_hash"],
+    }
+
+
+def validate_resume_metadata(
+    stored: Mapping[str, object], current: Mapping[str, object]
+) -> None:
+    if dict(stored) != dict(current):
+        raise ValueError("resume selection or provenance mismatch")
+
+
+def build_route_summary(
+    *,
+    profiles: Sequence[EndingWitness],
+    selected_route_ids: Sequence[str],
+    routes: Sequence[Mapping[str, object]],
+    provider: str,
+    model: str,
+    no_archive_route: Mapping[str, object] | None,
+    provenance: Mapping[str, object],
+) -> dict[str, object]:
+    is_full = len(selected_route_ids) == len(profiles)
+    return {
+        "scope": "full_catalog" if is_full else "selected_subset",
+        "catalog_profile_count": len(profiles),
+        "executed_count": len(routes),
+        "selected_route_ids": list(selected_route_ids),
+        "not_full_acceptance": not is_full,
+        "provider": provider,
+        "model": model,
+        # Kept for existing consumers; in subset mode it deliberately means executed.
+        "profile_count": len(routes),
+        "main_ending_count": len({item["main_ending_id"] for item in routes}),
+        "sub_ending_count": len({item["sub_ending_id"] for item in routes}),
+        "fake_calls": sum(int(item["fake_calls"]) for item in routes),
+        "no_archive_route": no_archive_route,
+        "git_sha": provenance["git_sha"],
+        "workspace_fingerprint": provenance["workspace_fingerprint"],
+        "v3_hash": provenance["v3_hash"],
+        "routes": list(routes),
+    }
+
+
+def execute_route_profiles(
+    *,
+    selected_profiles: Sequence[tuple[int, EndingWitness]],
+    completed: Mapping[str, dict[str, object]],
+    runner,
+    root: Path,
+    route_root: Path,
+    contract_terms: Mapping[str, object],
+) -> list[dict[str, object]]:
+    """Execute or resume exactly the selected catalog profiles, in requested order."""
+
+    routes: list[dict[str, object]] = []
+    for index, profile in selected_profiles:
+        route = completed.get(profile.route_id)
+        if route is not None:
+            routes.append(route)
+            print(f"reused verified {profile.route_id}", file=sys.stderr, flush=True)
+            continue
+        database_path = root / f"route-{index}.sqlite"
+        if database_path.exists():
+            database_path.unlink()
+        route = runner.run_profile(index, profile, contract_terms)
+        routes.append(route)
+        (route_root / f"{profile.route_id}.json").write_text(
+            json.dumps(route, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
+    return routes
 
 
 def validate_real_runner_settings(settings: Settings, *, api_key: str) -> None:
@@ -1100,24 +1222,63 @@ def main() -> int:
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--run-id")
     parser.add_argument(
+        "--route-ids",
+        action="append",
+        help=(
+            "run only these catalog route IDs; may be repeated or comma-separated "
+            "(this is not full acceptance)"
+        ),
+    )
+    parser.add_argument(
         "--resume-run",
         type=Path,
         help="resume one existing evidence root after validating every completed route",
     )
     args = parser.parse_args()
     base_settings = Settings.from_env()
-    api_key = os.getenv(base_settings.role_llm_api_key_env, "").strip()
-    validate_real_runner_settings(base_settings, api_key=api_key)
     package = FileScriptPackageLoader().load(PACKAGE_ROOT)
     profiles = load_witnesses(args.profiles)
     validate_profile_catalog(profiles, package)
+    try:
+        selected_profiles = select_route_profiles(profiles, args.route_ids)
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
+    api_key = os.getenv(base_settings.role_llm_api_key_env, "").strip()
+    validate_real_runner_settings(base_settings, api_key=api_key)
+    selected_route_ids = [profile.route_id for _index, profile in selected_profiles]
+    raw_provenance = build_run_metadata(
+        repo_root=repository_root_for_backend(BACKEND_ROOT),
+        backend_root=BACKEND_ROOT,
+        route_ids=selected_route_ids,
+    )
+    provenance = {
+        key: raw_provenance[key]
+        for key in ("git_sha", "workspace_fingerprint", "v3_hash")
+    }
+    run_metadata = build_route_run_metadata(
+        selected_route_ids=selected_route_ids,
+        catalog_profile_count=len(profiles),
+        provenance=provenance,
+    )
     contract_terms = load_contract_terms(args.profiles)
     if args.resume_run is not None:
         root = args.resume_run.resolve()
         if not root.is_dir():
             raise SystemExit(f"resume evidence root does not exist: {root}")
+        metadata_path = root / RUN_METADATA_NAME
+        if not metadata_path.is_file():
+            raise SystemExit(f"resume metadata is missing: {metadata_path}")
+        try:
+            validate_resume_metadata(
+                json.loads(metadata_path.read_text(encoding="utf-8")), run_metadata
+            )
+        except ValueError as exc:
+            raise SystemExit(str(exc)) from exc
     else:
         root = prepare_output_run(args.output_dir, run_id=args.run_id)
+        (root / RUN_METADATA_NAME).write_text(
+            json.dumps(run_metadata, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
     print(f"evidence_dir={root}", file=sys.stderr, flush=True)
     runner = RealRouteRunner(
         base_settings,
@@ -1127,46 +1288,41 @@ def main() -> int:
     )
     route_root = root / "routes"
     route_root.mkdir(exist_ok=args.resume_run is not None)
-    completed = load_completed_route_evidence(route_root, profiles)
-    routes: list[dict[str, object]] = []
-    for index, profile in enumerate(profiles):
-        route = completed.get(profile.route_id)
-        if route is not None:
-            routes.append(route)
-            print(f"reused verified {profile.route_id}", file=sys.stderr, flush=True)
-            continue
-        database_path = root / f"route-{index}.sqlite"
-        if database_path.exists():
-            database_path.unlink()
-        route = runner.run_profile(index, profile, contract_terms)
-        routes.append(route)
-        (route_root / f"{profile.route_id}.json").write_text(
-            json.dumps(route, ensure_ascii=False, indent=2), encoding="utf-8"
-        )
-    no_archive_route = runner.run_route(10_000)
-    if (
-        no_archive_route["status"] != "ended"
-        or no_archive_route["story_day"] != 90
-        or no_archive_route["archive_reads"]
-        or no_archive_route["fake_calls"]
-    ):
-        raise AssertionError(
-            f"real no-archive route did not legally reach D90: {no_archive_route}"
-        )
-    (route_root / "no-archive-baseline.json").write_text(
-        json.dumps(no_archive_route, ensure_ascii=False, indent=2),
-        encoding="utf-8",
+    execution_profiles = tuple(profile for _index, profile in selected_profiles)
+    completed = load_completed_route_evidence(route_root, execution_profiles)
+    routes = execute_route_profiles(
+        selected_profiles=selected_profiles,
+        completed=completed,
+        runner=runner,
+        root=root,
+        route_root=route_root,
+        contract_terms=contract_terms,
     )
-    report = {
-        "provider": "openai_compatible",
-        "model": base_settings.role_llm_model,
-        "profile_count": len(profiles),
-        "main_ending_count": len({item["main_ending_id"] for item in routes}),
-        "sub_ending_count": len({item["sub_ending_id"] for item in routes}),
-        "fake_calls": sum(int(item["fake_calls"]) for item in routes),
-        "no_archive_route": no_archive_route,
-        "routes": routes,
-    }
+    no_archive_route = None
+    if len(selected_profiles) == len(profiles):
+        no_archive_route = runner.run_route(10_000)
+        if (
+            no_archive_route["status"] != "ended"
+            or no_archive_route["story_day"] != 90
+            or no_archive_route["archive_reads"]
+            or no_archive_route["fake_calls"]
+        ):
+            raise AssertionError(
+                f"real no-archive route did not legally reach D90: {no_archive_route}"
+            )
+        (route_root / "no-archive-baseline.json").write_text(
+            json.dumps(no_archive_route, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+    report = build_route_summary(
+        profiles=profiles,
+        selected_route_ids=selected_route_ids,
+        routes=routes,
+        provider="openai_compatible",
+        model=base_settings.role_llm_model,
+        no_archive_route=no_archive_route,
+        provenance=provenance,
+    )
     (root / "summary.json").write_text(
         json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8"
     )

@@ -68,6 +68,28 @@ def test_v2_legacy_content_hash_baseline_is_unchanged() -> None:
     )
 
 
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("package_id", "pkg_unknown"),
+        ("content_hash", "sha256:" + "0" * 64),
+    ],
+)
+def test_portable_validation_rejects_packages_outside_the_legacy_whitelist(
+    tmp_path: Path, field: str, value: str
+) -> None:
+    package_dir = _materialize_package_from_git_blobs(
+        tmp_path, "pkg_gameplay_v3", autocrlf=True
+    )
+    manifest_path = package_dir / "package_manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest[field] = value
+    manifest_path.write_text(json.dumps(manifest, ensure_ascii=False), encoding="utf-8")
+
+    with pytest.raises(ContentValidationError):
+        FileScriptPackageLoader().load(package_dir)
+
+
 @pytest.mark.parametrize("change", ["text", "binary"])
 def test_portable_validation_rejects_content_changes(tmp_path: Path, change: str) -> None:
     package_dir = _materialize_package_from_git_blobs(

@@ -31,10 +31,15 @@ from tools.run_real_night_matrix import (
     _strategy_texts,
 )
 from tools.run_real_v3_routes import (
+    build_route_run_metadata,
+    build_route_summary,
+    execute_route_profiles,
     build_ending_operation_record,
     credible_group_replies,
     load_completed_route_evidence,
     prepare_output_run,
+    select_route_profiles,
+    validate_resume_metadata,
     validate_profile_catalog,
     validate_real_runner_settings,
     validate_route_result,
@@ -786,6 +791,113 @@ def test_real_runner_requires_a_complete_profile_catalog() -> None:
 
     with pytest.raises(ValueError, match="95"):
         validate_profile_catalog(profiles[:-1], package)
+
+
+def test_real_runner_defaults_to_all_95_profiles() -> None:
+    profiles = load_witnesses(PROFILE_PATH)
+
+    selected = select_route_profiles(profiles, None)
+
+    assert len(selected) == 95
+    assert [index for index, _profile in selected] == list(range(95))
+
+
+def test_real_runner_rejects_unknown_and_duplicate_selected_route_ids() -> None:
+    profiles = load_witnesses(PROFILE_PATH)
+
+    with pytest.raises(ValueError, match="unknown route ID"):
+        select_route_profiles(profiles, ["route-ending-01a,route-does-not-exist"])
+    with pytest.raises(ValueError, match="duplicate route ID"):
+        select_route_profiles(profiles, ["route-ending-01a", "route-ending-01a"])
+
+
+def test_real_runner_selects_exactly_three_requested_catalog_routes() -> None:
+    profiles = load_witnesses(PROFILE_PATH)
+    route_ids = [
+        "route-ending-01a",
+        "route-ending-08a",
+        "route-ending-23a",
+    ]
+
+    selected = select_route_profiles(
+        profiles, ["route-ending-01a,route-ending-08a", "route-ending-23a"]
+    )
+
+    assert [profile.route_id for _index, profile in selected] == route_ids
+    assert [index for index, _profile in selected] == [0, 32, 88]
+
+
+def test_real_runner_executes_only_the_three_selected_profiles(tmp_path: Path) -> None:
+    profiles = load_witnesses(PROFILE_PATH)
+    selected = select_route_profiles(
+        profiles,
+        ["route-ending-01a,route-ending-08a,route-ending-23a"],
+    )
+    calls: list[tuple[int, str]] = []
+
+    class Runner:
+        def run_profile(self, index, profile, _contract_terms):
+            calls.append((index, profile.route_id))
+            return _passing_route_result(profile)
+
+    route_root = tmp_path / "routes"
+    route_root.mkdir()
+    routes = execute_route_profiles(
+        selected_profiles=selected,
+        completed={},
+        runner=Runner(),
+        root=tmp_path,
+        route_root=route_root,
+        contract_terms={},
+    )
+
+    assert calls == [
+        (0, "route-ending-01a"),
+        (32, "route-ending-08a"),
+        (88, "route-ending-23a"),
+    ]
+    assert [route["route_id"] for route in routes] == [item[1] for item in calls]
+    assert sorted(path.stem for path in route_root.glob("route-*.json")) == [
+        "route-ending-01a",
+        "route-ending-08a",
+        "route-ending-23a",
+    ]
+
+
+def test_subset_summary_cannot_claim_full_acceptance() -> None:
+    profiles = load_witnesses(PROFILE_PATH)
+    selected_ids = [profile.route_id for profile in profiles[:3]]
+    routes = [_passing_route_result(profile) for profile in profiles[:3]]
+
+    report = build_route_summary(
+        profiles=profiles,
+        selected_route_ids=selected_ids,
+        routes=routes,
+        provider="openai_compatible",
+        model="test-model",
+        no_archive_route=None,
+        provenance={"git_sha": "a", "workspace_fingerprint": "b", "v3_hash": "c"},
+    )
+
+    assert report["scope"] == "selected_subset"
+    assert report["catalog_profile_count"] == 95
+    assert report["executed_count"] == 3
+    assert report["selected_route_ids"] == selected_ids
+    assert report["not_full_acceptance"] is True
+    assert report["profile_count"] == 3
+
+
+def test_resume_metadata_is_bound_to_exact_selection_and_provenance() -> None:
+    metadata = build_route_run_metadata(
+        selected_route_ids=["route-ending-01a", "route-ending-08a"],
+        catalog_profile_count=95,
+        provenance={"git_sha": "a", "workspace_fingerprint": "b", "v3_hash": "c"},
+    )
+    validate_resume_metadata(metadata, metadata)
+
+    changed = {**metadata, "selected_route_ids": ["route-ending-01a"]}
+    with pytest.raises(ValueError, match="selection or provenance mismatch"):
+        validate_resume_metadata(metadata, changed)
 
 
 def test_resume_loads_only_route_evidence_that_still_passes_contract(

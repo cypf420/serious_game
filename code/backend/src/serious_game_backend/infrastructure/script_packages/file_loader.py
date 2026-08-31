@@ -132,14 +132,26 @@ STORY_AUTHORITY_CONTRACT = (
 
 class FileScriptPackageLoader:
     PORTABLE_CONTENT_HASH_VERSION = "text-eol-v1"
-    _TEXT_EOL_V1_HASH_BY_LEGACY_HASH = {
-        "sha256:4ae93f107ad2e3136fc73fc54cb356d707fac7fccfbe3de4655585f367939c17": (
+    _TEXT_EOL_V1_HASH_BY_PACKAGE = {
+        (
+            "published",
+            "pkg_backend_dev_v1",
+            "sha256:4ae93f107ad2e3136fc73fc54cb356d707fac7fccfbe3de4655585f367939c17",
+        ): (
             "sha256:b8d883339b83071272f7f664020e13699fff7fa1f25001059d7024fbd9b6725a"
         ),
-        "sha256:1c45123f269f6ebd4ed2a0a8c13cba3b6d15b175100705ecaede1c67fc64a421": (
+        (
+            "draft",
+            "pkg_gameplay_v2",
+            "sha256:1c45123f269f6ebd4ed2a0a8c13cba3b6d15b175100705ecaede1c67fc64a421",
+        ): (
             "sha256:c57a16d21db0be1101cb5782efec2179acf80cb7c8e2077328da2472dec91020"
         ),
-        "sha256:259837279fb72772739b54638f35d014ac08bb5556bbc2e5feb0fbde0ca700b7": (
+        (
+            "published",
+            "pkg_gameplay_v3",
+            "sha256:259837279fb72772739b54638f35d014ac08bb5556bbc2e5feb0fbde0ca700b7",
+        ): (
             "sha256:465ef0114817949ef321fc98a0241c32a298524809edc6f18054c1d553bec539"
         ),
     }
@@ -165,7 +177,12 @@ class FileScriptPackageLoader:
         declared_hash = str(manifest.get("content_hash", ""))
         hash_verified = declared_hash == computed_hash
         portable_hash = None
-        expected_portable_hash = self._TEXT_EOL_V1_HASH_BY_LEGACY_HASH.get(declared_hash)
+        portable_key = (
+            str(manifest.get("status", "")),
+            str(manifest.get("package_id", "")),
+            declared_hash,
+        )
+        expected_portable_hash = self._TEXT_EOL_V1_HASH_BY_PACKAGE.get(portable_key)
         if not hash_verified and expected_portable_hash is not None:
             portable_hash = self.compute_portable_content_hash(package_dir)
             hash_verified = portable_hash == expected_portable_hash
