@@ -752,6 +752,62 @@ test("locks every map-launched action to its authoritative location", async () =
   });
 });
 
+test("gives governance variants distinct player-facing titles and actions", () => {
+  assert.equal(typeof playerUi.governanceDisplayTitle, "function");
+  assert.equal(typeof playerUi.governanceActionButtonLabel, "function");
+  assert.equal(
+    playerUi.governanceDisplayTitle({ action_id: "cadre_interview", variant_id: "interview_enterprise", target_ids: ["npc_qian_wei"] }, "干部访谈"),
+    "约谈钱伟",
+  );
+  assert.equal(
+    playerUi.governanceDisplayTitle({ action_id: "cadre_interview", variant_id: "contact_media" }, "干部访谈"),
+    "媒体沟通",
+  );
+  assert.equal(
+    playerUi.governanceDisplayTitle({ action_id: "household_visit", variant_id: "field_visit", map_entry_id: "map:factory", title: "化工厂现场核查" }, "入户走访"),
+    "化工厂现场核查",
+  );
+  assert.equal(playerUi.governanceDisplayTitle({ action_id: "cadre_interview" }, "干部访谈"), "政务沟通");
+  assert.equal(playerUi.governanceActionButtonLabel({ action_id: "inspect_archives" }), "开始查阅");
+  assert.equal(playerUi.governanceActionButtonLabel({ action_id: "cadre_interview", variant_id: "interview_enterprise" }), "开始约谈");
+  assert.equal(playerUi.governanceActionButtonLabel({ action_id: "household_visit" }), "开始走访");
+});
+
+test("merges committed and streaming governance replies without losing speakers or duplicating a turn", () => {
+  assert.equal(typeof playerUi.mergeGovernanceTimeline, "function");
+  const committed = [
+    { speaker_type: "player", conversation_id: "action-1", turn_id: "turn-1", text: "请说明诉求" },
+    { speaker_type: "npc", npc_id: "npc-a", npc_name: "甲", conversation_id: "action-1", turn_id: "turn-1", text: "我要一份书面答复" },
+    { speaker_type: "npc", npc_id: "npc-b", npc_name: "乙", conversation_id: "action-1", turn_id: "turn-1", text: "我也要一份书面答复" },
+  ];
+  const result = playerUi.mergeGovernanceTimeline(committed, [
+    { stream_id: "npc:0", npc_id: "npc-a", npc_name: "甲", conversation_id: "action-1", turn_id: "turn-1", text: "我要一份书面答复", complete: true },
+    { stream_id: "npc:1", npc_id: "npc-c", npc_name: "丙", conversation_id: "action-1", turn_id: "turn-2", text: "我会补充材料", complete: false },
+  ]);
+  assert.equal(result.length, 4);
+  assert.equal(result.filter(item => item.npc_id === "npc-a").length, 1);
+  assert.equal(result.find(item => item.npc_id === "npc-a")?.live, false);
+  assert.equal(result.find(item => item.npc_id === "npc-c")?.live, true);
+
+  const sameText = playerUi.mergeGovernanceTimeline(
+    [{ speaker_type: "npc", npc_id: "npc-a", text: "共同答复" }],
+    [{ stream_id: "npc:0", npc_id: "npc-a", text: "共同答复", complete: true }],
+  );
+  assert.equal(sameText.length, 1);
+});
+
+test("keeps the multi-NPC governance surface and ordinary action location read-only", async () => {
+  const source = await readFile(path.join(projectRoot, "app", "GameShell.tsx"), "utf8");
+  assert.match(source, /mergeGovernanceTimeline\(transcript, streamingReplies\)/);
+  assert.match(source, /className="governance-action-timeline"/);
+  assert.match(source, /className="new-dialogue-button governance-new-dialogue"/);
+  assert.match(source, /className="archive-unread-status"/);
+  assert.match(source, /requiredOpportunityPending/);
+  const form = source.slice(source.indexOf("function GovernanceActionForm"), source.indexOf("function Empty", source.indexOf("function GovernanceActionForm")));
+  assert.match(form, /className="action-location-readonly"/);
+  assert.doesNotMatch(form, /governanceLocationLocked\(item\)/);
+});
+
 test("selects exactly one dedicated primary scene for an active leadership meeting", () => {
   assert.equal(typeof playerUi.primaryScenePlan, "function");
   assert.deepEqual(playerUi.primaryScenePlan({

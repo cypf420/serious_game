@@ -494,6 +494,48 @@ export function governanceActionTitle(
   return typeof title === "string" && title.trim() ? title.trim() : fallback;
 }
 
+/**
+ * Resolve the player-facing name for an action family or one of its variants.
+ * The backend may provide display_title; the fallbacks keep legacy packages
+ * from collapsing three different conversations into “干部访谈”.
+ */
+export function governanceDisplayTitle(
+  action: PlayerRecord | null | undefined,
+  fallback = "治理行动",
+): string {
+  const explicit = action?.display_title;
+  if (typeof explicit === "string" && explicit.trim()) return explicit.trim();
+  const mapTitle = action?.map_entry_id && action?.title;
+  if (typeof mapTitle === "string" && mapTitle.trim()) return mapTitle.trim();
+  const variantId = String(action?.variant_id || "");
+  const actionId = String(action?.action_id || action?.action_kind || "");
+  const targetKind = String(action?.target_kind || "");
+  const targetIds = [
+    ...(Array.isArray(action?.target_ids) ? action.target_ids : []),
+    ...(Array.isArray(action?.legal_target_ids) ? action.legal_target_ids : []),
+    ...(Array.isArray(action?.preselected_npc_ids) ? action.preselected_npc_ids : []),
+  ].map(String);
+  if (variantId === "interview_enterprise" || targetKind === "enterprise_representative" || targetIds.includes("npc_qian_wei")) return "约谈钱伟";
+  if (variantId === "contact_media" || targetKind === "media_contact") return "媒体沟通";
+  if (variantId === "interview_cadre") return "干部约谈";
+  if (!variantId && actionId === "cadre_interview") return "政务沟通";
+  return governanceActionTitle(action, fallback);
+}
+
+export function governanceActionButtonLabel(
+  action: PlayerRecord | null | undefined,
+  fallback = "填写方案",
+): string {
+  const variantId = String(action?.variant_id || "");
+  const actionId = String(action?.action_id || action?.action_kind || "");
+  if (actionId === "inspect_archives") return "开始查阅";
+  if (actionId === "leadership_meeting") return "发起会议";
+  if (actionId === "household_visit") return "开始走访";
+  if (variantId === "contact_media" || String(action?.target_kind || "") === "media_contact") return "开始沟通";
+  if (actionId === "cadre_interview") return "开始约谈";
+  return fallback;
+}
+
 export function governanceActionProgressLabels(
   action: PlayerRecord | null | undefined,
   fallback: string,
@@ -503,6 +545,56 @@ export function governanceActionProgressLabels(
     footer: `${title}进行中`,
     task: `完成正在进行的${title}`,
   };
+}
+
+function governanceTimelineIdentity(entry: PlayerRecord): string {
+  const npcId = String(entry.npc_id || entry.speaker_id || "");
+  const conversationId = String(entry.conversation_id || entry.action_instance_id || entry.meeting_id || "");
+  const turnId = String(entry.reply_id || entry.turn_id || entry.turn_index || entry.turn_number || "");
+  const streamId = String(entry.stream_id || "");
+  if (conversationId && turnId && npcId) return `turn:${conversationId}:${turnId}:${npcId}`;
+  if (turnId && npcId) return `turn:${turnId}:${npcId}`;
+  if (streamId && npcId) return `stream:${streamId}:${npcId}`;
+  return "";
+}
+
+/**
+ * Join the authoritative transcript with the short-lived streaming replies.
+ * Some older API responses do not carry turn IDs, so a completed identical
+ * reply is matched to the most recent reply from that NPC as a safe fallback.
+ */
+export function mergeGovernanceTimeline(rawTranscript: unknown, rawReplies: unknown): PlayerRecord[] {
+  const records = (value: unknown) => Array.isArray(value)
+    ? value.filter(item => item && typeof item === "object" && !Array.isArray(item)) as PlayerRecord[]
+    : [];
+  const timeline: PlayerRecord[] = records(rawTranscript).map(item => ({ ...item, live: false } as PlayerRecord));
+  const committedByKey = new Map<string, number>();
+  timeline.forEach((item, index) => {
+    const key = governanceTimelineIdentity(item);
+    if (key) committedByKey.set(key, index);
+  });
+  records(rawReplies).forEach(reply => {
+    const live: PlayerRecord = { ...reply, speaker_type: "npc", live: true };
+    const key = governanceTimelineIdentity(live);
+    let duplicateIndex = key ? committedByKey.get(key) : undefined;
+    if (duplicateIndex === undefined && live.complete === true && String(live.text || "")) {
+      const npcId = String(live.npc_id || "");
+      const text = String(live.text || "");
+      for (let index = timeline.length - 1; index >= 0; index -= 1) {
+        const item = timeline[index];
+        if (item.live !== true && item.speaker_type !== "player" && String(item.npc_id || "") === npcId && String(item.text || "") === text) {
+          duplicateIndex = index;
+          break;
+        }
+      }
+    }
+    if (duplicateIndex !== undefined) {
+      timeline[duplicateIndex] = { ...timeline[duplicateIndex], ...live, live: false };
+      return;
+    }
+    timeline.push(live);
+  });
+  return timeline;
 }
 
 const CANONICAL_ACTION_IDS = [
@@ -626,10 +718,13 @@ export type NpcStreamViewState = {
   thinking: Record<string, { npc_id: string; npc_name: string }>;
   replies: Array<{ stream_id: string; npc_id: string; npc_name: string; text: string; complete: boolean }>;
   error: string;
+  /** Maps a backend stream id to the latest in-flight UI reply. */
+  activeStreamIds?: Record<string, string>;
+  streamCounts?: Record<string, number>;
 };
 
 export function initialNpcStreamState(): NpcStreamViewState {
-  return { requestPending: false, thinking: {}, replies: [], error: "" };
+  return { requestPending: false, thinking: {}, replies: [], error: "", activeStreamIds: {}, streamCounts: {} };
 }
 
 export function reduceNpcStream(state: NpcStreamViewState, event: PlayerRecord): NpcStreamViewState {
@@ -650,13 +745,25 @@ export function reduceNpcStream(state: NpcStreamViewState, event: PlayerRecord):
     return { ...state, thinking };
   }
   if (type === "npc_start" && streamId) {
-    return { ...state, requestPending: false, replies: [...state.replies, { stream_id: streamId, npc_id: String(event.npc_id || ""), npc_name: String(event.npc_name || ""), text: "", complete: false }] };
+    const counts = { ...(state.streamCounts || {}) };
+    const nextCount = (counts[streamId] || 0) + 1;
+    counts[streamId] = nextCount;
+    const uiStreamId = nextCount === 1 ? streamId : `${streamId}#${nextCount}`;
+    return {
+      ...state,
+      requestPending: false,
+      activeStreamIds: { ...(state.activeStreamIds || {}), [streamId]: uiStreamId },
+      streamCounts: counts,
+      replies: [...state.replies, { stream_id: uiStreamId, npc_id: String(event.npc_id || ""), npc_name: String(event.npc_name || ""), text: "", complete: false }],
+    };
   }
   if (type === "npc_delta" && streamId) {
-    return { ...state, replies: state.replies.map(item => item.stream_id === streamId ? { ...item, text: item.text + String(event.delta || "") } : item) };
+    const activeId = state.activeStreamIds?.[streamId] || streamId;
+    return { ...state, replies: state.replies.map(item => item.stream_id === activeId ? { ...item, text: item.text + String(event.delta || "") } : item) };
   }
   if (type === "npc_end" && streamId) {
-    return { ...state, replies: state.replies.map(item => item.stream_id === streamId ? { ...item, complete: true } : item) };
+    const activeId = state.activeStreamIds?.[streamId] || streamId;
+    return { ...state, replies: state.replies.map(item => item.stream_id === activeId ? { ...item, complete: true } : item) };
   }
   if (type === "error") {
     return { ...state, requestPending: false, thinking: {}, error: String(event.message || "对方暂时无法回应，请稍后重试。") };

@@ -20,7 +20,7 @@ from serious_game_backend.application.model_input_policy import ModelInputPolicy
 from serious_game_backend.application.research_projection_service import (
     ResearchProjectionService,
 )
-from serious_game_backend.bootstrap import build_container
+from tests.test_doubles import build_test_container as build_container
 from serious_game_backend.config import Settings
 from serious_game_backend.domain.action import ActionCommand
 from serious_game_backend.domain.consent import (
@@ -194,7 +194,7 @@ class M4FoundationTests(unittest.TestCase):
     def test_production_cookie_auth_and_csrf_middleware(self) -> None:
         runtime_settings = Settings(
             environment="test", content_root=BACKEND_ROOT / "content" / "packages",
-            repository="memory", role_llm_provider="fake",
+            repository="memory", role_llm_provider="none",
         )
         runtime = build_container(runtime_settings)
         runtime.auth.create_account(
@@ -203,7 +203,7 @@ class M4FoundationTests(unittest.TestCase):
         )
         production_view = Settings(
             environment="production", content_root=runtime_settings.content_root,
-            repository="memory", role_llm_provider="fake", auth_cookie_secure=True,
+            repository="memory", role_llm_provider="none", auth_cookie_secure=True,
         )
         client = TestClient(
             create_app(production_view, runtime), base_url="https://testserver"
@@ -246,7 +246,7 @@ class M4FoundationTests(unittest.TestCase):
                 environment="test", content_root=BACKEND_ROOT / "content" / "packages",
                 repository="sqlite", database_path=Path(directory) / "auth.db",
                 auth_required=True, allow_self_registration=True,
-                auth_cookie_secure=False, role_llm_provider="fake",
+                auth_cookie_secure=False, role_llm_provider="none",
             )
             client = TestClient(create_app(settings), base_url="http://testserver")
             too_short = client.post("/api/auth/register", json={

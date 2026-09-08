@@ -2429,8 +2429,6 @@ def main() -> int:
     settings = Settings.from_env()
     if settings.role_llm_provider != "openai_compatible":
         raise SystemExit("real feature workflow requires openai_compatible")
-    if settings.role_llm_fallback_to_fake:
-        raise SystemExit("real feature workflow refuses Fake fallback")
     if not os.getenv(settings.role_llm_api_key_env, "").strip():
         raise SystemExit("configured real API key is missing")
     root = args.output_dir / f"workflows-{int(time.time())}"

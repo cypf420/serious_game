@@ -209,8 +209,6 @@ def main() -> int:
     settings.validate()
     if settings.role_llm_provider != "openai_compatible":
         raise SystemExit("live matrix requires ROLE_LLM_PROVIDER=openai_compatible")
-    if settings.role_llm_fallback_to_fake:
-        raise SystemExit("live matrix refuses Fake fallback")
     api_key = os.getenv(settings.role_llm_api_key_env, "").strip()
     if not api_key:
         raise SystemExit("configured real API key is missing")

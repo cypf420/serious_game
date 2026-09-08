@@ -165,6 +165,48 @@ def variant_target_choices(
     ]
 
 
+def available_location_choices(
+    session: GameSession,
+    package: ScriptPackage,
+    variant: dict,
+) -> list[dict]:
+    """Return legal locations that are unlocked in the current state."""
+    location_names = {item.location_id: item.name for item in package.map_locations}
+    return [
+        {
+            "location_id": str(location_id),
+            "label": str(
+                variant.get("location_labels", {}).get(
+                    location_id, location_names.get(location_id, location_id)
+                )
+            ),
+        }
+        for location_id in variant.get("legal_location_ids", ())
+        if any(
+            item.location_id == location_id
+            and session.game_state.story_day >= item.unlock_day
+            and item.required_flags.issubset(session.flags)
+            for item in package.map_locations
+        )
+    ]
+
+
+def resolve_variant_location(
+    session: GameSession,
+    package: ScriptPackage,
+    variant: dict,
+    *,
+    preferred_location_id: str | None = None,
+) -> str | None:
+    choices = available_location_choices(session, package, variant)
+    if not choices:
+        return None
+    choice_ids = {item["location_id"] for item in choices}
+    if preferred_location_id in choice_ids:
+        return preferred_location_id
+    return choices[0]["location_id"]
+
+
 def public_variant(
     session: GameSession,
     package: ScriptPackage,
@@ -187,7 +229,7 @@ def public_variant(
                 f"至少需要 {rules['minimum']} 名已经正式接触的对象，"
                 f"目前只有 {len(target_choices)} 名"
             )
-    location_names = {item.location_id: item.name for item in package.map_locations}
+    location_choices = available_location_choices(session, package, variant)
     return {
         "variant_id": variant["variant_id"],
         "action_id": variant["action_id"],
@@ -198,17 +240,10 @@ def public_variant(
         "resource_costs": list(variant["resource_costs"]),
         "visible_result": variant["visible_result"],
         "legal_location_ids": list(variant["legal_location_ids"]),
-        "location_choices": [
-            {
-                "location_id": location_id,
-                "label": str(
-                    variant.get("location_labels", {}).get(
-                        location_id, location_names.get(location_id, location_id)
-                    )
-                ),
-            }
-            for location_id in variant["legal_location_ids"]
-        ],
+        "location_choices": location_choices,
+        "resolved_location_id": (
+            location_choices[0]["location_id"] if location_choices else None
+        ),
         "target_kind": variant["target_kind"],
         "target_choices": target_choices,
         "participant_rules": rules,

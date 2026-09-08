@@ -3,12 +3,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import Image from "next/image";
+import { TutorialProvider, TutorialButton, ActionTutorialButton, ActionsTutorialIntro } from "./tutorial/TutorialProvider";
+import type { TutorialContext } from "./tutorial/types";
 import { FormEvent, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { ApiError, GameApi, type NpcStreamEvent } from "./lib/api";
 import { resolveCharacter, type Character } from "./lib/characters";
 import { initialNarrativeState, narrativeItemFromFeed, narrativeReducer, pendingDecisionIsReady, type NarrativeItem } from "./lib/narrative-model";
 import { resolveSceneForView } from "./lib/scene-resolver";
-import { actionPointCost, actionPointLabel, activeInteractionMode, aiConfigurationErrorMessage, aiConfigurationMode, aiConfigurationView, archiveInvestigationGroups, archivePlayerSections, archiveReadGains, budgetEnvelopeChoices, canonicalActionEntry, canonicalActionFamilies, contractBatchTabs, conversationContractWorkflow, conversationTimelineUpdate, createActivityLatch, createSingleFlight, decisionUnlockRequirements, governanceActionProgressLabels, governanceActionTitle, governanceCancelMessage, governanceFinishMessage, governanceLocationLocked, governanceLocationLockMessage, initialNpcStreamState, investigationLeadView, meetingEvidenceArchives, peopleRelationshipView, personDiscoveryPresentation, primaryScenePlan, publicWindowRewardAvailable, qualitativeRelationshipLabel, reduceNpcStream, requiresAIConfiguration, resourceInventoryView, reviewEndingView, sessionEntry, speakerSelectionForTimelineEntry, submitGovernanceAction, toPlayerText, withAIActivity } from "./lib/player-ui";
+import { actionPointCost, actionPointLabel, activeInteractionMode, aiConfigurationErrorMessage, aiConfigurationMode, aiConfigurationView, archiveInvestigationGroups, archivePlayerSections, archiveReadGains, budgetEnvelopeChoices, canonicalActionEntry, canonicalActionFamilies, contractBatchTabs, conversationContractWorkflow, conversationTimelineUpdate, createActivityLatch, createSingleFlight, decisionUnlockRequirements, governanceActionButtonLabel, governanceActionProgressLabels, governanceDisplayTitle, governanceCancelMessage, governanceFinishMessage, initialNpcStreamState, investigationLeadView, meetingEvidenceArchives, mergeGovernanceTimeline, peopleRelationshipView, personDiscoveryPresentation, primaryScenePlan, publicWindowRewardAvailable, qualitativeRelationshipLabel, reduceNpcStream, requiresAIConfiguration, resourceInventoryView, reviewEndingView, sessionEntry, speakerSelectionForTimelineEntry, submitGovernanceAction, toPlayerText, withAIActivity } from "./lib/player-ui";
 
 type Dict = Record<string, any>;
 type Line = NarrativeItem;
@@ -39,14 +41,6 @@ const MEETING_TOPICS = [
   "明确部门分工、责任人与完成期限",
 ];
 const CUSTOM_MEETING_TOPIC = "custom";
-const QUICK_START = [
-  ["接下调令", "你是云溪县县长李致远。点击右上角进入游戏，登录并测试 AI 接口，然后开始新游戏或继续进度。"],
-  ["读完现场，再作决定", "在左侧逐段阅读，点击“下一段”继续。“上一段”和“剧情回看”可以重读；读到决定处后，点击相应选项。剧情决定不消耗精力。"],
-  ["认识人物并开始交流", "打开“人物”查看已经认识的人与可会谈机会。进入会谈后，在下方输入要说的话，再点击“送出回应”。吴秀英会谈需要了解村庄的关键情况后才能推进，暂时结束不等于完成。"],
-  ["剧情之外，自由安排行动", "处理完必须决定的事项后，不必等待下一幕。打开“行动”主动入户协商、访谈干部或查阅档案；先核对精力与资源成本。行动会带来线索、关系和实际办理结果，交流后点击“结束本次行动”。也可以保留精力、结束今日。"],
-  ["主动推进签约", "点击顶部签约进度旁的“推进签约”，选择已认识的住户或代表开展入户协商。会谈中点击“准备逐户合同”，核定条款、通过审校，再交本人复核。意向和口头承诺不等于签署。"],
-  ["结束今日与保留进度", "处理完必须完成的事项后，点击“结束今日”。夜间结果与次晨会谈可能继续推进局势。进度会自动保存，下次进入时可通过右上角“游戏进度”继续游戏。随时点击右上角“新手指引”重新查看。"],
-];
 const EVIDENCE_RANK: Record<string, number> = { E0: 0, E1: 1, E2: 2, E3: 3 };
 
 const DOCUMENT_TYPE_LABELS: Record<string, string> = {
@@ -63,7 +57,7 @@ const PARAMETER_LABELS: Record<string, string> = {
 
 const GOVERNANCE_ACTION_LABELS: Record<string, string> = {
   household_visit: "入户走访",
-  cadre_interview: "干部访谈",
+  cadre_interview: "政务沟通",
   leadership_meeting: "班子会议",
   inspect_archives: "查阅档案",
 };
@@ -83,6 +77,12 @@ const displayValue = (value: unknown, fallback: string | number = "待定"): str
   return fallback;
 };
 const playerText = toPlayerText;
+function actionLocationLabel(item: Dict, locationId: string, choices: Dict[]): string {
+  const direct = item.location_name || item.location_label || item.resolved_location_name || get(item, "location.name");
+  if (direct) return playerText(direct);
+  const choice = choices.find(value => String(value.location_id || "") === locationId);
+  return playerText(choice?.label || choice?.name, locationId || "现场待定");
+}
 const chineseIndex = (index: number) => {
   const digits = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九"];
   const value = index + 1;
@@ -215,12 +215,14 @@ export default function GameShell() {
   const [aiSuccess, setAiSuccess] = useState("");
   const [showApiKey, setShowApiKey] = useState(false);
   const [sessionId, setSessionId] = useState("");
+  const [tutorialGeneration, setTutorialGeneration] = useState(0);
+  const [tutorialEntry, setTutorialEntry] = useState<TutorialContext["entryKind"]>(null);
+  const [tutorialResult, setTutorialResult] = useState<"morning" | "action-result" | null>(null);
+  const [tutorialResultNotice, setTutorialResultNotice] = useState("");
   const [state, setState] = useState<Dict>({});
   const [commands, setCommands] = useState<Dict>({});
   const [narrative, dispatchNarrative] = useReducer(narrativeReducer, initialNarrativeState);
   const [showHistory, setShowHistory] = useState(false);
-  const [guideOpen, setGuideOpen] = useState(false);
-  const [guideStep, setGuideStep] = useState(0);
   const [panel, setPanel] = useState<PanelName>("scene");
   const [panelData, setPanelData] = useState<Dict | null>(null);
   const [governance, setGovernance] = useState<Dict | null>(null);
@@ -576,6 +578,7 @@ export default function GameShell() {
       const result = kind === "new" ? await api.newSession(value) : await api.session(value || "");
       const id = String(result.session_id || get(result, "state.session_id") || value || "");
       if (!id) throw new ApiError("没有找到可继续的游戏进度。", "SESSION_NOT_FOUND", 404);
+      setTutorialEntry(kind); setTutorialResult(null); setTutorialGeneration(value => value + 1);
       setSessionId(id); dispatchNarrative({ type: "SESSION_OPEN", sessionId: id }); setShowHistory(false); setSessionOpen(false); setSavedSessionsOpen(false);
       await refresh(0, id, true, true, kind === "load" ? "latest" : "start");
       if (kind === "review") {
@@ -587,6 +590,7 @@ export default function GameShell() {
       if ((error as ApiError)?.code === "PACKAGE_RETIRED" && value) {
         const result = await api.session(value);
         const id = String(result.session_id || value);
+        setTutorialEntry("review"); setTutorialResult(null); setTutorialGeneration(value => value + 1);
         setSessionId(id); dispatchNarrative({ type: "SESSION_OPEN", sessionId: id });
         setSessionOpen(false); setSavedSessionsOpen(false);
         await refresh(0, id, false, true, "start");
@@ -662,7 +666,7 @@ export default function GameShell() {
       return;
     }
     setNotice("");
-    setFormOpen({ title: item.name || item.action_name || fallbackTitle, kind: "resource", item });
+    setFormOpen({ title: governanceDisplayTitle(item, fallbackTitle), kind: "resource", item });
   }
 
   function applyNpcStreamEvent(event: NpcStreamEvent) {
@@ -694,6 +698,8 @@ export default function GameShell() {
     }), "夜间结算完成，新一天已经开始", false, undefined, "正在推演夜间人物行动与新一天局势");
     if (completed) {
       setPanel("scene");
+      setTutorialResult("morning");
+      setTutorialResultNotice("夜间结算完成，新一天已经开始");
     }
   }
 
@@ -723,10 +729,11 @@ export default function GameShell() {
   async function leaveConversation() {
     const conversation = state.active_conversation;
     if (!conversation) return;
-    await perform(() => api.action(sessionId, {
+    const completed = await perform(() => api.action(sessionId, {
       input_mode: "conversation_end", client_action_id: api.key("conversation-end"), state_version: state.state_version,
       conversation_id: conversation.conversation_id,
     }), "会谈已经结束");
+    if (completed) { setTutorialResult("action-result"); setTutorialResultNotice("会谈已经结束"); }
   }
 
   const activeGovernanceAction = arr(governance?.governance_actions).find(item => item.status === "active") || null;
@@ -735,7 +742,7 @@ export default function GameShell() {
     : null;
   const activeGovernanceLabels = governanceActionProgressLabels(
     activeGovernanceAction,
-    GOVERNANCE_ACTION_LABELS[activeGovernanceAction?.action_kind] || "治理行动",
+    governanceDisplayTitle(activeGovernanceAction, GOVERNANCE_ACTION_LABELS[activeGovernanceAction?.action_kind] || "治理行动"),
   );
   const activeContractWorkflow = conversationContractWorkflow(
     activeGovernanceAction,
@@ -826,9 +833,10 @@ export default function GameShell() {
       return;
     }
     setConfirmRequest({ title: "结束本次行动", message: "确认结束本次交流？已获得的信息和已发生的对话会保留，已消耗的精力不退还。系统会根据实际交流进展判断是否完成任务。", confirmLabel: "确认结束", action: async () => {
-      await perform(() => api.write(sessionId, `/governance/actions/${encodeURIComponent(String(activeGovernanceAction.action_instance_id))}/finish`, "POST", {
+      const completed = await perform(() => api.write(sessionId, `/governance/actions/${encodeURIComponent(String(activeGovernanceAction.action_instance_id))}/finish`, "POST", {
         state_version: state.state_version,
       }), governanceFinishMessage(activeGovernanceAction));
+      if (completed) { setTutorialResult("action-result"); setTutorialResultNotice(governanceFinishMessage(activeGovernanceAction)); }
     } });
   }
 
@@ -839,7 +847,7 @@ export default function GameShell() {
       adopt: true,
       resolution,
     }), "会议已经形成决议并收入卷宗", false, undefined, "正在汇总班子意见并生成、审校会议文件");
-    if (succeeded) setMeetingResolutionOpen(false);
+    if (succeeded) { setMeetingResolutionOpen(false); setTutorialResult("action-result"); setTutorialResultNotice("会议已经形成决议并收入卷宗"); }
   }
 
   async function performDocumentAction(documentId: string, suffix: string, method: "POST" | "PUT", body: Dict, success: string) {
@@ -871,9 +879,10 @@ export default function GameShell() {
   async function finishGroupConversation() {
     const group = state.active_group_conversation;
     if (!group || group.phase !== "resolved") return;
-    await perform(() => api.write(sessionId, "/group-conversation/finish", "POST", {
+    const completed = await perform(() => api.write(sessionId, "/group-conversation/finish", "POST", {
       client_action_id: api.key("group-finish"), state_version: state.state_version,
     }), "夜间会谈已经归档，次晨简报已恢复");
+    if (completed) { setTutorialResult("morning"); setTutorialResultNotice("夜间会谈已经归档，次晨简报已恢复"); }
   }
 
   function confirmEndDay() {
@@ -968,11 +977,29 @@ export default function GameShell() {
     ? `${thinkingNpcs.map(person => resolveCharacter(person.npc_id, person.npc_name)?.name || playerText(person.npc_name, "在场人物")).join("、")}正在回应`
     : aiActivity?.label || "正在理解现场并组织回应";
 
-  return <main className="app-shell">
+  const tutorialContext: TutorialContext = {
+    accountId: api.accountId,
+    sessionId,
+    entryKind: tutorialEntry,
+    panel,
+    readOnly: tutorialEntry === "review" || state.status === "ended" || state.status === "completed",
+    blocked: busy || Boolean(aiActivity) || npcStream.requestPending || thinkingNpcs.length > 0
+      || authOpen || consentOpen || sessionOpen || Boolean(confirmRequest) || progressBroadcastOpen
+      || Boolean(characterProfileOpen) || overtimeOpen || Boolean(contractProposalOpen) || meetingResolutionOpen,
+    form: formOpen?.item || null,
+    actions: panel === "actions" && !busy ? canonicalActionFamilies(panelData?.actions || panelData?.items || panelData) : [],
+    scene: archiveReadingOpen ? "archive-result" : contractOpen ? "contract" : governanceRecordOpen ? "document"
+      : activeMeeting ? "meeting" : activeGovernanceAction ? "governance"
+      : state.active_group_conversation ? state.active_group_conversation.phase === "resolved" ? null : "group" : state.active_conversation ? "conversation"
+      : decisionReady ? "decision" : tutorialResult && notice === tutorialResultNotice ? tutorialResult
+      : commands.can_end_day ? "end-day" : null,
+  };
+
+  return <TutorialProvider key={`${api.accountId}:${sessionId}:${tutorialGeneration}`} context={tutorialContext} onNavigate={name => loadPanel(name as PanelName)}><main className="app-shell">
     <header className="topbar">
       <div className="brand"><span className="seal">清</span><div><h1>浊流之上</h1><p>县域治理情境模拟</p></div></div>
       <div className="top-status">
-        <button onClick={() => { setGuideStep(0); setGuideOpen(true); }}>新手指引</button>
+        <TutorialButton />
         <span className={connected ? "online" : "offline"}><i />{connected ? "游戏已就绪" : "正在连接"}</span>
         {progressBroadcast && <button className="broadcast-reopen" onClick={() => { setProgressBroadcastOpen(true); void playProgressCue(progressBroadcastTone); }}>第 {progressBroadcast.story_day} 日督办</button>}
         <button onClick={openGameEntry} disabled={busy}>{sessionId ? `第 ${story.day || 1} 日 · 游戏进度` : authRequired && !account ? "登录" : "进入游戏"}</button>
@@ -983,11 +1010,11 @@ export default function GameShell() {
     {(aiActivity || npcStream.requestPending || thinkingNpcs.length > 0) && <AIThinkingBanner label={thinkingLabel} />}
 
     <aside className="rail" aria-label="游戏导航">
-      {NAV.map((item, index) => <button key={item.id} className={panel === item.id ? "active" : ""} onClick={() => loadPanel(item.id)} disabled={!sessionId}><small>卷宗 {chineseIndex(index)}</small><b>{item.label}</b><em>{item.hint}</em></button>)}
+      {NAV.map((item, index) => <button data-tutorial-id={"nav-" + item.id} key={item.id} className={panel === item.id ? "active" : ""} onClick={() => loadPanel(item.id)} disabled={!sessionId}><small>卷宗 {chineseIndex(index)}</small><b>{item.label}</b><em>{item.hint}</em></button>)}
     </aside>
 
     <section className="workspace" data-state-version={state.state_version}>
-      <div className="metric-strip" aria-label="当前治理状态">
+      <div data-tutorial-id="metrics" className="metric-strip" aria-label="当前治理状态">
         <div><small>当前日期</small><strong>第 {displayValue(story.day)} 日</strong><em>余 {Math.max(0, 90 - Number(story.day || 0))} 日</em></div>
         <div><small>今日精力</small><strong>{actionPoints}</strong><em>/ {dailyCap} 点</em></div>
         <div><small>财政余额</small><strong>{budget}</strong><em>万元</em></div>
@@ -1004,19 +1031,19 @@ export default function GameShell() {
         <section className="story-card">
           <Image key={currentScene.asset} className="scene-backdrop" src={currentScene.asset} alt={currentScene.title} fill priority sizes="(max-width: 980px) 100vw, 70vw" unoptimized />
           <div className="story-head"><div><small>县长手记 · 第 {displayValue(story.day, "待定")} 日</small><h2>{sessionId ? currentScene.title : "一纸调令，九十天限期"}</h2></div></div>
-          <div className="story-scroll" ref={storyScrollRef} aria-live="polite" data-scene-match={currentScene.matchedBy}>
+          <div data-tutorial-id={tutorialContext.scene === "morning" ? "morning" : undefined} className="story-scroll" ref={storyScrollRef} aria-live="polite" data-scene-match={currentScene.matchedBy}>
             {notice && !(activeConversation || (activeGovernanceAction && !activeMeeting)) && <div className="notice" role="status"><b>案头提醒</b><span>{notice}</span></div>}
             {!sessionId && <div className="welcome-block"><span className="eyebrow">云溪县 · 柳林村搬迁专班</span><h2>你有九十天，处理一场正在失控的搬迁。</h2><p>三十六户人家、八千万元预算，还有一条没人愿意说透的旧账。你的每次会谈、批示、承诺和沉默，都会留下痕迹。</p><p className="currency-notice" role="note">资源余额可用于兑换通晓币。通晓币不用于人物会谈或本局行动消耗。它将用于后续“百晓生”网站兑换；开放时间、兑换范围和具体规则以百晓生网站公告为准。</p><div className="welcome-credits"><small>开发：杨钞越　剧情：吉瑞新　美术：章钊林　指导：蒋俊彦、高翔</small></div><div className="welcome-action"><button onClick={openGameEntry} disabled={busy}>{authRequired && !account ? "登录后赴任" : "接下调令，前往云溪"}</button></div></div>}
             {(primaryScene === "narrative" || primaryScene === "conversation") && <section className={activeConversation ? "gal-stage conversation-mode" : decisionReady ? "gal-stage decision-mode" : "gal-stage"} data-primary-scene={primaryScene} data-testid={state.active_conversation ? "active-conversation-character" : undefined}>
               {stageSpeaker && <div className="gal-portrait" aria-label={`${stageSpeaker}立绘`}><CharacterPortrait character={stageCharacter} fallbackName={stageSpeaker} priority /></div>}
               <div className={stageSpeaker ? "gal-dialogue has-speaker" : "gal-dialogue narration"}>
                 <header><span>{decisionReady ? "当前必须作出决定" : stageSpeaker || (currentLine ? "县长手记" : "现场暂歇")}</span><small>{playerLines.length ? `第 ${currentLine?.storyDay || story.day} 日 · ${Math.max(1, narrative.currentIndex + 1)} / ${playerLines.length}` : "等待新消息"}</small></header>
-                {decisionReady && pending ? <div className="decision-stage-inline"><h3>{playerText(pending.title || pending.prompt || pending.situation, "当前事项需要你的决定")}</h3>{pending.description && <p>{playerText(pending.description)}</p>}{["sorting", "allocation"].includes(pending.input_kind) ? <StructuredDecision key={pending.decision_id} pending={pending} busy={busy} onSubmit={async payload => { await perform(() => api.action(sessionId, { input_mode: "decision", client_action_id: api.key("decision"), state_version: state.state_version, decision_id: pending.decision_id, ...payload }), ""); }} /> : <div className="decision-options">{options.map((option, index) => {
+                {decisionReady && pending ? <div data-tutorial-id="decision" className="decision-stage-inline"><h3>{playerText(pending.title || pending.prompt || pending.situation, "当前事项需要你的决定")}</h3>{pending.description && <p>{playerText(pending.description)}</p>}{["sorting", "allocation"].includes(pending.input_kind) ? <StructuredDecision key={pending.decision_id} pending={pending} busy={busy} onSubmit={async payload => { await perform(() => api.action(sessionId, { input_mode: "decision", client_action_id: api.key("decision"), state_version: state.state_version, decision_id: pending.decision_id, ...payload }), ""); }} /> : <div className="decision-options">{options.map((option, index) => {
                   const requirements = decisionUnlockRequirements(option);
                   const locked = option.available === false;
                   return <section className={locked ? "decision-option locked" : "decision-option"} key={option.option_id || index}><button onClick={() => submitDecision(option)} disabled={busy || locked}><span>{chineseIndex(index)}</span><div><b>{playerText(option.text || option.label, `方案${chineseIndex(index)}`)}</b>{option.description && <small>{playerText(option.description)}</small>}</div><i>{locked ? playerText(option.unavailable_reason, "条件不足") : "采纳"}</i></button>{locked && requirements.length > 0 && <div className="decision-unlock-guidance"><b>证据条件尚未满足</b><ul>{requirements.map(requirement => <li key={`${requirement.archiveName}:${requirement.reason}`}>需先查阅《{requirement.archiveName}》{requirement.reason ? `：${requirement.reason}` : "，或通过正式接触取得相关事实。"}</li>)}</ul><button type="button" onClick={() => void loadPanel("actions")}>前往查档</button></div>}</section>;
                 })}</div>}</div> : <p>{stageText}{conversationStreamingReply && !conversationStreamingReply.complete && <i className="stream-cursor" aria-hidden="true" />}</p>}
-                <nav className="narrative-controls" aria-label="剧情阅读控制">
+                <nav data-tutorial-id="narrative-controls" className="narrative-controls" aria-label="剧情阅读控制">
                   <button onClick={() => dispatchNarrative({ type: "PREVIOUS" })} disabled={narrative.currentIndex <= 0}>上一段</button>
                   <button onClick={() => dispatchNarrative({ type: "NEXT" })} disabled={narrative.currentIndex >= playerLines.length - 1}>下一段</button>
                   <button className="history-toggle" onClick={() => setShowHistory(value => !value)}>{showHistory ? "关闭回看" : "剧情回看"}</button>
@@ -1031,24 +1058,24 @@ export default function GameShell() {
           <PlayerActionBar state={state} commands={commands} busy={busy} waitingForAI={npcStream.requestPending || thinkingNpcs.length > 0} notice={notice} pending={pending} decisionReady={decisionReady} interactionMode={interactionMode} governanceAction={activeGovernanceAction} meeting={activeMeeting} contractAvailable={Boolean(activeContractWorkflow)} contractPreparation={governance?.active_contract_preparation} onPrepareContracts={() => void prepareContracts()} conversationName={activeConversationName} value={conversationInput} onChange={setConversationInput} onSubmit={interactionMode === "governance" ? submitGovernanceTurn : submitConversation} onOpenContract={() => { if (activeContractWorkflow?.proposal) setContractProposalOpen(activeContractWorkflow.proposal); else if (activeContractWorkflow?.contract) void openContractDetail(activeContractWorkflow.contract); }} onLeave={leaveConversation} onFinishGroup={finishGroupConversation} onFinishGovernance={finishGovernanceAction} onCancelGovernance={confirmCancelGovernanceAction} onNavigate={loadPanel} onEndDay={confirmEndDay} onOvertime={() => setOvertimeOpen(true)} />
         </section>
 
-        <aside className="context-panel" ref={contextRef}>
+        <aside data-tutorial-id="today" className="context-panel" ref={contextRef}>
           <div className="panel-head"><div><small>云溪县政府 · 案头</small><h2>{PANEL_TITLES[panel]}</h2></div>{busy && <span className="sync-state" aria-live="polite">正在整理</span>}</div>
           <div className="panel-body">
             {sessionId && <PlayerIdentityCard />}
-            {panel === "scene" && <SceneSummary state={state} commands={commands} governanceAction={activeGovernanceAction} decisionReady={decisionReady} onNavigate={loadPanel} onEndDay={confirmEndDay} onOvertime={() => setOvertimeOpen(true)} />}
-            {panel === "actions" && <ActionPanel data={panelData} onRun={item => { setNotice(""); setFormOpen({ title: item.name || item.action_name || "安排治理行动", kind: "resource", item }); }} />}
+            {panel === "scene" && <SceneSummary state={state} commands={commands} requiredOpportunity={(commands.required_opportunity || state.required_opportunity || get(commands, "current_required_opportunity")) as Dict | null} governanceAction={activeGovernanceAction} decisionReady={decisionReady} onNavigate={loadPanel} onEndDay={confirmEndDay} onOvertime={() => setOvertimeOpen(true)} />}
+            {panel === "actions" && <ActionPanel data={panelData} onRun={item => { setNotice(""); setFormOpen({ title: governanceDisplayTitle(item, "安排治理行动"), kind: "resource", item }); }} />}
             {panel === "opportunities" && <OpportunityPanel signingOnly={signingOnly} data={panelData} activeConversation={state.active_conversation || null} onOpenProfile={setCharacterProfileOpen} onContinue={() => void loadPanel("scene")} onStart={item => openCanonicalAction(item, `与 ${playerText(item.npc_name, "对方")} 会谈`)} />}
-            {panel === "governance" && <GovernancePanel data={panelData} busy={busy} onOpenRecord={setGovernanceRecordOpen} onOpenArchive={openArchiveDetail} onOpenContract={openContractDetail} />}
+            {panel === "governance" && <GovernancePanel data={panelData} onOpenRecord={setGovernanceRecordOpen} onOpenArchive={openArchiveDetail} onOpenContract={openContractDetail} />}
             {panel === "desk" && <DeskPanel data={panelData} />}
             {panel === "knowledge" && <KnowledgePanel data={panelData} />}
             {panel === "review" && <ReviewPanel data={panelData} api={api} sessionId={sessionId} />}
+
           </div>
         </aside>
       </div>
     </section>
 
     <footer><span>{sessionId ? "每次行动与决定都会自动保存" : "准备好后，从右上角进入游戏"}</span><span>开发：杨钞越　剧情：吉瑞新　美术：章钊林　指导：蒋俊彦、高翔</span><span>{activeGovernanceAction ? activeGovernanceLabels.footer : activeConversation ? "会谈进行中" : pending ? decisionReady ? "等待你的决定" : "请继续阅读当前剧情" : sessionId ? "请合理分配今日精力" : "清江水急，民心难测"}</span></footer>
-    {guideOpen && <Modal title="县长上手指引" onClose={() => setGuideOpen(false)}><section className="quick-start" aria-live="polite"><small>第 {guideStep + 1} 步 / {QUICK_START.length} 步</small><h3>{QUICK_START[guideStep][0]}</h3><p>{QUICK_START[guideStep][1]}</p><div className="guide-controls"><button onClick={() => setGuideStep(value => value - 1)} disabled={guideStep === 0}>上一步</button>{guideStep < QUICK_START.length - 1 ? <button onClick={() => setGuideStep(value => value + 1)}>下一步</button> : <button onClick={() => setGuideOpen(false)}>完成指引，返回游戏</button>}{guideStep < QUICK_START.length - 1 && <button onClick={() => setGuideOpen(false)}>返回游戏</button>}</div></section></Modal>}
 
     {authOpen && <Modal title={authStep === "ai" ? "配置 AI 接口" : authRequired ? account ? "账号中心" : "登录治理档案" : "本地试玩"} onClose={aiView.configured || authStep === "account" ? () => setAuthOpen(false) : undefined}>
       {authStep === "ai" ? <AIConfigurationPanel
@@ -1068,18 +1095,18 @@ export default function GameShell() {
       /> : authRequired ? account ? <div className="account-card"><small>当前账号</small><strong>{account}</strong><p>你的游戏进度已绑定当前账号，重新登录后仍可继续。</p><div className={`ai-config-summary ${aiView.configured ? "active" : ""}`}><small>当前 AI 接口</small><b>{aiView.summary}</b></div>{authError && <div className="notice">{authError}</div>}<button className="secondary" onClick={() => { setAuthStep("ai"); setAiError(""); setAiSuccess(""); void loadAIConfiguration(false); }} disabled={busy}>AI 接口设置</button>{modelConsentRequired && <button className="secondary" onClick={() => setConsentOpen(true)} disabled={busy}>模型与数据授权</button>}<button onClick={logoutAccount} disabled={busy}>退出登录</button></div> : <form className="stack-form" onSubmit={authenticate}><div className="auth-tabs"><button type="button" className={authMode === "login" ? "active" : ""} onClick={() => { setAuthMode("login"); setAuthError(""); }}>登录</button>{selfRegistration && <button type="button" className={authMode === "register" ? "active" : ""} onClick={() => { setAuthMode("register"); setAuthError(""); }}>注册</button>}</div><p>{authMode === "login" ? "登录后可继续这个账号的历史进度。" : "创建账号后即可保留多条游戏进度。"}</p>{authError && <div className="notice">{authError}</div>}<label>用户名<input name="username" minLength={authMode === "register" ? 3 : 1} maxLength={32} autoComplete="username" required autoFocus /></label><label>密码<input name="password" type="password" minLength={authMode === "register" ? 8 : 1} maxLength={256} autoComplete={authMode === "register" ? "new-password" : "current-password"} required /></label><button disabled={busy}>{busy ? "正在处理…" : authMode === "login" ? "登录并继续" : "注册并开始"}</button></form> : <div className="account-card"><small>当前身份</small><strong>本地试玩</strong><p>无需注册。游戏进度会保存在这台电脑上。</p><button onClick={() => setAuthStep("ai")}>配置 AI 接口</button></div>}
     </Modal>}
     {sessionOpen && <Modal title="进入云溪县" onClose={() => { setSessionOpen(false); setSavedSessionsOpen(false); }}><div className="session-actions"><button onClick={() => openSession("new")} disabled={!aiView.configured}>开始新游戏<span>{aiView.configured ? "从上任第一天开始一条新的九十天时间线" : "请先测试并启用 AI 接口"}</span></button><button onClick={showSavedSessions} className={savedSessionsOpen ? "selected" : ""}>查看已有进度<span>可继续当前版本，或复盘已退役剧本</span></button></div>{savedSessionsOpen && <div className="saved-session-list" aria-live="polite">{busy && !savedSessions.length && <div className="form-loading">正在整理存档…</div>}{savedSessionsError && <div className="notice">{savedSessionsError}</div>}{!busy && !savedSessionsError && !savedSessions.length && <div className="empty-state"><p>还没有保存过的游戏，可以从新游戏开始。</p></div>}{savedSessions.map((saved, index) => { const entry = sessionEntry(saved); const needsAI = entry.openKind === "load" && !aiView.configured; return <button key={saved.session_id} className={entry.mode === "review" ? "review-only" : entry.mode === "unavailable" ? "unavailable" : ""} disabled={entry.openKind === null || needsAI} onClick={() => { if (entry.openKind && !needsAI) openSession(entry.openKind, String(saved.session_id)); }}><span><b>进度{chineseIndex(index)} · {entry.label}</b><small>第 {saved.story_day || 1} 日 · {needsAI ? "配置 AI 接口后可继续" : entry.mode === "review" ? "仅可复盘" : entry.mode === "unavailable" ? entry.unavailableReason : friendlyStatus(saved.status)}</small></span><time>{saved.updated_at ? new Date(saved.updated_at).toLocaleString("zh-CN", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }) : ""}</time></button>; })}</div>}</Modal>}
-    {formOpen && <Modal title={formOpen.title} onClose={() => setFormOpen(null)}><ContextForm config={formOpen} state={state} api={api} sessionId={sessionId} notice={notice} onPerform={perform} onArchivesRead={setArchiveReadingOpen} onOpenProfile={setCharacterProfileOpen} /></Modal>}
+    {formOpen && <Modal title={formOpen.title} onClose={() => setFormOpen(null)}><TutorialButton label="填写指南" /><ContextForm config={formOpen} state={state} api={api} sessionId={sessionId} notice={notice} onPerform={perform} onArchivesRead={setArchiveReadingOpen} onOpenProfile={setCharacterProfileOpen} /></Modal>}
     {meetingResolutionOpen && activeMeeting && <Modal title="确认会议决议" onClose={() => { if (!busy) setMeetingResolutionOpen(false); }}><MeetingResolutionForm meeting={activeMeeting} governance={governance || {}} state={state} busy={busy} notice={notice} onOpenProfile={setCharacterProfileOpen} onCancel={() => setMeetingResolutionOpen(false)} onSubmit={submitMeetingResolution} /></Modal>}
     {characterProfileOpen && <Modal title="人物介绍" className="character-profile-modal" onClose={() => setCharacterProfileOpen(null)}><CharacterProfileView character={characterProfileOpen} /></Modal>}
-    {governanceRecordOpen && <Modal title={governanceRecordOpen.document ? "决议文件详情" : "会议纪要"} onClose={() => { if (!busy) setGovernanceRecordOpen(null); }}><GovernanceRecordDetail key={`${governanceRecordOpen.document?.document_id || governanceRecordOpen.meeting?.meeting_id}:${governanceRecordOpen.document?.version || governanceRecordOpen.document?.status || "meeting"}`} record={governanceRecordOpen} governance={governance || panelData || {}} busy={busy} onAction={performDocumentAction} /></Modal>}
+    {governanceRecordOpen && <Modal title={governanceRecordOpen.document ? "决议文件详情" : "会议纪要"} onClose={() => { if (!busy) setGovernanceRecordOpen(null); }}><div data-tutorial-id="document"><TutorialButton label="文件操作指南" /><GovernanceRecordDetail key={`${governanceRecordOpen.document?.document_id || governanceRecordOpen.meeting?.meeting_id}:${governanceRecordOpen.document?.version || governanceRecordOpen.document?.status || "meeting"}`} record={governanceRecordOpen} governance={governance || panelData || {}} busy={busy} onAction={performDocumentAction} /></div></Modal>}
     {archiveReadingOpen && <Modal title="档案查阅结果" className="archive-reading-modal" onClose={() => setArchiveReadingOpen(null)}><ArchiveReading result={archiveReadingOpen} /></Modal>}
     {contractProposalOpen && <Modal title="确认逐户合同提议" onClose={() => { if (!busy) setContractProposalOpen(null); }}><ContractBatchProposal proposal={contractProposalOpen} busy={busy} onConfirm={confirmContractBatch} /></Modal>}
-    {contractOpen && <Modal title={`逐户合同 · ${playerText(contractOpen.signatory_name, contractOpen.household_id || "待确认")}`} className="contract-modal" onClose={() => { if (!busy) setContractOpen(null); }}><ContractWorkspace key={`${contractOpen.contract_id}:${contractOpen.current_version}:${contractOpen.status}`} contract={contractOpen} governance={governance || panelData || {}} state={state} busy={busy} api={api} sessionId={sessionId} onPerform={performContractAction} onOpenContract={openContractDetail} /></Modal>}
+    {contractOpen && <Modal title={`逐户合同 · ${playerText(contractOpen.signatory_name, contractOpen.household_id || "待确认")}`} className="contract-modal" onClose={() => { if (!busy) setContractOpen(null); }}><div data-tutorial-id="contract"><TutorialButton label="合同操作指南" /><ContractWorkspace key={`${contractOpen.contract_id}:${contractOpen.current_version}:${contractOpen.status}`} contract={contractOpen} governance={governance || panelData || {}} state={state} busy={busy} api={api} sessionId={sessionId} onPerform={performContractAction} onOpenContract={openContractDetail} /></div></Modal>}
     {overtimeOpen && <Modal title="申请加班" onClose={() => { if (!busy) setOvertimeOpen(false); }}><OvertimeChoice state={state} busy={busy} onChoose={requestOvertime} /></Modal>}
     {progressBroadcastOpen && progressBroadcast && <Modal title={playerText(progressBroadcast.title, "云溪县十日督办播报")} className="progress-broadcast-modal" onClose={() => setProgressBroadcastOpen(false)}><ProgressBroadcast broadcast={progressBroadcast} onReplay={() => void playProgressCue(progressBroadcastTone)} /></Modal>}
     {consentOpen && <Modal title="角色模型与数据授权" onClose={consentGranted ? () => setConsentOpen(false) : undefined}><ConsentPanel info={consentInfo} aiSummary={aiView.summary} granted={consentGranted} busy={busy} error={consentError} onSign={signModelConsent} onWithdraw={confirmWithdrawModelConsent} /></Modal>}
     {confirmRequest && <Modal title={confirmRequest.title} onClose={() => { if (!busy) setConfirmRequest(null); }}><div className="confirm-panel"><p>{confirmRequest.message}</p><div><button disabled={busy} onClick={() => setConfirmRequest(null)}>返回</button><button className={confirmRequest.danger ? "danger" : "primary"} disabled={busy} onClick={() => { const action = confirmRequest.action; setConfirmRequest(null); void action(); }}>{confirmRequest.confirmLabel}</button></div></div></Modal>}
-  </main>;
+  </main></TutorialProvider>;
 }
 
 function characterPublicIntroduction(character: Character) {
@@ -1127,25 +1154,65 @@ function GovernanceActionScene({ action, overview, streamingReplies }: { action:
   const names = new Map(catalogs.map(item => [String(item.target_id), String(item.label || item.name || "相关人员")]));
   const targets = (Array.isArray(action.target_ids) ? action.target_ids : []).map((id: unknown) => names.get(String(id)) || "相关人员");
   const transcript = arr(action.transcript);
-  const title = governanceActionTitle(
+  const title = governanceDisplayTitle(
     action,
     GOVERNANCE_ACTION_LABELS[String(action.action_kind)] || "治理行动",
   );
   const targetId = String((Array.isArray(action.target_ids) ? action.target_ids : [])[0] || "");
   const targetName = targets[0] || "对方";
   const targetCharacter = resolveCharacter(targetId, targetName);
-  const latestReply = streamingReplies.length ? streamingReplies[streamingReplies.length - 1] : null;
-  const latestNpcEntry = [...transcript].reverse().find(entry => entry.speaker_type !== "player");
-  const dialogue = latestReply?.text || latestNpcEntry?.text || "你已经到达现场。先说明来意，再围绕事实、诉求与可行安排展开交流。";
-  const narration = !latestReply && latestNpcEntry?.speaker_type === "system";
-  const speakerName = narration ? "县长手记" : playerText(latestReply?.npc_name || latestNpcEntry?.npc_name, targetCharacter?.name || targetName);
+  const timeline = mergeGovernanceTimeline(transcript, streamingReplies) as Dict[];
+  const latestEntry = timeline[timeline.length - 1] || null;
+  const latestNpcEntry = [...timeline].reverse().find(entry => entry.speaker_type === "npc") || null;
+  const narration = latestEntry?.speaker_type === "system";
+  const speakerName = narration ? "县长手记" : playerText(latestNpcEntry?.npc_name, targetCharacter?.name || targetName);
+  const timelineSignature = timeline.map(entry => [entry.speaker_type, entry.npc_id, entry.stream_id, entry.text, entry.live ? "live" : "committed"].join("\u0001")).join("\u0002");
+  const timelineRef = useRef<HTMLDivElement | null>(null);
+  const previousTimelineSignature = useRef(timelineSignature);
+  const previousTimelineLength = useRef(timeline.length);
+  const [timelineAtBottom, setTimelineAtBottom] = useState(true);
+  const [acknowledgedTimelineLength, setAcknowledgedTimelineLength] = useState(timeline.length);
+  const hasNewDialogue = !timelineAtBottom && timeline.length > acknowledgedTimelineLength;
+
+  useEffect(() => {
+    if (timelineSignature === previousTimelineSignature.current) return;
+    const element = timelineRef.current;
+    const grew = timeline.length > previousTimelineLength.current;
+    previousTimelineSignature.current = timelineSignature;
+    previousTimelineLength.current = timeline.length;
+    if (element && timelineAtBottom) {
+      element.scrollTo({ top: element.scrollHeight, behavior: "smooth" });
+    }
+    if (timelineAtBottom && grew) setAcknowledgedTimelineLength(timeline.length);
+  }, [timelineAtBottom, timeline.length, timelineSignature]);
+
+  const jumpToLatest = () => {
+    const element = timelineRef.current;
+    if (element) element.scrollTo({ top: element.scrollHeight, behavior: "smooth" });
+    setTimelineAtBottom(true);
+    setAcknowledgedTimelineLength(timeline.length);
+  };
   return <section className="gal-stage governance-gal-stage conversation-mode" data-primary-scene="governance_action" data-testid="governance-gal-scene" data-action-kind={String(action.action_kind)}>
     <div className="gal-scene-meta"><small>正在进行 · {title}</small><strong>{playerText(action.topic, `与${targetName}当面沟通`)}</strong><span>第 {action.story_day || "待定"} 日</span></div>
     <div className="gal-portrait" aria-label={`${targetName}立绘`}><CharacterPortrait character={targetCharacter} fallbackName={targetName} priority /></div>
     <div className="gal-dialogue has-speaker">
-      <header><span>{speakerName}</span><small>{narration ? "现场记录" : targetCharacter?.role || title}{latestReply ? latestReply.complete ? " · 回应完成" : " · 正在回应" : ""}</small></header>
-      <p>{dialogue}{latestReply && !latestReply.complete && <i className="stream-cursor" aria-hidden="true" />}</p>
-      {transcript.length > 0 && <details className="gal-transcript-history"><summary>回看本次交谈记录（{transcript.length}）</summary><div>{transcript.map((entry, index) => <article key={index}><strong>{entry.speaker_type === "player" ? "你" : entry.speaker_type === "system" ? "县长手记" : entry.npc_name || targetName}</strong><p>{entry.text || "对方暂未表态。"}</p></article>)}</div></details>}
+      <header><span>{speakerName || targetName}</span><small>{narration ? "现场记录" : targetCharacter?.role || title}{latestEntry?.live ? latestEntry.complete ? " · 回应完成" : " · 正在回应" : ""}</small></header>
+      <div className="governance-action-timeline" ref={timelineRef} onScroll={event => {
+        const element = event.currentTarget;
+        const atBottom = element.scrollHeight - element.scrollTop - element.clientHeight < 36;
+        setTimelineAtBottom(atBottom);
+        if (atBottom) setAcknowledgedTimelineLength(timeline.length);
+      }} aria-label="本次治理行动完整记录" aria-live="polite">
+        {timeline.length === 0 && <div className="governance-action-opening"><p>你已经到达现场。先说明来意，再围绕事实、诉求与可行安排展开交流。</p></div>}
+        {timeline.map((entry, index) => {
+          const player = entry.speaker_type === "player";
+          const system = entry.speaker_type === "system";
+          const character = !player && !system ? resolveCharacter(entry.npc_id, entry.npc_name) : null;
+          const name = player ? "你" : system ? "县长手记" : playerText(entry.npc_name, character?.name || targetName);
+          return <article className={`${player ? "player" : system ? "system" : "npc"}${entry.live ? " live" : ""}`} key={`${entry.speaker_type}-${entry.npc_id || "player"}-${entry.conversation_id || entry.action_instance_id || ""}-${entry.turn_id || entry.reply_id || ""}-${entry.stream_id || ""}-${index}`}><strong>{name}</strong><p>{playerText(entry.text, "对方暂未表态。")}{entry.live && !entry.complete && <i className="stream-cursor" aria-hidden="true" />}</p></article>;
+        })}
+      </div>
+      {hasNewDialogue && <button type="button" className="new-dialogue-button governance-new-dialogue" onClick={jumpToLatest}>有新回复</button>}
     </div>
   </section>;
 }
@@ -1279,22 +1346,22 @@ function PlayerActionBar({ state, commands, busy, waitingForAI, notice, pending,
     ? "在场人物已暂时接受，等待发起人确认收束"
     : `${groupPursuingCount || values(group?.participant_ids).length} 人仍在追问`;
   const compactCharacter = conversation ? resolveCharacter(conversation.npc_id, conversation.target_npc_id, conversation.npc_name) : null;
-  if (interactionMode === "group" && group?.phase === "resolved") return <div className="conversation-bar gal-conversation-bar group-resolution-bar"><div><b>发起人已确认不再追问</b><span>你可以回看完整记录；确认后将进入次晨流程。</span></div><button type="button" onClick={onFinishGroup} disabled={busy}>结束夜间会谈</button></div>;
-  if (interactionMode === "group" || interactionMode === "conversation") return <form className="conversation-bar gal-conversation-bar" onSubmit={onSubmit} aria-busy={waitingForAI}>
+  const groupResolved = interactionMode === "group" && group?.phase === "resolved";
+  if (interactionMode === "group" || interactionMode === "conversation") return <form data-tutorial-id={interactionMode} className="conversation-bar gal-conversation-bar" onSubmit={onSubmit} aria-busy={waitingForAI}>
     {notice && <div className="conversation-notice" role="status">{notice}</div>}
     {interactionMode === "conversation" && conversation && <header className="conversation-compact" data-testid="active-conversation-compact"><div className="compact-portrait"><CharacterPortrait character={compactCharacter} fallbackName={conversationName || "对方"} /></div><div><small>正在会谈</small><strong>{compactCharacter?.name || conversationName || "对方"}</strong><span>{compactCharacter?.role || playerText(conversation.npc_title, "身份待确认")}</span></div><b>第 {Number(conversation.turn_count || conversation.turns_completed || 0)} 轮</b></header>}
-    {interactionMode === "group" && group && <header className="conversation-compact group-compact" data-testid="active-group-conversation-compact"><div><small>强制多人会谈</small><strong>{playerText(group.agenda, "在场各方要求立即说明")}</strong><span>{groupStatusSummary}</span><span>在场人物：{values(group.participant_ids).map(id => resolveCharacter(String(id))?.name || "在场人物").join("、")}</span></div><b>不可跳过</b></header>}
-    <label><span>{interactionMode === "group" ? "回应在场各方" : `回应 ${conversationName || "对方"}`}</span><textarea name="player_text" value={value} onChange={event => onChange(event.target.value)} placeholder="说清事实、诉求、承诺或你要追问的问题…" maxLength={1000} disabled={busy} /></label><div><small>{waitingForAI ? "正在思考回应…" : `${value.length} / 1000`}</small>{interactionMode === "conversation" && conversation && <button type="button" className="secondary" onClick={onLeave} disabled={busy}>结束会谈</button>}<button disabled={busy || !value.trim()}>{waitingForAI ? "正在思考…" : "送出回应"}</button></div>
+    {interactionMode === "group" && group && <header className="conversation-compact group-compact" data-testid="active-group-conversation-compact"><div><small>{groupResolved ? "多人会谈已收束，可继续补充" : "强制多人会谈"}</small><strong>{playerText(group.agenda, "在场各方要求立即说明")}</strong><span>{groupResolved ? "发起人已确认暂不追问；你仍可补充事实或说明。" : groupStatusSummary}</span><span>在场人物：{values(group.participant_ids).map(id => resolveCharacter(String(id))?.name || "在场人物").join("、")}</span></div><b>{groupResolved ? "可继续回应" : "不可跳过"}</b></header>}
+    <label data-tutorial-id="conversation-input"><span>{interactionMode === "group" ? "回应在场各方" : `回应 ${conversationName || "对方"}`}</span><textarea name="player_text" value={value} onChange={event => onChange(event.target.value)} placeholder="说清事实、诉求、承诺或你要追问的问题…" maxLength={1000} disabled={busy} /></label><div><small>{waitingForAI ? "正在思考回应…" : `${value.length} / 1000`}</small>{interactionMode === "conversation" && conversation && <button type="button" className="secondary" onClick={onLeave} disabled={busy}>结束会谈</button>}{interactionMode === "group" && groupResolved && <button type="button" className="secondary" onClick={onFinishGroup} disabled={busy}>结束夜间会谈</button>}<button data-tutorial-id="conversation-send" disabled={busy || !value.trim()}>{waitingForAI ? "正在思考…" : "送出回应"}</button></div>
   </form>;
   if (pending) return <div className="next-action pending"><span>{decisionReady ? "先处理上方事项" : "继续阅读上方剧情"}</span><p>{decisionReady ? "作出决定后，行动与会谈会重新开放。" : "请使用“下一段”按顺序读完当前现场；相关情节出现后才会开放决定。"}</p></div>;
   if (governanceAction) {
     const isMeeting = governanceAction.action_kind === "leadership_meeting";
     const respondingNpcIds = new Set(arr(meeting?.transcript).filter(item => item.speaker_type === "npc").map(item => String(item.npc_id)));
     const hasDiscussion = values(meeting?.participant_ids).every(id => respondingNpcIds.has(String(id)));
-    return <form className="conversation-bar governance-bar" onSubmit={onSubmit} aria-busy={waitingForAI}>{notice && <div className="governance-inline-notice" role="status">{notice}</div>}<label><span>{isMeeting ? "向班子成员说明你的意见" : "继续询问或说明"}</span><textarea name="player_text" value={value} onChange={event => onChange(event.target.value)} placeholder={isMeeting ? "说明方案、责任分工、期限，或回应在场意见…" : "追问事实、了解诉求、解释政策或提出具体方案…"} maxLength={1000} disabled={busy} /></label><div><small>{waitingForAI ? "正在思考回应…" : `${value.length} / 1000`}</small>{isMeeting && <button type="button" className="danger-quiet" onClick={onCancelGovernance} disabled={busy}>终止会议</button>}<button type="button" className="secondary" onClick={onFinishGovernance} disabled={busy || (isMeeting && !hasDiscussion)}>{isMeeting ? "形成会议决议" : "结束本次行动"}</button>{!contractAvailable && !isMeeting && contractPreparation && contractPreparation.household_count > 0 && <button type="button" className="secondary" title={contractPreparation.reason || "核定条款后仍需逐户审校与本人复核，不会直接签署"} disabled={busy || !contractPreparation.available} onClick={onPrepareContracts}>{contractPreparation.available ? "准备逐户合同" : "签约条件待满足"}</button>}{contractAvailable && !isMeeting && <button type="button" className="primary" onClick={onOpenContract} disabled={busy}>继续办理合同</button>}<button disabled={busy || !value.trim()}>{waitingForAI ? "正在思考…" : "送出回应"}</button></div></form>;
+    return <form data-tutorial-id={isMeeting ? "meeting" : "governance"} className="conversation-bar governance-bar" onSubmit={onSubmit} aria-busy={waitingForAI}>{notice && <div className="governance-inline-notice" role="status">{notice}</div>}<label data-tutorial-id="conversation-input"><span>{isMeeting ? "向班子成员说明你的意见" : "继续询问或说明"}</span><textarea name="player_text" value={value} onChange={event => onChange(event.target.value)} placeholder={isMeeting ? "说明方案、责任分工、期限，或回应在场意见…" : "追问事实、了解诉求、解释政策或提出具体方案…"} maxLength={1000} disabled={busy} /></label><div><small>{waitingForAI ? "正在思考回应…" : `${value.length} / 1000`}</small>{isMeeting && <button type="button" className="danger-quiet" onClick={onCancelGovernance} disabled={busy}>终止会议</button>}<button data-tutorial-id="conversation-finish" type="button" className="secondary" onClick={onFinishGovernance} disabled={busy || (isMeeting && !hasDiscussion)}>{isMeeting ? "形成会议决议" : "结束本次行动"}</button>{!contractAvailable && !isMeeting && contractPreparation && contractPreparation.household_count > 0 && <button type="button" className="secondary" title={contractPreparation.reason || "核定条款后仍需逐户审校与本人复核，不会直接签署"} disabled={busy || !contractPreparation.available} onClick={onPrepareContracts}>{contractPreparation.available ? "准备逐户合同" : "签约条件待满足"}</button>}{contractAvailable && !isMeeting && <button type="button" className="primary" onClick={onOpenContract} disabled={busy}>继续办理合同</button>}<button data-tutorial-id="conversation-send" disabled={busy || !value.trim()}>{waitingForAI ? "正在思考…" : "送出回应"}</button></div></form>;
   }
   const overtimeAvailable = Boolean(get(state, "ledger.action_points.overtime_available"));
-  return <div className="next-action"><div><span>下一步</span><p>{overtimeAvailable ? "今日精力已经用尽；可以结束今日，或在身体允许时申请一次加班。" : commands.can_end_day ? "今日工作可以收束，也可以继续使用剩余精力。" : "从行动或会谈中选择一个推进方向。"}</p></div><div className="next-buttons"><button onClick={() => onNavigate("actions")} disabled={busy}>安排行动</button><button onClick={() => onNavigate("opportunities")} disabled={busy}>寻找会谈</button>{overtimeAvailable && <button onClick={onOvertime} disabled={busy}>申请加班</button>}{commands.can_end_day && <button className="primary" onClick={onEndDay} disabled={busy}>结束今日</button>}</div></div>;
+  return <div className="next-action"><div><span>下一步</span><p>{overtimeAvailable ? "今日精力已经用尽；可以结束今日，或在身体允许时申请一次加班。" : commands.can_end_day ? "今日工作可以收束，也可以继续使用剩余精力。" : "从行动或会谈中选择一个推进方向。"}</p></div><div className="next-buttons"><button onClick={() => onNavigate("actions")} disabled={busy}>安排行动</button><button onClick={() => onNavigate("opportunities")} disabled={busy}>寻找会谈</button>{overtimeAvailable && <button onClick={onOvertime} disabled={busy}>申请加班</button>}{commands.can_end_day && <button data-tutorial-id="end-day" className="primary" onClick={onEndDay} disabled={busy}>结束今日</button>}</div></div>;
 }
 
 function MeetingResolutionForm({ meeting, governance, state, busy, notice, onCancel, onSubmit, onOpenProfile }: { meeting: Dict; governance: Dict; state: Dict; busy: boolean; notice: string; onCancel: () => void; onSubmit: (resolution: Dict) => Promise<void>; onOpenProfile: (character: Character) => void }) {
@@ -1344,7 +1411,7 @@ function MeetingResolutionForm({ meeting, governance, state, busy, notice, onCan
   </form>;
 }
 
-function SceneSummary({ state, commands, governanceAction, decisionReady, onNavigate, onEndDay, onOvertime }: { state: Dict; commands: Dict; governanceAction: Dict | null; decisionReady: boolean; onNavigate: (panel: PanelName) => void; onEndDay: () => void; onOvertime: () => void }) {
+function SceneSummary({ state, commands, requiredOpportunity, governanceAction, decisionReady, onNavigate, onEndDay, onOvertime }: { state: Dict; commands: Dict; requiredOpportunity: Dict | null; governanceAction: Dict | null; decisionReady: boolean; onNavigate: (panel: PanelName) => void; onEndDay: () => void; onOvertime: () => void }) {
   if (!state.session_id) return <div className="scene-summary"><div className="empty-state"><span>令</span><h3>尚未赴任</h3><p>进入游戏后，这里会显示今日目标和可行安排。</p></div></div>;
   const endingId = get(state, "ending.main_ending_id") || get(state, "ending_result.main_ending_id") || state.main_ending_id;
   if (endingId) return <div className="scene-summary"><section className="objective-card"><small>治理周期完成</small><h3>查看九十日结局复盘</h3><p>行动阶段已经结束。复盘会汇总关键选择、治理指标和最终影响。</p></section><div className="quick-links"><button className="primary" onClick={() => onNavigate("review")}>进入结局复盘</button></div></div>;
@@ -1352,12 +1419,20 @@ function SceneSummary({ state, commands, governanceAction, decisionReady, onNavi
   const pending = state.pending_decision;
   const firstActionPending = !state.onboarding?.free_action_completed;
   const overtimeAvailable = Boolean(get(state, "ledger.action_points.overtime_available"));
+  const requiredOpportunityPending = Boolean(requiredOpportunity)
+    && requiredOpportunity?.completed !== true
+    && requiredOpportunity?.satisfied !== true
+    && !["completed", "resolved", "done"].includes(String(requiredOpportunity?.status || ""))
+    && !pending && !governanceAction && !active;
+  const requiredOpportunityDescription = requiredOpportunityPending
+    ? playerText(requiredOpportunity?.reason || requiredOpportunity?.description || requiredOpportunity?.entry_description, "请先寻找当前指定会谈，了解村庄关系与顾虑。")
+    : "";
   const governanceLabels = governanceActionProgressLabels(
     governanceAction,
     GOVERNANCE_ACTION_LABELS[governanceAction?.action_kind] || "治理行动",
   );
-  const current = pending ? decisionReady ? "处理当前必须决定的事项" : "继续阅读当前剧情" : governanceAction ? governanceLabels.task : active ? "完成正在进行的会谈" : commands.can_end_day ? "决定继续工作还是结束今日" : "选择一项行动或会谈";
-  return <div className="scene-summary"><section className="objective-card"><small>当前首要事项</small><h3>{current}</h3><p>{pending ? decisionReady ? "相关情节已经展开，请根据现场信息作出选择。" : "请按顺序读完当前现场；相关情节出现后才会开放决定。" : governanceAction ? "在左侧现场继续交流；取得所需信息后，记得正式结束行动。" : active ? "认真回应对方；你的措辞和承诺都会被记录。" : overtimeAvailable ? "精力归零后可申请一次加班；新增精力会增加日终疲惫。" : "查看行动成本和开放条件，再决定如何使用今日精力。"}</p></section>{firstActionPending && <section className="tutorial-card"><small>上手指引</small><ol><li className={pending ? "active" : "done"}><b>{pending && !decisionReady ? "读完现场并处理决定" : "处理必须决定的事项"}</b><span>剧情决定不消耗精力，读完铺垫后才会开放</span></li><li className={!pending && !commands.can_end_day ? "active" : ""}><b>剧情之外，也能主动安排行动</b><span>不必等下一幕：入户协商、干部访谈和查阅档案都能推进工作。先查看精力与资源成本；取得的线索、协商和签约会影响后续。</span>{!pending && !active && !governanceAction && commands.can_act && <button onClick={() => onNavigate("actions")}>试着安排一次行动</button>}</li><li className={governanceAction ? "active" : commands.can_end_day ? "active" : ""}><b>{governanceAction ? "收束当前行动" : "结束今日"}</b><span>{governanceAction ? "交流后从左下方结束行动" : "夜间会结算后续影响，私下联络仅汇入次晨简报"}</span></li></ol></section>}<div className="quick-links"><button onClick={() => onNavigate(governanceAction ? "governance" : "actions")}>{governanceAction ? "查看治理进展" : "查看行动"}</button><button onClick={() => onNavigate("desk")}>阅读任务卷宗</button>{overtimeAvailable && !governanceAction && <button onClick={onOvertime}>申请加班</button>}{commands.can_end_day && !governanceAction && <button className="primary" onClick={onEndDay}>结束今日</button>}</div></div>;
+  const current = pending ? decisionReady ? "处理当前必须决定的事项" : "继续阅读当前剧情" : governanceAction ? governanceLabels.task : active ? "完成正在进行的会谈" : requiredOpportunityPending ? "寻找会谈" : commands.can_end_day ? "决定继续工作还是结束今日" : "选择一项行动或会谈";
+  return <div className="scene-summary"><section className="objective-card"><small>当前首要事项</small><h3>{current}</h3><p>{pending ? decisionReady ? "相关情节已经展开，请根据现场信息作出选择。" : "请按顺序读完当前现场；相关情节出现后才会开放决定。" : governanceAction ? "在左侧现场继续交流；取得所需信息后，记得正式结束行动。" : active ? "认真回应对方；你的措辞和承诺都会被记录。" : requiredOpportunityPending ? requiredOpportunityDescription : overtimeAvailable ? "精力归零后可申请一次加班；新增精力会增加日终疲惫。" : "查看行动成本和开放条件，再决定如何使用今日精力。"}</p></section>{firstActionPending && <section className="tutorial-card"><small>上手指引</small><TutorialButton label="查看赴任指南" /><ol><li className={pending ? "active" : "done"}><b>{pending && !decisionReady ? "读完现场并处理决定" : "处理必须决定的事项"}</b><span>剧情决定不消耗精力，读完铺垫后才会开放</span></li><li className={!pending && !commands.can_end_day ? "active" : ""}><b>剧情之外，也能主动安排行动</b><span>不必等下一幕：入户协商、干部访谈和查阅档案都能推进工作。先查看精力与资源成本；取得的线索、协商和签约会影响后续。</span>{!pending && !active && !governanceAction && commands.can_act && <button onClick={() => onNavigate("actions")}>试着安排一次行动</button>}</li><li className={governanceAction ? "active" : commands.can_end_day ? "active" : ""}><b>{governanceAction ? "收束当前行动" : "结束今日"}</b><span>{governanceAction ? "交流后从左下方结束行动" : "夜间会结算后续影响，私下联络仅汇入次晨简报"}</span></li></ol></section>}<div className="quick-links"><button onClick={() => onNavigate(requiredOpportunityPending ? "opportunities" : governanceAction ? "governance" : "actions")}>{requiredOpportunityPending ? "寻找会谈" : governanceAction ? "查看治理进展" : "查看行动"}</button><button onClick={() => onNavigate("desk")}>阅读任务卷宗</button>{overtimeAvailable && !governanceAction && <button onClick={onOvertime}>申请加班</button>}{commands.can_end_day && !governanceAction && <button className="primary" onClick={onEndDay}>结束今日</button>}</div></div>;
 }
 
 function OvertimeChoice({ state, busy, onChoose }: { state: Dict; busy: boolean; onChoose: (points: number) => Promise<void> }) {
@@ -1439,7 +1514,7 @@ function StructuredDecision({ pending, busy, onSubmit }: { pending: Dict; busy: 
 
 function ActionPanel({ data, onRun }: { data: Dict | null; onRun: (item: Dict) => void }) {
   const items = canonicalActionFamilies(data?.actions || data?.items || data) as Dict[];
-  return <div className="card-list action-list canonical-actions">{items.length ? items.map((item, index) => <article key={item.action_id || index} data-action-id={String(item.action_id || "")}><div className="card-number">{chineseIndex(index)}</div><div><h3>{playerText(item.name || item.action_name, GOVERNANCE_ACTION_LABELS[String(item.action_id)] || "治理行动")}</h3><p>{playerText(item.description, "根据当前情况安排工作")}</p><div className="action-variants">{arr(item.variants).map(variant => { const unreadArchiveCount = item.action_id === "inspect_archives" ? arr(variant.target_choices).length : 0; return <section key={String(variant.variant_id)} data-variant-id={String(variant.variant_id || "")} className={variant.available === false ? "unavailable" : ""}><div><b>{playerText(variant.name, "当前办理方式")}</b><p>{playerText(variant.description || variant.visible_result)}</p><small>{actionPointLabel(variant)}{item.action_id === "inspect_archives" ? ` · 待查档案 ${unreadArchiveCount} 份` : ""}</small>{variant.available === false && <em>{playerText(variant.unavailable_reason, "当前条件尚未满足")}</em>}</div><button onClick={() => onRun({ ...item, ...variant, action_id: item.action_id })} disabled={variant.available === false}>{variant.available === false ? "条件不足" : "填写方案"}</button></section>; })}</div></div></article>) : <Empty text="目前没有可安排的行动。先处理现场事项，或结束今天。"/>}</div>;
+  return <><ActionsTutorialIntro items={items} /><div className="card-list action-list canonical-actions">{items.length ? items.map((item, index) => <article key={item.action_id || index} data-action-id={String(item.action_id || "")}><div className="card-number">{chineseIndex(index)}</div><div><h3>{governanceDisplayTitle(item, GOVERNANCE_ACTION_LABELS[String(item.action_id)] || "治理行动")}</h3><p>{playerText(item.description, "根据当前情况安排工作")}</p><div className="action-variants">{arr(item.variants).map(variant => { const descriptor = { ...item, ...variant, action_id: item.action_id }; const unreadArchiveCount = item.action_id === "inspect_archives" ? arr(variant.target_choices).length : 0; const buttonLabel = governanceActionButtonLabel(descriptor, variant.available === false ? "条件不足" : "填写方案"); return <section key={String(variant.variant_id)} data-variant-id={String(variant.variant_id || "")} className={variant.available === false ? "unavailable" : ""}><div><b>{governanceDisplayTitle(descriptor, playerText(variant.name, "当前办理方式"))}</b><p>{playerText(variant.description || variant.visible_result)}</p><small>{actionPointLabel(variant)}{item.action_id === "inspect_archives" ? ` · 待查档案 ${unreadArchiveCount} 份` : ""}</small>{variant.available === false && <em>{playerText(variant.unavailable_reason, "当前条件尚未满足")}</em>}</div><ActionTutorialButton item={descriptor} /><button onClick={() => onRun(descriptor)} disabled={variant.available === false}>{variant.available === false ? "条件不足" : buttonLabel}</button></section>; })}</div></div></article>) : <Empty text="目前没有可安排的行动。先处理现场事项，或结束今天。"/>}</div></>;
 }
 
 function OpportunityPanel({ data, signingOnly = false, activeConversation, onStart, onContinue, onOpenProfile }: { data: Dict | null; signingOnly?: boolean; activeConversation: Dict | null; onStart: (item: Dict) => void; onContinue: () => void; onOpenProfile: (character: Character) => void }) {
@@ -1462,7 +1537,7 @@ function OpportunityPanel({ data, signingOnly = false, activeConversation, onSta
         {presentation.allowProfile ? <button type="button" className="person-portrait profile-avatar-button" aria-label={`查看${name}人物介绍`} onClick={() => character && onOpenProfile(character)} disabled={!character}><CharacterPortrait character={character} fallbackName={name} /></button> : <div className="person-portrait dossier-mention-placeholder">档</div>}
         <div className="person-copy"><small>{character?.role || "已知人物"} · {contactLabel}</small><h3>{name}</h3>
           {presentation.showRelationship ? <div className="relationship-bands" aria-label={`${name}关系态势`}><span>信任：{qualitativeRelationshipLabel(person.trust_band)}</span><span>态度：{qualitativeRelationshipLabel(person.attitude_band)}</span><span>焦虑：{qualitativeRelationshipLabel(person.anxiety_band)}</span></div> : <p>材料中已提及此人，等待本人正式进入现场。</p>}
-          {actions.map(item => <div className="person-action" key={String(item.variant_id)}><div><b>{playerText(item.name)}</b><small>{actionPointLabel(item)}</small>{item.available === false && <p>{playerText(item.unavailable_reason)}</p>}{signingOnly && item.contract_preparation?.reason && <p>{playerText(item.contract_preparation.reason)}；可先走访了解情况。</p>}</div><button disabled={Boolean(activeConversation) || item.available === false} onClick={() => onStart({...item, canonical_topic: signingOnly ? "了解本户搬迁顾虑，协商逐户合同与安置安排" : ""})}>{signingOnly ? "入户协商" : "开始会谈"}</button></div>)}
+           {actions.map(item => <div className="person-action" key={String(item.variant_id)}><div><b>{governanceDisplayTitle(item, playerText(item.name, "当前会谈"))}</b><small>{actionPointLabel(item)}</small>{item.available === false && <p>{playerText(item.unavailable_reason)}</p>}{signingOnly && item.contract_preparation?.reason && <p>{playerText(item.contract_preparation.reason)}；可先走访了解情况。</p>}</div><button disabled={Boolean(activeConversation) || item.available === false} onClick={() => onStart({...item, canonical_topic: signingOnly ? "了解本户搬迁顾虑，协商逐户合同与安置安排" : ""})}>{signingOnly ? "入户协商" : governanceActionButtonLabel(item, "开始会谈")}</button></div>)}
           {topics.map(item => { const descriptor = item.canonical_action_descriptor; const matching = actions.find(action => action.variant_id === descriptor?.variant_id); const isActive = activeConversation?.opportunity_id === item.opportunity_id; return <div className="person-action" key={String(item.opportunity_id)}><div><small>当前剧情话题</small><p>{playerText(item.opening_narrative || item.conversation_goal)}</p>{matching && <small>{actionPointLabel(matching)}</small>}</div>{isActive ? <button onClick={onContinue}>继续会谈</button> : descriptor && <button disabled={!matching?.available || Boolean(activeConversation)} onClick={() => onStart(item)}>谈这件事</button>}</div>; })}
           {!actions.length && !topics.length && presentation.showRelationship && <p>当前没有已开放的会谈安排。</p>}
         </div></article>;
@@ -1471,7 +1546,8 @@ function OpportunityPanel({ data, signingOnly = false, activeConversation, onSta
   </div>;
 }
 
-function GovernancePanel({ data, busy, onOpenRecord, onOpenArchive, onOpenContract }: { data: Dict | null; busy: boolean; onOpenRecord: (record: { meeting?: Dict; document?: Dict }) => void; onOpenArchive: (archive: Dict) => void; onOpenContract: (contract: Dict) => void }) {
+function GovernancePanel({ data, onOpenRecord, onOpenArchive, onOpenContract }: { data: Dict | null; onOpenRecord: (record: { meeting?: Dict; document?: Dict }) => void; onOpenArchive: (archive: Dict) => void; onOpenContract: (contract: Dict) => void }) {
+  const [archiveNoticeId, setArchiveNoticeId] = useState("");
   if (!data) return <Empty text="正在整理治理进展…"/>;
   const actions = arr(data.governance_actions);
   const meetings = arr(data.meetings);
@@ -1486,7 +1562,7 @@ function GovernancePanel({ data, busy, onOpenRecord, onOpenArchive, onOpenContra
     ["已形成文件", arr(data.documents).length], ["待查档案", archiveGroups.unreadCount],
   ];
   const cash = get(data, "resources.cash_ledger");
-  return <div className="governance-panel"><div className="governance-grid">{stats.map(([label, value]) => <div key={String(label)}><strong>{value}</strong><span>{label}</span></div>)}</div>{cash && <section className="resource-card"><small>财政资源</small><h3>可安排 {displayValue(cash.available_unencumbered, "待定")} 万元</h3><p>已支付 {displayValue(cash.paid, 0)} 万元</p></section>}{resourceInventory.length > 0 && <ResourceInventoryLedger items={resourceInventory} />}<PanelSection title="行动记录" items={actions.slice().reverse().slice(0, 6)} empty="尚未开展治理行动" render={(item) => <><div className="evidence-head"><h4>{GOVERNANCE_ACTION_LABELS[item.action_kind] || "治理行动"}</h4><span>{friendlyStatus(item.status)}</span></div><p>{playerText(item.topic, `第 ${item.story_day || "待定"} 日开展`)}</p></>} /><PanelSection title="逐户合同记录" items={contracts} empty="尚未建立逐户合同；请在与相关人员或代表的入户会谈中提出签约" render={(item) => <div className="governance-record-row"><div><h4>{playerText(item.signatory_name, item.household_id || "待确认家庭")}</h4><p>{item.household_id} · {friendlyStatus(item.status)} · {playerText(item.resource_hold_status, "尚未扣除资源")}</p></div>{item.status === "signed" ? <button onClick={() => onOpenContract(item)}>查看合同</button> : <small>请在相关人员或代表的入户会谈中继续办理</small>}</div>} /><PanelSection title="已取得档案" items={archives} empty="尚未取得可查阅档案" render={(item) => { const hasBeenRead = values(item.read_at_days).length > 0; return <div className="governance-record-row"><div><h4>{playerText(item.title, "治理档案")}</h4><p>{friendlyStatus(item.evidence_level)} · {hasBeenRead ? `已于第 ${values(item.read_at_days).at(-1)} 日查阅` : "尚未查阅"}</p></div><button disabled={!hasBeenRead} title={!hasBeenRead ? "请先从行动页执行一次查阅档案" : undefined} onClick={() => onOpenArchive(item)}>{hasBeenRead ? "重读正文" : "等待查阅"}</button></div>; }} /><PanelSection title="近期会议" items={meetings} empty="尚未召开正式会议" render={(item) => { const document = documents.find(value => String(value.source_meeting_id) === String(item.meeting_id)); return <div className="governance-record-row"><div><h4>{playerText(item.topic || item.title, "治理协调会")}</h4><p>第 {item.story_day || "待定"} 日 · {friendlyStatus(item.status)}</p></div><button onClick={() => onOpenRecord({ meeting: item, document })}>{document ? "查看决议" : "查看纪要"}</button></div>; }} /><PanelSection title="已形成文件" items={documents} empty="尚未形成新的正式文件" render={(item) => <div className="governance-record-row"><div><h4>{playerText(item.title || DOCUMENT_TYPE_LABELS[item.document_type], "治理文件")}</h4><p>{friendlyStatus(item.status)} · 第 {item.issued_day || item.story_day || "待定"} 日</p></div><button onClick={() => onOpenRecord({ document: item, meeting: meetings.find(value => String(value.meeting_id) === String(item.source_meeting_id)) })}>查看文件</button></div>} /></div>;
+  return <div className="governance-panel"><div className="governance-grid">{stats.map(([label, value]) => <div key={String(label)}><strong>{value}</strong><span>{label}</span></div>)}</div>{cash && <section className="resource-card"><small>财政资源</small><h3>可安排 {displayValue(cash.available_unencumbered, "待定")} 万元</h3><p>已支付 {displayValue(cash.paid, 0)} 万元</p></section>}{resourceInventory.length > 0 && <ResourceInventoryLedger items={resourceInventory} />}<PanelSection title="行动记录" items={actions.slice().reverse().slice(0, 6)} empty="尚未开展治理行动" render={(item) => <><div className="evidence-head"><h4>{governanceDisplayTitle(item, GOVERNANCE_ACTION_LABELS[item.action_kind] || "治理行动")}</h4><span>{friendlyStatus(item.status)}</span></div><p>{playerText(item.topic, `第 ${item.story_day || "待定"} 日开展`)}</p></>} /><PanelSection title="逐户合同记录" items={contracts} empty="尚未建立逐户合同；请在与相关人员或代表的入户会谈中提出签约" render={(item) => <div className="governance-record-row"><div><h4>{playerText(item.signatory_name, item.household_id || "待确认家庭")}</h4><p>{item.household_id} · {friendlyStatus(item.status)} · {playerText(item.resource_hold_status, "尚未扣除资源")}</p></div>{item.status === "signed" ? <button onClick={() => onOpenContract(item)}>查看合同</button> : <small>请在相关人员或代表的入户会谈中继续办理</small>}</div>} /><PanelSection title="已取得档案" items={archives} empty="尚未取得可查阅档案" render={(item) => { const archiveId = String(item.archive_id || ""); const hasBeenRead = values(item.read_at_days).length > 0; const archiveUnavailable = data.can_inspect_archives === false || get(data, "permissions.can_inspect_archives") === false; const archiveHint = archiveUnavailable ? playerText(data.inspect_blocked_reason || data.action_blocked_reason, "当前决策期间无法发起查阅行动。请先处理当前决策。") : "这份档案尚未查阅，请前往「行动 → 查阅档案」完成首次查阅。"; return <div className="governance-record-row"><div><h4>{playerText(item.title, "治理档案")}</h4><p>{friendlyStatus(item.evidence_level)} · {hasBeenRead ? `已于第 ${values(item.read_at_days).at(-1)} 日查阅` : "尚未查阅"}</p></div>{hasBeenRead ? <button type="button" onClick={() => onOpenArchive(item)}>重读正文</button> : <><button type="button" className="archive-unread-status" aria-describedby={`archive-hint-${archiveId}`} onClick={() => setArchiveNoticeId(archiveId)}>等待查阅</button>{archiveNoticeId === archiveId && <small id={`archive-hint-${archiveId}`} className="archive-unread-hint" role="status">{archiveHint}</small>}</>}</div>; }} /><PanelSection title="近期会议" items={meetings} empty="尚未召开正式会议" render={(item) => { const document = documents.find(value => String(value.source_meeting_id) === String(item.meeting_id)); return <div className="governance-record-row"><div><h4>{playerText(item.topic || item.title, "治理协调会")}</h4><p>第 {item.story_day || "待定"} 日 · {friendlyStatus(item.status)}</p></div><button onClick={() => onOpenRecord({ meeting: item, document })}>{document ? "查看决议" : "查看纪要"}</button></div>; }} /><PanelSection title="已形成文件" items={documents} empty="尚未形成新的正式文件" render={(item) => <div className="governance-record-row"><div><h4>{playerText(item.title || DOCUMENT_TYPE_LABELS[item.document_type], "治理文件")}</h4><p>{friendlyStatus(item.status)} · 第 {item.issued_day || item.story_day || "待定"} 日</p></div><button onClick={() => onOpenRecord({ document: item, meeting: meetings.find(value => String(value.source_meeting_id) === String(item.source_meeting_id)) })}>查看文件</button></div>} /></div>;
 }
 
 function ResourceInventoryLedger({ items }: { items: ReturnType<typeof resourceInventoryView> }) {
@@ -1495,7 +1571,7 @@ function ResourceInventoryLedger({ items }: { items: ReturnType<typeof resourceI
     { title: "合同配套服务", items: items.filter(item => item.category !== "housing" && item.allocatableScope !== "npc_demand") },
     { title: "治理专项能力", items: items.filter(item => item.allocatableScope === "npc_demand") },
   ].filter(group => group.items.length > 0);
-  return <section className="resource-card resource-pool-card" data-testid="resource-pool-summary"><small>完整资源台账</small><h3>签约资源台账</h3><p>签约成功后立即扣除对应资金、房源和服务名额；标有开放日的资源到期后才能使用。</p>{groups.map(group => <section className="resource-inventory-group" key={group.title}><h4>{group.title}</h4><div className="resource-pool-grid">{group.items.map(item => <article key={item.resourceId}><b>{item.name}</b><span>剩余 {item.available} / 总量 {item.capacity} {item.unit}</span>{item.used > 0 && <em>已分配 {item.used} {item.unit}</em>}{item.availableDay > 1 && <small>第 {item.availableDay} 日开放</small>}</article>)}</div></section>)}</section>;
+  return <section className="resource-card resource-pool-card" data-testid="resource-pool-summary"><small>完整资源台账</small><h3>签约资源台账</h3><p className="resource-scope-note">全局共享库存（所有住户共用）。签约成功后立即扣除对应资金、房源和服务名额；标有开放日的资源到期后才能使用。</p>{groups.map(group => <section className="resource-inventory-group" key={group.title}><h4>{group.title}</h4><div className="resource-pool-grid">{group.items.map(item => <article key={item.resourceId}><b>{item.name}</b><span>剩余 {item.available} / 总量 {item.capacity} {item.unit}</span>{item.used > 0 && <em>已分配 {item.used} {item.unit}</em>}{item.availableDay > 1 && <small>第 {item.availableDay} 日开放</small>}</article>)}</div></section>)}</section>;
 }
 
 function ContractBatchProposal({ proposal, busy, onConfirm }: { proposal: Dict; busy: boolean; onConfirm: (confirmed: boolean) => void }) {
@@ -1523,6 +1599,7 @@ function ContractWorkspace({ contract, governance, state, busy, api, sessionId, 
   const siblingContracts = contractBatchTabs(governance.contracts, contract) as Dict[];
   const auditIssues = arr(get(contract, "audit_result.issues"));
   const [text, setText] = useState(playerText(contract.contract_text));
+  const [serviceAllocations, setServiceAllocations] = useState<Record<string, string>>(() => Object.fromEntries(services.map(item => [String(item.resource_id), String(get(terms, `service_allocations.${item.resource_id}`, 0))])));
   const rewardAvailable = publicWindowRewardAvailable(get(state, "story.day", 1));
 
   function submitTerms(event: FormEvent<HTMLFormElement>) {
@@ -1530,7 +1607,7 @@ function ContractWorkspace({ contract, governance, state, busy, api, sessionId, 
     const data = new FormData(event.currentTarget);
     const allocations: Record<string, number> = {};
     services.forEach(item => {
-      const amount = Number(data.get(`service:${item.resource_id}`) || 0);
+      const amount = Number(serviceAllocations[String(item.resource_id)] || data.get(`service:${item.resource_id}`) || 0);
       if (amount > 0) allocations[String(item.resource_id)] = amount;
     });
     const payload = {
@@ -1567,7 +1644,7 @@ function ContractWorkspace({ contract, governance, state, busy, api, sessionId, 
         <label>交房日<input name="housing_delivery_day" type="number" min={Number(get(state, "story.day", 1))} max="90" defaultValue={terms.housing_delivery_day ?? Math.min(90, Number(get(state, "story.day", 1)) + 20)} required /></label>
         <label>安置房源<select name="housing_resource_id" defaultValue={terms.housing_resource_id || ""}><option value="">不采用实物安置</option>{housing.map(item => <option key={item.resource_id} value={item.resource_id}>{item.name}（可用 {displayValue(item.available, item.capacity)}）</option>)}</select></label>
       </div>
-      <fieldset><legend>配套服务资源</legend><p className="contract-resource-hint">这里显示当前权威库存。填写只形成合同草案；对方接受签约后立即扣除对应资源。</p><div className="service-allocation-grid">{services.map(item => { const inventory = serviceInventory.get(String(item.resource_id)); return <label className="service-resource-label" key={item.resource_id}><span>{item.name}</span><small>可用 {inventory?.available ?? 0} / {inventory?.capacity ?? 0} {inventory?.unit || "份"}{inventory?.used ? ` · 已分配 ${inventory.used}` : ""}</small><input name={`service:${item.resource_id}`} type="number" min="0" max={inventory?.available ?? 0} defaultValue={get(terms, `service_allocations.${item.resource_id}`, 0)} /></label>; })}</div></fieldset>
+       <fieldset><legend>配套服务资源</legend><p className="contract-resource-hint">全局共享库存（所有住户共用）。这里显示当前权威库存；填写只形成合同草案，对方接受签约后立即扣除对应资源，最终以服务端结算为准。</p><div className="service-allocation-grid">{services.map(item => { const inventory = serviceInventory.get(String(item.resource_id)); const contractAmount = Number(serviceAllocations[String(item.resource_id)] || 0); const unit = inventory?.unit || "份"; return <label className="service-resource-label" key={item.resource_id}><span>{item.name}</span><small>本合同 {contractAmount} {unit} · 预计签后剩余 {Math.max(0, (inventory?.available ?? 0) - contractAmount)} {unit}</small><small>当前库存 {inventory?.available ?? 0} / {inventory?.capacity ?? 0} {unit}{inventory?.used ? ` · 已分配 ${inventory.used}` : ""}</small><input name={`service:${item.resource_id}`} type="number" min="0" max={inventory?.available ?? 0} value={serviceAllocations[String(item.resource_id)] ?? "0"} onChange={event => setServiceAllocations(current => ({ ...current, [String(item.resource_id)]: event.target.value }))} /></label>; })}</div></fieldset>
       {approvalDocuments.length > 0 && <fieldset><legend>引用已签发批准文件</legend><div className="contract-check-grid">{approvalDocuments.map(item => <label key={item.document_id}><input name="approval_document_ids" type="checkbox" value={item.document_id} defaultChecked={values(terms.approval_document_ids).includes(item.document_id)} />{item.title}</label>)}</div></fieldset>}
       <fieldset><legend>公开签约奖励</legend><label><input name="public_window_reward" type="checkbox" disabled={!rewardAvailable} defaultChecked={rewardAvailable && Boolean(terms.public_window_reward)} />{rewardAvailable ? "适用公开签约奖励" : "公开签约奖励已于D75截止"}</label></fieldset>
       <button disabled={busy}>核验条款并生成合同</button>
@@ -1581,7 +1658,7 @@ function ContractWorkspace({ contract, governance, state, busy, api, sessionId, 
 function ArchiveReading({ result }: { result: Dict }) {
   const records = arr(result.records);
   const gains = archiveReadGains(result);
-  return <div className="archive-reading">{records.map((record, index) => <ArchiveRecordView key={record.archive_id || index} record={record} index={index} />)}{gains.facts.length > 0 && <section className="archive-read-gains learned"><h3>新掌握线索</h3>{gains.facts.map((fact, index) => <article key={String(fact.fact_id || index)}><b>{playerText(fact.title || fact.name, `线索${chineseIndex(index)}`)}</b>{Boolean(fact.summary) && <p>{playerText(fact.summary)}</p>}</article>)}</section>}{gains.strategicUses.length > 0 && <section className="archive-read-gains uses"><h3>可用于什么</h3><ul>{gains.strategicUses.map(item => <li key={item}>{playerText(item)}</li>)}</ul></section>}</div>;
+  return <div data-tutorial-id="archive-result" className="archive-reading">{records.map((record, index) => <ArchiveRecordView key={record.archive_id || index} record={record} index={index} />)}{gains.facts.length > 0 && <section className="archive-read-gains learned"><h3>新掌握线索</h3>{gains.facts.map((fact, index) => <article key={String(fact.fact_id || index)}><b>{playerText(fact.title || fact.name, `线索${chineseIndex(index)}`)}</b>{Boolean(fact.summary) && <p>{playerText(fact.summary)}</p>}</article>)}</section>}{gains.strategicUses.length > 0 && <section className="archive-read-gains uses"><h3>可用于什么</h3><ul>{gains.strategicUses.map(item => <li key={item}>{playerText(item)}</li>)}</ul></section>}</div>;
 }
 
 function ArchiveRecordView({ record, index }: { record: Dict; index: number }) {
@@ -1688,6 +1765,7 @@ function ReviewPanel({ data, api, sessionId }: { data: Dict | null; api: GameApi
   return <div className="review-panel">{ending && <section className="ending-review-card" aria-label="最终结局"><header><small>九十日治理结局</small><h3>{ending.mainName}</h3>{ending.subTitle && <p>余波：{ending.subTitle}</p>}</header><div className="ending-axis-grid">{ending.axes.map(axis => <div key={axis.key}><small>{ENDING_AXIS_LABELS[axis.key] || "治理影响"}</small><b>{playerText(axis.value)}</b></div>)}</div>{ending.mainText && <div className="ending-review-text">{playerText(ending.mainText)}</div>}{ending.subText && <section className="ending-substory"><h4>{ending.subTitle || "后续影响"}</h4><p>{playerText(ending.subText)}</p></section>}{ending.appendices.length > 0 && <div className="ending-appendices"><h4>案卷附记</h4>{ending.appendices.map((appendix, index) => <article key={String(appendix.appendix_id || index)}><b>{playerText(appendix.title, `附记${chineseIndex(index)}`)}</b><p>{playerText(appendix.text)}</p></article>)}</div>}</section>}<section className="review-summary"><small>当前进程</small><h3>{friendlyStatus(data.status)}</h3><p>这里只记录你已经经历的事件，不会提前透露尚未发生的剧情。</p></section><div className="timeline">{timelines.length ? timelines.map((item, index) => <article key={index}><time>第 {item.story_day || item.day || "待定"} 日</time><div><small>{item.typeLabel}</small><h4>{timelineTitle(item)}</h4>{item.choice && <p>你的选择：{playerText(item.choice)}</p>}{item.summary && item.title && <p>{playerText(item.summary)}</p>}</div></article>) : <Empty text="还没有足够的经历可供复盘。"/>}</div><section className="conversation-review" aria-label="完整会谈记录"><header><div><small>完整记录</small><h3>人物会谈复盘</h3></div><span>{historyLoading ? "正在加载全部分页…" : `${filteredConversations.length} 场`}</span></header><div className="conversation-filters"><label>人物<select value={npcFilter} onChange={event => setNpcFilter(event.target.value)}><option value="">全部人物</option>{[...npcOptions].map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select></label><label>日期<input type="number" min="1" max="90" value={dayFilter} onChange={event => setDayFilter(event.target.value)} placeholder="全部" /></label><label>会谈编号<input value={conversationFilter} onChange={event => setConversationFilter(event.target.value)} placeholder="输入编号筛选" /></label></div>{historyError && <div className="notice">{historyError}</div>}{!historyLoading && !historyError && (filteredConversations.length ? <div className="conversation-history-list">{filteredConversations.map(item => <details key={String(item.conversation_id)}><summary><b>第 {item.story_day || "?"} 日 · {npcOptions.get(String(item.npc_id)) || "相关人员"}</b><span>{item.completion_status === "completed" ? "已完成" : "未完成"}</span></summary><div>{arr(item.transcript).map((turn, index) => <article key={index}><strong>{turn.speaker_type === "player" ? "你" : npcOptions.get(String(item.npc_id)) || "对方"}</strong><p>{playerText(turn.text)}</p></article>)}</div></details>)}</div> : <Empty text="当前筛选条件下没有会谈记录。"/>)}</section></div>;
 }
 
+
 function PanelSection({ title, items, empty, render }: { title: string; items: Dict[]; empty: string; render: (item: Dict, index: number) => React.ReactNode }) {
   if (title === "已取得档案") {
     const groups = archiveInvestigationGroups(items);
@@ -1783,7 +1861,7 @@ function GovernanceActionForm({ item, state, api, sessionId, notice, onPerform, 
   const locationChoices = arr(item.location_choices);
   const [overview, setOverview] = useState<Dict | null>(null);
   const [loadError, setLoadError] = useState("");
-  const [locationId, setLocationId] = useState(() => String(item.preselected_location_id || item.location_id || locationChoices[0]?.location_id || ""));
+  const locationId = String(item.preselected_location_id || item.location_id || item.resolved_location_id || locationChoices[0]?.location_id || "");
   const [selectedTargets, setSelectedTargets] = useState<string[]>(() => values(item.preselected_npc_ids).map(String));
   const [selectedArchives, setSelectedArchives] = useState<string[]>(() => values(item.preselected_archive_ids).map(String));
   const [topic, setTopic] = useState(() => String(item.canonical_topic || (actionId === "household_visit" ? "了解对方对搬迁安排的核心诉求与底线" : actionId === "cadre_interview" ? "核实负责事项、现有材料与程序风险" : MEETING_TOPICS[0])));
@@ -1794,8 +1872,6 @@ function GovernanceActionForm({ item, state, api, sessionId, notice, onPerform, 
   const isMeeting = actionId === "leadership_meeting";
   const isArchive = actionId === "inspect_archives";
   const isCanonicalOpportunity = Boolean(item.opportunity_id);
-  const isLocationLocked = governanceLocationLocked(item);
-  const locationLockMessage = governanceLocationLockMessage(item);
   const requiresLead = isMeeting && variantId === "convene_leadership_meeting";
 
   useEffect(() => {
@@ -1879,16 +1955,16 @@ function GovernanceActionForm({ item, state, api, sessionId, notice, onPerform, 
     });
   }}>
     <p>{item.description}</p>
-    {locationChoices.length > 1 && <label>办理地点<select value={locationId} disabled={isLocationLocked} onChange={event => setLocationId(event.target.value)}>{locationChoices.map(choice => <option key={String(choice.location_id)} value={String(choice.location_id)}>{playerText(choice.label, choice.location_id)}</option>)}</select>{locationLockMessage && <small>{locationLockMessage}</small>}</label>}
-    {isMeeting && <fieldset className="choice-fieldset"><legend>本次会议要解决什么</legend><p className="field-help">发言和最终决议都会围绕这个核心问题展开。</p><div className="choice-grid topic-choices">{MEETING_TOPICS.map(value => <label className={meetingTopicMode === "preset" && topic === value ? "choice-card selected" : "choice-card"} key={value}><input type="radio" name="meeting-topic" value={value} checked={meetingTopicMode === "preset" && topic === value} onChange={() => { setMeetingTopicMode("preset"); setTopic(value); }} /><span>{value}</span></label>)}<label className={meetingTopicMode === "custom" ? "choice-card selected" : "choice-card"}><input type="radio" name="meeting-topic" value={CUSTOM_MEETING_TOPIC} checked={meetingTopicMode === "custom"} onChange={() => setMeetingTopicMode("custom")} /><span><b>自定义会议主题</b><small>输入本次会议需要讨论的具体事项</small></span></label></div>{meetingTopicMode === "custom" && <label className="custom-topic-field">会议主题<input value={customMeetingTopic} onChange={event => setCustomMeetingTopic(event.target.value)} maxLength={200} required autoFocus placeholder="例如：讨论柳林村临时安置点启用与责任分工" /><small>{customMeetingTopic.trim().length} / 200</small></label>}</fieldset>}
-    {!isMeeting && !isArchive && <label>本次重点了解什么<textarea value={topic} readOnly={isCanonicalOpportunity} onChange={event => setTopic(event.target.value)} maxLength={500} required placeholder="例如：核实对方最关心的补偿、住房或程序问题" /></label>}
-    {!isArchive && <fieldset className="choice-fieldset"><legend>{isMeeting ? "参会领导（选择二至八人）" : actionId === "cadre_interview" ? "访谈对象（选择一至三人）" : "走访对象（选择一人）"}</legend>{isMeeting && <p className="field-help">这里只列出已随剧情公开、且在设定中具有领导职务的干部；普通干部、村民和外部人员不能进入班子会议。</p>}<div className="choice-grid character-choice-grid">{targetChoices.map(choice => { const id = String(choice.target_id || choice.id); const selected = selectedTargets.includes(id); const fallbackName = playerText(choice.label || choice.name, "未命名对象"); return <CharacterChoiceCard key={id} character={resolveCharacter(id, fallbackName)} fallbackName={fallbackName} inputId={`governance-person-${actionId}-${id}`} type={maxTargets === 1 ? "radio" : "checkbox"} name="targets" value={id} checked={selected} disabled={isCanonicalOpportunity} onChange={() => toggleTarget(id)} onOpenProfile={onOpenProfile} />; })}</div><small>已选择 {selectedTargets.length} 人{selectedTargets.length < minTargets ? `，还需选择 ${minTargets - selectedTargets.length} 人` : ""}</small></fieldset>}
-    {requiresLead && selectedTargets.length > 0 && <fieldset className="choice-fieldset"><legend>指定分管或牵头领导</legend><p className="field-help">该领导首先汇报议题的事实、依据、方案与风险；其他参会领导随后逐一表态。</p><div className="choice-grid character-choice-grid">{selectedTargets.map(id => { const fallbackName = playerText(targetChoices.find(choice => String(choice.target_id || choice.id) === id)?.label, id); return <CharacterChoiceCard key={`lead-${id}`} character={resolveCharacter(id, fallbackName)} fallbackName={fallbackName} inputId={`meeting-lead-${id}`} type="radio" name="meeting-lead" value={id} checked={leadNpcId === id} onChange={() => setLeadNpcId(id)} onOpenProfile={onOpenProfile} />; })}</div>{!leadNpcId && <span className="field-error">必须确定一名主要汇报人。</span>}</fieldset>}
-    {isMeeting && documentType && <fieldset className="choice-fieldset"><legend>会议依据（至少达到 {requiredEvidenceLevel}）</legend><p className="field-help">拟形成红头文件时，会议只能引用已经查阅且证据等级足够的材料。</p><div className="choice-grid meeting-evidence-choices">{meetingArchives.map(choice => { const id = String(choice.archive_id); const selected = selectedArchives.includes(id); return <label className={selected ? "choice-card selected" : "choice-card"} key={id}><input type="checkbox" value={id} checked={selected} onChange={() => toggleArchive(id)} /><span><b>{choice.title || "未命名材料"}</b><small>{friendlyStatus(choice.evidence_level)} · {choice.evidence_level || "E0"}</small></span></label>; })}</div>{!meetingArchives.length && <div className="blocked-reason">当前还没有已读、可供会议引用的材料。</div>}{!documentEvidenceValid && <span className="field-error">所选材料尚未达到 {requiredEvidenceLevel}，请改选更高等级材料或仅形成会议纪要。</span>}</fieldset>}
-    {isArchive && <fieldset className="choice-fieldset"><legend>要查阅的档案（每次选择一份）</legend><p className="field-help">首次查阅会立即扣除标示精力，并把权威事实和用途收入线索页；已读档案可在治理页免费重读。</p><div className="choice-grid archive-investigation-choices">{archiveChoices.map(choice => { const id = String(choice.archive_id); const selected = selectedArchives.includes(id); return <label className={selected ? "choice-card selected" : "choice-card"} key={id}><input type="radio" name="archive-investigation" value={id} checked={selected} onChange={() => toggleArchive(id)} /><span><b>{choice.title || "未命名档案"}</b><small>{friendlyStatus(choice.evidence_level)} · {friendlyStatus(choice.confidentiality)} · 首次 {displayValue(choice.first_read_cost_action_points, actionPointCost(item) ?? 1)} 点精力</small><small>预计形成 {displayValue(choice.result_fact_count, 0)} 条事实</small>{values(choice.strategic_uses).length > 0 && <em>可用于：{values(choice.strategic_uses).map(value => playerText(value)).join("；")}</em>}</span></label>; })}</div>{!archiveChoices.length && <div className="empty-state"><p>目前没有新到未读档案，可到治理页免费重读已读档案。</p></div>}</fieldset>}
-    {isMeeting && documentTypes.length > 0 && <label>拟形成文件（可选）<select value={documentType} onChange={event => chooseDocumentType(event.target.value)}><option value="">仅形成会议纪要</option>{documentTypes.map(value => <option key={value.document_type} value={value.document_type}>{DOCUMENT_TYPE_LABELS[value.document_type] || "专项治理文件"}</option>)}</select>{requiredParticipantNames.length > 0 && <small className="required-participants">该文件要求 {requiredParticipantNames.join("、")} 参会，选择文件时会自动加入。</small>}{missingRequiredParticipantIds.length > 0 && <span className="field-error">仍缺少必要会签人，请重新选择文件以自动补齐。</span>}</label>}
+    <div data-tutorial-id="form-location" data-tutorial-valid={Boolean(locationId)} className="action-location-readonly" data-testid="action-location"><span>办理地点</span><strong>{actionLocationLabel(item, locationId, locationChoices)}</strong><small>{item.map_entry_id ? "地图入口已确定现场" : item.opportunity_id ? "剧情机会已确定现场" : "当前行动配置已确定现场"}{item.scene_id ? ` · ${playerText(item.scene_id)}` : ""}</small></div>
+    {isMeeting && <fieldset data-tutorial-id="form-topic" data-tutorial-valid={topicValid} className="choice-fieldset"><legend>本次会议要解决什么</legend><p className="field-help">发言和最终决议都会围绕这个核心问题展开。</p><div className="choice-grid topic-choices">{MEETING_TOPICS.map(value => <label className={meetingTopicMode === "preset" && topic === value ? "choice-card selected" : "choice-card"} key={value}><input type="radio" name="meeting-topic" value={value} checked={meetingTopicMode === "preset" && topic === value} onChange={() => { setMeetingTopicMode("preset"); setTopic(value); }} /><span>{value}</span></label>)}<label className={meetingTopicMode === "custom" ? "choice-card selected" : "choice-card"}><input type="radio" name="meeting-topic" value={CUSTOM_MEETING_TOPIC} checked={meetingTopicMode === "custom"} onChange={() => setMeetingTopicMode("custom")} /><span><b>自定义会议主题</b><small>输入本次会议需要讨论的具体事项</small></span></label></div>{meetingTopicMode === "custom" && <label className="custom-topic-field">会议主题<input value={customMeetingTopic} onChange={event => setCustomMeetingTopic(event.target.value)} maxLength={200} required autoFocus placeholder="例如：讨论柳林村临时安置点启用与责任分工" /><small>{customMeetingTopic.trim().length} / 200</small></label>}</fieldset>}
+    {!isMeeting && !isArchive && <label data-tutorial-id="form-topic" data-tutorial-valid={Boolean(topic.trim())}>本次重点了解什么<textarea value={topic} readOnly={isCanonicalOpportunity} onChange={event => setTopic(event.target.value)} maxLength={500} required placeholder="例如：核实对方最关心的补偿、住房或程序问题" /></label>}
+    {!isArchive && <fieldset data-tutorial-id="form-targets" data-tutorial-valid={selectedCountValid} className="choice-fieldset"><legend>{isMeeting ? "参会领导（选择二至八人）" : actionId === "cadre_interview" ? "访谈对象（选择一至三人）" : "走访对象（选择一人）"}</legend>{isMeeting && <p className="field-help">这里只列出已随剧情公开、且在设定中具有领导职务的干部；普通干部、村民和外部人员不能进入班子会议。</p>}<div className="choice-grid character-choice-grid">{targetChoices.map(choice => { const id = String(choice.target_id || choice.id); const selected = selectedTargets.includes(id); const fallbackName = playerText(choice.label || choice.name, "未命名对象"); return <CharacterChoiceCard key={id} character={resolveCharacter(id, fallbackName)} fallbackName={fallbackName} inputId={`governance-person-${actionId}-${id}`} type={maxTargets === 1 ? "radio" : "checkbox"} name="targets" value={id} checked={selected} disabled={isCanonicalOpportunity} onChange={() => toggleTarget(id)} onOpenProfile={onOpenProfile} />; })}</div><small>已选择 {selectedTargets.length} 人{selectedTargets.length < minTargets ? `，还需选择 ${minTargets - selectedTargets.length} 人` : ""}</small></fieldset>}
+    {requiresLead && selectedTargets.length > 0 && <fieldset data-tutorial-id="form-lead" data-tutorial-valid={selectedTargets.includes(leadNpcId)} className="choice-fieldset"><legend>指定分管或牵头领导</legend><p className="field-help">该领导首先汇报议题的事实、依据、方案与风险；其他参会领导随后逐一表态。</p><div className="choice-grid character-choice-grid">{selectedTargets.map(id => { const fallbackName = playerText(targetChoices.find(choice => String(choice.target_id || choice.id) === id)?.label, id); return <CharacterChoiceCard key={`lead-${id}`} character={resolveCharacter(id, fallbackName)} fallbackName={fallbackName} inputId={`meeting-lead-${id}`} type="radio" name="meeting-lead" value={id} checked={leadNpcId === id} onChange={() => setLeadNpcId(id)} onOpenProfile={onOpenProfile} />; })}</div>{!leadNpcId && <span className="field-error">必须确定一名主要汇报人。</span>}</fieldset>}
+    {isMeeting && documentType && <fieldset data-tutorial-id="form-evidence" data-tutorial-valid={documentEvidenceValid} className="choice-fieldset"><legend>会议依据（至少达到 {requiredEvidenceLevel}）</legend><p className="field-help">拟形成红头文件时，会议只能引用已经查阅且证据等级足够的材料。</p><div className="choice-grid meeting-evidence-choices">{meetingArchives.map(choice => { const id = String(choice.archive_id); const selected = selectedArchives.includes(id); return <label className={selected ? "choice-card selected" : "choice-card"} key={id}><input type="checkbox" value={id} checked={selected} onChange={() => toggleArchive(id)} /><span><b>{choice.title || "未命名材料"}</b><small>{friendlyStatus(choice.evidence_level)} · {choice.evidence_level || "E0"}</small></span></label>; })}</div>{!meetingArchives.length && <div className="blocked-reason">当前还没有已读、可供会议引用的材料。</div>}{!documentEvidenceValid && <span className="field-error">所选材料尚未达到 {requiredEvidenceLevel}，请改选更高等级材料或仅形成会议纪要。</span>}</fieldset>}
+    {isArchive && <fieldset data-tutorial-id="form-archives" data-tutorial-valid={selectedCountValid} className="choice-fieldset"><legend>要查阅的档案（每次选择一份）</legend><p className="field-help">首次查阅会立即扣除标示精力，并把权威事实和用途收入线索页；已读档案可在治理页免费重读。</p><div className="choice-grid archive-investigation-choices">{archiveChoices.map(choice => { const id = String(choice.archive_id); const selected = selectedArchives.includes(id); return <label className={selected ? "choice-card selected" : "choice-card"} key={id}><input type="radio" name="archive-investigation" value={id} checked={selected} onChange={() => toggleArchive(id)} /><span><b>{choice.title || "未命名档案"}</b><small>{friendlyStatus(choice.evidence_level)} · {friendlyStatus(choice.confidentiality)} · 首次 {displayValue(choice.first_read_cost_action_points, actionPointCost(item) ?? 1)} 点精力</small><small>预计形成 {displayValue(choice.result_fact_count, 0)} 条事实</small>{values(choice.strategic_uses).length > 0 && <em>可用于：{values(choice.strategic_uses).map(value => playerText(value)).join("；")}</em>}</span></label>; })}</div>{!archiveChoices.length && <div className="empty-state"><p>目前没有新到未读档案，可到治理页免费重读已读档案。</p></div>}</fieldset>}
+    {isMeeting && documentTypes.length > 0 && <label data-tutorial-id="form-document">拟形成文件（可选）<select value={documentType} onChange={event => chooseDocumentType(event.target.value)}><option value="">仅形成会议纪要</option>{documentTypes.map(value => <option key={value.document_type} value={value.document_type}>{DOCUMENT_TYPE_LABELS[value.document_type] || "专项治理文件"}</option>)}</select>{requiredParticipantNames.length > 0 && <small className="required-participants">该文件要求 {requiredParticipantNames.join("、")} 参会，选择文件时会自动加入。</small>}{missingRequiredParticipantIds.length > 0 && <span className="field-error">仍缺少必要会签人，请重新选择文件以自动补齐。</span>}</label>}
     {notice && <div className="notice form-notice" role="status">{notice}</div>}
-    <button disabled={!validSelection || !topicValid}>{isMeeting ? "发起班子会议" : isArchive ? "开始查阅" : "发起行动"}</button>
+    <button data-tutorial-id="form-submit" disabled={!validSelection || !topicValid}>{isMeeting ? "发起班子会议" : isArchive ? "开始查阅" : "发起行动"}</button>
   </form>;
 }
 

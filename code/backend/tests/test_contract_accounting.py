@@ -1,4 +1,4 @@
-"""Signature accounting regressions using real application/API paths, fake dialogue only."""
+"""Signature accounting regressions using real application/API paths and a test-only dialogue double."""
 from copy import deepcopy
 from dataclasses import replace
 from pathlib import Path
@@ -7,7 +7,7 @@ from unittest.mock import patch
 from types import SimpleNamespace
 from fastapi.testclient import TestClient
 from serious_game_backend.api.app import create_app
-from serious_game_backend.bootstrap import build_container
+from tests.test_doubles import build_test_container as build_container
 from serious_game_backend.config import Settings
 from serious_game_backend.application.contract_accounting import migrate_contract_accounting, ACCOUNTING_VERSION
 from serious_game_backend.domain.errors import ActionUnavailableError
@@ -15,7 +15,7 @@ from serious_game_backend.domain.gameplay_governance import HouseholdContract, R
 
 class ContractAccountingTests(unittest.TestCase):
     def setUp(self):
-        settings=Settings(environment='test',repository='memory',role_llm_provider='fake',default_package_id='pkg_gameplay_v3',content_root=Path(__file__).resolve().parents[1]/'content/packages')
+        settings=Settings(environment='test',repository='memory',role_llm_provider='none',default_package_id='pkg_gameplay_v3',content_root=Path(__file__).resolve().parents[1]/'content/packages')
         self.runtime=build_container(settings); self.client=TestClient(create_app(settings,self.runtime))
         self.headers={'X-Account-ID':'accounting-tests'}
         r=self.client.post('/api/game/session',headers=self.headers,json={'client_request_id':'accounting-session'})

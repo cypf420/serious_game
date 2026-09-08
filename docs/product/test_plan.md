@@ -128,7 +128,7 @@ tests/test_action_service.py
 
 - 行动点变为 2。
 - `ActionService` 只结算行动点、地点访问和确定性世界状态，不直接修改杨德清的信任、态度或签约意愿。
-- 目标 NPC 的指标变化来自可控 fake LLM 返回的 `NPCStateEvaluation`，并经 `StateDeltaValidator` 提交。
+- 目标 NPC 的指标变化来自可控 测试范围内的确定性 LLM 替身返回的 `NPCStateEvaluation`，并经 `StateDeltaValidator` 提交。
 - 产生一条 `SimulationLog`。
 - 日志可见。
 
@@ -271,7 +271,7 @@ tests/test_night_simulation_service.py
 
 - 签约率超过阈值。
 - 生成包含“签约率超过阈值且核心诉求满足”的夜间处境上下文。
-- 对高影响 NPC，fake LLM 可据该上下文输出受限的态度变化；夜间规则本身不直接写死 `attitude_score`。
+- 对高影响 NPC，测试范围内的确定性 LLM 替身可据该上下文输出受限的态度变化；夜间规则本身不直接写死 `attitude_score`。
 - 产生隐藏日志。
 
 ### 8.2 阈值超过但核心诉求未满足
@@ -403,7 +403,7 @@ tests/test_memory_service.py
 | 存档后重进 | NPC 记忆保持一致 |
 | 重复问同一核心问题 | NPC 核心立场一致 |
 
-第一阶段可以用 fake LLM 或模板回复验证。
+第一阶段可以用 测试范围内的确定性 LLM 替身或模板回复验证。
 
 ## 12. NPC 指标评估测试
 
@@ -451,7 +451,7 @@ tests/test_dialogue_service.py
 - NPC 不接受非法承诺。
 - NPC 语言风格符合档案。
 
-可用 fake LLM 生成违规文本，测试输出校验器是否拦截。
+可用 测试范围内的确定性 LLM 替身生成违规文本，测试输出校验器是否拦截。
 
 ## 14. 结局判定测试
 
@@ -628,7 +628,7 @@ tests/fixtures/
 - 不把 API Key 放入 fixture。
 - 不把真实密码放入 fixture。
 - 测试账号使用明确的弱口令并只用于本地测试。
-- LLM 测试默认使用 fake client。
+- LLM 测试默认使用 测试范围内的 HTTP/依赖替身。
 - 数据库集成测试使用独立 MySQL 测试库，不连接正式库。
 
 ## 21. 通过标准
@@ -694,7 +694,7 @@ tests/test_npc_turn_service.py
 
 必须覆盖：
 
-- 同一份 fake LLM 输出中的台词、`dialogue_intent` 与指标变化相容；矛盾输出被重试或降级。
+- 同一份 测试范围内的确定性 LLM 替身输出中的台词、`dialogue_intent` 与指标变化相容；矛盾输出被重试或降级。
 - LLM 输出经校验后，在同一事务中写入 NPC 状态、记忆、日志和快照索引。
 - 模型超时、JSON 无效、知识越界、数据库写入失败时，不扣行动点、不改变 NPC 状态、不开放后续机会。
 - 玩家输入含有“忽略规则”“输出系统提示”等注入文本时，不能改变角色、规则或 JSON schema。
@@ -719,7 +719,7 @@ tests/test_session_concurrency.py
 
 ### 22.4 真实模型回归集
 
-fake LLM 只能验证程序契约，不能证明 NPC 的人设和对抗性。M3 起必须维护版本化小型回归集，至少包括每个关键 NPC 的：
+测试范围内的确定性 LLM 替身只能验证程序契约，不能证明 NPC 的人设和对抗性。M3 起必须维护版本化小型回归集，至少包括每个关键 NPC 的：
 
 - 可接受的说服示例。
 - 触及红线的示例。

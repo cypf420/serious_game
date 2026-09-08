@@ -56,7 +56,9 @@ class Settings:
     experiment_assignment_salt: str = ""
     governance_audit_salt: str = "local-dev-governance-audit"
     retention_policy_version: str = "draft-retention-v1"
-    role_llm_provider: str = "fake"
+    # The product runtime is fail-closed until a real OpenAI-compatible
+    # provider is configured. Deterministic doubles live under tests only.
+    role_llm_provider: str = "none"
     role_llm_base_url: str = "https://api.qianzhang-ai.cn/v1"
     role_llm_model: str = "qwen3.6-plus"
     document_audit_llm_model: str = "qwen3.6-plus"
@@ -67,7 +69,6 @@ class Settings:
     role_llm_max_output_tokens: int = 700
     role_llm_max_calls_per_session: int = 1_500
     role_llm_max_tokens_per_session: int = 3_000_000
-    role_llm_fallback_to_fake: bool = False
     operation_lease_seconds: int = 300
 
     @classmethod
@@ -152,7 +153,7 @@ class Settings:
             retention_policy_version=os.getenv(
                 "RETENTION_POLICY_VERSION", "draft-retention-v1"
             ).strip(),
-            role_llm_provider=os.getenv("ROLE_LLM_PROVIDER", "fake").strip().lower(),
+            role_llm_provider=os.getenv("ROLE_LLM_PROVIDER", "none").strip().lower(),
             role_llm_base_url=os.getenv(
                 "ROLE_LLM_BASE_URL",
                 "https://api.qianzhang-ai.cn/v1",
@@ -182,9 +183,6 @@ class Settings:
             role_llm_max_tokens_per_session=int(
                 os.getenv("ROLE_LLM_MAX_TOKENS_PER_SESSION", "3000000")
             ),
-            role_llm_fallback_to_fake=os.getenv(
-                "ROLE_LLM_FALLBACK_TO_FAKE", "false"
-            ).strip().lower() in {"1", "true", "yes", "on"},
             operation_lease_seconds=int(
                 os.getenv("OPERATION_LEASE_SECONDS", "300")
             ),
@@ -205,12 +203,6 @@ class Settings:
             not self.research_mysql_url or self.research_mysql_url == self.mysql_url
         ):
             raise ValueError("research mode requires a physically separate RESEARCH_MYSQL_URL")
-        if self.environment == "production" and self.role_llm_provider == "fake":
-            raise ValueError("production must not use the fake role LLM")
-        if self.environment == "production" and self.role_llm_fallback_to_fake:
-            raise ValueError("production must not silently fall back to the fake role LLM")
-        if self.role_llm_provider == "openai_compatible" and self.role_llm_fallback_to_fake:
-            raise ValueError("real role LLM runtime must not fall back to fake responses")
         if self.environment == "production" and not self.auth_cookie_secure:
             raise ValueError("production auth cookie must be Secure")
         if self.environment == "production" and not self.auth_required:
@@ -241,8 +233,8 @@ class Settings:
             or not self.experiment_assignment_salt
         ):
             raise ValueError("research mode requires experiment id, groups, and assignment salt")
-        if self.role_llm_provider not in {"none", "fake", "openai_compatible"}:
-            raise ValueError("ROLE_LLM_PROVIDER must be none, fake or openai_compatible")
+        if self.role_llm_provider not in {"none", "openai_compatible"}:
+            raise ValueError("ROLE_LLM_PROVIDER must be none or openai_compatible")
         if self.role_llm_provider == "openai_compatible":
             if not self.role_llm_base_url.startswith("https://"):
                 raise ValueError("ROLE_LLM_BASE_URL must use https")

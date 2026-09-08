@@ -17,14 +17,14 @@ from serious_game_backend.application.scripted_delta_resolver import (
 from serious_game_backend.application.scripted_effect_service import (
     ScriptedEffectService,
 )
-from serious_game_backend.bootstrap import build_container
+from tests.test_doubles import build_test_container as build_container
 from serious_game_backend.config import Settings
 from serious_game_backend.domain.errors import (
     RoleLLMResponseRetryableError,
     RoleLLMUnavailableError,
 )
 from serious_game_backend.domain.llm import NightAgentResult
-from serious_game_backend.infrastructure.llm.fake import FakeRoleLLMGateway
+from tests.test_doubles import DeterministicRoleLLMGateway
 from serious_game_backend.infrastructure.script_packages.file_loader import (
     FileScriptPackageLoader,
 )
@@ -205,7 +205,7 @@ class NightAgentV3ConfigurationTests(unittest.TestCase):
             validate_night_matrix_report(rejected_vague)
 
 
-class RecordingNightGateway(FakeRoleLLMGateway):
+class RecordingNightGateway(DeterministicRoleLLMGateway):
     def __init__(self, *, night_fixture: str = "legal") -> None:
         super().__init__(night_fixture=night_fixture)
         self.contexts = []
@@ -222,7 +222,7 @@ class NightAgentV3SettlementTests(unittest.TestCase):
             content_root=PACKAGE_DIR.parent,
             default_package_id="pkg_gameplay_v3",
             repository="memory",
-            role_llm_provider="fake",
+            role_llm_provider="none",
         )
         self.runtime = build_container(self.settings)
         self.client = TestClient(create_app(self.settings, self.runtime))
@@ -283,14 +283,14 @@ class NightAgentV3SettlementTests(unittest.TestCase):
 
     def test_required_d10_followup_uses_package_plan_and_blocks_until_completed(self) -> None:
         session = self._session_on(10)
-        record = self._service(FakeRoleLLMGateway()).run_night(
+        record = self._service(DeterministicRoleLLMGateway()).run_night(
             session, self.package
         )
         created = [item for item in record["followup_decisions"] if item["created"]]
         self.assertEqual(1, len(created))
         self.assertEqual("followup_d10_county_reporting", created[0]["plan_id"])
         self.assertEqual(1, len(session.group_conversation_queue))
-        self._service(FakeRoleLLMGateway()).activate_next_group_conversation(session)
+        self._service(DeterministicRoleLLMGateway()).activate_next_group_conversation(session)
         self.assertIsNotNone(session.active_group_conversation)
         self.assertEqual(
             ("npc_zhao_jianguo", "npc_sun_qiang"),
@@ -317,7 +317,7 @@ class NightAgentV3SettlementTests(unittest.TestCase):
                 session.night_logs.clear()
                 session.group_conversation_queue.clear()
                 session.active_group_conversation = None
-                record = self._service(FakeRoleLLMGateway()).run_night(
+                record = self._service(DeterministicRoleLLMGateway()).run_night(
                     session, self.package
                 )
                 created = [
@@ -331,7 +331,7 @@ class NightAgentV3SettlementTests(unittest.TestCase):
 
     def test_d29_without_turncoat_condition_keeps_private_action_optional(self) -> None:
         session = self._session_on(29)
-        record = self._service(FakeRoleLLMGateway()).run_night(
+        record = self._service(DeterministicRoleLLMGateway()).run_night(
             session, self.package
         )
         self.assertFalse(any(
@@ -340,7 +340,7 @@ class NightAgentV3SettlementTests(unittest.TestCase):
         ))
 
     def test_d29_break_with_qian_requires_protection_followup_even_when_agents_hold(self) -> None:
-        class HoldGateway(FakeRoleLLMGateway):
+        class HoldGateway(DeterministicRoleLLMGateway):
             def run_night_turn(self, context):
                 if context.phase == "action":
                     return NightAgentResult(
@@ -386,7 +386,7 @@ class NightAgentV3SettlementTests(unittest.TestCase):
         self.assertTrue(all(item["resolved_hard_outcome_ids"] == ["outcome_unify_story"] for item in audits))
 
     def test_scene_execution_limit_rejects_later_legal_proposal_before_settlement(self) -> None:
-        class SplitActionGateway(FakeRoleLLMGateway):
+        class SplitActionGateway(DeterministicRoleLLMGateway):
             def run_night_turn(self, context):
                 if context.phase != "action":
                     return super().run_night_turn(context)
@@ -433,7 +433,7 @@ class NightAgentV3SettlementTests(unittest.TestCase):
         self.assertEqual(["outcome_hold_position"], qian_audit["resolved_hard_outcome_ids"])
 
     def test_unmet_consensus_falls_back_without_applying_consensus_outcome(self) -> None:
-        class SplitConsensusGateway(FakeRoleLLMGateway):
+        class SplitConsensusGateway(DeterministicRoleLLMGateway):
             def run_night_turn(self, context):
                 if context.phase != "action":
                     return super().run_night_turn(context)
@@ -585,7 +585,7 @@ class NightAgentV3SettlementTests(unittest.TestCase):
         self.assertNotIn("response", details)
 
     def test_legal_no_contact_commits_a_morning_card_without_a_failure_fallback(self) -> None:
-        delegate = FakeRoleLLMGateway()
+        delegate = DeterministicRoleLLMGateway()
 
         class NoContactGateway:
             def __getattr__(self, name):
@@ -621,7 +621,7 @@ class NightAgentV3SettlementTests(unittest.TestCase):
     def test_legal_fixture_is_repeatable_for_same_seed(self) -> None:
         first_session = self._session_on(29)
         first_session.random_seed = "night-v3-repeatable-seed"
-        first = self._service(FakeRoleLLMGateway()).run_night(
+        first = self._service(DeterministicRoleLLMGateway()).run_night(
             first_session, self.package
         )
 
@@ -643,7 +643,7 @@ class NightAgentV3SettlementTests(unittest.TestCase):
         second_session.game_state = replace(
             second_session.game_state, story_day=29, days_left=62
         )
-        second = self._service(FakeRoleLLMGateway()).run_night(
+        second = self._service(DeterministicRoleLLMGateway()).run_night(
             second_session, self.package
         )
 
@@ -671,7 +671,7 @@ class NightAgentV3FullPlaybackTests(unittest.TestCase):
             content_root=PACKAGE_DIR.parent,
             default_package_id="pkg_gameplay_v3",
             repository="memory",
-            role_llm_provider="fake",
+            role_llm_provider="none",
         )
         runner.container = build_container(settings)
         runner.client = TestClient(create_app(settings, runner.container))

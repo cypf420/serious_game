@@ -6,7 +6,7 @@ import unittest
 from fastapi.testclient import TestClient
 
 from serious_game_backend.api.app import create_app
-from serious_game_backend.bootstrap import build_container
+from tests.test_doubles import build_test_container as build_container
 from serious_game_backend.config import Settings
 
 
@@ -19,7 +19,7 @@ class ConsentPlayerContractTests(unittest.TestCase):
             environment="test",
             content_root=BACKEND_ROOT / "content" / "packages",
             repository="memory",
-            role_llm_provider="fake",
+            role_llm_provider="none",
             require_model_consent=True,
             consent_version="consent-v1",
             consent_document_hash="sha256:player-consent-v1",

@@ -1,18 +1,18 @@
-"""Feedback 30/31/33: real API boundaries with an explicitly fake model fixture."""
+"""Feedback 30/31/33: real API boundaries with an explicitly injected test model double."""
 from dataclasses import replace
 from pathlib import Path
 import unittest
 
 from fastapi.testclient import TestClient
 from serious_game_backend.api.app import create_app
-from serious_game_backend.bootstrap import build_container
+from tests.test_doubles import build_test_container as build_container
 from serious_game_backend.config import Settings
 from serious_game_backend.domain.gameplay_governance import GovernanceActionRecord
 
 
 class FeedbackActionTests(unittest.TestCase):
     def setUp(self):
-        settings = Settings(environment="test", repository="memory", role_llm_provider="fake",
+        settings = Settings(environment="test", repository="memory", role_llm_provider="none",
             content_root=Path(__file__).resolve().parents[1] / "content/packages",
             default_package_id="pkg_gameplay_v3")
         self.runtime = build_container(settings)
@@ -139,3 +139,44 @@ class FeedbackActionTests(unittest.TestCase):
         self.assertIsNotNone(s.pending_decision)
         self.assertFalse(self.get("/view")["commands"]["can_act"])
         self.assertTrue(all(not p["available"] for p in self.get("/opportunities")["person_actions"]))
+
+    def test_day_two_required_opportunity_is_returned_from_authoritative_state(self):
+        package = self.runtime.packages.get("pkg_gameplay_v3")
+        s = self.session()
+        s.pending_decision = None
+        s.pending_decision_queue.clear()
+        s.flags = {"flag_clan_map"}
+        s.known_npc_ids.add("npc_wu_xiuying")
+        s.game_state = replace(s.game_state, story_day=2, action_points=8)
+        self.save(s)
+
+        view = self.get("/view")
+        required = view["commands"]["required_opportunity"]
+        self.assertIsNotNone(required)
+        self.assertEqual("opp_d02_wu_xiuying_first_talk", required["opportunity_id"])
+        self.assertEqual("npc_wu_xiuying", required["npc_id"])
+        self.assertEqual("寻找会谈", required["entry_description"])
+        self.assertIn("村庄关系", required["reason"])
+
+        actions = self.get("/actions")
+        self.assertEqual(required, actions["required_opportunity"])
+
+    def test_ordinary_action_resolves_first_unlocked_location_when_picker_omits_it(self):
+        descriptor = next(
+            item for item in self.get("/opportunities")["person_actions"]
+            if item["npc_id"] == "npc_zhou_dashan"
+            and item["action_id"] == "household_visit"
+        )
+        choices = descriptor["location_choices"]
+        self.assertTrue(choices)
+        payload = self.post(
+            "/governance/actions",
+            {
+                "action_kind": descriptor["action_id"],
+                "variant_id": descriptor["variant_id"],
+                "target_ids": ["npc_zhou_dashan"],
+                "topic": "核对各户诉求和协议办理条件",
+            },
+            status=201,
+        )
+        self.assertEqual(choices[0]["location_id"], payload["action"]["location_id"])

@@ -119,13 +119,12 @@ CONTRACT_AUDIT_LLM_MODEL=qwen3.6-plus
 ROLE_LLM_API_KEY_ENV=DASHSCOPE_API_KEY
 DASHSCOPE_API_KEY=在这里填写你有权限使用的真实密钥
 
-ROLE_LLM_FALLBACK_TO_FAKE=false
 ```
 
 不提供服务器默认接口时，可使用 `ROLE_LLM_PROVIDER=none`；玩家仍可在登录界面配置个人 API。注意：
 
 - 本地使用 HTTP，因此 `AUTH_COOKIE_SECURE` 必须是 `false`，否则可能出现登录后仍显示未登录；
-- `ROLE_LLM_FALLBACK_TO_FAKE=false` 可以避免 API 调用失败时悄悄退回模板回答；
+- API 调用失败时按真实网关错误契约返回，不生成模板替代回答；
 - 服务器默认 API Key 只能保存在本机 `.env` 中，不得写进 README、源码或提交到 GitHub；
 - 如果使用其他 OpenAI 兼容服务，请同时修改 `ROLE_LLM_BASE_URL`、模型名、Key 环境变量名和值；
 - 项目曾在沟通中出现过明文密钥，正式共享前应撤销旧密钥并创建新密钥。
@@ -189,7 +188,7 @@ Web address: http://127.0.0.1:3001
 }
 ```
 
-`llm_provider` 只表示管理员提供的服务器默认接口：`none` 表示玩家必须配置个人 API；`openai_compatible` 表示可以选择服务器默认接口；`fake` 仅用于开发和自动测试。
+`llm_provider` 只表示管理员提供的服务器默认接口：`none` 表示玩家必须配置个人 API；`openai_compatible` 表示可以选择服务器默认接口。产品运行时不提供确定性替代 provider。
 
 ## 五、第一次进入游戏
 
@@ -226,7 +225,7 @@ ALLOW_SELF_REGISTRATION=true
 
 ### AI 接口测试失败或 NPC 无法回应
 
-从右上角账号中心重新打开“AI 接口设置”，检查 Base URL、API Key、模型名、余额与模型权限。个人接口不会静默退回 `.env` 或 Fake；测试失败时，上一份已启用配置仍然保留。个人 Base URL 必须是公共 HTTPS 地址，不能指向本机、内网或带查询参数的地址。
+从右上角账号中心重新打开“AI 接口设置”，检查 Base URL、API Key、模型名、余额与模型权限。个人接口不会静默退回 `.env` 或生成替代回答；测试失败时，上一份已启用配置仍然保留。个人 Base URL 必须是公共 HTTPS 地址，不能指向本机、内网或带查询参数的地址。
 
 ### 提示 Node.js 版本过低
 

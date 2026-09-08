@@ -57,7 +57,6 @@ from serious_game_backend.application.research_projection_service import (
 )
 from serious_game_backend.application.research_outbox_service import ResearchOutboxService
 from serious_game_backend.config import Settings
-from serious_game_backend.infrastructure.llm.fake import FakeRoleLLMGateway
 from serious_game_backend.infrastructure.llm.openai_compatible import OpenAICompatibleRoleLLMGateway, Transport
 from serious_game_backend.infrastructure.llm.player_configuration import (
     PlayerLLMConfigurationRegistry,
@@ -264,19 +263,12 @@ def build_container(
     projector = VisibleStateProjector()
     event_service = EventService()
     story_clock = StoryClockService(event_service)
-    fake_llm = FakeRoleLLMGateway()
-    if server_role_llm is not None:
-        pass  # Explicit test injection; normal provider selection is unchanged.
-    elif settings.role_llm_provider == "openai_compatible":
+    if server_role_llm is None and settings.role_llm_provider == "openai_compatible":
         server_role_llm = OpenAICompatibleRoleLLMGateway(
             settings,
             os.getenv(settings.role_llm_api_key_env, ""),
             llm_audits,
         )
-    elif settings.role_llm_provider == "fake":
-        server_role_llm = fake_llm
-    else:
-        server_role_llm = None
     registry_kwargs = {"transport": player_llm_transport}
     if player_llm_resolver is not None:
         registry_kwargs["resolver"] = player_llm_resolver

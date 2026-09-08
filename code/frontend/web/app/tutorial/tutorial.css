@@ -1,0 +1,59 @@
+.tutorial-overlay { position: fixed; inset: 0; z-index: 70; pointer-events: none; }
+.tutorial-mask { position: fixed; inset: 0; overflow: visible; pointer-events: none; }
+.tutorial-blocker { position: fixed; pointer-events: auto; touch-action: none; }
+.tutorial-popover { position: fixed; right: 20px; bottom: 20px; width: min(360px, calc(100vw - 28px)); height: max-content; overflow: auto; overscroll-behavior: contain; pointer-events: auto; padding: 20px; border: 1px solid #a3895a; border-top: 3px solid #8e3d32; border-radius: 5px; background: #f3ead4; color: #302a20; box-shadow: 0 16px 54px #0007; font-size: 14px; line-height: 1.65; }
+.tutorial-popover header { display: flex; align-items: flex-start; gap: 12px; justify-content: space-between; }
+.tutorial-eyebrow { color: #71634e; font-size: 11px; letter-spacing: .06em; }
+.tutorial-popover .tutorial-close { flex: 0 0 28px; min-height: 28px; width: 28px; padding: 0; margin: -9px -9px 0 0; border: 0; font-size: 25px; line-height: 1; background: transparent; }
+.tutorial-step-count { margin: 14px 0 4px; color: #8e3d32; font-size: 12px; font-weight: 700; }
+.tutorial-popover h2 { margin: 7px 0 10px; font-family: "STKaiti", "KaiTi", serif; font-size: 23px; line-height: 1.35; }
+.tutorial-popover p { margin: 8px 0 12px; white-space: pre-line; }
+.tutorial-popover details { border-top: 1px solid #b7a58080; padding-top: 8px; font-size: 12px; color: #5b5142; }
+.tutorial-popover summary { cursor: pointer; color: #793a30; }
+.tutorial-popover .tutorial-field-hint { margin-top: 12px; padding: 8px 10px; background: #e7dbc0; border-left: 2px solid #a87836; font-size: 12px; }
+.tutorial-dots { display: flex; flex-wrap: wrap; gap: 5px; margin: 18px 0 14px; }
+.tutorial-dots i { width: 6px; height: 6px; border-radius: 50%; background: #baa98b; }
+.tutorial-dots i.active { width: 20px; border-radius: 5px; background: #8e3d32; }
+.tutorial-dots i.done { background: #8a744b; }
+.tutorial-popover .tutorial-controls { display: flex; gap: 10px; justify-content: space-between; margin-top: 15px; }
+.tutorial-popover button, .tutorial-invitation button, .tutorial-directory button, .tutorial-action-intro button, .tutorial-action-help { min-height: 38px; padding: 7px 13px; border: 1px solid #a68f69; border-radius: 3px; background: #eee1c6; color: #403323; cursor: pointer; }
+.tutorial-popover button:hover:not(:disabled), .tutorial-invitation button:hover, .tutorial-directory button:hover { background: #e4d2af; }
+.tutorial-popover button:disabled { color: #8a7c66; background: #e2d7c3; cursor: not-allowed; border-color: #c0b298; }
+.tutorial-popover .tutorial-primary { background: #8e3d32; color: #fff5df; border-color: #8e3d32; }
+.tutorial-popover .tutorial-primary:hover:not(:disabled) { background: #723027; }
+.tutorial-popover .tutorial-primary:disabled { background: #c4ada0; border-color: #bfa496; color: #fcf4e5; }
+.tutorial-secondary { display: flex; justify-content: space-between; gap: 8px; margin-top: 11px; }
+.tutorial-popover .tutorial-secondary button { min-height: 30px; padding: 3px 0; background: transparent; border: 0; font-size: 11px; color: #786851; text-decoration: underline; text-underline-offset: 3px; }
+.tutorial-popover :focus-visible, .tutorial-invitation :focus-visible, .tutorial-directory :focus-visible, .tutorial-action-intro :focus-visible { outline: 3px solid #a14b37; outline-offset: 3px; }
+.tutorial-popover:focus { outline: none; }
+.tutorial-is-paused .tutorial-popover { border-top-color: #9c8052; max-width: 330px; }
+.tutorial-is-paused .tutorial-popover h2 { font-size: 19px; }
+.tutorial-invitation { position: fixed; right: 22px; bottom: 48px; width: min(350px, calc(100vw - 28px)); padding: 18px; z-index: 65; border: 1px solid #a3895a; border-top: 3px solid #8e3d32; border-radius: 4px; background: #f3ead4; color: #302a20; box-shadow: 0 12px 38px #0006; }
+.tutorial-invitation b { font-family: "STKaiti", "KaiTi", serif; font-size: 21px; }
+.tutorial-invitation p { font-size: 13px; line-height: 1.7; }
+.tutorial-invitation button { margin: 9px 8px 0 0; font-size: 12px; }
+.tutorial-directory-backdrop { position: fixed; inset: 0; display: grid; place-items: center; padding: 18px; background: #100d0abd; z-index: 70; }
+.tutorial-directory { width: min(530px, 100%); max-height: calc(100dvh - 36px); overflow: auto; padding: 24px; border: 1px solid #a3895a; border-top: 4px solid #8e3d32; background: #f3ead4; color: #302a20; box-shadow: 0 16px 54px #0007; }
+.tutorial-directory header { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; margin-bottom: 20px; }
+.tutorial-directory h2 { font-family: "STKaiti", "KaiTi", serif; margin: 5px 0 0; font-size: 28px; }
+.tutorial-directory small { font-size: 11px; color: #786851; }
+.tutorial-directory label { display: flex; align-items: center; gap: 8px; margin: 15px 0; font-size: 13px; }
+.tutorial-directory > button { display: flex; width: 100%; align-items: center; justify-content: space-between; text-align: left; gap: 15px; margin: 8px 0; }
+.tutorial-directory button:disabled { color: #988c78; background: #e4dac6; cursor: not-allowed; }
+.tutorial-action-intro { padding: 12px 15px; margin-bottom: 12px; border: 1px solid #7c6540; background: #33291e; color: #e8d8b8; }
+.tutorial-action-intro p { font-size: 12px; line-height: 1.6; margin: 5px 0 8px; }
+.tutorial-action-intro button { margin-right: 8px; font-size: 12px; }
+.tutorial-action-help { margin-top: 8px; font-size: 12px; }
+.tutorial-open { white-space: nowrap; }
+@media (max-width: 780px) {
+  [data-tutorial-scroll-host="true"] { padding-bottom: calc(var(--tutorial-scroll-base, 0px) + var(--tutorial-scroll-reserve, 340px)) !important; scroll-padding-top: 12px; scroll-padding-bottom: var(--tutorial-scroll-reserve, 340px); }
+  .tutorial-popover { padding: 16px; font-size: 13px; max-height: min(55dvh, 440px); }
+  .tutorial-popover h2 { font-size: 21px; }
+  .tutorial-step-count { margin-top: 9px; }
+  .tutorial-dots { margin: 11px 0; }
+  .tutorial-invitation { right: 14px; bottom: 20px; }
+  .tutorial-directory { padding: 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tutorial-overlay *, .tutorial-invitation *, .tutorial-directory * { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+}

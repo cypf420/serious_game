@@ -8,7 +8,7 @@ const componentEvidenceDir = process.env.FULL_ACCEPTANCE_COMPONENT_DIR
 
 export default defineConfig({
   testDir: "./e2e",
-  testMatch: "component-game-shell.spec.ts",
+  testMatch: ["component-game-shell.spec.ts", "tutorial.spec.ts"],
   fullyParallel: false,
   workers: 1,
   retries: 0,

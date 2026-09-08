@@ -5,7 +5,7 @@ import pytest
 from serious_game_backend.application.input_review_service import InputReviewService
 from serious_game_backend.domain.errors import RoleLLMResponseError
 from serious_game_backend.domain.llm import GovernanceLLMResult
-from serious_game_backend.infrastructure.llm.fake import FakeRoleLLMGateway
+from tests.test_doubles import DeterministicRoleLLMGateway
 
 
 class FailingGateway:
@@ -102,7 +102,7 @@ def test_meta_instruction_remains_rejected_even_when_it_names_the_scene():
 
 
 def test_fake_gateway_applies_three_classifications_without_legacy_boolean_leakage():
-    reviewer = InputReviewService(FakeRoleLLMGateway())
+    reviewer = InputReviewService(DeterministicRoleLLMGateway())
     low, _ = reviewer.review(session(), operation_id="fake-low",
                              player_text="我会高度重视，尽快研究。",
                              scene_goal="核对签约落差")

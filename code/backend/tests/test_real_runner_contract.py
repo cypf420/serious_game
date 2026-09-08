@@ -764,18 +764,10 @@ def test_every_forced_night_plan_has_specific_credible_player_replies() -> None:
         assert all(len(reply) >= 30 for reply in replies)
 
 
-def test_real_runner_refuses_fake_provider_fallback_and_missing_key() -> None:
+def test_real_runner_requires_real_provider_and_key() -> None:
     with pytest.raises(SystemExit, match="requires openai_compatible"):
         validate_real_runner_settings(
-            Settings(role_llm_provider="fake"), api_key="real-key-present"
-        )
-    with pytest.raises(SystemExit, match="refuses Fake fallback"):
-        validate_real_runner_settings(
-            Settings(
-                role_llm_provider="openai_compatible",
-                role_llm_fallback_to_fake=True,
-            ),
-            api_key="real-key-present",
+            Settings(role_llm_provider="none"), api_key="real-key-present"
         )
     with pytest.raises(SystemExit, match="API key is missing"):
         validate_real_runner_settings(

@@ -32,6 +32,7 @@ from serious_game_backend.infrastructure.llm.openai_compatible import (
 from serious_game_backend.infrastructure.llm.player_configuration import (
     _PinnedHTTPSConnection,
 )
+from tests.test_doubles import DeterministicRoleLLMGateway
 
 
 BACKEND_ROOT = Path(__file__).resolve().parents[1]
@@ -60,7 +61,7 @@ class PlayerLLMConfigurationApiTests(unittest.TestCase):
             auth_required=True,
             allow_self_registration=True,
             auth_cookie_secure=False,
-            role_llm_provider="fake",
+            role_llm_provider="none",
         )
         self.transport_mode = "valid"
         self.transport_calls: list[dict] = []
@@ -92,6 +93,7 @@ class PlayerLLMConfigurationApiTests(unittest.TestCase):
             self.settings,
             player_llm_transport=transport,
             player_llm_resolver=resolver,
+            server_role_llm=DeterministicRoleLLMGateway(),
         )
         self.client = TestClient(
             create_app(self.settings, self.runtime), base_url="http://testserver"
@@ -600,9 +602,9 @@ class PlayerLLMConfigurationApiTests(unittest.TestCase):
             auth_required=True,
             allow_self_registration=True,
             auth_cookie_secure=False,
-            role_llm_provider="fake",
+            role_llm_provider="none",
         )
-        runtime = build_container(settings)
+        runtime = build_container(settings, server_role_llm=DeterministicRoleLLMGateway())
         client = TestClient(create_app(settings, runtime), base_url="http://testserver")
         registered = client.post("/api/auth/register", json={
             "username": "needs-model", "password": "pass1234",

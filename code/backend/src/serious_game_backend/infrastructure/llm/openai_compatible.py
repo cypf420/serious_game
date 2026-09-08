@@ -421,7 +421,8 @@ class OpenAICompatibleRoleLLMGateway(RoleLLMGateway):
                 "不强制每轮交出新线索，不列完整通关条件。口头承诺仍是承诺，不能当作事实或自动资源操作。"
                 "实际看房、核验、签署只认服务器的observed_results及合同记录，不能因玩家自称做完而确认。")
         if isinstance(context, RoleTurnContext) or (
-            isinstance(context, NightAgentContext) and context.phase == "player_group_dialogue"
+            isinstance(context, NightAgentContext)
+            and context.phase in {"player_group_dialogue", "resolved_group_followup"}
         ):
             data["player_identity"] = "云溪县县长李致远"
         for key in (
@@ -851,12 +852,19 @@ class OpenAICompatibleRoleLLMGateway(RoleLLMGateway):
                 memory_candidate=memory_candidate,
                 reason_code=dialogue_act,
             )
-        if context.phase == "dialogue":
+        if context.phase in {"dialogue", "resolved_group_followup"}:
+            followup = context.phase == "resolved_group_followup"
             expression = self.express(ExpressionTask(
                 task_id=f"{context.scene_id}:{context.phase}",
                 confirmed_choice_ids=("speak_to_agenda",),
                 choice_summaries={
-                    "speak_to_agenda": "只围绕已确认议题，以当前角色身份作出回应"
+                    "speak_to_agenda": (
+                        "会谈已经收束；以当前角色身份作出自然的会后补充回应，"
+                        "可以回应符合世界与人物身份的日常交流，但不得重新开启追问、"
+                        "改变会谈结论或宣称任何承诺已经兑现。"
+                        if followup else
+                        "只围绕已确认议题，以当前角色身份作出回应"
+                    )
                 },
                 allowed_facts=tuple(
                     item for item in (

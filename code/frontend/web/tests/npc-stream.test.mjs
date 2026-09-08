@@ -91,6 +91,21 @@ test("tracks thinking per NPC, progressive answers, and safe error cleanup", () 
   assert.equal(state.error, "对方暂时无法回应，请稍后重试。");
 });
 
+test("keeps repeated backend stream IDs separate across successive NPC replies", () => {
+  let state = playerUi.initialNpcStreamState();
+  state = playerUi.reduceNpcStream(state, { type: "npc_start", stream_id: "npc:0", npc_id: "npc-a", npc_name: "甲" });
+  state = playerUi.reduceNpcStream(state, { type: "npc_delta", stream_id: "npc:0", delta: "第一轮" });
+  state = playerUi.reduceNpcStream(state, { type: "npc_end", stream_id: "npc:0" });
+  state = playerUi.reduceNpcStream(state, { type: "npc_start", stream_id: "npc:0", npc_id: "npc-b", npc_name: "乙" });
+  state = playerUi.reduceNpcStream(state, { type: "npc_delta", stream_id: "npc:0", delta: "第二轮" });
+  state = playerUi.reduceNpcStream(state, { type: "npc_end", stream_id: "npc:0" });
+
+  assert.deepEqual(state.replies.map(reply => [reply.stream_id, reply.npc_id, reply.text, reply.complete]), [
+    ["npc:0", "npc-a", "第一轮", true],
+    ["npc:0#2", "npc-b", "第二轮", true],
+  ]);
+});
+
 test("shows an immediate pending state until the first NPC response event", () => {
   let state = playerUi.initialNpcStreamState();
   state = playerUi.reduceNpcStream(state, { type: "request_started" });

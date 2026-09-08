@@ -7,7 +7,7 @@ from fastapi.testclient import TestClient
 
 from serious_game_backend.api.app import create_app
 from serious_game_backend.application.story_flow_service import StoryFlowService
-from serious_game_backend.bootstrap import build_container
+from tests.test_doubles import build_test_container as build_container
 from serious_game_backend.config import Settings
 
 
@@ -22,7 +22,7 @@ class TestArchiveDecisionLinkageV3:
             content_root=PACKAGE_ROOT,
             default_package_id="pkg_gameplay_v3",
             repository="memory",
-            role_llm_provider="fake",
+            role_llm_provider="none",
         )
         self.runtime = build_container(settings)
         self.client = TestClient(create_app(settings, self.runtime))

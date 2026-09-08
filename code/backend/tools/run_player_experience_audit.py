@@ -14,11 +14,13 @@ import sys
 from fastapi.testclient import TestClient
 
 from serious_game_backend.api.app import create_app
-from serious_game_backend.bootstrap import build_container
 from serious_game_backend.config import Settings
 
 
 BACKEND_ROOT = Path(__file__).resolve().parents[1]
+if str(BACKEND_ROOT) not in sys.path:
+    sys.path.insert(0, str(BACKEND_ROOT))
+from tests.test_doubles import build_test_container as build_container  # noqa: E402
 ACCOUNT_ID = "acct_player_experience_audit"
 HEADERS = {"X-Account-ID": ACCOUNT_ID}
 PREFERRED_WORDS = (
@@ -43,7 +45,7 @@ def run(max_steps: int = 3000) -> dict:
         environment="test",
         content_root=BACKEND_ROOT / "content" / "packages",
         repository="memory",
-        role_llm_provider="fake",
+        role_llm_provider="none",
     )
     runtime = build_container(settings)
     client = TestClient(create_app(settings, runtime))

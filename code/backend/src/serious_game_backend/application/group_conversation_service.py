@@ -104,8 +104,20 @@ class GroupConversationService:
             conversation = session.active_group_conversation
             if conversation is None:
                 raise ActionUnavailableError("当前没有强制群组会谈")
-            if conversation.phase != "active":
-                raise ActionUnavailableError("本场会谈已经收束，请确认结束后继续")
+            if conversation.status == "completed":
+                raise ActionUnavailableError("本场会谈已经结束")
+            # A resolved conversation remains open for optional, ordinary
+            # follow-up dialogue until the player explicitly finishes it.
+            # Older snapshots may have persisted the resolved status while
+            # omitting the newer phase field, so accept both representations.
+            followup_mode = (
+                conversation.phase == "resolved"
+                or conversation.status == "resolved"
+            )
+            if conversation.phase not in {"active", "resolved"} and not followup_mode:
+                raise ActionUnavailableError("本场会谈当前不能继续")
+            if followup_mode:
+                conversation.phase = "resolved"
             package = require_locked_package(self._packages, session)
             if stream_event is not None:
                 stream_event({"type": "npc_thinking_start", "stream_id": "group:review",
@@ -117,7 +129,12 @@ class GroupConversationService:
                     f"input-review:{conversation.turn_count + 1}"
                 ),
                 player_text=text,
-                scene_goal=conversation.agenda,
+                scene_goal=(
+                    conversation.agenda
+                    if not followup_mode else
+                    f"{conversation.agenda}；会后与在场人物保持符合其身份的日常交流，"
+                    "不改变本场会谈的结论"
+                ),
             )
             ensure_stream_open(stream_cancelled)
             if stream_event is not None:
@@ -131,10 +148,15 @@ class GroupConversationService:
                     "reason": review_reason,
                     "visible_to_player": False,
                 })
-                NPCDemandService.sync(session, package)
+                if not followup_mode:
+                    NPCDemandService.sync(session, package)
                 return self._leases.complete(lease, lambda committed: {
                     "completed": False,
                     "input_rejected": True,
+                    "resolved": followup_mode,
+                    "dialogue_mode": (
+                        "followup" if followup_mode else "persuasion"
+                    ),
                     "message": input_rejection_message(review_reason),
                     "turn_dialogues": [],
                     "visible_state": self._projector.project(committed, package),
@@ -162,10 +184,13 @@ class GroupConversationService:
                     for item in other_ids
                 )
                 allowed_dialogue_acts = (
-                    "press", "challenge", "soften", "settle", "reopen"
+                    ("followup",)
+                    if followup_mode else
+                    ("press", "challenge", "soften", "settle", "reopen")
                 )
                 if (
-                    npc_id == conversation.initiator_npc_id
+                    not followup_mode
+                    and npc_id == conversation.initiator_npc_id
                     and all_others_settled
                 ):
                     allowed_dialogue_acts += ("close",)
@@ -195,7 +220,10 @@ class GroupConversationService:
                     ),
                     story_day=session.game_state.story_day,
                     scene_id=conversation.conversation_id,
-                    phase="player_group_dialogue",
+                    phase=(
+                        "resolved_group_followup"
+                        if followup_mode else "player_group_dialogue"
+                    ),
                     npc_id=npc_id,
                     npc_name=profile.name,
                     role_setting=profile.role_setting,
@@ -214,10 +242,19 @@ class GroupConversationService:
                     private_context=(
                         f"本场背景：{conversation.persuasion_context}\n"
                         f"本角色判断参考：{guidance}"
+                        + (
+                            "\n本场会谈已经收束；本次只是会后补充交流，"
+                            "不得重新开启追问、改变会谈结论或兑现任何承诺。"
+                            if followup_mode else ""
+                        )
                     ),
                     public_expression_context=(
                         f"当前公开议题：{conversation.agenda}；"
                         f"当前会谈状态：{state}"
+                        + (
+                            "；模式：会后补充交流，不改变收束状态"
+                            if followup_mode else ""
+                        )
                     ),
                     allowed_topics=tuple(conversation.demands),
                     player_text=text,
@@ -230,7 +267,7 @@ class GroupConversationService:
                             session, npc_id
                         )
                     ),
-                    participant_state=state,
+                    participant_state=("settled" if followup_mode else state),
                     allowed_dialogue_acts=allowed_dialogue_acts,
                     all_other_participants_settled=all_others_settled,
                     forbidden_disclosure_markers=tuple(
@@ -254,31 +291,37 @@ class GroupConversationService:
                     # facts they have not established.
                     allow_unverified_memory_claims=True,
                 )
-                dialogue_act = result.dialogue_act or "press"
-                if dialogue_act not in allowed_dialogue_acts:
-                    raise ActionUnavailableError("角色模型返回了当前不可用的会谈动作")
-                if dialogue_act == "close" and not (
-                    npc_id == conversation.initiator_npc_id
-                    and all_others_settled
-                    and result.topic_settled
-                ):
-                    raise ActionUnavailableError("发起人尚不能结束本场会谈")
-                if dialogue_act in {"settle", "close"} and result.topic_settled:
-                    next_state = "settled"
-                    public_summary = "暂时接受，仍在旁听"
-                elif dialogue_act == "soften":
-                    next_state = "wavering"
-                    public_summary = "态度有所动摇，仍在考虑"
+                if followup_mode:
+                    # Follow-up dialogue is deliberately not a persuasion
+                    # state transition.  The original settled states and
+                    # resolved phase remain authoritative.
+                    dialogue_act = "followup"
                 else:
-                    next_state = "active"
-                    public_summary = (
-                        "发现新矛盾，重新追问"
-                        if dialogue_act == "reopen" else "仍在追问"
-                    )
-                conversation.participant_states[npc_id] = {
-                    "status": next_state,
-                    "public_summary": public_summary,
-                }
+                    dialogue_act = result.dialogue_act or "press"
+                    if dialogue_act not in allowed_dialogue_acts:
+                        raise ActionUnavailableError("角色模型返回了当前不可用的会谈动作")
+                    if dialogue_act == "close" and not (
+                        npc_id == conversation.initiator_npc_id
+                        and all_others_settled
+                        and result.topic_settled
+                    ):
+                        raise ActionUnavailableError("发起人尚不能结束本场会谈")
+                    if dialogue_act in {"settle", "close"} and result.topic_settled:
+                        next_state = "settled"
+                        public_summary = "暂时接受，仍在旁听"
+                    elif dialogue_act == "soften":
+                        next_state = "wavering"
+                        public_summary = "态度有所动摇，仍在考虑"
+                    else:
+                        next_state = "active"
+                        public_summary = (
+                            "发现新矛盾，重新追问"
+                            if dialogue_act == "reopen" else "仍在追问"
+                        )
+                    conversation.participant_states[npc_id] = {
+                        "status": next_state,
+                        "public_summary": public_summary,
+                    }
                 if result.dialogue:
                     conversation.add_npc_turn(
                         npc_id=npc_id,
@@ -288,12 +331,18 @@ class GroupConversationService:
                         dialogue_act=dialogue_act,
                         stance=result.stance or "guarded",
                     )
+                    conversation.transcript[-1]["dialogue_mode"] = (
+                        "followup" if followup_mode else "persuasion"
+                    )
                     turn_dialogues.append({
                         "npc_id": npc_id,
                         "npc_name": profile.name,
                         "model_id": result.model_id,
                         "text": result.dialogue,
                         "dialogue_act": dialogue_act,
+                        "dialogue_mode": (
+                            "followup" if followup_mode else "persuasion"
+                        ),
                         "stance": result.stance or "guarded",
                     })
                 if result.memory_candidate:
@@ -304,20 +353,22 @@ class GroupConversationService:
                     ))
             ensure_stream_open(stream_cancelled)
             conversation.turn_count += 1
-            resolved = all(
-                item["status"] == "settled"
-                for item in conversation.participant_states.values()
-            ) and any(
-                item.get("speaker_type") == "npc"
-                and item.get("npc_id") == conversation.initiator_npc_id
-                and item.get("dialogue_act") == "close"
-                for item in reversed(conversation.transcript)
-            )
-            if resolved:
-                conversation.phase = "resolved"
-                conversation.closure_summary = (
-                    "发起人确认在场人物暂时停止追问；这不代表承诺已经兑现。"
+            resolved = followup_mode
+            if not followup_mode:
+                resolved = all(
+                    item["status"] == "settled"
+                    for item in conversation.participant_states.values()
+                ) and any(
+                    item.get("speaker_type") == "npc"
+                    and item.get("npc_id") == conversation.initiator_npc_id
+                    and item.get("dialogue_act") == "close"
+                    for item in reversed(conversation.transcript)
                 )
+                if resolved:
+                    conversation.phase = "resolved"
+                    conversation.closure_summary = (
+                        "发起人确认在场人物暂时停止追问；这不代表承诺已经兑现。"
+                    )
             if self._npc_memories is not None:
                 for npc_id, candidate, operation_id in memory_candidates:
                     memory = self._npc_memories.record(
@@ -331,10 +382,14 @@ class GroupConversationService:
                     if memory is not None:
                         conversation.memory_ids.append(memory.memory_id)
                         created_memory_ids.append(memory.memory_id)
-            NPCDemandService.sync(session, package)
+            if not followup_mode:
+                NPCDemandService.sync(session, package)
             response = self._leases.complete(lease, lambda committed: {
                 "completed": False,
                 "resolved": resolved,
+                "dialogue_mode": (
+                    "followup" if followup_mode else "persuasion"
+                ),
                 "input_rejected": False,
                 "turn_dialogues": turn_dialogues,
                 "visible_state": self._projector.project(committed, package),
@@ -382,8 +437,10 @@ class GroupConversationService:
             conversation = session.active_group_conversation
             if conversation is None:
                 raise ActionUnavailableError("当前没有强制群组会谈")
-            if conversation.phase != "resolved":
+            if conversation.phase != "resolved" and conversation.status != "resolved":
                 raise ActionUnavailableError("在场人物尚未停止追问")
+            # Normalize older snapshots before archiving them.
+            conversation.phase = "resolved"
             package = require_locked_package(self._packages, session)
             conversation.status = "completed"
             session.completed_group_conversations.append(asdict(conversation))
@@ -422,6 +479,7 @@ class GroupConversationService:
                 "stream_id": f"{reply['npc_id']}:committed",
                 "npc_id": reply["npc_id"],
                 "npc_name": reply["npc_name"],
+                "dialogue_mode": reply.get("dialogue_mode", "persuasion"),
             }
             stream_event({"type": "npc_thinking_start", **identity})
             stream_event({"type": "npc_thinking_end", **identity})

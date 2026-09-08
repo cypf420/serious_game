@@ -17,7 +17,7 @@ from serious_game_backend.domain.errors import ContentValidationError
 from serious_game_backend.infrastructure.script_packages.file_loader import (
     FileScriptPackageLoader,
 )
-from serious_game_backend.bootstrap import build_container
+from tests.test_doubles import build_test_container as build_container
 from serious_game_backend.config import Settings
 from serious_game_backend.api.app import create_app
 
@@ -495,7 +495,7 @@ class StorySemanticsV3Tests(unittest.TestCase):
             content_root=BACKEND_ROOT / "content" / "packages",
             default_package_id="pkg_gameplay_v3",
             repository="memory",
-            role_llm_provider="fake",
+            role_llm_provider="none",
         )
         container = build_container(settings)
         self.assertEqual("retired", container.packages.get("pkg_gameplay_v2").status)
@@ -507,7 +507,7 @@ class StorySemanticsV3Tests(unittest.TestCase):
             content_root=BACKEND_ROOT / "content" / "packages",
             default_package_id="pkg_gameplay_v2",
             repository="memory",
-            role_llm_provider="fake",
+            role_llm_provider="none",
         )
         container = build_container(settings)
         client = TestClient(create_app(settings, container=container))

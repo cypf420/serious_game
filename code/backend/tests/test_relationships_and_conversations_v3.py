@@ -11,11 +11,11 @@ from fastapi.testclient import TestClient
 from serious_game_backend.api.app import create_app
 from serious_game_backend.application.npc_memory_service import NPCMemoryService
 from serious_game_backend.application.npc_demand_service import NPCDemandService
-from serious_game_backend.bootstrap import build_container
+from tests.test_doubles import build_test_container as build_container
 from serious_game_backend.config import Settings
 from serious_game_backend.domain.conversation import CompletedConversation
 from serious_game_backend.domain.llm import RoleTurnContext
-from serious_game_backend.infrastructure.llm.fake import FakeRoleLLMGateway
+from tests.test_doubles import DeterministicRoleLLMGateway
 from serious_game_backend.infrastructure.repositories.codec import (
     decode_session,
     encode_session,
@@ -101,7 +101,7 @@ class RelationshipAndConversationV3Tests(unittest.TestCase):
             content_root=PACKAGE_ROOT,
             default_package_id="pkg_gameplay_v3",
             repository="memory",
-            role_llm_provider="fake",
+            role_llm_provider="none",
         )
         self.runtime = build_container(self.settings)
         self.client = TestClient(create_app(self.settings, self.runtime))
@@ -363,7 +363,7 @@ class RelationshipAndConversationV3Tests(unittest.TestCase):
             self.assertNotIn(forbidden, serialized)
 
     def test_fake_role_behavior_changes_with_safe_qualitative_context(self) -> None:
-        gateway = FakeRoleLLMGateway()
+        gateway = DeterministicRoleLLMGateway()
         base = RoleTurnContext(
             session_id="sess_context",
             npc_id="npc_wu_xiuying",
@@ -683,7 +683,7 @@ class RelationshipSqliteRestartTests(unittest.TestCase):
                 default_package_id="pkg_gameplay_v3",
                 repository="sqlite",
                 database_path=database_path,
-                role_llm_provider="fake",
+                role_llm_provider="none",
             )
             runtime = build_container(settings)
             client = TestClient(create_app(settings, runtime))
@@ -737,7 +737,7 @@ class RelationshipSqliteRestartTests(unittest.TestCase):
                 default_package_id="pkg_gameplay_v3",
                 repository="sqlite",
                 database_path=database_path,
-                role_llm_provider="fake",
+                role_llm_provider="none",
             )
             runtime = build_container(settings)
             client = TestClient(create_app(settings, runtime))

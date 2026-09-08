@@ -32,8 +32,10 @@ from serious_game_backend.application.action_variants import (
     canonical_opportunity_descriptor,
     find_variant,
     governance_action_permission,
+    available_location_choices,
     variant_availability,
     variant_target_choices,
+    resolve_variant_location,
     participant_rules,
 )
 from serious_game_backend.application.archive_investigation_service import (
@@ -321,7 +323,9 @@ class GameplayGovernanceService:
             session, package, action_kind
         )
         if not permitted:
-            raise ActionUnavailableError(permission_reason or "当前不能执行该行动")
+            raise ActionUnavailableError(
+                permission_reason or "当前不能执行该行动"
+            )
         opportunity = self._governance_opportunity(
             session,
             package,
@@ -335,6 +339,15 @@ class GameplayGovernanceService:
             proposed_document_type=proposed_document_type,
             lead_npc_id=lead_npc_id,
         )
+        # An opportunity and a map entry carry their own canonical scene.  The
+        # ordinary action picker no longer needs to submit a location; resolve
+        # it from the authoritative descriptor before validating the variant.
+        if opportunity is not None and location_id is None:
+            opportunity_descriptor = canonical_opportunity_descriptor(
+                session, package, opportunity
+            )
+            if opportunity_descriptor is not None:
+                location_id = opportunity_descriptor["preselected_location_id"]
         if opportunity is not None and map_entry_id is not None:
             raise ActionUnavailableError("人物会谈机会不能伪装成地图入口")
         map_descriptor = None
@@ -344,6 +357,8 @@ class GameplayGovernanceService:
             )
             if map_descriptor is None:
                 raise ActionUnavailableError("地图入口当前不可用")
+            if location_id is None:
+                location_id = map_descriptor["preselected_location_id"]
             if (
                 map_descriptor["action_id"] != action_kind
                 or map_descriptor["variant_id"] != variant_id
@@ -360,9 +375,9 @@ class GameplayGovernanceService:
             raise ActionUnavailableError("不存在这项基础行动")
         variant = None
         if package.gameplay_schema_version >= 4:
-            if not variant_id or not location_id:
+            if not variant_id:
                 raise ActionUnavailableError(
-                    "玩法 Schema v4 必须提交行动变体和合法地点"
+                    "玩法 Schema v4 必须提交行动变体"
                 )
             variant = find_variant(package, variant_id)
             if variant is None or variant.get("action_id") != action_kind:
@@ -372,8 +387,20 @@ class GameplayGovernanceService:
                 raise ActionUnavailableError(
                     unavailable_reason or "行动变体当前不可用"
                 )
-            if location_id not in variant["legal_location_ids"]:
+            location_choices = available_location_choices(session, package, variant)
+            if not location_choices:
+                raise ActionUnavailableError("当前没有已解锁的合法办理地点")
+            resolved_location_id = resolve_variant_location(
+                session,
+                package,
+                variant,
+                preferred_location_id=location_id,
+            )
+            if resolved_location_id is None:
+                raise ActionUnavailableError("当前没有已解锁的合法办理地点")
+            if location_id is not None and location_id != resolved_location_id:
                 raise ActionUnavailableError("行动变体不能在所选地点执行")
+            location_id = resolved_location_id
             legal_targets = {
                 item["target_id"]
                 for item in variant_target_choices(session, package, variant)
@@ -450,6 +477,8 @@ class GameplayGovernanceService:
             display_title=(
                 str(map_descriptor["title"])
                 if map_descriptor is not None
+                else str(variant.get("name"))
+                if variant is not None and variant.get("name")
                 else None
             ),
             cost_action_points=cost,
@@ -658,7 +687,7 @@ class GameplayGovernanceService:
         profiles = {item.npc_id: item for item in package.npc_profiles}
         opportunity = next(
             (
-                item for item in package.interaction_opportunities
+            item for item in package.interaction_opportunities
                 if item.opportunity_id == action.opportunity_id
             ),
             None,
@@ -4261,7 +4290,10 @@ class GameplayGovernanceService:
         if descriptor is None or (
             action_kind != descriptor["action_id"]
             or variant_id != descriptor["variant_id"]
-            or location_id != descriptor["preselected_location_id"]
+            or (
+                location_id is not None
+                and location_id != descriptor["preselected_location_id"]
+            )
             or list(target_ids) != descriptor["preselected_npc_ids"]
             or topic.strip() != descriptor["canonical_topic"]
             or archive_ids

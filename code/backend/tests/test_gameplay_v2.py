@@ -27,7 +27,7 @@ from serious_game_backend.application.scripted_effect_service import (
 )
 from serious_game_backend.application.stream_lifecycle import StreamCancellation
 from serious_game_backend.application.trust_derivation_service import TrustDerivationService
-from serious_game_backend.bootstrap import build_container
+from tests.test_doubles import build_test_container as build_container
 from serious_game_backend.config import Settings
 from serious_game_backend.domain.enums import ActionInputMode, OperationStatus
 from serious_game_backend.domain.errors import (
@@ -48,7 +48,7 @@ from serious_game_backend.infrastructure.repositories.codec import (
     decode_session,
     encode_session,
 )
-from serious_game_backend.infrastructure.llm.fake import FakeRoleLLMGateway
+from tests.test_doubles import DeterministicRoleLLMGateway
 
 
 BACKEND_ROOT = Path(__file__).resolve().parents[1]
@@ -140,7 +140,7 @@ class GameplayV2Tests(unittest.TestCase):
             content_root=BACKEND_ROOT / "content" / "packages",
             default_package_id="pkg_gameplay_v2",
             repository="memory",
-            role_llm_provider="fake",
+            role_llm_provider="none",
         )
         self.container = build_container(settings)
         self.client = TestClient(create_app(settings, self.container))
@@ -1145,7 +1145,7 @@ class GameplayV2Tests(unittest.TestCase):
         effects = ScriptedEffectService(ScriptedDeltaResolver())
         service = NightSimulationService(
             effects,
-            night_llm=FakeRoleLLMGateway(),
+            night_llm=DeterministicRoleLLMGateway(),
         )
 
         record = service.run_night(session, package)
@@ -1262,7 +1262,7 @@ class GameplayV2Tests(unittest.TestCase):
         self.assertEqual(OperationStatus.FAILED_RETRYABLE, operation.status)
 
     def test_d29_npc_can_choose_zero_to_multiple_contacts(self) -> None:
-        class MultiContactGateway(FakeRoleLLMGateway):
+        class MultiContactGateway(DeterministicRoleLLMGateway):
             def run_night_turn(self, context):
                 if context.phase == "contact_selection":
                     contacts = (
@@ -1309,7 +1309,7 @@ class GameplayV2Tests(unittest.TestCase):
         self.assertEqual(6, len(record["agent_exchanges"][0]["transcript"]))
 
     def test_rejected_night_invitation_does_not_force_npc_into_dialogue(self) -> None:
-        class RejectingGateway(FakeRoleLLMGateway):
+        class RejectingGateway(DeterministicRoleLLMGateway):
             def run_night_turn(self, context):
                 if context.phase == "contact_selection":
                     contacts = (

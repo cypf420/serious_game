@@ -10,7 +10,7 @@ import unittest
 from fastapi.testclient import TestClient
 
 from serious_game_backend.api.app import create_app
-from serious_game_backend.bootstrap import build_container
+from tests.test_doubles import build_test_container as build_container
 from serious_game_backend.config import Settings
 from serious_game_backend.domain.errors import ContentValidationError
 from serious_game_backend.domain.llm import RoleTurnResult
@@ -177,7 +177,7 @@ class ActionUnificationV3Tests(unittest.TestCase):
             content_root=PACKAGE_ROOT,
             default_package_id="pkg_gameplay_v2",
             repository="memory",
-            role_llm_provider="fake",
+            role_llm_provider="none",
         )
         self.runtime = build_container(self.settings)
         base = self.runtime.packages.get("pkg_gameplay_v2")
@@ -599,7 +599,7 @@ class GameplayV3PlayerRegressionTests(unittest.TestCase):
             content_root=PACKAGE_ROOT,
             default_package_id="pkg_gameplay_v3",
             repository="memory",
-            role_llm_provider="fake",
+            role_llm_provider="none",
         )
         self.runtime = build_container(self.settings)
         self.client = TestClient(create_app(self.settings, self.runtime))

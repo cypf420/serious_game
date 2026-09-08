@@ -56,7 +56,7 @@ from serious_game_backend.infrastructure.repositories.sqlite import (
     SqliteNPCMemoryRepository,
     SqliteRuntimeStore,
 )
-from serious_game_backend.infrastructure.llm.fake import FakeRoleLLMGateway
+from tests.test_doubles import DeterministicRoleLLMGateway
 from serious_game_backend.infrastructure.script_packages.file_loader import FileScriptPackageLoader
 
 
@@ -120,7 +120,7 @@ class RuntimeServiceTests(unittest.TestCase):
             self.projector,
             self.opportunities,
             NPCTurnService(
-                FakeRoleLLMGateway(),
+                DeterministicRoleLLMGateway(),
                 StateDeltaValidator(resolver),
             ),
             scripted_effects,

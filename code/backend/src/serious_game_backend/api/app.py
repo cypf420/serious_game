@@ -309,6 +309,7 @@ def create_app(settings: Settings | None = None, container: Container | None = N
                 "stream_id": stream_id,
                 "npc_id": reply.get("npc_id", ""),
                 "npc_name": reply.get("npc_name", ""),
+                "dialogue_mode": reply.get("dialogue_mode", "persuasion"),
             }
             if include_thinking:
                 yield json.dumps({

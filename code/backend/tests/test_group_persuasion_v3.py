@@ -8,7 +8,7 @@ from fastapi.testclient import TestClient
 
 from serious_game_backend.api.app import create_app
 from serious_game_backend.application.disclosure_gate_service import DisclosureGateService
-from serious_game_backend.bootstrap import build_container
+from tests.test_doubles import build_test_container as build_container
 from serious_game_backend.config import Settings
 from serious_game_backend.domain.conversation import ForcedGroupConversation
 from serious_game_backend.domain.errors import StateVersionConflictError
@@ -21,7 +21,7 @@ BACKEND_ROOT = Path(__file__).resolve().parents[1]
 def test_low_information_group_turn_reaches_npc_and_meta_instruction_leaves_state_untouched() -> None:
     settings = Settings(
         environment="test", content_root=BACKEND_ROOT / "content" / "packages",
-        default_package_id="pkg_gameplay_v3", repository="memory", role_llm_provider="fake",
+        default_package_id="pkg_gameplay_v3", repository="memory", role_llm_provider="none",
     )
     runtime = build_container(settings)
     client = TestClient(create_app(settings, runtime))
@@ -102,7 +102,7 @@ def test_conversation_disclosure_follows_the_declared_npc_route() -> None:
         content_root=BACKEND_ROOT / "content" / "packages",
         default_package_id="pkg_gameplay_v3",
         repository="memory",
-        role_llm_provider="fake",
+        role_llm_provider="none",
     )
     runtime = build_container(settings)
     client = TestClient(create_app(settings, runtime))
@@ -198,7 +198,7 @@ def test_group_turn_resolves_from_npc_choices_without_auto_archiving() -> None:
         content_root=BACKEND_ROOT / "content" / "packages",
         default_package_id="pkg_gameplay_v3",
         repository="memory",
-        role_llm_provider="fake",
+        role_llm_provider="none",
     )
     runtime = build_container(settings)
     client = TestClient(create_app(settings, runtime))
@@ -284,7 +284,7 @@ def test_player_finish_archives_only_a_resolved_group_conversation() -> None:
         content_root=BACKEND_ROOT / "content" / "packages",
         default_package_id="pkg_gameplay_v3",
         repository="memory",
-        role_llm_provider="fake",
+        role_llm_provider="none",
     )
     runtime = build_container(settings)
     client = TestClient(create_app(settings, runtime))
@@ -345,7 +345,7 @@ def test_many_press_turns_never_auto_resolve_from_a_hidden_quota() -> None:
         content_root=BACKEND_ROOT / "content" / "packages",
         default_package_id="pkg_gameplay_v3",
         repository="memory",
-        role_llm_provider="fake",
+        role_llm_provider="none",
     )
     runtime = build_container(settings)
     client = TestClient(create_app(settings, runtime))
@@ -418,7 +418,7 @@ def test_failed_atomic_commit_invalidates_new_group_memory() -> None:
         content_root=BACKEND_ROOT / "content" / "packages",
         default_package_id="pkg_gameplay_v3",
         repository="memory",
-        role_llm_provider="fake",
+        role_llm_provider="none",
     )
     runtime = build_container(settings)
     client = TestClient(create_app(settings, runtime))
@@ -481,7 +481,7 @@ def test_group_persuasion_receives_current_relationship_state() -> None:
         content_root=BACKEND_ROOT / "content" / "packages",
         default_package_id="pkg_gameplay_v3",
         repository="memory",
-        role_llm_provider="fake",
+        role_llm_provider="none",
     )
     runtime = build_container(settings)
     client = TestClient(create_app(settings, runtime))
@@ -557,7 +557,7 @@ def test_committed_group_memory_survives_stream_delivery_failure() -> None:
         content_root=BACKEND_ROOT / "content" / "packages",
         default_package_id="pkg_gameplay_v3",
         repository="memory",
-        role_llm_provider="fake",
+        role_llm_provider="none",
     )
     runtime = build_container(settings)
     client = TestClient(create_app(settings, runtime))
@@ -625,7 +625,7 @@ def test_full_persuasion_state_machine_reopens_then_closes_and_keeps_history() -
         content_root=BACKEND_ROOT / "content" / "packages",
         default_package_id="pkg_gameplay_v3",
         repository="memory",
-        role_llm_provider="fake",
+        role_llm_provider="none",
     )
     runtime = build_container(settings)
     client = TestClient(create_app(settings, runtime))

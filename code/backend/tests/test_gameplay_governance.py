@@ -18,7 +18,7 @@ from serious_game_backend.application.scripted_delta_resolver import (
 from serious_game_backend.application.scripted_effect_service import (
     ScriptedEffectService,
 )
-from serious_game_backend.bootstrap import build_container
+from tests.test_doubles import build_test_container as build_container
 from serious_game_backend.config import Settings
 from serious_game_backend.domain.errors import ActionUnavailableError
 from serious_game_backend.domain.llm import GovernanceLLMResult
@@ -107,7 +107,7 @@ class GameplayGovernanceTests(unittest.TestCase):
             content_root=BACKEND_ROOT / "content" / "packages",
             default_package_id="pkg_gameplay_v2",
             repository="memory",
-            role_llm_provider="fake",
+            role_llm_provider="none",
         )
         self.runtime = build_container(settings)
         self.client = TestClient(create_app(settings, self.runtime))

@@ -3,11 +3,11 @@ from __future__ import annotations
 import unittest
 
 from serious_game_backend.domain.llm import RoleTurnResult
-from serious_game_backend.infrastructure.llm.fake import FakeRoleLLMGateway
+from tests.test_doubles import DeterministicRoleLLMGateway
 
 
 class OppositeBoundedGateway:
-    """合法但与 Fake LLM 相反的软状态输出。"""
+    """合法但与默认测试替身相反的软状态输出。"""
 
     def run_turn(self, context):
         return RoleTurnResult(
@@ -47,7 +47,7 @@ def complete_default_replay(gateway) -> tuple[dict, dict]:
 
 class M3HardStateInvarianceTests(unittest.TestCase):
     def test_llm_soft_output_cannot_change_hard_settlement_or_ending(self) -> None:
-        baseline, baseline_review = complete_default_replay(FakeRoleLLMGateway())
+        baseline, baseline_review = complete_default_replay(DeterministicRoleLLMGateway())
         opposite, opposite_review = complete_default_replay(OppositeBoundedGateway())
 
         self.assertEqual("ended", baseline["visible_state"]["status"])

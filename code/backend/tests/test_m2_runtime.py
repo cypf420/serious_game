@@ -6,7 +6,7 @@ import unittest
 from fastapi.testclient import TestClient
 
 from serious_game_backend.api.app import create_app
-from serious_game_backend.bootstrap import build_container
+from tests.test_doubles import build_test_container as build_container
 from serious_game_backend.config import Settings
 from serious_game_backend.infrastructure.script_packages.file_loader import (
     FileScriptPackageLoader,
@@ -23,7 +23,7 @@ class M2RuntimeTests(unittest.TestCase):
             content_root=BACKEND_ROOT / "content" / "packages",
             default_package_id="pkg_gameplay_v2",
             repository="memory",
-            role_llm_provider="fake",
+            role_llm_provider="none",
         )
         self.container = build_container(settings)
         self.client = TestClient(create_app(settings, container=self.container))

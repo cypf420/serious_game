@@ -168,8 +168,6 @@ def validate_real_runner_settings(settings: Settings, *, api_key: str) -> None:
 
     if settings.role_llm_provider != "openai_compatible":
         raise SystemExit("real route acceptance requires openai_compatible")
-    if settings.role_llm_fallback_to_fake:
-        raise SystemExit("real route acceptance refuses Fake fallback")
     if not api_key.strip():
         raise SystemExit("configured real API key is missing")
 
@@ -639,7 +637,6 @@ class RealRouteRunner(StoryRoutesV3Tests):
             auth_required=False,
             allow_self_registration=False,
             role_llm_provider="openai_compatible",
-            role_llm_fallback_to_fake=False,
         )
         settings.validate()
         container = build_container(

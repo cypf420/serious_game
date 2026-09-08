@@ -291,7 +291,6 @@ def run_failure_cases(settings: Settings, api_key: str, root: Path, proxy: Fault
         default_package_id="pkg_gameplay_v3",
         role_llm_max_retries=0,
         role_llm_timeout_seconds=max(5, int(settings.role_llm_timeout_seconds)),
-        role_llm_fallback_to_fake=False,
     )
     def fault_transport(_base: str, key: str, body: dict, timeout: float) -> dict:
         return OpenAICompatibleRoleLLMGateway._http_transport(

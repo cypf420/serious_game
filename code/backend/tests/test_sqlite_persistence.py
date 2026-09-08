@@ -11,7 +11,7 @@ from contextlib import contextmanager
 from fastapi.testclient import TestClient
 
 from serious_game_backend.api.app import create_app
-from serious_game_backend.bootstrap import build_container
+from tests.test_doubles import build_test_container as build_container
 from serious_game_backend.application.hashing import canonical_request_hash
 from serious_game_backend.config import Settings
 from serious_game_backend.domain.action import ActionCommand
@@ -39,7 +39,7 @@ class SqlitePersistenceTests(unittest.TestCase):
             content_root=BACKEND_ROOT / "content" / "packages",
             default_package_id="pkg_gameplay_v3",
             repository="memory",
-            role_llm_provider="fake",
+            role_llm_provider="none",
         )
         runtime = build_container(settings)
         session = runtime.game_sessions.start_session(
@@ -157,7 +157,7 @@ class SqlitePersistenceTests(unittest.TestCase):
             content_root=BACKEND_ROOT / "content" / "packages",
             default_package_id="pkg_gameplay_v3",
             repository="memory",
-            role_llm_provider="fake",
+            role_llm_provider="none",
         )
         runtime = build_container(settings)
         session = runtime.game_sessions.start_session(
@@ -204,7 +204,7 @@ class SqlitePersistenceTests(unittest.TestCase):
                 default_package_id="pkg_gameplay_v3",
                 repository="sqlite",
                 database_path=database,
-                role_llm_provider="fake",
+                role_llm_provider="none",
             )
             runtime = build_container(settings)
             client = TestClient(create_app(settings, runtime))
@@ -307,7 +307,7 @@ class SqlitePersistenceTests(unittest.TestCase):
                 content_root=BACKEND_ROOT / "content" / "packages",
                 repository="sqlite",
                 database_path=database_path,
-                role_llm_provider="fake",
+                role_llm_provider="none",
             )
             runtime = build_container(settings)
             session = runtime.game_sessions.start_session(
@@ -426,7 +426,7 @@ class SqlitePersistenceTests(unittest.TestCase):
                 content_root=BACKEND_ROOT / "content" / "packages",
                 repository="sqlite",
                 database_path=database,
-                role_llm_provider="fake",
+                role_llm_provider="none",
                 operation_lease_seconds=300,
             )
             runtime = build_container(settings)
@@ -499,7 +499,7 @@ class SqlitePersistenceTests(unittest.TestCase):
                 content_root=BACKEND_ROOT / "content" / "packages",
                 repository="sqlite",
                 database_path=database,
-                role_llm_provider="fake",
+                role_llm_provider="none",
             )
             runtime = build_container(settings)
             session = runtime.game_sessions.start_session(
@@ -599,7 +599,7 @@ class SqlitePersistenceTests(unittest.TestCase):
                 content_root=BACKEND_ROOT / "content" / "packages",
                 repository="sqlite",
                 database_path=Path(temp_dir) / "m2-queue.db",
-                role_llm_provider="fake",
+                role_llm_provider="none",
             )
             runtime = build_container(settings)
             session = runtime.game_sessions.start_session(
@@ -699,7 +699,7 @@ class SqlitePersistenceTests(unittest.TestCase):
                 content_root=BACKEND_ROOT / "content" / "packages",
                 repository="sqlite",
                 database_path=database_path,
-                role_llm_provider="fake",
+                role_llm_provider="none",
             )
             runtime = build_container(settings)
             session = runtime.game_sessions.start_session(
@@ -762,7 +762,7 @@ class SqlitePersistenceTests(unittest.TestCase):
                 content_root=BACKEND_ROOT / "content" / "packages",
                 repository="sqlite",
                 database_path=Path(temp_dir) / "runtime.db",
-                role_llm_provider="fake",
+                role_llm_provider="none",
             )
             first_runtime = build_container(settings)
             session = first_runtime.game_sessions.start_session(

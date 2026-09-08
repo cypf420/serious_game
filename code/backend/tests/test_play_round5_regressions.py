@@ -10,7 +10,7 @@ from fastapi.testclient import TestClient
 from serious_game_backend.api.app import create_app
 from serious_game_backend.application.progress_broadcast_policy import progress_broadcast
 from serious_game_backend.application.story_flow_service import StoryFlowService
-from serious_game_backend.bootstrap import build_container
+from tests.test_doubles import build_test_container as build_container
 from serious_game_backend.config import Settings
 from serious_game_backend.domain.errors import ContentValidationError
 
@@ -26,7 +26,7 @@ class PlayRound5ApiTests(unittest.TestCase):
             content_root=PACKAGE_ROOT,
             default_package_id="pkg_gameplay_v3",
             repository="memory",
-            role_llm_provider="fake",
+            role_llm_provider="none",
         )
         self.runtime = build_container(self.settings)
         self.client = TestClient(create_app(self.settings, self.runtime))
@@ -309,7 +309,7 @@ class PlayRound5PolicyTests(unittest.TestCase):
             content_root=PACKAGE_ROOT,
             default_package_id="pkg_gameplay_v3",
             repository="memory",
-            role_llm_provider="fake",
+            role_llm_provider="none",
         )).packages.get("pkg_gameplay_v3")
         texts = []
         for beat in package.story_days.values():
@@ -334,7 +334,7 @@ class PlayRound5PolicyTests(unittest.TestCase):
             content_root=PACKAGE_ROOT,
             default_package_id="pkg_gameplay_v3",
             repository="memory",
-            role_llm_provider="fake",
+            role_llm_provider="none",
         )).packages.get("pkg_gameplay_v3")
         from serious_game_backend.domain.game_session import GameSession
         from serious_game_backend.domain.game_state import GameState

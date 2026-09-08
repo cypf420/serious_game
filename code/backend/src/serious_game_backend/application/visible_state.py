@@ -151,8 +151,16 @@ class VisibleStateProjector:
                     "demands": list(
                         session.active_group_conversation.demands
                     ),
-                    "urgency": session.active_group_conversation.urgency,
-                    "phase": session.active_group_conversation.phase,
+                     "urgency": session.active_group_conversation.urgency,
+                     "phase": session.active_group_conversation.phase,
+                     "dialogue_mode": (
+                         "followup"
+                         if (
+                             session.active_group_conversation.phase == "resolved"
+                             or session.active_group_conversation.status == "resolved"
+                         )
+                         else "persuasion"
+                     ),
                     "participant_states": [
                         {
                             "npc_id": npc_id,

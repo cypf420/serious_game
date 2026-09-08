@@ -10,7 +10,7 @@ from fastapi.testclient import TestClient
 
 from serious_game_backend.api.app import create_app
 from serious_game_backend.application.governance_service import GovernanceService
-from serious_game_backend.bootstrap import build_container
+from tests.test_doubles import build_test_container as build_container
 from serious_game_backend.config import Settings
 from serious_game_backend.domain.errors import PermissionDeniedError
 from serious_game_backend.domain.identity import ADMIN, RESEARCHER, ROLE_PERMISSIONS, Principal
@@ -152,7 +152,7 @@ class GovernanceTests(unittest.TestCase):
             ))
         production_view = Settings(
             environment="production", content_root=runtime_settings.content_root,
-            repository="memory", role_llm_provider="fake",
+            repository="memory", role_llm_provider="none",
         )
         app = create_app(production_view, runtime)
         researcher = TestClient(app, base_url="https://testserver")

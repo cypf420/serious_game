@@ -257,11 +257,7 @@ class PlayerLLMConfigurationRegistry:
         if self._server_default is None:
             return None
         return {
-            "endpoint": (
-                "开发模板接口"
-                if self._settings.role_llm_provider == "fake"
-                else self._public_endpoint(self._settings.role_llm_base_url)
-            ),
+            "endpoint": self._public_endpoint(self._settings.role_llm_base_url),
             "model": self._settings.role_llm_model,
         }
 
@@ -297,11 +293,7 @@ class PlayerLLMConfigurationRegistry:
         if self._server_default is None:
             raise PlayerLLMConfigurationInvalidError("服务器未配置可用的默认 AI 接口")
         capabilities, tested_at = self._probe_capabilities(self._server_default)
-        endpoint = (
-            "开发模板接口"
-            if self._settings.role_llm_provider == "fake"
-            else self._public_endpoint(self._settings.role_llm_base_url)
-        )
+        endpoint = self._public_endpoint(self._settings.role_llm_base_url)
         self._set(scope_id, _Selection(
             mode="server_default",
             gateway=self._server_default,
@@ -332,7 +324,6 @@ class PlayerLLMConfigurationRegistry:
             role_llm_model=normalized_model,
             document_audit_llm_model=normalized_model,
             contract_audit_llm_model=normalized_model,
-            role_llm_fallback_to_fake=False,
         )
         def validated_transport(
             request_base_url: str,

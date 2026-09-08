@@ -23,7 +23,7 @@ from serious_game_backend.domain.llm import (
 from serious_game_backend.infrastructure.llm.openai_compatible import (
     OpenAICompatibleRoleLLMGateway,
 )
-from serious_game_backend.infrastructure.llm.fake import FakeRoleLLMGateway
+from tests.test_doubles import DeterministicRoleLLMGateway
 from serious_game_backend.infrastructure.llm.player_configuration import (
     PlayerLLMConfigurationRegistry,
 )
@@ -46,7 +46,6 @@ class ChoiceExpressionProtocolTests(unittest.TestCase):
         self.settings = Settings(
             environment="test",
             role_llm_provider="openai_compatible",
-            role_llm_fallback_to_fake=False,
             role_llm_max_retries=2,
         )
         self.audits = InMemoryLLMCallAuditRepository()
@@ -201,7 +200,7 @@ class ChoiceExpressionProtocolTests(unittest.TestCase):
         limited = OpenAICompatibleRoleLLMGateway(
             Settings(
                 environment="test", role_llm_provider="openai_compatible",
-                role_llm_fallback_to_fake=False, role_llm_max_calls_per_session=1,
+                role_llm_max_calls_per_session=1,
             ),
             "real-key", self.audits, transport=transport,
         )
@@ -632,7 +631,7 @@ class ChoiceExpressionProtocolTests(unittest.TestCase):
         registry = PlayerLLMConfigurationRegistry(
             self.settings,
             self.audits,
-            FakeRoleLLMGateway(),
+            DeterministicRoleLLMGateway(),
             transport=transport,
             resolver=lambda host, port, **_kwargs: [
                 (socket.AF_INET, socket.SOCK_STREAM, 6, "", ("93.184.216.34", port))
@@ -772,7 +771,7 @@ class ChoiceExpressionProtocolTests(unittest.TestCase):
     def test_technical_night_failure_aborts_instead_of_settling_hold_position(self) -> None:
         service = NightSimulationService(
             ScriptedEffectService(ScriptedDeltaResolver()),
-            night_llm=FakeRoleLLMGateway(night_fixture="malformed"),
+            night_llm=DeterministicRoleLLMGateway(night_fixture="malformed"),
         )
         failures: list[dict] = []
         context = NightAgentContext(
