@@ -8,7 +8,7 @@ import unittest
 from fastapi.testclient import TestClient
 
 from serious_game_backend.api.app import create_app
-from serious_game_backend.bootstrap import build_container
+from tests.test_doubles import build_test_container as build_container
 from serious_game_backend.config import Settings
 
 
@@ -21,7 +21,7 @@ class ApiTests(unittest.TestCase):
             environment="test",
             content_root=BACKEND_ROOT / "content" / "packages",
             repository="memory",
-            role_llm_provider="fake",
+            role_llm_provider="none",
         )
         self.runtime = build_container(settings)
         self.client = TestClient(create_app(settings, self.runtime))
@@ -524,12 +524,20 @@ class ApiTests(unittest.TestCase):
             headers=self.headers,
         )
         self.assertEqual(200, action_catalog.status_code, action_catalog.text)
+        catalog_actions = action_catalog.json()["actions"]
+        self.assertTrue(
+            next(item for item in catalog_actions
+                 if item["action_id"] == "inspect_archives")["available"]
+        )
         self.assertTrue(all(
-            not item["available"] for item in action_catalog.json()["actions"]
+            not item["available"]
+            for item in catalog_actions
+            if item["action_id"] != "inspect_archives"
         ))
         self.assertTrue(all(
             item["unavailable_reason"] == "必须先处理当前决策"
-            for item in action_catalog.json()["actions"]
+            for item in catalog_actions
+            if item["action_id"] != "inspect_archives"
         ))
 
         decision = self.client.post(
@@ -550,7 +558,9 @@ class ApiTests(unittest.TestCase):
             headers=self.headers,
         )
         self.assertEqual(200, consequence.status_code, consequence.text)
-        self.assertEqual(["consequence", "narration"], [
+        # The retired generic followup is absent in both the saved editorial
+        # baseline and current package; do not require filler to reappear.
+        self.assertEqual(["consequence"], [
             item["kind"] for item in consequence.json()["items"]
         ])
         consequence_cursor = consequence.json()["cursor"]

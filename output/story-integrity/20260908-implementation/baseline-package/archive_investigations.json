@@ -1,0 +1,125 @@
+{
+  "archives": [
+    {
+      "archive_id": "archive_household_registry",
+      "title": "36户基础底账",
+      "category": "户籍与签约",
+      "unlock_day": 1,
+      "content": "柳林村搬迁范围内共登记三十六户。底账逐户列明户主、家庭人口、宅基地与房屋面积、安置意向及当前签约状态；三十户是阶段达标线，不是总户数。",
+      "evidence_level": "E2",
+      "confidentiality": "内部",
+      "result_fact_ids": ["fact_total_households"],
+      "strategic_uses": ["核对签约分母与阶段达标线", "识别台账口径是否偷换"]
+    },
+    {
+      "archive_id": "archive_coordination_fee_index",
+      "title": "前期协调费索引",
+      "category": "财政与项目",
+      "unlock_day": 1,
+      "content": "项目早期支出索引中单列“前期协调费”二百万元，摘要笼统，未附完整去向说明。索引能够证明该款项存在，但仍需结合原始凭证核实具体流向。",
+      "evidence_level": "E2",
+      "confidentiality": "内部",
+      "result_fact_ids": ["fact_two_million_fee"],
+      "strategic_uses": ["在审计和上级汇报中指出两百万元疑点", "与后续原始凭证交叉核验"]
+    },
+    {
+      "archive_id": "archive_village_social_excerpt",
+      "title": "村庄社会关系摘录",
+      "category": "村庄社会",
+      "unlock_day": 2,
+      "content": "历次入户记录显示，柳林村的议事并不只按村委会组织线运行。周氏宗族、老党员、困难户与临江经营户各有自己的说话人，迁坟和补偿议题尤其受宗族秩序影响。",
+      "evidence_level": "E1",
+      "confidentiality": "内部",
+      "result_fact_ids": ["fact_clan_power_map"],
+      "strategic_uses": ["安排入户和会谈顺序", "判断哪些事项需要先做宗族沟通"]
+    },
+    {
+      "archive_id": "archive_invoice_number_index",
+      "title": "发票登记与编号索引",
+      "category": "财政与项目",
+      "unlock_day": 16,
+      "content": "登记簿中三张不同名目的发票号码连续，开具日期相近，经办链条重合。索引足以支持正式立项核查，但不能单独证明最终责任人。",
+      "evidence_level": "E2",
+      "confidentiality": "敏感",
+      "result_fact_ids": ["fact_connected_invoices"],
+      "strategic_uses": ["发起专项审计", "追问经办人与开票单位之间的关系"]
+    },
+    {
+      "archive_id": "archive_original_vouchers",
+      "title": "四十一张原始凭证",
+      "category": "财政与项目",
+      "unlock_day": 18,
+      "content": "卷内保存四十一张原始凭证，覆盖协调费、临时工程和接待支出。部分摘要与审批日期不一致，能够与发票索引、村级底稿继续勾稽。",
+      "evidence_level": "E3",
+      "confidentiality": "机密",
+      "result_fact_ids": ["fact_original_vouchers"],
+      "strategic_uses": ["形成逐笔责任清单", "在终局汇报中提供原始凭证依据"]
+    },
+    {
+      "archive_id": "archive_environmental_report_versions",
+      "title": "三年度环保报告版本",
+      "category": "环境与健康",
+      "unlock_day": 21,
+      "content": "连续三年度报告的监测数值、段落和标点几乎完全一致，连一处录入错误也原样保留。该异常足以要求独立复核或依法封存取样。",
+      "evidence_level": "E2",
+      "confidentiality": "敏感",
+      "result_fact_ids": ["fact_identical_reports"],
+      "strategic_uses": ["申请独立环境复核", "为封存取样说明必要性"]
+    },
+    {
+      "archive_id": "archive_signing_ledger_comparison",
+      "title": "两版签约台账比对",
+      "category": "户籍与签约",
+      "unlock_day": 30,
+      "content": "同一统计期存在两版签约台账：专班底表与上报汇总表的户数、签字状态和日期不能对应，若干户在未完成本人确认时已被计入上报进度。",
+      "evidence_level": "E3",
+      "confidentiality": "机密",
+      "result_fact_ids": ["fact_false_signing"],
+      "strategic_uses": ["并排提交两版台账", "作废失真汇总并逐户重评"]
+    },
+    {
+      "archive_id": "archive_lead_census_master",
+      "title": "血铅普查原始总表",
+      "category": "环境与健康",
+      "unlock_day": 45,
+      "content": "原始总表逐人记录采样编号、检测结果、复检状态和医疗建议，显示问题并非单一个案。涉及个人身份的字段不得向无关人员扩散。",
+      "evidence_level": "E3",
+      "confidentiality": "机密",
+      "result_fact_ids": ["fact_lead_census"],
+      "strategic_uses": ["推动完整医疗处置", "据实公开经脱敏的检测结论", "纳入巡察材料"]
+    },
+    {
+      "archive_id": "archive_eia_raw_data",
+      "title": "环评原始数据附件",
+      "category": "环境与健康",
+      "unlock_day": 45,
+      "content": "附件保留监测点位、采样时段和原始读数，与公开报告中的整齐结论存在无法解释的差异，能够支持独立复核和风险论证。",
+      "evidence_level": "E3",
+      "confidentiality": "机密",
+      "result_fact_ids": ["fact_eia_original"],
+      "strategic_uses": ["核对报告是否被改写", "向上级完整说明环境风险"]
+    },
+    {
+      "archive_id": "archive_inspection_schedule",
+      "title": "上级检查工作日程",
+      "category": "上级交办",
+      "unlock_day": 58,
+      "content": "工作日程列明三组检查的进场、抽查和反馈时点。时间相互衔接，任何临时粉饰都可能在交叉检查中暴露。",
+      "evidence_level": "E2",
+      "confidentiality": "内部",
+      "result_fact_ids": ["fact_inspection_anchors"],
+      "strategic_uses": ["安排真实整改优先级", "论证拖延或遮掩将在何时失效"]
+    },
+    {
+      "archive_id": "archive_resettlement_acceptance_sample",
+      "title": "安置房抽样验收材料",
+      "category": "安置与验收",
+      "unlock_day": 60,
+      "content": "抽样材料显示对外展示的样板房与多数待交付毛坯房并非同一完成状态，部分验收记录引用了样板房照片，不能代表全部房源。",
+      "evidence_level": "E3",
+      "confidentiality": "敏感",
+      "result_fact_ids": ["fact_shell_house"],
+      "strategic_uses": ["据实组织安置房验收", "在终局责任汇报中说明样板与实际差异"]
+    }
+  ]
+}

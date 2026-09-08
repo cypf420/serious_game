@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "constants": {
+    "total_households": 36,
+    "target_signed_households": 30,
+    "budget_initial": 8000,
+    "budget_unit": "万元",
+    "story_days": 90,
+    "daily_action_points": 8
+  },
+  "initial_state": {
+    "signed_households": 0,
+    "reported_signed_households": 0,
+    "budget_remaining": 7800,
+    "budget_base_authorized": 8000,
+    "budget_approved_adjustments": 0,
+    "budget_precoord_suspense": 200,
+    "budget_committed": 0,
+    "budget_paid": 200,
+    "days_left": 90,
+    "public_trust": 50,
+    "social_stability": 70,
+    "political_credit": 70,
+    "media_pressure": 30,
+    "env_clue": 0,
+    "integrity": 100,
+    "cadre_discontent": 30,
+    "fatigue": 0,
+    "stability_low_water": 70,
+    "field_visit_count": 0,
+    "lead_roster_disposition": "neutral",
+    "corruption_evidence": 0
+  },
+  "visible_metric_bands": {
+    "public_trust": [
+      {"min": 0, "max": 20, "label": "敌视"},
+      {"min": 21, "max": 40, "label": "戒备"},
+      {"min": 41, "max": 60, "label": "观望"},
+      {"min": 61, "max": 80, "label": "配合"},
+      {"min": 81, "max": 100, "label": "亲近"}
+    ],
+    "social_stability": [
+      {"min": 0, "max": 20, "label": "失控"},
+      {"min": 21, "max": 40, "label": "失控边缘"},
+      {"min": 41, "max": 60, "label": "躁动"},
+      {"min": 61, "max": 80, "label": "绷紧"},
+      {"min": 81, "max": 100, "label": "平稳"}
+    ],
+    "political_credit": [
+      {"min": 0, "max": 20, "label": "透支"},
+      {"min": 21, "max": 40, "label": "岌岌可危"},
+      {"min": 41, "max": 60, "label": "受损"},
+      {"min": 61, "max": 80, "label": "尚可"},
+      {"min": 81, "max": 100, "label": "稳固"}
+    ],
+    "media_pressure": [
+      {"min": 0, "max": 20, "label": "无人问津"},
+      {"min": 21, "max": 40, "label": "零星关注"},
+      {"min": 41, "max": 60, "label": "媒体盯上"},
+      {"min": 61, "max": 80, "label": "舆论汹涌"},
+      {"min": 81, "max": 100, "label": "全国热点"}
+    ],
+    "cadre_discontent": [
+      {"min": 0, "max": 20, "label": "同心"},
+      {"min": 21, "max": 40, "label": "服从"},
+      {"min": 41, "max": 60, "label": "离心"},
+      {"min": 61, "max": 80, "label": "掣肘"},
+      {"min": 81, "max": 100, "label": "对抗"}
+    ]
+  }
+}

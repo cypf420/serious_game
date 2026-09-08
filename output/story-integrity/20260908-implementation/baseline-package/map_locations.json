@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "locations": [
+    {
+      "location_id": "loc_county_government",
+      "name": "云溪县政府",
+      "description": "县政府办公楼与专班中枢。",
+      "unlock_day": 1,
+      "linked_opportunity_ids": [],
+      "linked_event_ids": [
+        "EV2-01",
+        "EV5-03"
+      ]
+    },
+    {
+      "location_id": "loc_liulin_village",
+      "name": "柳林村",
+      "description": "三十六户搬迁工作的核心现场。",
+      "unlock_day": 1,
+      "linked_opportunity_ids": [
+        "opp_d02_wu_xiuying_first_talk",
+        "opp_d03_zhou_dashan_first_talk"
+      ],
+      "linked_event_ids": [
+        "EV1-02",
+        "EV1-03",
+        "EV5-01",
+        "EV5-02"
+      ]
+    },
+    {
+      "location_id": "loc_hongda_factory",
+      "name": "宏达化工旧厂区",
+      "description": "紧贴清江的锈红色旧厂区。",
+      "unlock_day": 3,
+      "linked_opportunity_ids": [],
+      "linked_event_ids": [
+        "EV4-03",
+        "EV4-04"
+      ]
+    },
+    {
+      "location_id": "loc_ferry_town",
+      "name": "渡口镇政府",
+      "description": "镇级协调与首轮签约现场。",
+      "unlock_day": 1,
+      "linked_opportunity_ids": [],
+      "linked_event_ids": [
+        "EV1-02"
+      ]
+    },
+    {
+      "location_id": "loc_zhou_ancestral_hall",
+      "name": "周氏祠堂",
+      "description": "周氏宗族议事与祖坟线入口。",
+      "unlock_day": 31,
+      "linked_opportunity_ids": [],
+      "linked_event_ids": [
+        "EV5-01"
+      ]
+    },
+    {
+      "location_id": "loc_abandoned_grain_station",
+      "name": "废弃粮站",
+      "description": "刘三秘密接触玩家的地点。",
+      "unlock_day": 16,
+      "linked_opportunity_ids": [],
+      "linked_event_ids": []
+    },
+    {
+      "location_id": "loc_county_hospital",
+      "name": "云溪县医院",
+      "description": "血铅体检和患儿善后现场。",
+      "unlock_day": 46,
+      "linked_opportunity_ids": [],
+      "linked_event_ids": [
+        "EV4-01",
+        "EV6-01"
+      ]
+    },
+    {
+      "location_id": "loc_environment_station",
+      "name": "县环保站",
+      "description": "监测台账与原始材料入口。",
+      "unlock_day": 16,
+      "linked_opportunity_ids": [],
+      "linked_event_ids": [
+        "EV3-01",
+        "EV6-02"
+      ]
+    }
+  ]
+}

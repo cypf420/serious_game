@@ -66,16 +66,19 @@ class ConditionalEffectDefinition:
     required_state_values: dict[str, str] = field(default_factory=dict)
     forbidden_state_values: dict[str, frozenset[str]] = field(default_factory=dict)
     minimum_ledger_values: dict[str, int] = field(default_factory=dict)
+    required_fact_ids: frozenset[str] = frozenset()
 
     def matches(
         self,
         flags: set[str],
         state_values: dict[str, str],
         ledger_values: dict[str, int] | None = None,
+        known_fact_ids: set[str] | None = None,
     ) -> bool:
         ledger_values = ledger_values or {}
         return (
             self.required_flags.issubset(flags)
+            and self.required_fact_ids.issubset(known_fact_ids or set())
             and (not self.required_any_flags or bool(self.required_any_flags & flags))
             and not bool(self.forbidden_flags & flags)
             and all(state_values.get(key) == value for key, value in self.required_state_values.items())
@@ -173,9 +176,10 @@ class DecisionTextVariant:
     option_texts: dict[str, str] = field(default_factory=dict)
     option_consequences: dict[str, str] = field(default_factory=dict)
     scene_id: str | None = None
+    required_fact_ids: frozenset[str] = frozenset()
 
-    def matches(self, flags: set[str]) -> bool:
-        return self.required_flags.issubset(flags) and not bool(
+    def matches(self, flags: set[str], known_fact_ids: set[str] | None = None) -> bool:
+        return self.required_fact_ids.issubset(known_fact_ids or set()) and self.required_flags.issubset(flags) and not bool(
             self.forbidden_flags & flags
         )
 
@@ -219,31 +223,31 @@ class DecisionDefinition:
             and self.early_required_flags.issubset(flags)
         )
 
-    def text_variant(self, flags: set[str]) -> DecisionTextVariant | None:
-        return next((item for item in self.text_variants if item.matches(flags)), None)
+    def text_variant(self, flags: set[str], known_fact_ids: set[str] | None = None) -> DecisionTextVariant | None:
+        return next((item for item in self.text_variants if item.matches(flags, known_fact_ids)), None)
 
-    def visible_title(self, flags: set[str]) -> str:
-        variant = self.text_variant(flags)
+    def visible_title(self, flags: set[str], known_fact_ids: set[str] | None = None) -> str:
+        variant = self.text_variant(flags, known_fact_ids)
         return variant.title if variant is not None and variant.title else self.title
 
-    def visible_prompt(self, flags: set[str]) -> str:
-        variant = self.text_variant(flags)
+    def visible_prompt(self, flags: set[str], known_fact_ids: set[str] | None = None) -> str:
+        variant = self.text_variant(flags, known_fact_ids)
         return variant.prompt if variant is not None and variant.prompt else self.prompt
 
-    def visible_scene_id(self, flags: set[str]) -> str | None:
-        variant = self.text_variant(flags)
+    def visible_scene_id(self, flags: set[str], known_fact_ids: set[str] | None = None) -> str | None:
+        variant = self.text_variant(flags, known_fact_ids)
         return variant.scene_id if variant is not None and variant.scene_id else self.scene_id
 
-    def visible_option_text(self, option: DecisionOptionDefinition, flags: set[str]) -> str:
-        variant = self.text_variant(flags)
+    def visible_option_text(self, option: DecisionOptionDefinition, flags: set[str], known_fact_ids: set[str] | None = None) -> str:
+        variant = self.text_variant(flags, known_fact_ids)
         return (
             variant.option_texts.get(option.option_id, option.text)
             if variant is not None
             else option.text
         )
 
-    def visible_consequence(self, option: DecisionOptionDefinition, flags: set[str]) -> str:
-        variant = self.text_variant(flags)
+    def visible_consequence(self, option: DecisionOptionDefinition, flags: set[str], known_fact_ids: set[str] | None = None) -> str:
+        variant = self.text_variant(flags, known_fact_ids)
         return (
             variant.option_consequences.get(option.option_id, option.consequence)
             if variant is not None

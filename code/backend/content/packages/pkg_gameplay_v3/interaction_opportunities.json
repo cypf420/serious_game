@@ -2,7 +2,7 @@
   "schema_version": 2,
   "conversation_contexts": {
     "opp_d02_wu_xiuying_first_talk": {
-      "opening_narrative": "专班名单刚定下来，你带着新摸出的派系图下村核实。坡道上，吴秀英拎着一篮刚摘的青菜迎面走来。旁人见了这位教过村里三代人的老教师都客气三分；她没有躲你，只淡淡打了个招呼。你意识到，她正是能帮你读懂柳林村人情脉络的人，于是停下脚步，请她说几句村里的实情。",
+      "opening_narrative": "你没有急着作答。吴秀英把菜篮换到另一只手，站在坡道边等你开口。",
       "conversation_goal": "弄清周氏宗族、散姓和关键村民之间的关系，并听取她对搬迁工作的真实顾虑。"
     },
     "opp_d03_zhou_dashan_first_talk": {
@@ -158,7 +158,9 @@
       "completion_policy": {
         "minimum_turns": 1,
         "completion_mode": "required_disclosures",
-        "required_disclosure_ids": ["fact_clan_power_map"],
+        "required_disclosure_ids": [
+          "fact_clan_power_map"
+        ],
         "complete_on_player_exit": true,
         "complete_on_npc_exit": true
       },
@@ -216,15 +218,35 @@
       ],
       "disclosure_protocols": [
         {
-          "fact_ids": ["fact_connected_invoices"],
+          "fact_ids": [
+            "fact_connected_invoices"
+          ],
           "required_term_groups": [
-            ["发票号码"], ["经手人"], ["资金流向"]
+            [
+              "发票号码"
+            ],
+            [
+              "经手人"
+            ],
+            [
+              "资金流向"
+            ]
           ]
         },
         {
-          "fact_ids": ["fact_two_million_fee"],
+          "fact_ids": [
+            "fact_two_million_fee"
+          ],
           "required_term_groups": [
-            ["两百万"], ["原始凭证"], ["真实去处"]
+            [
+              "两百万"
+            ],
+            [
+              "原始凭证"
+            ],
+            [
+              "真实去处"
+            ]
           ]
         }
       ]
@@ -265,12 +287,24 @@
         "fact_two_million_fee",
         "fact_shell_house"
       ],
-      "disclosure_protocols": [{
-        "fact_ids": ["fact_original_vouchers"],
-        "required_term_groups": [
-          ["原始凭证"], ["逐笔核对"], ["保留核查底稿"]
-        ]
-      }]
+      "disclosure_protocols": [
+        {
+          "fact_ids": [
+            "fact_original_vouchers"
+          ],
+          "required_term_groups": [
+            [
+              "原始凭证"
+            ],
+            [
+              "逐笔核对"
+            ],
+            [
+              "保留核查底稿"
+            ]
+          ]
+        }
+      ]
     },
     {
       "opportunity_id": "opp_26_chen_mo_contact",
@@ -318,29 +352,74 @@
       ],
       "disclosure_protocols": [
         {
-          "fact_ids": ["fact_shi_usb"],
+          "fact_ids": [
+            "fact_shi_usb"
+          ],
           "required_term_groups": [
-            ["安全地点", "保密地点", "换个地方"],
-            ["匿名", "不公开姓名", "保护你和家人", "职业保障"],
-            ["复制留痕", "交接清单", "登记封存"]
+            [
+              "安全地点",
+              "保密地点",
+              "换个地方"
+            ],
+            [
+              "匿名",
+              "不公开姓名",
+              "保护你和家人",
+              "职业保障"
+            ],
+            [
+              "复制留痕",
+              "交接清单",
+              "登记封存"
+            ]
           ]
         },
         {
-          "fact_ids": ["fact_identical_reports"],
+          "fact_ids": [
+            "fact_identical_reports"
+          ],
           "required_term_groups": [
-            ["三年报告"], ["重复数值"], ["改写经过"]
+            [
+              "三年报告"
+            ],
+            [
+              "重复数值"
+            ],
+            [
+              "改写经过"
+            ]
           ]
         },
         {
-          "fact_ids": ["fact_eia_original"],
+          "fact_ids": [
+            "fact_eia_original"
+          ],
           "required_term_groups": [
-            ["监测点位"], ["采样时段"], ["公示版本"]
+            [
+              "监测点位"
+            ],
+            [
+              "采样时段"
+            ],
+            [
+              "公示版本"
+            ]
           ]
         },
         {
-          "fact_ids": ["fact_lead_census"],
+          "fact_ids": [
+            "fact_lead_census"
+          ],
           "required_term_groups": [
-            ["保护受检者隐私"], ["普查人数"], ["原始总表"]
+            [
+              "保护受检者隐私"
+            ],
+            [
+              "普查人数"
+            ],
+            [
+              "原始总表"
+            ]
           ]
         }
       ]

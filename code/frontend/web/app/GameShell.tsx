@@ -264,9 +264,10 @@ export default function GameShell() {
   useEffect(() => {
     const current = narrative.items[narrative.currentIndex];
     if (!sessionId || !current || narrative.currentIndex < 0) return;
+    const readingDay = Math.max(0, ...narrative.items.map(item => item.storyDay || 0));
     try {
       window.localStorage.setItem(
-        `qingjiang-read-position:${sessionId}:${current.storyDay || 0}`,
+        `qingjiang-read-position:v2:${sessionId}:${readingDay}`,
         String(narrative.currentIndex),
       );
     } catch { /* reading still works when local persistence is unavailable */ }
@@ -552,7 +553,7 @@ export default function GameShell() {
       if (rebuild) {
         const latestDay = Math.max(0, ...incoming.map(item => item.storyDay || 0));
         const savedPosition = rebuildPosition === "latest" && typeof window !== "undefined"
-          ? Number(window.localStorage.getItem(`qingjiang-read-position:${targetSession}:${latestDay}`))
+          ? Number(window.localStorage.getItem(`qingjiang-read-position:v2:${targetSession}:${latestDay}`))
           : Number.NaN;
         dispatchNarrative({ type: "SESSION_REBUILD", sessionId: targetSession, items: incoming, cursor: nextCursor, position: Number.isInteger(savedPosition) && savedPosition >= 0 ? savedPosition : "start" });
       } else {
@@ -1009,7 +1010,7 @@ export default function GameShell() {
             {(primaryScene === "narrative" || primaryScene === "conversation") && <section className={activeConversation ? "gal-stage conversation-mode" : decisionReady ? "gal-stage decision-mode" : "gal-stage"} data-primary-scene={primaryScene} data-testid={state.active_conversation ? "active-conversation-character" : undefined}>
               {stageSpeaker && <div className="gal-portrait" aria-label={`${stageSpeaker}立绘`}><CharacterPortrait character={stageCharacter} fallbackName={stageSpeaker} priority /></div>}
               <div className={stageSpeaker ? "gal-dialogue has-speaker" : "gal-dialogue narration"}>
-                <header><span>{decisionReady ? "当前必须作出决定" : stageSpeaker || (currentLine ? "县长手记" : "现场暂歇")}</span><small>{playerLines.length ? `今日 ${Math.max(1, narrative.currentIndex + 1)} / ${playerLines.length}` : "等待新消息"}</small></header>
+                <header><span>{decisionReady ? "当前必须作出决定" : stageSpeaker || (currentLine ? "县长手记" : "现场暂歇")}</span><small>{playerLines.length ? `第 ${currentLine?.storyDay || story.day} 日 · ${Math.max(1, narrative.currentIndex + 1)} / ${playerLines.length}` : "等待新消息"}</small></header>
                 {decisionReady && pending ? <div className="decision-stage-inline"><h3>{playerText(pending.title || pending.prompt || pending.situation, "当前事项需要你的决定")}</h3>{pending.description && <p>{playerText(pending.description)}</p>}{["sorting", "allocation"].includes(pending.input_kind) ? <StructuredDecision key={pending.decision_id} pending={pending} busy={busy} onSubmit={async payload => { await perform(() => api.action(sessionId, { input_mode: "decision", client_action_id: api.key("decision"), state_version: state.state_version, decision_id: pending.decision_id, ...payload }), ""); }} /> : <div className="decision-options">{options.map((option, index) => {
                   const requirements = decisionUnlockRequirements(option);
                   const locked = option.available === false;

@@ -56,6 +56,7 @@ from serious_game_backend.application.action_variants import (
     canonical_opportunity_descriptor,
     configured_variants,
     default_npc_location,
+    governance_action_permission,
     public_variant,
     variant_availability,
 )
@@ -452,6 +453,50 @@ def create_app(settings: Settings | None = None, container: Container | None = N
             raise AuthenticationRequiredError("治理接口仅接受正式 Cookie 登录身份")
         return principal
 
+    def required_opportunity(session, package) -> dict | None:
+        """Return the current story-required conversation, when one exists.
+
+        The source of truth is the beat's end-day flag requirement and the
+        interaction opportunity's completion flags. This keeps the UI guided
+        by authoritative state instead of hard-coding a calendar day or NPC.
+        """
+        beat = package.story_day(session.game_state.story_day)
+        if beat is None or not beat.end_day_requires_flags:
+            return None
+        missing = set(beat.end_day_requires_flags) - set(session.flags)
+        if not missing:
+            return None
+        available = runtime.opportunities.list_available(session, package)
+        candidate = next(
+            (
+                item for item in available
+                if missing.intersection(item.completion_flags)
+            ),
+            None,
+        )
+        if candidate is None:
+            return None
+        profile = next(
+            (item for item in package.npc_profiles if item.npc_id == candidate.npc_id),
+            None,
+        )
+        name = profile.name if profile is not None else candidate.npc_id
+        description = (
+            f"请先与{name}交谈，了解村庄关系与真实顾虑。"
+            if candidate.npc_id == "npc_wu_xiuying"
+            else f"请先完成与{name}的会谈，以满足当前剧情前置条件。"
+        )
+        return {
+            "opportunity_id": candidate.opportunity_id,
+            "npc_id": candidate.npc_id,
+            "npc_name": name,
+            "action_id": candidate.action_id,
+            "entry_type": candidate.entry_type,
+            "entry_description": "寻找会谈",
+            "reason": description,
+            "missing_flags": sorted(missing),
+        }
+
     def command_gate(session, package) -> dict:
         pending = session.pending_decision is not None
         conversing = session.active_conversation is not None
@@ -495,6 +540,10 @@ def create_app(settings: Settings | None = None, container: Container | None = N
             action_blocked_reason = "会谈正在进行，请先继续或结束当前会谈"
         elif not allow_actions:
             action_blocked_reason = "当前剧情节点不开放自主行动"
+        can_inspect_archives, inspect_blocked_reason = governance_action_permission(
+            session, package, "inspect_archives"
+        )
+        required = required_opportunity(session, package)
         return {
             "can_choose": (
                 package.status != "retired" and active and not busy and pending
@@ -515,12 +564,30 @@ def create_app(settings: Settings | None = None, container: Container | None = N
                 and active and not busy and not pending and not conversing
                 and not group_conversing and not governance_active and allow_end_day
             ),
+            # A pending decision blocks ordinary actions but still permits the
+            # player to inspect already-acquired archives.  This is a separate
+            # capability so callers cannot accidentally treat it as permission
+            # to start other actions while the decision remains pending.
+            "can_inspect_archives": can_inspect_archives,
             "action_blocked_reason": action_blocked_reason,
+            "inspect_blocked_reason": inspect_blocked_reason,
+            "required_opportunity": required,
         }
 
     def executable_variant(session, package, variant, gate) -> dict:
         descriptor = public_variant(session, package, variant)
-        reason = gate["action_blocked_reason"]
+        permission_key = (
+            "can_inspect_archives"
+            if variant.get("action_id") == "inspect_archives"
+            else "can_act"
+        )
+        reason = (
+            gate["inspect_blocked_reason"]
+            if permission_key == "can_inspect_archives"
+            else gate["action_blocked_reason"]
+        )
+        if not gate[permission_key] and reason is None:
+            reason = "当前不能执行该行动"
         if reason is None and session.game_state.action_points < descriptor["cost_action_points"]:
             reason = "今日精力不足"
         if reason:
@@ -544,8 +611,13 @@ def create_app(settings: Settings | None = None, container: Container | None = N
                     session, str(item["action_id"]), base
                 )
                 cost = cost_result.final_cost
+                permission_key = (
+                    "can_inspect_archives"
+                    if item["action_id"] == "inspect_archives"
+                    else "can_act"
+                )
                 available = (
-                    gate["can_act"]
+                    gate[permission_key]
                     and not active
                     and state.action_points >= cost
                 )
@@ -562,7 +634,11 @@ def create_app(settings: Settings | None = None, container: Container | None = N
                     },
                     "available": available,
                     "unavailable_reason": (
-                        gate["action_blocked_reason"]
+                        (
+                            gate["inspect_blocked_reason"]
+                            if permission_key == "can_inspect_archives"
+                            else gate["action_blocked_reason"]
+                        )
                         if not available else None
                     ),
                     "execution_mode": "governance",
@@ -1151,18 +1227,26 @@ def create_app(settings: Settings | None = None, container: Container | None = N
         session = runtime.game_sessions.get_owned(session_id, account_id)
         package = require_locked_package(runtime.packages, session)
         gate = command_gate(session, package)
+        commands = {
+            "can_choose": gate["can_choose"],
+            "can_act": gate["can_act"],
+            "can_end_day": gate["can_end_day"],
+            "can_talk": gate["can_talk"] and (
+                session.active_conversation is not None
+                or bool(runtime.opportunities.list_available(session, package))
+            ),
+        }
+        # Keep the retired-session read-only contract stable while exposing
+        # the additional live interaction capabilities during an active game.
+        if session.status.value == "active" and package.status != "retired":
+            commands.update(
+                can_inspect_archives=gate["can_inspect_archives"],
+                required_opportunity=gate["required_opportunity"],
+            )
         return {
             "state": runtime.projector.project(session, package),
             "feed": runtime.story_flow.feed_since(session, after),
-            "commands": {
-                "can_choose": gate["can_choose"],
-                "can_act": gate["can_act"],
-                "can_end_day": gate["can_end_day"],
-                "can_talk": gate["can_talk"] and (
-                    session.active_conversation is not None
-                    or bool(runtime.opportunities.list_available(session, package))
-                ),
-            },
+            "commands": commands,
         }
 
     @app.get("/api/game/session/{session_id}/feed")
@@ -1251,6 +1335,7 @@ def create_app(settings: Settings | None = None, container: Container | None = N
         package = require_locked_package(runtime.packages, session)
         briefing = package.public_briefing
         tier, actions = action_entries(session, package)
+        gate = command_gate(session, package)
         guidance = briefing["tool_guidance"]
         tools = [
             {
@@ -1295,6 +1380,7 @@ def create_app(settings: Settings | None = None, container: Container | None = N
             "tool_categories": briefing["tool_categories"],
             "cost_tier": tier,
             "tools": tools,
+            "required_opportunity": gate["required_opportunity"],
             "household_registry": [
                 {
                     "household_id": item.household_id,
@@ -1420,17 +1506,33 @@ def create_app(settings: Settings | None = None, container: Container | None = N
         session = runtime.game_sessions.get_owned(session_id, account_id)
         package = require_locked_package(runtime.packages, session)
         tier, result = action_entries(session, package)
-        return {"state_version": session.state_version, "cost_tier": tier, "actions": result}
+        gate = command_gate(session, package)
+        return {
+            "state_version": session.state_version,
+            "cost_tier": tier,
+            "actions": result,
+            "required_opportunity": gate["required_opportunity"],
+        }
 
     @app.get("/api/game/session/{session_id}/governance")
     async def governance_overview(
         session_id: str,
         x_account_id: str | None = Header(default=None),
     ) -> dict:
-        return runtime.gameplay_governance.overview(
+        result = runtime.gameplay_governance.overview(
             account_id=current_account_id(x_account_id),
             session_id=session_id,
         )
+        account_id = current_account_id(x_account_id)
+        session = runtime.game_sessions.get_owned(session_id, account_id)
+        package = require_locked_package(runtime.packages, session)
+        result["required_opportunity"] = required_opportunity(session, package)
+        can_inspect_archives, inspect_blocked_reason = governance_action_permission(
+            session, package, "inspect_archives"
+        )
+        result["can_inspect_archives"] = can_inspect_archives
+        result["inspect_blocked_reason"] = inspect_blocked_reason
+        return result
 
     @app.post(
         "/api/game/session/{session_id}/governance/npc-demands/{demand_id}/dispose"
@@ -2066,8 +2168,11 @@ def create_app(settings: Settings | None = None, container: Container | None = N
         session = runtime.game_sessions.get_owned(session_id, account_id)
         package = require_locked_package(runtime.packages, session)
         gate = command_gate(session, package)
-        if not gate["can_act"]:
-            raise DomainError(gate["action_blocked_reason"] or "当前不能执行行动")
+        permitted, permission_reason = governance_action_permission(
+            session, package, body.action_id
+        )
+        if not permitted:
+            raise DomainError(permission_reason or "当前不能执行行动")
         if session.state_version != body.state_version:
             from serious_game_backend.domain.errors import StateVersionConflictError
             raise StateVersionConflictError(

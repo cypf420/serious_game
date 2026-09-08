@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "segments": [
+    {"day_start": 1, "day_end": 15, "chapter": 1, "cost_tier": "normal"},
+    {"day_start": 16, "day_end": 30, "chapter": 2, "cost_tier": "normal"},
+    {"day_start": 31, "day_end": 45, "chapter": 3, "cost_tier": "sensitive"},
+    {"day_start": 46, "day_end": 58, "chapter": 4, "cost_tier": "sensitive"},
+    {"day_start": 59, "day_end": 60, "chapter": 4, "cost_tier": "acceptance"},
+    {"day_start": 61, "day_end": 75, "chapter": 5, "cost_tier": "sensitive"},
+    {"day_start": 76, "day_end": 90, "chapter": 6, "cost_tier": "acceptance"}
+  ]
+}

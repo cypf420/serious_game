@@ -1,0 +1,1634 @@
+{
+  "schema_version": 1,
+  "npc_discovery_rules": {
+    "initial_known_npc_ids": [
+      "npc_zheng_xiangdong"
+    ],
+    "initial_contactable_npc_ids": [
+      "npc_zheng_xiangdong"
+    ],
+    "by_npc": {
+      "npc_wu_xiuying": {
+        "known_from_day": 2,
+        "known_required_flags": [
+          "flag_clan_map"
+        ]
+      },
+      "npc_zhou_dashan": {
+        "known_from_day": 2,
+        "known_required_fact_ids": [
+          "fact_clan_power_map"
+        ]
+      }
+    }
+  },
+  "npc_social_roles": {
+    "npc_zhang_li": [
+      "cadre"
+    ],
+    "npc_zhao_jianguo": [
+      "cadre"
+    ],
+    "npc_chen_mo": [
+      "crowd"
+    ],
+    "npc_liu_san": [
+      "crowd"
+    ],
+    "npc_shi_wenbin": [
+      "cadre"
+    ],
+    "npc_zhou_dashan": [
+      "crowd",
+      "cadre"
+    ],
+    "npc_zhou_kuiyuan": [
+      "crowd"
+    ],
+    "npc_zhou_mancang": [
+      "crowd"
+    ],
+    "npc_wu_xiuying": [
+      "crowd"
+    ],
+    "npc_he_tiezhu": [
+      "crowd"
+    ],
+    "npc_tan_laoliu": [
+      "crowd"
+    ],
+    "npc_ma_changshun": [
+      "crowd"
+    ],
+    "npc_ning_dehai": [
+      "crowd"
+    ],
+    "npc_yuan_guilan": [
+      "crowd"
+    ],
+    "npc_yang_bo": [
+      "crowd"
+    ],
+    "npc_lao_juetou": [
+      "crowd"
+    ],
+    "npc_miao_xiwang": [
+      "crowd"
+    ],
+    "npc_deng_shouben": [
+      "crowd"
+    ],
+    "npc_jiang_chongyue": [
+      "cadre"
+    ],
+    "npc_zheng_xiangdong": [
+      "cadre"
+    ],
+    "npc_sun_qiang": [
+      "cadre"
+    ],
+    "npc_feng_jingzhi": [
+      "cadre"
+    ],
+    "npc_he_xingbang": [
+      "cadre"
+    ],
+    "npc_ke_qinian": [
+      "cadre"
+    ],
+    "npc_gu_keming": [
+      "cadre"
+    ],
+    "npc_cui_guanglin": [
+      "cadre"
+    ]
+  },
+  "origin_npc_attitude_modifiers": {},
+  "trust_rules": {
+    "base": 40,
+    "common_villager_ids": [
+      "npc_zhou_dashan",
+      "npc_zhou_kuiyuan",
+      "npc_zhou_mancang",
+      "npc_wu_xiuying",
+      "npc_he_tiezhu",
+      "npc_tan_laoliu",
+      "npc_ma_changshun",
+      "npc_ning_dehai",
+      "npc_yuan_guilan",
+      "npc_yang_bo",
+      "npc_lao_juetou",
+      "npc_miao_xiwang",
+      "npc_deng_shouben"
+    ],
+    "common_flag_effects": {
+      "血铅补实": 15,
+      "环评揭穿": 15,
+      "掌握血铅": 5,
+      "困难户帮扶": 10,
+      "额外补偿": 5,
+      "一碗水端平": 10,
+      "立规在先": 10,
+      "进度榜已上墙": 5,
+      "差异化口子已开": -5,
+      "掩盖真相": -15,
+      "环评被掩盖": -15,
+      "压制媒体": -5,
+      "强制施压": -15,
+      "虚假签约": -30,
+      "暴力驱逐": -30
+    },
+    "aliases": {
+      "陈默结盟": "记者结盟",
+      "flag_reporter_alliance": "记者结盟",
+      "flag_blood_lead_remediated": "血铅补实",
+      "flag_eia_exposed": "环评揭穿",
+      "flag_blood_lead_known": "掌握血铅",
+      "flag_vulnerable_household_helped": "困难户帮扶",
+      "flag_extra_compensation": "额外补偿",
+      "flag_eia_concealed": "环评被掩盖",
+      "flag_media_suppressed": "压制媒体",
+      "flag_coercion": "强制施压",
+      "flag_false_signing": "虚假签约",
+      "flag_violent_eviction": "暴力驱逐",
+      "flag_wu_alliance": "吴秀英同盟",
+      "flag_wu_disappointed": "秀英寒心",
+      "flag_accounts_exposed": "账目揭发",
+      "flag_qian_secret_deal": "钱伟密约",
+      "flag_bribe_accepted": "收受贿赂",
+      "flag_two_million_smoothed": "两百万抹平",
+      "flag_two_million_case_filed": "两百万已移交立案",
+      "flag_sacrifice_zhao": "牺牲赵建国",
+      "孙强倒戈": "孙强交底",
+      "持有": "持有环评原件"
+    },
+    "npc_flag_effects": {
+      "npc_zhou_dashan": {
+        "周大山归心": 30,
+        "周大山未反水": 10,
+        "周大山预付条件已核验": 10,
+        "周大山核心矛盾已缓解": 10,
+        "宗族对立": -30,
+        "祖坟被冒犯": "lock"
+      },
+      "npc_zhou_kuiyuan": {
+        "祖坟迁定": 30,
+        "祠堂议事已开": 15,
+        "周奎元肯谈": 15,
+        "迁坟旧例在手": 10,
+        "祖坟症结已明": 10,
+        "周家祖坟事由已知": 5,
+        "周奎元核心矛盾已缓解": 10,
+        "掘坟已致歉": 5,
+        "祖坟线挂起": -5,
+        "祖坟派攻坚难度上调": -10,
+        "加价被拒": -15,
+        "绕开族亲": -15,
+        "迁坟简办遭拒": -15,
+        "祖坟线弃管": -15,
+        "掘坟结怨": "lock"
+      },
+      "npc_zhou_mancang": {
+        "明账服人": 30,
+        "账目揭发": 15,
+        "周满仓核心矛盾已缓解": 10,
+        "台账见光": 10
+      },
+      "npc_wu_xiuying": {
+        "吴秀英同盟": 30,
+        "吴秀英核心矛盾已缓解": 10,
+        "秀英寒心": -30
+      },
+      "npc_he_tiezhu": {
+        "治疗兜底承诺": 30,
+        "何铁柱肯再谈": 15,
+        "何铁柱欠你一个人情": 15,
+        "何铁柱核心矛盾已缓解": 10,
+        "人情已兑现": -5,
+        "何铁柱已冷": -30
+      },
+      "npc_tan_laoliu": {
+        "接访安抚谭老六": 15,
+        "闭门接访": 15,
+        "持有谭老六旧档": 5,
+        "谭老六核心矛盾已缓解": 10,
+        "程序打发": -15,
+        "谭老六转镇处理": -15,
+        "强力维稳": -30,
+        "谭老六永久关闭": "lock"
+      },
+      "npc_ma_changshun": {
+        "补偿口径已澄清": 15,
+        "账本已合": 15,
+        "马长顺待自然触发": 5,
+        "私许口头承诺": 5,
+        "马长顺核心矛盾已缓解": 10,
+        "口径遭封": -15
+      },
+      "npc_ning_dehai": {
+        "党员样板已立": 15,
+        "党员档案在手": 10,
+        "样板已下乡": 10,
+        "宁德海已接触": 5,
+        "宁德海核心矛盾已缓解": 10,
+        "宁德海缩壳": -15,
+        "宁德海被冒犯": -30,
+        "拿儿子说事": -30,
+        "宁德海线已锁死": "lock"
+      },
+      "npc_yuan_guilan": {
+        "复查费县垫": 15,
+        "袁桂兰核心矛盾已缓解": 10
+      },
+      "npc_yang_bo": {
+        "杨波核心矛盾已缓解": 10
+      },
+      "npc_deng_shouben": {
+        "邓守本核心矛盾已缓解": 10
+      },
+      "npc_zhao_jianguo": {
+        "赵建国欠你一次": 15,
+        "以那一页换配合": 10,
+        "两百万被压卷底": 15,
+        "赵建国翻供": -15,
+        "账目揭发": -30,
+        "牺牲赵建国": "lock",
+        "赵建国转全面敌对": "lock"
+      },
+      "npc_qian_wei": {
+        "收受贿赂": 30,
+        "钱伟密约": 30,
+        "两百万抹平": 15,
+        "钱伟握有你的把柄": 10,
+        "把柄悬空": -10,
+        "已立项审计": -15,
+        "宏达行贿在录": -30,
+        "两百万已移交立案": -30
+      },
+      "npc_liu_san": {
+        "刘三反水": 30,
+        "刘三当面交盒": 30,
+        "刘三已保": 15,
+        "刘三动摇": 15,
+        "白条线已启动": 10,
+        "铁盒不请自来": 10,
+        "铁盒封存": -15
+      },
+      "npc_chen_mo": {
+        "记者结盟": 30,
+        "陈默结盟": 30,
+        "名册原件已交": 15,
+        "舆情公开": 15,
+        "陈默的手机视频": 10,
+        "舆情冷处理": -10,
+        "压制媒体": -30,
+        "陈默转敌对": "lock"
+      },
+      "npc_shi_wenbin": {
+        "环评揭穿": 30,
+        "环评存疑·私存水样": 15,
+        "石文斌的优盘": 15,
+        "水样封存": 10,
+        "错过水样": -5,
+        "环评被掩盖": -30
+      }
+    },
+    "crowd_effects": [
+      {
+        "threshold_percent": 50,
+        "npc_ids": [
+          "npc_yang_bo"
+        ],
+        "delta": 15
+      }
+    ],
+    "explicit_freeze_after_day": {
+      "npc_zhang_li": 45
+    },
+    "explicit_flag_effects": {
+      "npc_zhang_li": {
+        "自查落空": [
+          -15,
+          -10
+        ]
+      }
+    },
+    "explicit_decision_effects": {
+      "npc_zhang_li": {
+        "dp3_01:a": [
+          10,
+          15
+        ],
+        "dp3_01:b": [
+          -5,
+          -3
+        ],
+        "dp3_01:c": [
+          5,
+          8
+        ],
+        "dp3_01:d": [
+          3,
+          6
+        ],
+        "dp3_02:a": [
+          12,
+          18
+        ],
+        "dp3_02:b": [
+          -12,
+          -8
+        ],
+        "dp3_02:c": [
+          3,
+          6
+        ],
+        "dp3_02:d": [
+          -15,
+          -10
+        ],
+        "dp3_03:a": [
+          5,
+          8
+        ],
+        "dp3_04:b": [
+          20,
+          28
+        ],
+        "dp3_04:d": [
+          3,
+          5
+        ],
+        "dp3_07:a_b_c_d": [
+          8,
+          12
+        ],
+        "dp3_07:a_b_d_c": [
+          8,
+          12
+        ],
+        "dp3_07:a_c_b_d": [
+          8,
+          12
+        ],
+        "dp3_07:a_c_d_b": [
+          8,
+          12
+        ],
+        "dp3_07:a_d_b_c": [
+          8,
+          12
+        ],
+        "dp3_07:a_d_c_b": [
+          8,
+          12
+        ],
+        "dp3_07:b_a_c_d": [
+          3,
+          5
+        ],
+        "dp3_07:b_a_d_c": [
+          3,
+          5
+        ],
+        "dp3_07:c_a_b_d": [
+          3,
+          5
+        ],
+        "dp3_07:c_a_d_b": [
+          3,
+          5
+        ],
+        "dp3_07:d_a_b_c": [
+          3,
+          5
+        ],
+        "dp3_07:d_a_c_b": [
+          3,
+          5
+        ],
+        "dp3_07:b_c_a_d": [
+          -8,
+          -5
+        ],
+        "dp3_07:b_d_a_c": [
+          -8,
+          -5
+        ],
+        "dp3_07:c_b_a_d": [
+          -8,
+          -5
+        ],
+        "dp3_07:c_d_a_b": [
+          -8,
+          -5
+        ],
+        "dp3_07:d_b_a_c": [
+          -8,
+          -5
+        ],
+        "dp3_07:d_c_a_b": [
+          -8,
+          -5
+        ],
+        "dp3_07:b_c_d_a": [
+          -18,
+          -12
+        ],
+        "dp3_07:b_d_c_a": [
+          -18,
+          -12
+        ],
+        "dp3_07:c_b_d_a": [
+          -18,
+          -12
+        ],
+        "dp3_07:c_d_b_a": [
+          -18,
+          -12
+        ],
+        "dp3_07:d_b_c_a": [
+          -18,
+          -12
+        ],
+        "dp3_07:d_c_b_a": [
+          -18,
+          -12
+        ],
+        "ev3_01:c": [
+          5,
+          8
+        ],
+        "ev3_01_followup:c": [
+          5,
+          8
+        ],
+        "dp3_tea_disposition:c": [
+          3,
+          5
+        ],
+        "dp3_08:a": {
+          "required_flag": "孙强交底",
+          "when_present": [
+            15,
+            22
+          ],
+          "otherwise": [
+            3,
+            5
+          ]
+        },
+        "dp3_08:b": {
+          "required_flag": "持有环评原件",
+          "when_present": [
+            12,
+            18
+          ],
+          "otherwise": [
+            5,
+            8
+          ]
+        },
+        "dp3_08:c": [
+          8,
+          12
+        ],
+        "dp3_08:d": [
+          -12,
+          -8
+        ],
+        "dp3_09:a": [
+          4,
+          8
+        ],
+        "dp3_10:a": [
+          20,
+          30
+        ],
+        "dp3_10:b": [
+          -15,
+          -10
+        ],
+        "dp3_10:c": [
+          -18,
+          -12
+        ],
+        "dp3_10:d": [
+          -22,
+          -15
+        ]
+      }
+    }
+  },
+  "relationship_subnetworks": [
+    {
+      "subnetwork_id": "county_government",
+      "name": "县级政府网络",
+      "edge_ids": [
+        "rel_sun_zhao_reporting"
+      ],
+      "allowed_propagation_topics": [
+        "county_reporting"
+      ],
+      "relationship_visibility_requirements": {
+        "minimum_visibility": "hidden",
+        "actor_must_be_endpoint": true
+      },
+      "night_action_ids": [
+        "night_hold_position"
+      ]
+    },
+    {
+      "subnetwork_id": "corporate_corruption",
+      "name": "企业腐败网络",
+      "edge_ids": [
+        "rel_liu_zhou_interest",
+        "rel_qian_zhao_interest",
+        "rel_zhao_qian_interest"
+      ],
+      "allowed_propagation_topics": [
+        "investigation_risk",
+        "evidence_custody"
+      ],
+      "relationship_visibility_requirements": {
+        "minimum_visibility": "hidden",
+        "actor_must_be_endpoint": true
+      },
+      "night_action_ids": [
+        "night_unify_story",
+        "night_move_originals",
+        "night_cut_off_counterpart",
+        "night_hold_position"
+      ]
+    },
+    {
+      "subnetwork_id": "village_clan",
+      "name": "村庄宗族网络",
+      "edge_ids": [
+        "rel_wu_zhou_village"
+      ],
+      "allowed_propagation_topics": [
+        "clan_mediation"
+      ],
+      "relationship_visibility_requirements": {
+        "minimum_visibility": "hidden",
+        "actor_must_be_endpoint": true
+      },
+      "night_action_ids": [
+        "night_hold_position"
+      ]
+    },
+    {
+      "subnetwork_id": "environmental_evidence",
+      "name": "环境证据网络",
+      "edge_ids": [
+        "rel_shi_ke_evidence"
+      ],
+      "allowed_propagation_topics": [
+        "eia_evidence"
+      ],
+      "relationship_visibility_requirements": {
+        "minimum_visibility": "hidden",
+        "actor_must_be_endpoint": true
+      },
+      "night_action_ids": [
+        "night_hold_position"
+      ]
+    },
+    {
+      "subnetwork_id": "external_oversight",
+      "name": "外部监督网络",
+      "edge_ids": [
+        "rel_chen_wu_information",
+        "rel_zhang_zhao_oversight"
+      ],
+      "allowed_propagation_topics": [
+        "public_oversight",
+        "inspection_progress"
+      ],
+      "relationship_visibility_requirements": {
+        "minimum_visibility": "hidden",
+        "actor_must_be_endpoint": true
+      },
+      "night_action_ids": [
+        "night_hold_position"
+      ]
+    }
+  ],
+  "npc_relationships": [
+    {
+      "edge_id": "rel_liu_zhou_interest",
+      "subnetwork": "corporate_corruption",
+      "channel": "interest",
+      "source_npc_id": "npc_liu_san",
+      "target_npc_id": "npc_zhou_dashan",
+      "initial_visibility": "hidden",
+      "visibility_requirements": {
+        "suspected_fact_ids": [
+          "fact_connected_invoices"
+        ],
+        "confirmed_flags": [
+          "账目揭发"
+        ]
+      },
+      "allowed_propagation_topics": [
+        "investigation_risk"
+      ],
+      "night_action_ids": [
+        "night_hold_position"
+      ],
+      "suspected_reason": "已取得的票据显示刘三与周大山之间存在利益往来。",
+      "confirmed_reason": "账目核验确认了双方的利益联系。",
+      "propagation_enabled": true,
+      "attitude_delta": -5,
+      "anxiety_delta": 5
+    },
+    {
+      "edge_id": "rel_qian_zhao_interest",
+      "subnetwork": "corporate_corruption",
+      "channel": "interest",
+      "source_npc_id": "npc_qian_wei",
+      "target_npc_id": "npc_zhao_jianguo",
+      "initial_visibility": "hidden",
+      "visibility_requirements": {
+        "suspected_flags": [
+          "秘密摸底"
+        ],
+        "confirmed_flags": [
+          "两百万已移交立案"
+        ]
+      },
+      "allowed_propagation_topics": [
+        "investigation_risk",
+        "evidence_custody"
+      ],
+      "night_action_ids": [
+        "night_unify_story",
+        "night_cut_off_counterpart",
+        "night_hold_position"
+      ],
+      "suspected_reason": "调查迹象显示钱伟与赵建国之间可能存在利益联系。",
+      "confirmed_reason": "正式材料确认了双方的利益联系。",
+      "propagation_enabled": true,
+      "attitude_delta": -5,
+      "anxiety_delta": 5
+    },
+    {
+      "edge_id": "rel_zhao_qian_interest",
+      "subnetwork": "corporate_corruption",
+      "channel": "interest",
+      "source_npc_id": "npc_zhao_jianguo",
+      "target_npc_id": "npc_qian_wei",
+      "initial_visibility": "hidden",
+      "visibility_requirements": {
+        "suspected_flags": [
+          "秘密摸底"
+        ],
+        "confirmed_flags": [
+          "两百万已移交立案"
+        ]
+      },
+      "allowed_propagation_topics": [
+        "investigation_risk",
+        "evidence_custody"
+      ],
+      "night_action_ids": [
+        "night_unify_story",
+        "night_move_originals",
+        "night_cut_off_counterpart",
+        "night_hold_position"
+      ],
+      "suspected_reason": "调查迹象显示赵建国仍受钱伟利益链影响。",
+      "confirmed_reason": "正式材料确认了赵建国与钱伟之间的反向联络。",
+      "propagation_enabled": false,
+      "attitude_delta": 0,
+      "anxiety_delta": 0
+    },
+    {
+      "edge_id": "rel_chen_wu_information",
+      "subnetwork": "external_oversight",
+      "channel": "information",
+      "source_npc_id": "npc_chen_mo",
+      "target_npc_id": "npc_wu_xiuying",
+      "initial_visibility": "hidden",
+      "visibility_requirements": {
+        "when_both_known": true,
+        "confirmed_flags": [
+          "记者结盟"
+        ]
+      },
+      "allowed_propagation_topics": [
+        "public_oversight"
+      ],
+      "night_action_ids": [
+        "night_hold_position"
+      ],
+      "suspected_reason": "两人的公开接触显示存在信息往来。",
+      "confirmed_reason": "玩家亲历的合作确认了双方的信息联系。",
+      "propagation_enabled": true,
+      "attitude_delta": 5,
+      "anxiety_delta": 0
+    },
+    {
+      "edge_id": "rel_sun_zhao_reporting",
+      "subnetwork": "county_government",
+      "channel": "reporting",
+      "source_npc_id": "npc_sun_qiang",
+      "target_npc_id": "npc_zhao_jianguo",
+      "initial_visibility": "hidden",
+      "visibility_requirements": {
+        "when_both_known": true,
+        "confirmed_flags": [
+          "孙强交底"
+        ]
+      },
+      "allowed_propagation_topics": [
+        "county_reporting"
+      ],
+      "night_action_ids": [
+        "night_hold_position"
+      ],
+      "suspected_reason": "公开职务关系显示孙强经常向赵建国汇报。",
+      "confirmed_reason": "孙强的交底确认了实际汇报链。",
+      "propagation_enabled": true,
+      "attitude_delta": -5,
+      "anxiety_delta": 5
+    },
+    {
+      "edge_id": "rel_wu_zhou_village",
+      "subnetwork": "village_clan",
+      "channel": "influence",
+      "source_npc_id": "npc_wu_xiuying",
+      "target_npc_id": "npc_zhou_dashan",
+      "initial_visibility": "hidden",
+      "visibility_requirements": {
+        "suspected_fact_ids": [
+          "fact_clan_power_map"
+        ],
+        "confirmed_flags": [
+          "flag_wu_first_talk_completed"
+        ]
+      },
+      "allowed_propagation_topics": [
+        "clan_mediation"
+      ],
+      "night_action_ids": [
+        "night_hold_position"
+      ],
+      "suspected_reason": "吴秀英介绍了村庄中不同群体与周氏族长的关系。",
+      "confirmed_reason": "首次会谈确认了两人在村庄关系网中的位置。",
+      "propagation_enabled": false,
+      "attitude_delta": 0,
+      "anxiety_delta": 0
+    },
+    {
+      "edge_id": "rel_shi_ke_evidence",
+      "subnetwork": "environmental_evidence",
+      "channel": "reporting",
+      "source_npc_id": "npc_shi_wenbin",
+      "target_npc_id": "npc_ke_qinian",
+      "initial_visibility": "hidden",
+      "visibility_requirements": {
+        "when_both_known": true,
+        "confirmed_flags": [
+          "环评揭穿"
+        ]
+      },
+      "allowed_propagation_topics": [
+        "eia_evidence"
+      ],
+      "night_action_ids": [
+        "night_hold_position"
+      ],
+      "suspected_reason": "公开职务关系显示石文斌受柯启年管理。",
+      "confirmed_reason": "环境材料确认了两人在证据链中的关系。",
+      "propagation_enabled": false,
+      "attitude_delta": 0,
+      "anxiety_delta": 0
+    },
+    {
+      "edge_id": "rel_zhang_zhao_oversight",
+      "subnetwork": "external_oversight",
+      "channel": "oversight",
+      "source_npc_id": "npc_zhang_li",
+      "target_npc_id": "npc_zhao_jianguo",
+      "initial_visibility": "hidden",
+      "visibility_requirements": {
+        "when_both_known": true,
+        "confirmed_flags": [
+          "自查落空"
+        ]
+      },
+      "allowed_propagation_topics": [
+        "inspection_progress"
+      ],
+      "night_action_ids": [
+        "night_hold_position"
+      ],
+      "suspected_reason": "巡察工作使张立与县班子进入公开监督关系。",
+      "confirmed_reason": "巡察材料确认了具体监督对象。",
+      "propagation_enabled": false,
+      "attitude_delta": 0,
+      "anxiety_delta": 0
+    }
+  ],
+  "night_agent_scenes": [
+    {
+      "scene_id": "night_d10_county_reporting",
+      "story_day": 10,
+      "selection_mode": "autonomous",
+      "subnetwork_ids": [
+        "county_government"
+      ],
+      "candidate_ids": [
+        "npc_sun_qiang",
+        "npc_zhao_jianguo"
+      ],
+      "max_contacts_per_npc": 1,
+      "max_action_executions": 1,
+      "rounds": 1,
+      "allowed_topics": [
+        "county_reporting"
+      ],
+      "scene_goal": "征迁初期的县镇汇报链正在校准口径，只能讨论已经进入工作流程的进度。",
+      "public_direction_summary": "县镇工作链条进行了一次常规进度核对。",
+      "private_contexts": {},
+      "model_ids": {},
+      "action_ids": [
+        "night_hold_position"
+      ],
+      "followup_plans": [
+        {
+          "plan_id": "followup_d10_county_reporting",
+          "label": "次日向县长汇报征迁进度",
+          "followup_type": "cadre_meeting",
+          "initiator_ids": [
+            "npc_zhao_jianguo",
+            "npc_sun_qiang"
+          ],
+          "participant_ids": [
+            "npc_zhao_jianguo",
+            "npc_sun_qiang"
+          ],
+          "agenda": "核对首阶段签约落差、县镇汇报口径和下一步责任。",
+          "demands": [
+            "明确签约落差的责任人与补救期限"
+          ],
+          "urgency": "high",
+          "persuasion_context": "签约进度落后，县镇之间都担心下一次汇报时无法自圆其说。玩家需要给出让人物此刻愿意继续执行的解释，但人物相信不代表进度已经完成。",
+          "participant_guidance": {
+            "npc_zhao_jianguo": {
+              "core_concerns": [
+                "县级汇报时由谁承担进度落差责任",
+                "玩家说法能否与已发生的工作记录对上"
+              ],
+              "convincing_signals": [
+                "承认真实差距并说明可核验的下一步",
+                "明确县镇各自承担的责任而非只向下压责"
+              ],
+              "suspicion_signals": [
+                "只说高度重视或保证完成",
+                "把全部责任推给渡口镇",
+                "与此前公开口径明显冲突"
+              ],
+              "questioning_style": "先问责任归属，再连续追问时间、经手人和如何向县里解释。"
+            },
+            "npc_sun_qiang": {
+              "core_concerns": [
+                "镇里是否会承担无法落地的承诺",
+                "基层执行口径是否具体一致"
+              ],
+              "convincing_signals": [
+                "说明先做什么后做什么并承认基层限制",
+                "愿意让县级部门共同出面承担"
+              ],
+              "suspicion_signals": [
+                "不谈执行步骤的宏大承诺",
+                "临时改变数字或让镇里独自兜底"
+              ],
+              "questioning_style": "用基层实际困难拆解玩家说法，追问下一步由谁去做。"
+            }
+          },
+          "required_when": {
+            "signed_households_lte": 11
+          }
+        }
+      ]
+    },
+    {
+      "scene_id": "night_d29_qian_zhao_private_room",
+      "story_day": 29,
+      "selection_mode": "autonomous",
+      "subnetwork_ids": [
+        "corporate_corruption"
+      ],
+      "candidate_ids": [
+        "npc_qian_wei",
+        "npc_zhao_jianguo",
+        "npc_sun_qiang",
+        "npc_liu_san"
+      ],
+      "max_contacts_per_npc": 2,
+      "max_action_executions": 1,
+      "rounds": 2,
+      "allowed_topics": [
+        "investigation_risk",
+        "evidence_custody"
+      ],
+      "hidden_fact_markers": [
+        "未公开底稿",
+        "精确隐秘得分"
+      ],
+      "scene_goal": "县里的调查正在逼近。判断彼此是否仍可信，并决定今晚之后如何保护自己。",
+      "public_direction_summary": "与近期调查有关的人员进行了试探性接触，主要在评估风险、合作边界和彼此立场。",
+      "private_contexts": {
+        "npc_qian_wei": "你掌握资源和关系，但担心赵建国在压力下留下口供。你首先保护自己，也可能牺牲赵建国。",
+        "npc_zhao_jianguo": "你经手过关键材料，既怕被推出去顶罪，也怕主动翻脸后失去保护。你需要判断钱伟是否还会保你。",
+        "npc_sun_qiang": "你熟悉镇村执行链条，也察觉调查可能牵连基层经手人。除非风险逼近，否则不必主动联系任何人。",
+        "npc_liu_san": "你握有部分原始凭证，也担心夜间联系暴露自己。只有确有交换材料或求助的必要时才联系人。"
+      },
+      "model_ids": {},
+      "action_ids": [
+        "night_unify_story",
+        "night_move_originals",
+        "night_cut_off_counterpart",
+        "night_hold_position"
+      ],
+      "followup_plans": [
+        {
+          "plan_id": "followup_d29_zhao_protection",
+          "label": "次日向县长说明调查压力",
+          "followup_type": "cadre_meeting",
+          "initiator_ids": [
+            "npc_zhao_jianguo"
+          ],
+          "participant_ids": [
+            "npc_zhao_jianguo",
+            "npc_sun_qiang"
+          ],
+          "agenda": "说明调查压力、材料保管风险和需要县长明确的保护边界。",
+          "demands": [
+            "明确关键材料的保管与报告路径"
+          ],
+          "urgency": "high",
+          "persuasion_context": "调查压力已经进入熟人关系和材料保管环节。赵建国担心被推出去顶责，孙强担心基层经手人被卷入；玩家可以安抚或欺骗他们，但今天的说法会被记住。",
+          "participant_guidance": {
+            "npc_zhao_jianguo": {
+              "core_concerns": [
+                "自己会不会成为唯一责任人",
+                "交代材料后能否得到程序上的保护"
+              ],
+              "convincing_signals": [
+                "不要求私下销毁或隐匿材料",
+                "能解释公开报告路径及谁会共同见证",
+                "说法与此前对他的承诺一致"
+              ],
+              "suspicion_signals": [
+                "让他先交东西却不说明后果",
+                "空泛保证绝不会出事",
+                "前后改变对钱伟或材料的口径"
+              ],
+              "questioning_style": "防备而急迫，反复确认玩家是否会把他单独推出去。"
+            },
+            "npc_sun_qiang": {
+              "core_concerns": [
+                "材料保管是否留下合法记录",
+                "镇村经手人会不会被迫统一假口径"
+              ],
+              "convincing_signals": [
+                "允许按程序留痕并保护如实说明者",
+                "明确不要求基层替任何人背书"
+              ],
+              "suspicion_signals": [
+                "暗示私下处理原件",
+                "只谈忠诚不谈程序",
+                "要求所有人说同一种未经核验的话"
+              ],
+              "questioning_style": "语气克制，抓住材料去向、见证人和正式报告渠道追问。"
+            }
+          },
+          "required_when": {
+            "required_any_flags": [
+              "与钱伟撕破脸",
+              "钱赵生隙",
+              "赵建国翻供",
+              "孙强交底"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "scene_id": "night_d40_village_mediation",
+      "story_day": 40,
+      "selection_mode": "autonomous",
+      "subnetwork_ids": [
+        "village_clan"
+      ],
+      "candidate_ids": [
+        "npc_wu_xiuying",
+        "npc_zhou_dashan"
+      ],
+      "max_contacts_per_npc": 1,
+      "max_action_executions": 1,
+      "rounds": 1,
+      "allowed_topics": [
+        "clan_mediation"
+      ],
+      "scene_goal": "宗族议事只能围绕已公开的安置分歧协调，不得扩散未核验材料。",
+      "public_direction_summary": "村庄内部就公开的安置分歧进行了有限沟通。",
+      "private_contexts": {},
+      "model_ids": {},
+      "action_ids": [
+        "night_hold_position"
+      ],
+      "followup_plans": [
+        {
+          "plan_id": "followup_d40_village_mediation",
+          "label": "次日请县长参加安置协调会",
+          "followup_type": "petition",
+          "initiator_ids": [
+            "npc_wu_xiuying",
+            "npc_zhou_dashan"
+          ],
+          "participant_ids": [
+            "npc_wu_xiuying",
+            "npc_zhou_dashan"
+          ],
+          "agenda": "就宗族、迁坟和安置诉求逐项确认可执行安排。",
+          "demands": [
+            "明确迁坟礼序和安置诉求的办理边界"
+          ],
+          "urgency": "high",
+          "persuasion_context": "迁坟礼序、散姓住户的公平感和宗族体面彼此牵制。玩家不需要提交资源表，也不要求玩家给出剧本未提供的具体旧例名称、资源数量或政策条文；只要提出让周氏与散姓共同参与、逐户核对、保留异议并兼顾体面的可信办法，就可以让人物暂时接受，但这不代表承诺已经兑现。",
+          "participant_guidance": {
+            "npc_wu_xiuying": {
+              "core_concerns": [
+                "散姓和边缘住户是否被同等听见",
+                "县里是否又用一句统一安排跳过真实差别"
+              ],
+              "convincing_signals": [
+                "直接回应不同家庭处境而不只安抚族长",
+                "愿意公开说明程序并让普通住户说话",
+                "提出周氏与散姓共同参与、逐户核对并保留异议"
+              ],
+              "suspicion_signals": [
+                "只通过周大山代表全村",
+                "用顾全大局压住具体质疑",
+                "回避此前已经说过的话"
+              ],
+              "questioning_style": "从具体住户遭遇发问，平静但会紧盯公平和公开；不要求玩家当场说出剧本未提供的资源数字或政策名称。"
+            },
+            "npc_zhou_dashan": {
+              "core_concerns": [
+                "迁坟礼序和宗族体面是否被尊重",
+                "自己是否仍能向族人解释这项安排"
+              ],
+              "convincing_signals": [
+                "承认礼序的现实影响并给出体面的公开说法",
+                "不当众否定宗族内部的协调作用",
+                "允许村民共同商议礼序并保留宗族体面"
+              ],
+              "suspicion_signals": [
+                "把礼序斥为迷信或小事",
+                "绕过他直接宣告已经解决",
+                "前后对迁坟态度矛盾"
+              ],
+              "questioning_style": "讲体面和规矩，也会试探玩家是否真的理解村庄权力结构；不要求县长说出剧本没有提供的统一旧例名称。"
+            }
+          },
+          "required_when": {
+            "unless_all_flags": [
+              "迁坟条件被接受"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "scene_id": "night_d55_environment_evidence",
+      "story_day": 55,
+      "selection_mode": "autonomous",
+      "subnetwork_ids": [
+        "environmental_evidence"
+      ],
+      "candidate_ids": [
+        "npc_shi_wenbin",
+        "npc_ke_qinian"
+      ],
+      "max_contacts_per_npc": 1,
+      "max_action_executions": 1,
+      "rounds": 1,
+      "allowed_topics": [
+        "eia_evidence"
+      ],
+      "scene_goal": "环境材料进入复核期，只能讨论证据保管和已经登记的复核流程。",
+      "public_direction_summary": "环境材料的保管与复核流程出现了新的工作动向。",
+      "private_contexts": {},
+      "model_ids": {},
+      "action_ids": [
+        "night_hold_position"
+      ],
+      "followup_plans": [
+        {
+          "plan_id": "followup_d55_environment",
+          "label": "次日向县长汇报复检和治疗落实",
+          "followup_type": "cadre_meeting",
+          "initiator_ids": [
+            "npc_shi_wenbin",
+            "npc_ke_qinian"
+          ],
+          "participant_ids": [
+            "npc_shi_wenbin",
+            "npc_ke_qinian"
+          ],
+          "agenda": "核对环评复核、儿童复检治疗和证据保管的落实情况。",
+          "demands": [
+            "明确复检治疗责任和证据保管路径"
+          ],
+          "urgency": "critical",
+          "persuasion_context": "环境证据和儿童健康问题已经无法只靠口径维持。人物关注证据是否还在、真实情况是否会被复核以及玩家是否愿意承担公开后的压力。",
+          "participant_guidance": {
+            "npc_shi_wenbin": {
+              "core_concerns": [
+                "原始材料能否安全保留并被独立核对",
+                "自己如实说明后是否被当作替罪羊"
+              ],
+              "convincing_signals": [
+                "允许保留原件和交接痕迹",
+                "不要求他修改专业结论",
+                "承认复核可能推翻既有报告"
+              ],
+              "suspicion_signals": [
+                "只要口头汇报不要原件",
+                "保证结果一定没有问题",
+                "逼他替未经核验的结论背书"
+              ],
+              "questioning_style": "专业、谨慎，围绕样本、原件、复核者和交接过程逐层追问。"
+            },
+            "npc_ke_qinian": {
+              "core_concerns": [
+                "卫生系统能否对患儿给出真实可解释的处理",
+                "环境与医疗口径不一致时由谁负责"
+              ],
+              "convincing_signals": [
+                "承认需要复检并允许据实说明",
+                "对患儿处置和证据核对采用同一真实口径"
+              ],
+              "suspicion_signals": [
+                "先压消息再谈治疗",
+                "把报告无异常当作不复检的理由",
+                "承诺结果而非承诺核验过程"
+              ],
+              "questioning_style": "从医疗责任切入，要求玩家解释发现异常后准备怎么面对家长。"
+            }
+          },
+          "required_when": {
+            "unless_all_flags": [
+              "环评揭穿",
+              "治疗兜底承诺"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "scene_id": "night_d70_external_oversight",
+      "story_day": 70,
+      "selection_mode": "autonomous",
+      "subnetwork_ids": [
+        "external_oversight"
+      ],
+      "candidate_ids": [
+        "npc_chen_mo",
+        "npc_wu_xiuying"
+      ],
+      "max_contacts_per_npc": 1,
+      "max_action_executions": 1,
+      "rounds": 1,
+      "allowed_topics": [
+        "public_oversight"
+      ],
+      "scene_goal": "外部关注上升，只能交流已经公开或亲历可观察的监督进展。",
+      "public_direction_summary": "外部监督渠道围绕公开进展进行了谨慎核对。",
+      "private_contexts": {},
+      "model_ids": {},
+      "action_ids": [
+        "night_hold_position"
+      ],
+      "followup_plans": [
+        {
+          "plan_id": "followup_d70_public_oversight",
+          "label": "次日与县长核对公开材料",
+          "followup_type": "petition",
+          "initiator_ids": [
+            "npc_chen_mo",
+            "npc_wu_xiuying"
+          ],
+          "participant_ids": [
+            "npc_chen_mo",
+            "npc_wu_xiuying"
+          ],
+          "agenda": "核对公开材料、群众所见与县里说明之间的差异。",
+          "demands": [
+            "给出可以公开核验的材料与答复期限"
+          ],
+          "urgency": "high",
+          "persuasion_context": "公开材料与群众亲历之间已经出现落差。玩家可以用可信解释暂时稳住在场者，也可能留下日后被公开比对的说法。",
+          "participant_guidance": {
+            "npc_chen_mo": {
+              "core_concerns": [
+                "玩家说法能否被公开材料和第三方核验",
+                "是否有人试图用空话换取停止报道"
+              ],
+              "convincing_signals": [
+                "允许后续公开核验而不预设结论",
+                "直接解释材料之间的具体差异",
+                "不要求记者放弃独立判断"
+              ],
+              "suspicion_signals": [
+                "以大局为由要求不要再问",
+                "只承诺会研究却不给任何可核验内容",
+                "攻击提问者动机而不回应矛盾"
+              ],
+              "questioning_style": "短、准、持续追问证据来源，并会引用玩家此前说过的话。"
+            },
+            "npc_wu_xiuying": {
+              "core_concerns": [
+                "县里的公开说法是否符合村民实际经历",
+                "普通住户会不会再次被排除在说明之外"
+              ],
+              "convincing_signals": [
+                "承认群众看到的矛盾是真问题",
+                "愿意让当事人继续核对并公开纠错"
+              ],
+              "suspicion_signals": [
+                "把所有质疑归为误解",
+                "借记者在场只做姿态",
+                "否认她亲眼见过的情况"
+              ],
+              "questioning_style": "用生活经验校验官方说法，一旦被否认会直接指出具体反例。"
+            }
+          },
+          "required_when": {
+            "any_of": [
+              {
+                "required_any_flags": [
+                  "记者结盟",
+                  "舆情公开"
+                ]
+              },
+              {
+                "metric_min": {
+                  "media_pressure": 60
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "scene_id": "night_d84_inspection_followup",
+      "story_day": 84,
+      "selection_mode": "autonomous",
+      "subnetwork_ids": [
+        "external_oversight",
+        "county_government"
+      ],
+      "candidate_ids": [
+        "npc_zhang_li",
+        "npc_zhao_jianguo",
+        "npc_sun_qiang"
+      ],
+      "max_contacts_per_npc": 1,
+      "max_action_executions": 1,
+      "rounds": 1,
+      "allowed_topics": [
+        "inspection_progress",
+        "county_reporting"
+      ],
+      "scene_goal": "终局前的监督回看只核对已登记的整改和县镇执行进度。",
+      "public_direction_summary": "监督与执行链条对已登记的整改进度进行了回看。",
+      "private_contexts": {},
+      "model_ids": {},
+      "action_ids": [
+        "night_hold_position"
+      ],
+      "followup_plans": [
+        {
+          "plan_id": "followup_d84_final_inspection",
+          "label": "次日召开终局前整改会谈",
+          "followup_type": "cadre_meeting",
+          "initiator_ids": [
+            "npc_zhang_li"
+          ],
+          "participant_ids": [
+            "npc_zhang_li",
+            "npc_zhao_jianguo",
+            "npc_sun_qiang"
+          ],
+          "agenda": "逐项核对巡察整改、逾期事项和自查落空问题。",
+          "demands": [
+            "逐项确认整改责任人、证据和最后期限"
+          ],
+          "urgency": "critical",
+          "persuasion_context": "终局前仍有整改、逾期事项或自查落空。三个人分别从监督、县级责任和基层执行审视玩家；一人的接受不会自动消除另两人的质疑。",
+          "participant_guidance": {
+            "npc_zhang_li": {
+              "core_concerns": [
+                "整改是否有可核验的闭环而非临时表态",
+                "玩家是否回避逾期和自查落空的责任"
+              ],
+              "convincing_signals": [
+                "承认未完成事项并允许按原记录复核",
+                "说法与已经登记的证据和历史承诺一致",
+                "不阻止后续追责"
+              ],
+              "suspicion_signals": [
+                "用最终都会完成回避当前状态",
+                "要求以信任代替核验",
+                "把新口头承诺说成已经整改"
+              ],
+              "questioning_style": "冷静、精确，抓住每个动词追问究竟是已完成、正在办还是仅承诺。"
+            },
+            "npc_zhao_jianguo": {
+              "core_concerns": [
+                "县班子是否会在终局责任中切割自己",
+                "玩家的解释能否在巡察追问下站住"
+              ],
+              "convincing_signals": [
+                "不掩盖现实但说明共同责任",
+                "给出能让他在会上继续支持的统一事实口径"
+              ],
+              "suspicion_signals": [
+                "当着巡察把责任全部下压",
+                "临时否认此前共同决定",
+                "保证张立不会再查"
+              ],
+              "questioning_style": "在政治责任和自保之间试探，会追问玩家准备怎样对上级说明。"
+            },
+            "npc_sun_qiang": {
+              "core_concerns": [
+                "镇村执行记录是否被县级表态歪曲",
+                "最后几天是否又出现无法落实的新承诺"
+              ],
+              "convincing_signals": [
+                "尊重基层已有记录并承认未完成部分",
+                "说清接下来由谁继续做而不让镇里虚报完成"
+              ],
+              "suspicion_signals": [
+                "要求把进行中写成已完成",
+                "新增不可能兑现的任务",
+                "与基层已报数字冲突"
+              ],
+              "questioning_style": "用现场和台账事实核对每句话，发现数字或状态冲突会立即指出。"
+            }
+          },
+          "required_when": {
+            "always": true
+          }
+        }
+      ]
+    }
+  ],
+  "night_agent_hard_outcomes": [
+    {
+      "outcome_id": "outcome_unify_story",
+      "action_id": "night_unify_story",
+      "effects": {
+        "metric_deltas": {
+          "corruption_evidence": [
+            3,
+            8
+          ]
+        },
+        "open_flags": [
+          "攻守同盟已成"
+        ],
+        "close_flags": [
+          "钱赵生隙"
+        ]
+      },
+      "npc_deltas": {
+        "npc_qian_wei": {
+          "attitude": 3,
+          "anxiety": -3
+        },
+        "npc_zhao_jianguo": {
+          "attitude": 3,
+          "anxiety": -3
+        }
+      }
+    },
+    {
+      "outcome_id": "outcome_move_originals",
+      "action_id": "night_move_originals",
+      "effects": {
+        "metric_deltas": {
+          "corruption_evidence": [
+            -8,
+            -3
+          ]
+        },
+        "open_flags": [
+          "原件缺失"
+        ]
+      },
+      "npc_deltas": {
+        "npc_zhao_jianguo": {
+          "attitude": 0,
+          "anxiety": 8
+        }
+      }
+    },
+    {
+      "outcome_id": "outcome_cut_off_counterpart",
+      "action_id": "night_cut_off_counterpart",
+      "effects": {
+        "metric_deltas": {
+          "corruption_evidence": [
+            0,
+            3
+          ]
+        },
+        "open_flags": [
+          "钱赵生隙"
+        ],
+        "close_flags": [
+          "攻守同盟已成"
+        ]
+      },
+      "npc_deltas": {
+        "npc_qian_wei": {
+          "attitude": -5,
+          "anxiety": 5
+        },
+        "npc_zhao_jianguo": {
+          "attitude": -5,
+          "anxiety": 5
+        }
+      }
+    },
+    {
+      "outcome_id": "outcome_hold_position",
+      "action_id": "night_hold_position",
+      "effects": {},
+      "npc_deltas": {}
+    }
+  ],
+  "night_agent_actions": [
+    {
+      "action_id": "night_unify_story",
+      "name": "统一口径",
+      "description": "双方继续合作，约定一致说法并互相掩护；只有两人都选择才成立。",
+      "public_direction_summary": "部分相关人员尝试协调对外说法，调查中的相互掩护迹象有所增强。",
+      "resolution": "consensus",
+      "hard_outcome_ids": [
+        "outcome_unify_story"
+      ],
+      "allowed_topics": [
+        "investigation_risk"
+      ],
+      "actor_ids": [
+        "npc_qian_wei",
+        "npc_zhao_jianguo"
+      ],
+      "forbidden_flags": [
+        "与钱伟撕破脸"
+      ],
+      "allowed_target_ids": [
+        "npc_qian_wei",
+        "npc_zhao_jianguo"
+      ],
+      "effects": {
+        "metric_deltas": {
+          "corruption_evidence": [
+            3,
+            8
+          ]
+        },
+        "open_flags": [
+          "攻守同盟已成"
+        ],
+        "close_flags": [
+          "钱赵生隙"
+        ]
+      },
+      "npc_deltas": {
+        "npc_qian_wei": {
+          "attitude": 3,
+          "anxiety": -3
+        },
+        "npc_zhao_jianguo": {
+          "attitude": 3,
+          "anxiety": -3
+        }
+      }
+    },
+    {
+      "action_id": "night_move_originals",
+      "name": "转移原件",
+      "description": "赵建国趁夜转移可能被调查取得的原件，以降低直接证据强度。",
+      "public_direction_summary": "有人可能调整了关键材料的保管方式，后续核查难度有所上升。",
+      "resolution": "unilateral",
+      "hard_outcome_ids": [
+        "outcome_move_originals"
+      ],
+      "allowed_topics": [
+        "evidence_custody"
+      ],
+      "actor_ids": [
+        "npc_zhao_jianguo"
+      ],
+      "required_any_flags": [
+        "已立项审计",
+        "秘密摸底"
+      ],
+      "allowed_target_ids": [],
+      "effects": {
+        "metric_deltas": {
+          "corruption_evidence": [
+            -8,
+            -3
+          ]
+        },
+        "open_flags": [
+          "原件缺失"
+        ]
+      },
+      "npc_deltas": {
+        "npc_zhao_jianguo": {
+          "attitude": 0,
+          "anxiety": 8
+        }
+      }
+    },
+    {
+      "action_id": "night_cut_off_counterpart",
+      "name": "切割对方",
+      "description": "停止互相掩护，并为必要时向调查者提供对方线索做准备。",
+      "public_direction_summary": "原有合作关系出现裂痕，相关人员开始相互防备。",
+      "resolution": "unilateral",
+      "hard_outcome_ids": [
+        "outcome_cut_off_counterpart"
+      ],
+      "allowed_topics": [
+        "investigation_risk"
+      ],
+      "required_flags": [
+        "与钱伟撕破脸"
+      ],
+      "allowed_target_ids": [
+        "npc_qian_wei",
+        "npc_zhao_jianguo"
+      ],
+      "effects": {
+        "metric_deltas": {
+          "corruption_evidence": [
+            0,
+            3
+          ]
+        },
+        "open_flags": [
+          "钱赵生隙"
+        ],
+        "close_flags": [
+          "攻守同盟已成"
+        ]
+      },
+      "npc_deltas": {
+        "npc_qian_wei": {
+          "attitude": -5,
+          "anxiety": 5
+        },
+        "npc_zhao_jianguo": {
+          "attitude": -5,
+          "anxiety": 5
+        }
+      }
+    },
+    {
+      "action_id": "night_hold_position",
+      "name": "暂不行动",
+      "description": "不达成共同安排，也不立刻采取高风险动作，保留下一夜改变立场的空间。",
+      "public_direction_summary": "相关人员进行了有限接触，但没有形成明确的共同安排。",
+      "resolution": "unilateral",
+      "hard_outcome_ids": [
+        "outcome_hold_position"
+      ],
+      "allowed_topics": [
+        "county_reporting",
+        "investigation_risk",
+        "evidence_custody",
+        "clan_mediation",
+        "eia_evidence",
+        "public_oversight",
+        "inspection_progress"
+      ],
+      "allowed_target_ids": [],
+      "effects": {},
+      "npc_deltas": {}
+    }
+  ]
+}

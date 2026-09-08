@@ -8,10 +8,27 @@
       "text": "柳林村共36户，周姓11户集中住在村中心；刘、吴、杨等散姓多在村边和河湾下游。周氏宗族掌握村内主要话语权，吴秀英连接宗族核心与边缘散户。",
       "source_label": "D2走访吴秀英并结合开局村庄社会卷宗核实",
       "acquisition_methods": [
-        {"route_type": "archive", "source_id": "archive_village_social_excerpt", "unlock_day": 2, "label": "查阅《村庄社会关系摘录》", "instructions": "进入“行动—查阅档案”，选择《村庄社会关系摘录》完成首次查阅。"},
-        {"route_type": "conversation", "source_id": "opp_d02_wu_xiuying_first_talk", "unlock_day": 2, "label": "走访吴秀英", "instructions": "在第2日与吴秀英完成入户会谈，追问周氏宗族、散姓户和村内议事关系。"}
+        {
+          "route_type": "archive",
+          "source_id": "archive_village_social_excerpt",
+          "unlock_day": 2,
+          "label": "查阅《村庄社会关系摘录》",
+          "instructions": "进入“行动—查阅档案”，选择《村庄社会关系摘录》完成首次查阅。"
+        },
+        {
+          "route_type": "conversation",
+          "source_id": "opp_d02_wu_xiuying_first_talk",
+          "unlock_day": 2,
+          "label": "走访吴秀英",
+          "instructions": "在第2日与吴秀英完成入户会谈，追问周氏宗族、散姓户和村内议事关系。"
+        }
       ],
-      "related_npc_ids": ["npc_wu_xiuying", "npc_zhou_dashan", "npc_liu_san", "npc_yang_bo"],
+      "related_npc_ids": [
+        "npc_wu_xiuying",
+        "npc_zhou_dashan",
+        "npc_liu_san",
+        "npc_yang_bo"
+      ],
       "use_hint": "可用于选择走访顺序、判断意见领袖与宗族路线，并在相关会谈中追问村内利益分配。",
       "disclosure_tier": 2,
       "source_line": 2555
@@ -23,9 +40,19 @@
       "text": "吴秀英不怕周大山，也看不惯他那套论资排辈、按姓分肥的老规矩。",
       "source_label": "D2与吴秀英交谈",
       "acquisition_methods": [
-        {"route_type": "conversation", "source_id": "opp_d02_wu_xiuying_first_talk", "unlock_day": 2, "label": "走访吴秀英", "instructions": "在第2日完成吴秀英的首次入户会谈，听取她对宗族旧规和公开补偿的真实态度。"}
+        {
+          "route_type": "conversation",
+          "source_id": "opp_d02_wu_xiuying_first_talk",
+          "unlock_day": 2,
+          "label": "走访吴秀英",
+          "instructions": "在第2日完成吴秀英的首次入户会谈，听取她对宗族旧规和公开补偿的真实态度。"
+        }
       ],
-      "related_npc_ids": ["npc_wu_xiuying", "npc_zhou_dashan", "npc_yuan_guilan"],
+      "related_npc_ids": [
+        "npc_wu_xiuying",
+        "npc_zhou_dashan",
+        "npc_yuan_guilan"
+      ],
       "use_hint": "可用于判断吴秀英能否作为独立意见领袖，并追问散姓户、困难户与公开补偿诉求。",
       "disclosure_tier": 2,
       "source_line": 2622
@@ -37,10 +64,26 @@
       "text": "三张发票开在同一天，抬头是三家不同的公司，金额加起来八十七万。",
       "source_label": "财政账目核查",
       "acquisition_methods": [
-        {"route_type": "archive", "source_id": "archive_invoice_number_index", "unlock_day": 16, "label": "查阅《发票登记与编号索引》", "instructions": "第16日起进入“行动—查阅档案”，首次查阅发票登记与编号索引。"},
-        {"route_type": "conversation", "source_id": "opp_16_zhao_jianguo_contact", "unlock_day": 16, "label": "访谈赵建国", "instructions": "第16日起与赵建国进行干部访谈，围绕协调费发票的日期、抬头和经办链追问；信任不足时对方可能拒绝交底。"}
+        {
+          "route_type": "archive",
+          "source_id": "archive_invoice_number_index",
+          "unlock_day": 16,
+          "label": "查阅《发票登记与编号索引》",
+          "instructions": "第16日起进入“行动—查阅档案”，首次查阅发票登记与编号索引。"
+        },
+        {
+          "route_type": "conversation",
+          "source_id": "opp_16_zhao_jianguo_contact",
+          "unlock_day": 16,
+          "label": "访谈赵建国",
+          "instructions": "第16日起与赵建国进行干部访谈，围绕协调费发票的日期、抬头和经办链追问；信任不足时对方可能拒绝交底。"
+        }
       ],
-      "related_npc_ids": ["npc_zhao_jianguo", "npc_liu_san", "npc_qian_wei"],
+      "related_npc_ids": [
+        "npc_zhao_jianguo",
+        "npc_liu_san",
+        "npc_qian_wei"
+      ],
       "use_hint": "可与拨付凭证、村账和经办人陈述交叉印证，尚不能单独证明资金去向。",
       "source_line": 3429
     },
@@ -51,10 +94,25 @@
       "text": "四十一张原始凭证还在财政局的档案袋里。",
       "source_label": "县财政档案调阅",
       "acquisition_methods": [
-        {"route_type": "archive", "source_id": "archive_original_vouchers", "unlock_day": 18, "label": "查阅《四十一张原始凭证》", "instructions": "第18日起进入“行动—查阅档案”，首次查阅四十一张原始凭证。"},
-        {"route_type": "conversation", "source_id": "opp_20_liu_san_contact", "unlock_day": 20, "label": "私下询问刘三", "instructions": "第20日起与刘三正式接触，追问原始凭证、村级底稿和实际收款情况；需要建立足够信任。"}
+        {
+          "route_type": "archive",
+          "source_id": "archive_original_vouchers",
+          "unlock_day": 18,
+          "label": "查阅《四十一张原始凭证》",
+          "instructions": "第18日起进入“行动—查阅档案”，首次查阅四十一张原始凭证。"
+        },
+        {
+          "route_type": "conversation",
+          "source_id": "opp_20_liu_san_contact",
+          "unlock_day": 20,
+          "label": "私下询问刘三",
+          "instructions": "第20日起与刘三正式接触，追问原始凭证、村级底稿和实际收款情况；需要建立足够信任。"
+        }
       ],
-      "related_npc_ids": ["npc_zhao_jianguo", "npc_liu_san"],
+      "related_npc_ids": [
+        "npc_zhao_jianguo",
+        "npc_liu_san"
+      ],
       "use_hint": "可核对前期经费的时间、抬头、审批与实际收款方，构成资金链证据。",
       "source_line": 3545
     },
@@ -65,10 +123,25 @@
       "text": "三份一模一样的报告指向同一批被改写的监测口径。",
       "source_label": "环保材料交叉核验",
       "acquisition_methods": [
-        {"route_type": "archive", "source_id": "archive_environmental_report_versions", "unlock_day": 21, "label": "查阅《三年度环保报告版本》", "instructions": "第21日起进入“行动—查阅档案”，并排查阅三年度环保报告版本。"},
-        {"route_type": "conversation", "source_id": "opp_22_shi_wenbin_contact", "unlock_day": 22, "label": "访谈石文斌", "instructions": "第22日起与石文斌会谈，追问三年报告的重复数值、原始监测口径和改写经过。"}
+        {
+          "route_type": "archive",
+          "source_id": "archive_environmental_report_versions",
+          "unlock_day": 21,
+          "label": "查阅《三年度环保报告版本》",
+          "instructions": "第21日起进入“行动—查阅档案”，并排查阅三年度环保报告版本。"
+        },
+        {
+          "route_type": "conversation",
+          "source_id": "opp_22_shi_wenbin_contact",
+          "unlock_day": 22,
+          "label": "访谈石文斌",
+          "instructions": "第22日起与石文斌会谈，追问三年报告的重复数值、原始监测口径和改写经过。"
+        }
       ],
-      "related_npc_ids": ["npc_shi_wenbin", "npc_qian_wei"],
+      "related_npc_ids": [
+        "npc_shi_wenbin",
+        "npc_qian_wei"
+      ],
       "use_hint": "可与原始监测数据和第三方检测结果比对，判断报告是否被复制或改写。",
       "source_line": 3754
     },
@@ -79,9 +152,19 @@
       "text": "刘三答应把前年那本账的底稿留一份。",
       "source_label": "刘三私下提供",
       "acquisition_methods": [
-        {"route_type": "conversation", "source_id": "opp_20_liu_san_contact", "unlock_day": 20, "label": "取得刘三的老账底稿", "instructions": "第20日起私下接触刘三，围绕前年村账和实际领取情况建立信任并请求保留底稿。"}
+        {
+          "route_type": "conversation",
+          "source_id": "opp_20_liu_san_contact",
+          "unlock_day": 20,
+          "label": "取得刘三的老账底稿",
+          "instructions": "第20日起私下接触刘三，围绕前年村账和实际领取情况建立信任并请求保留底稿。"
+        }
       ],
-      "related_npc_ids": ["npc_liu_san", "npc_zhou_dashan", "npc_zhao_jianguo"],
+      "related_npc_ids": [
+        "npc_liu_san",
+        "npc_zhou_dashan",
+        "npc_zhao_jianguo"
+      ],
       "use_hint": "可核对村级账、财政拨付和实际领取情况，但需保护来源并验证真伪。",
       "source_line": 3709
     },
@@ -92,9 +175,18 @@
       "text": "全书的优盘只有一件，属于石文斌。",
       "source_label": "石文斌提供或剧情封存",
       "acquisition_methods": [
-        {"route_type": "conversation", "source_id": "opp_22_shi_wenbin_contact", "unlock_day": 22, "label": "取得石文斌的优盘", "instructions": "第22日起与石文斌会谈，明确材料保护、复制留痕和交接方式后，请他提供或封存优盘。"}
+        {
+          "route_type": "conversation",
+          "source_id": "opp_22_shi_wenbin_contact",
+          "unlock_day": 22,
+          "label": "取得石文斌的优盘",
+          "instructions": "第22日起与石文斌会谈，明确材料保护、复制留痕和交接方式后，请他提供或封存优盘。"
+        }
       ],
-      "related_npc_ids": ["npc_shi_wenbin", "npc_qian_wei"],
+      "related_npc_ids": [
+        "npc_shi_wenbin",
+        "npc_qian_wei"
+      ],
       "use_hint": "可用于保存和核验环保原始材料；应记录取得、保管和复制过程。",
       "source_line": 4308
     },
@@ -105,10 +197,25 @@
       "text": "环评的原始数据可以与公示版本交叉印证。",
       "source_label": "环保原始材料",
       "acquisition_methods": [
-        {"route_type": "conversation", "source_id": "opp_22_shi_wenbin_contact", "unlock_day": 22, "label": "向石文斌核对原始数据", "instructions": "第22日起与石文斌会谈，追问监测点位、采样时段、原始读数与公示版本差异。"},
-        {"route_type": "archive", "source_id": "archive_eia_raw_data", "unlock_day": 45, "label": "查阅《环评原始数据附件》", "instructions": "第45日起进入“行动—查阅档案”，首次查阅环评原始数据附件。"}
+        {
+          "route_type": "conversation",
+          "source_id": "opp_22_shi_wenbin_contact",
+          "unlock_day": 22,
+          "label": "向石文斌核对原始数据",
+          "instructions": "第22日起与石文斌会谈，追问监测点位、采样时段、原始读数与公示版本差异。"
+        },
+        {
+          "route_type": "archive",
+          "source_id": "archive_eia_raw_data",
+          "unlock_day": 45,
+          "label": "查阅《环评原始数据附件》",
+          "instructions": "第45日起进入“行动—查阅档案”，首次查阅环评原始数据附件。"
+        }
       ],
-      "related_npc_ids": ["npc_shi_wenbin", "npc_qian_wei"],
+      "related_npc_ids": [
+        "npc_shi_wenbin",
+        "npc_qian_wei"
+      ],
       "use_hint": "可与正式环评、公示报告和第三方检测比对，验证是否存在删改。",
       "source_line": 6144
     },
@@ -119,9 +226,19 @@
       "text": "玩家手中的水样取自冲沟之前，具备证据效力。",
       "source_label": "依程序取样并封存",
       "acquisition_methods": [
-        {"route_type": "action", "source_id": "third_party_water_test", "unlock_day": 22, "label": "第三方见证取样并封存", "instructions": "第22日起进入行动，请第三方在登记取样点、见证人和封存编号后取样送检。"}
+        {
+          "route_type": "action",
+          "source_id": "third_party_water_test",
+          "unlock_day": 22,
+          "label": "第三方见证取样并封存",
+          "instructions": "第22日起进入行动，请第三方在登记取样点、见证人和封存编号后取样送检。"
+        }
       ],
-      "related_npc_ids": ["npc_shi_wenbin", "npc_he_tiezhu", "npc_qian_wei"],
+      "related_npc_ids": [
+        "npc_shi_wenbin",
+        "npc_he_tiezhu",
+        "npc_qian_wei"
+      ],
       "use_hint": "可送第三方检测并与企业或环保部门数据交叉印证。",
       "source_line": 6328
     },
@@ -132,10 +249,26 @@
       "text": "受检 107、超一百微克每升 41、超两百 11、最高 287。",
       "source_label": "血铅普查原始总表",
       "acquisition_methods": [
-        {"route_type": "conversation", "source_id": "opp_22_shi_wenbin_contact", "unlock_day": 22, "label": "向石文斌追问普查范围", "instructions": "第22日起与石文斌会谈，追问普查人数、异常分布和原始表保管位置；敏感数据需要足够信任。"},
-        {"route_type": "archive", "source_id": "archive_lead_census_master", "unlock_day": 45, "label": "查阅《血铅普查原始总表》", "instructions": "第45日起进入“行动—查阅档案”，首次查阅血铅普查原始总表。"}
+        {
+          "route_type": "conversation",
+          "source_id": "opp_22_shi_wenbin_contact",
+          "unlock_day": 22,
+          "label": "向石文斌追问普查范围",
+          "instructions": "第22日起与石文斌会谈，追问普查人数、异常分布和原始表保管位置；敏感数据需要足够信任。"
+        },
+        {
+          "route_type": "archive",
+          "source_id": "archive_lead_census_master",
+          "unlock_day": 45,
+          "label": "查阅《血铅普查原始总表》",
+          "instructions": "第45日起进入“行动—查阅档案”，首次查阅血铅普查原始总表。"
+        }
       ],
-      "related_npc_ids": ["npc_he_tiezhu", "npc_shi_wenbin", "npc_qian_wei"],
+      "related_npc_ids": [
+        "npc_he_tiezhu",
+        "npc_shi_wenbin",
+        "npc_qian_wei"
+      ],
       "use_hint": "可证明健康风险的范围与严重程度，并支撑医疗处置和责任调查。",
       "source_line": 6450
     },
@@ -146,9 +279,18 @@
       "text": "何铁柱七岁孙子的检测值为 287 微克每升。",
       "source_label": "何家体检材料",
       "acquisition_methods": [
-        {"route_type": "conversation", "source_id": "opp_03_he_tiezhu_contact", "unlock_day": 56, "label": "走访何铁柱", "instructions": "第56日起走访何铁柱，在尊重隐私和取得同意的前提下询问其孙子的体检结果。"}
+        {
+          "route_type": "conversation",
+          "source_id": "opp_03_he_tiezhu_contact",
+          "unlock_day": 56,
+          "label": "走访何铁柱",
+          "instructions": "第56日起走访何铁柱，在尊重隐私和取得同意的前提下询问其孙子的体检结果。"
+        }
       ],
-      "related_npc_ids": ["npc_he_tiezhu", "npc_shi_wenbin"],
+      "related_npc_ids": [
+        "npc_he_tiezhu",
+        "npc_shi_wenbin"
+      ],
       "use_hint": "可用于核实何家的健康诉求；属于敏感个人健康信息，公开和转交需谨慎。",
       "source_line": 5643
     },
@@ -159,10 +301,26 @@
       "text": "账面签约户数与真实签约户数必须分开。",
       "source_label": "签约台账复核",
       "acquisition_methods": [
-        {"route_type": "conversation", "source_id": "opp_07_sun_qiang_contact", "unlock_day": 7, "label": "与孙强核对签约口径", "instructions": "第7日起访谈孙强，逐户核对本人确认、签字状态和上报汇总口径。"},
-        {"route_type": "archive", "source_id": "archive_signing_ledger_comparison", "unlock_day": 30, "label": "查阅《两版签约台账比对》", "instructions": "第30日起进入“行动—查阅档案”，首次查阅两版签约台账比对。"}
+        {
+          "route_type": "conversation",
+          "source_id": "opp_07_sun_qiang_contact",
+          "unlock_day": 7,
+          "label": "与孙强核对签约口径",
+          "instructions": "第7日起访谈孙强，逐户核对本人确认、签字状态和上报汇总口径。"
+        },
+        {
+          "route_type": "archive",
+          "source_id": "archive_signing_ledger_comparison",
+          "unlock_day": 30,
+          "label": "查阅《两版签约台账比对》",
+          "instructions": "第30日起进入“行动—查阅档案”，首次查阅两版签约台账比对。"
+        }
       ],
-      "related_npc_ids": ["npc_sun_qiang", "npc_zhou_dashan", "npc_liu_san"],
+      "related_npc_ids": [
+        "npc_sun_qiang",
+        "npc_zhou_dashan",
+        "npc_liu_san"
+      ],
       "use_hint": "可用于验收前清理口头承诺、虚报或程序不完整的签约，D90只认真实签约。",
       "source_line": 4154
     },
@@ -173,9 +331,19 @@
       "text": "择地、择日、起灵、祭祀延续，四件事一件不缺。",
       "source_label": "宗族与村民会谈",
       "acquisition_methods": [
-        {"route_type": "conversation", "source_id": "opp_03_zhou_kuiyuan_contact", "unlock_day": 51, "label": "拜访周奎元", "instructions": "第51日起拜访周奎元，询问迁坟中的择地、择日、起灵和祭祀延续规矩。"}
+        {
+          "route_type": "conversation",
+          "source_id": "opp_03_zhou_kuiyuan_contact",
+          "unlock_day": 51,
+          "label": "拜访周奎元",
+          "instructions": "第51日起拜访周奎元，询问迁坟中的择地、择日、起灵和祭祀延续规矩。"
+        }
       ],
-      "related_npc_ids": ["npc_zhou_kuiyuan", "npc_zhou_dashan", "npc_wu_xiuying"],
+      "related_npc_ids": [
+        "npc_zhou_kuiyuan",
+        "npc_zhou_dashan",
+        "npc_wu_xiuying"
+      ],
       "use_hint": "可用于制定迁坟协商方案，避免把文化与祭祀诉求简化成单一报价。",
       "source_line": 3411
     },
@@ -186,9 +354,19 @@
       "text": "先摊台账、再摆原始检测数据、最后才谈钱。",
       "source_label": "周满仓提出的谈判顺序",
       "acquisition_methods": [
-        {"route_type": "conversation", "source_id": "opp_03_zhou_mancang_contact", "unlock_day": 64, "label": "与周满仓谈判", "instructions": "第64日起与周满仓会谈，询问他愿意继续协商的议程和材料出示顺序。"}
+        {
+          "route_type": "conversation",
+          "source_id": "opp_03_zhou_mancang_contact",
+          "unlock_day": 64,
+          "label": "与周满仓谈判",
+          "instructions": "第64日起与周满仓会谈，询问他愿意继续协商的议程和材料出示顺序。"
+        }
       ],
-      "related_npc_ids": ["npc_zhou_mancang", "npc_liu_san", "npc_shi_wenbin"],
+      "related_npc_ids": [
+        "npc_zhou_mancang",
+        "npc_liu_san",
+        "npc_shi_wenbin"
+      ],
       "use_hint": "可作为公开协商或听证的议程设计，让事实与账目先于补偿讨价。",
       "source_line": 7909
     },
@@ -199,10 +377,26 @@
       "text": "两百万前期协调费的凭证需要说明真实去处。",
       "source_label": "开局财政与项目卷宗，后续凭证核验",
       "acquisition_methods": [
-        {"route_type": "archive", "source_id": "archive_coordination_fee_index", "unlock_day": 1, "label": "查阅《前期协调费索引》", "instructions": "进入“行动—查阅档案”，选择《前期协调费索引》完成首次查阅。"},
-        {"route_type": "conversation", "source_id": "opp_16_zhao_jianguo_contact", "unlock_day": 16, "label": "访谈赵建国", "instructions": "第16日起访谈赵建国，追问两百万元的审批链、经手人、收款方和真实用途。"}
+        {
+          "route_type": "archive",
+          "source_id": "archive_coordination_fee_index",
+          "unlock_day": 1,
+          "label": "查阅《前期协调费索引》",
+          "instructions": "进入“行动—查阅档案”，选择《前期协调费索引》完成首次查阅。"
+        },
+        {
+          "route_type": "conversation",
+          "source_id": "opp_16_zhao_jianguo_contact",
+          "unlock_day": 16,
+          "label": "访谈赵建国",
+          "instructions": "第16日起访谈赵建国，追问两百万元的审批链、经手人、收款方和真实用途。"
+        }
       ],
-      "related_npc_ids": ["npc_zhao_jianguo", "npc_qian_wei", "npc_liu_san"],
+      "related_npc_ids": [
+        "npc_zhao_jianguo",
+        "npc_qian_wei",
+        "npc_liu_san"
+      ],
       "use_hint": "可追问经手人、审批链、收款方与实际用途；金额异常本身不等于已经定罪。",
       "source_line": 10287
     },
@@ -213,9 +407,18 @@
       "text": "验收组看的样板房不能代替真正的毛坯房。",
       "source_label": "安置房现场与验收材料比对",
       "acquisition_methods": [
-        {"route_type": "archive", "source_id": "archive_resettlement_acceptance_sample", "unlock_day": 60, "label": "查阅《安置房抽样验收材料》", "instructions": "第60日起进入“行动—查阅档案”，首次查阅安置房抽样验收材料。"}
+        {
+          "route_type": "archive",
+          "source_id": "archive_resettlement_acceptance_sample",
+          "unlock_day": 60,
+          "label": "查阅《安置房抽样验收材料》",
+          "instructions": "第60日起进入“行动—查阅档案”，首次查阅安置房抽样验收材料。"
+        }
       ],
-      "related_npc_ids": ["npc_qian_wei", "npc_sun_qiang"],
+      "related_npc_ids": [
+        "npc_qian_wei",
+        "npc_sun_qiang"
+      ],
       "use_hint": "可用于要求验收抽查真实交付房源、配套和质量，而非只看展示样板。",
       "source_line": 9955
     },
@@ -226,10 +429,25 @@
       "text": "市委巡察组第 31 日进驻、第 45 日撤离，环保迎检组第 59 日进驻。",
       "source_label": "正式工作日程",
       "acquisition_methods": [
-        {"route_type": "conversation", "source_id": "opp_31_zhang_li_contact", "unlock_day": 31, "label": "向张立核对检查安排", "instructions": "第31日起与张立会谈，核对巡察进场、撤离和后续环保迎检时点。"},
-        {"route_type": "archive", "source_id": "archive_inspection_schedule", "unlock_day": 58, "label": "查阅《上级检查工作日程》", "instructions": "第58日起进入“行动—查阅档案”，首次查阅上级检查工作日程。"}
+        {
+          "route_type": "conversation",
+          "source_id": "opp_31_zhang_li_contact",
+          "unlock_day": 31,
+          "label": "向张立核对检查安排",
+          "instructions": "第31日起与张立会谈，核对巡察进场、撤离和后续环保迎检时点。"
+        },
+        {
+          "route_type": "archive",
+          "source_id": "archive_inspection_schedule",
+          "unlock_day": 58,
+          "label": "查阅《上级检查工作日程》",
+          "instructions": "第58日起进入“行动—查阅档案”，首次查阅上级检查工作日程。"
+        }
       ],
-      "related_npc_ids": ["npc_zhang_li", "npc_gu_keming"],
+      "related_npc_ids": [
+        "npc_zhang_li",
+        "npc_gu_keming"
+      ],
       "use_hint": "可用于安排材料准备和对接窗口，避免把巡察组与环保迎检组混为同一机构。",
       "source_line": 6326
     },
@@ -240,11 +458,43 @@
       "text": "全村总盘 36 户，不许改。目标线 30 户。",
       "source_label": "开局上级交办与村庄社会卷宗",
       "acquisition_methods": [
-        {"route_type": "archive", "source_id": "archive_household_registry", "unlock_day": 1, "label": "查阅《36户基础底账》", "instructions": "进入“行动—查阅档案”，选择《36户基础底账》完成首次查阅。"}
+        {
+          "route_type": "archive",
+          "source_id": "archive_household_registry",
+          "unlock_day": 1,
+          "label": "查阅《36户基础底账》",
+          "instructions": "进入“行动—查阅档案”，选择《36户基础底账》完成首次查阅。"
+        }
       ],
-      "related_npc_ids": ["npc_sun_qiang", "npc_zhou_dashan", "npc_zheng_xiangdong"],
+      "related_npc_ids": [
+        "npc_sun_qiang",
+        "npc_zhou_dashan",
+        "npc_zheng_xiangdong"
+      ],
       "use_hint": "可用于核对签约进度和D90达标线；口头意向与虚报不得计入真实签约。",
       "source_line": 3404
+    },
+    {
+      "fact_id": "fact_tan_land_arrears",
+      "title": "二〇一九年占地尾款卷宗",
+      "text": "卷宗记载：二〇一九年修通村路占用谭老六家四亩坡地，第一笔补偿已付三成，剩余七成形成白条挂账。原始支付回单与村级登记能够相互核对。该卷证明历史欠付经过；截至当日是否已经补齐，须同时查阅第二十六日的办理与收款记录，不能把历史欠付一律当成当前仍欠款。",
+      "category": "evidence",
+      "source_label": "县档案旧占地卷宗",
+      "source_line": 7072,
+      "related_npc_ids": [
+        "npc_tan_laoliu",
+        "npc_liu_san"
+      ],
+      "acquisition_methods": [
+        {
+          "route_type": "archive",
+          "source_id": "archive_tan_land_arrears",
+          "unlock_day": 38,
+          "label": "查阅《二〇一九年占地尾款卷宗》",
+          "instructions": "第38日起在行动—查阅档案中核对该卷；第53日待决策期间也可查阅。"
+        }
+      ],
+      "use_hint": "核对谭老六旧占地尾款；第53日可据此作出有依据的答复，已了结路线不重复支付。"
     }
   ]
 }

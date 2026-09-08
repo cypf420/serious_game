@@ -31,6 +31,7 @@ from serious_game_backend.application.action_variants import (
     canonical_map_entry_descriptor,
     canonical_opportunity_descriptor,
     find_variant,
+    governance_action_permission,
     variant_availability,
     variant_target_choices,
     participant_rules,
@@ -316,6 +317,11 @@ class GameplayGovernanceService:
         session, package = self._load_mutable(
             account_id, session_id, state_version
         )
+        permitted, permission_reason = governance_action_permission(
+            session, package, action_kind
+        )
+        if not permitted:
+            raise ActionUnavailableError(permission_reason or "当前不能执行该行动")
         opportunity = self._governance_opportunity(
             session,
             package,
@@ -396,8 +402,6 @@ class GameplayGovernanceService:
                 "已有一项基础行动正在进行",
                 details={"action_instance_id": active.action_instance_id},
             )
-        if session.pending_decision is not None:
-            raise ActionUnavailableError("必须先处理当前剧情决策")
         if session.active_conversation is not None:
             raise ActionUnavailableError("必须先结束当前单人会谈")
         if session.active_group_conversation is not None:

@@ -73,9 +73,20 @@ def test_tan_contract_path_requires_written_evidence_and_unlocks_after_resolutio
     package = load_v3()
     option = package.decisions["dp4_06"].option("a")
 
-    assert option.required_fact_ids == frozenset({"fact_original_vouchers"})
-    assert "谭老六核心矛盾已缓解" in option.effects.open_flags
-    assert "谭老六合同批次可发起" in option.effects.open_flags
+    # A reply is always selectable, but empty assurances and unrelated
+    # engineering vouchers must not unlock the land-arrears contract route.
+    for flags, facts, resolved in (
+        (set(), set(), False),
+        (set(), {"fact_original_vouchers"}, False),
+        (set(), {"fact_tan_land_arrears"}, True),
+        ({"旧账缺口已坐实"}, set(), True),
+        ({"旧案了结"}, set(), True),
+    ):
+        effects = ActionService._effective_effects(
+            option, flags, known_fact_ids=facts, decision_id="dp4_06",
+        )
+        assert ("谭老六核心矛盾已缓解" in effects.open_flags) == resolved
+        assert ("谭老六合同批次可发起" in effects.open_flags) == resolved
 
 
 def test_respectful_grave_route_requires_the_conversation_fact() -> None:

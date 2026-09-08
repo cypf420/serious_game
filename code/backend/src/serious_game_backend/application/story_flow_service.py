@@ -10,6 +10,22 @@ from serious_game_backend.domain.story import DecisionOptionDefinition, StoryDay
 from serious_game_backend.application.player_text_policy import player_visible_sentence
 
 
+PERMIT_ALREADY_ISSUED_TEXT = (
+    "你与周大山核对了此前签发的祠堂用地批文，编号、红章和有效手续均有留档。"
+    "这项手续已经办成，无需重复申请或支付办理成本。接下来核查落实情况，"
+    "各户合同仍以本人确认和正式签署为准。"
+)
+REPEATED_MONEY_OPTION_TEXTS = {
+    1: "见他没有还价，你把补偿数又往上提了一次。",
+    2: "你把补偿数提到第三次，要求他当场给个答复。",
+}
+
+
+def should_skip_permit_reissue(decision_id: str, flags: set[str]) -> bool:
+    return (decision_id == "dp5_09" and "祠堂地块批文已签发" in flags
+            and "用地手续有瑕疵" not in flags)
+
+
 class StoryFlowService:
     """把结构化 story beat 投影为可恢复的玩家叙事流和待决策实例。"""
 
@@ -67,7 +83,7 @@ class StoryFlowService:
             story_day=session.game_state.story_day,
             kind="consequence",
             text=self.session_public_text(
-                decision.visible_consequence(option, session.flags), session
+                decision.visible_consequence(option, session.flags, session.known_fact_ids), session
             ),
             beat_id=session.story_beat_id,
             decision_id=decision_id,
@@ -104,6 +120,10 @@ class StoryFlowService:
             decision = package.decisions.get(decision_id)
             if decision is None:
                 raise ContentValidationError(f"剧本包缺少决策：{decision_id}")
+            if self._skip_completed_permit(session, decision_id):
+                continue
+            if self._skip_returned_roster(session, decision_id):
+                continue
             if not decision.is_available(session.flags):
                 session.logs.append({
                     "type": "decision_skipped",
@@ -126,12 +146,9 @@ class StoryFlowService:
     def _visible_option_text(
         cls, decision, option, session: GameSession, context: dict
     ) -> str:
-        text = decision.visible_option_text(option, session.flags)
+        text = decision.visible_option_text(option, session.flags, session.known_fact_ids)
         if decision.decision_id == "dp4_04" and option.option_id == "b":
-            text = {
-                1: "见他没有还价，你把补偿数又往上提了一次。",
-                2: "你把补偿数提到第三次，要求他当场给个答复。",
-            }.get(int(context.get("talk_money_count", 0)), text)
+            text = REPEATED_MONEY_OPTION_TEXTS.get(int(context.get("talk_money_count", 0)), text)
         return cls.session_public_text(text, session)
 
     @staticmethod
@@ -243,11 +260,55 @@ class StoryFlowService:
             )
 
     @staticmethod
+    def _skip_completed_permit(session: GameSession, decision_id: str) -> bool:
+        if not should_skip_permit_reissue(decision_id, session.flags):
+            return False
+        if not any(item.get("type") == "permit_already_issued" for item in session.logs):
+            session.logs.append({
+                "type": "permit_already_issued", "decision_id": decision_id,
+                "story_day": session.game_state.story_day, "visible_to_player": False,
+            })
+            session.append_narrative(
+                story_day=session.game_state.story_day, kind="narration",
+                text=PERMIT_ALREADY_ISSUED_TEXT, beat_id=session.story_beat_id,
+                content_instance_id="permit:already-issued", presentation_phase="scene",
+            )
+        return True
+
+    @staticmethod
+    def _skip_returned_roster(session: GameSession, decision_id: str) -> bool:
+        """The legacy report-choice E already executes the original-return scene.
+
+        In the final script E belongs to the next custody question. Preserve
+        legacy route IDs, but never offer retaining/destroying the returned bag.
+        The zero-cost return has no metric/flag effects; only custody is recorded.
+        """
+        if decision_id != 'dp4_roster_disposition':
+            return False
+        if not any(item.get('type') == 'decision'
+                   and item.get('decision_id') == 'dp4_01'
+                   and item.get('option_id') == 'e' for item in session.logs):
+            return False
+        if not any(item.get('type') == 'roster_return_already_handled' for item in session.logs):
+            session.state_values['lead_roster_disposition'] = '未获取'
+            session.logs.append({
+                'type': 'roster_return_already_handled',
+                'story_day': session.game_state.story_day,
+                'decision_id': decision_id,
+                'visible_to_player': False,
+            })
+        return True
+
+    @staticmethod
     def _present_decision_id(
         session: GameSession,
         package: ScriptPackage,
         decision_id: str,
     ) -> None:
+        if StoryFlowService._skip_completed_permit(session, decision_id):
+            return
+        if StoryFlowService._skip_returned_roster(session, decision_id):
+            return
         decision = package.decisions.get(decision_id)
         if decision is None:
             raise ContentValidationError(f"剧本包缺少决策：{decision_id}")
@@ -317,12 +378,12 @@ class StoryFlowService:
             story_day=session.game_state.story_day,
             kind="decision",
             text=StoryFlowService.session_public_text(
-                decision.visible_prompt(session.flags), session
+                decision.visible_prompt(session.flags, session.known_fact_ids), session
             ),
             content_instance_id=presentation_entry_id,
             beat_id=session.story_beat_id,
             decision_id=decision_id,
-            scene_id=decision.visible_scene_id(session.flags),
+            scene_id=decision.visible_scene_id(session.flags, session.known_fact_ids),
             presentation_phase="decision",
             read_gate="decision",
         )
@@ -332,12 +393,12 @@ class StoryFlowService:
             option_ids=available_ids,
             presented_state_version=session.state_version,
             visible_title=StoryFlowService.session_public_text(
-                decision.visible_title(session.flags), session
+                decision.visible_title(session.flags, session.known_fact_ids), session
             ),
             visible_text=StoryFlowService.session_public_text(
-                decision.visible_prompt(session.flags), session
+                decision.visible_prompt(session.flags, session.known_fact_ids), session
             ),
-            scene_id=decision.visible_scene_id(session.flags),
+            scene_id=decision.visible_scene_id(session.flags, session.known_fact_ids),
             options=tuple(
                 VisibleDecisionOption(
                     item.option_id,

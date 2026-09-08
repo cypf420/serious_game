@@ -133,6 +133,15 @@ STORY_AUTHORITY_CONTRACT = (
 class FileScriptPackageLoader:
     PORTABLE_CONTENT_HASH_VERSION = "text-eol-v1"
     _TEXT_EOL_V1_HASH_BY_PACKAGE = {
+        # Fixed-story edition: accept only its exact LF/CRLF-equivalent bytes.
+        ("published", "pkg_gameplay_v3", "sha256:3a11e3bda869a800d3d1b1066096fa30509ff5d245af40235ee0f7af7d31ad22"):
+            "sha256:dececfeba55f4d58878b8e725f63a0a3b75b3797600a398e5559963f2c68873d",
+        # Final story-integrity candidate11 (D49 count-unit copy correction only).
+        ("published", "pkg_gameplay_v3", "sha256:a817f40fee276331f429874c29f69358889ccf3c6a1b9a05ae93682cfbb08d8f"):
+            "sha256:98aa37fc241a2fc2c2f813c715a3c0bcd05f774fd6390292984b4f1ef97ffdd1",
+        # Reviewed story-integrity candidate10; exact content, EOL-only portability.
+        ("published", "pkg_gameplay_v3", "sha256:638be13ac9bb00c7a2b4989ce988087ec4a846255865a6a07f58fbfde802a4b4"):
+            "sha256:b22bb080c57f88b69672a4e0214e3520989a16accaa21bf3668fe27853da70ab",
         ("published", "pkg_gameplay_v3", "sha256:d32346777561cd929b7222ce3a6ceb14e0735798e860dff7dabe9e19487d072c"):
             "sha256:1725a2336043dc23d24a404d83d0dc3ac31adc722b19abff2f4ab508b49239a2",
         (
@@ -1397,6 +1406,7 @@ class FileScriptPackageLoader:
                     unavailable_reason=str(option.get("unavailable_reason", "条件不足")),
                     conditional_effects=tuple(
                         ConditionalEffectDefinition(
+                            required_fact_ids=frozenset(branch.get("required_fact_ids", [])),
                             effects=FileScriptPackageLoader._load_effects(
                                 branch.get("effects", {})
                             ),
@@ -1455,6 +1465,7 @@ class FileScriptPackageLoader:
                 ),
                 text_variants=tuple(
                     DecisionTextVariant(
+                        required_fact_ids=frozenset(variant.get("required_fact_ids", [])),
                         required_flags=frozenset(
                             variant.get("required_flags", [])
                         ),
@@ -1886,8 +1897,11 @@ class FileScriptPackageLoader:
             unknown_decision_facts = sorted({
                 fact_id
                 for decision in decisions.values()
-                for option in decision.options
-                for fact_id in (*option.required_fact_ids, *option.required_any_fact_ids)
+                for fact_id in (
+                    *(f for option in decision.options for f in (*option.required_fact_ids, *option.required_any_fact_ids)),
+                    *(f for option in decision.options for branch in option.conditional_effects for f in branch.required_fact_ids),
+                    *(f for variant in decision.text_variants for f in variant.required_fact_ids),
+                )
                 if fact_id not in facts
             })
             if unknown_archive_facts or unknown_decision_facts:

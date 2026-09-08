@@ -204,7 +204,9 @@ class M2RuntimeTests(unittest.TestCase):
         locations = {
             item["location_id"]: item for item in map_response.json()["locations"]
         }
-        self.assertEqual("available", locations["loc_liulin_village"]["visual_state"])
+        # Pending decisions pause ordinary actions; map entries remain visible
+        # for context but are no longer executable until the decision is read.
+        self.assertEqual("known", locations["loc_liulin_village"]["visual_state"])
         self.assertNotIn("trust_score", map_response.text)
         self.assertNotIn("opportunity_ids", map_response.text)
         for suffix in ("map", "review"):

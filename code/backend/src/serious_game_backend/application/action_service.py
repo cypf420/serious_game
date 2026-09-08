@@ -521,11 +521,12 @@ class ActionService:
                     self._ledger_values(session),
                     pending.context,
                     decision_id=decision.decision_id,
+                    known_fact_ids=session.known_fact_ids,
                 ),
                 "parameters": parameters,
                 "cost": 0,
                 "narrative": self._story_flow.session_public_text(
-                    option.consequence, session
+                    decision.visible_consequence(option, session.flags, session.known_fact_ids), session
                 ),
             }
         if command.input_mode is ActionInputMode.OVERTIME:
@@ -1415,6 +1416,7 @@ class ActionService:
         context: dict | None = None,
         *,
         decision_id: str = "",
+        known_fact_ids: set[str] | None = None,
     ) -> ScriptedEffects:
         state_values = state_values or {}
         ledger_values = ledger_values or {}
@@ -1425,7 +1427,7 @@ class ActionService:
         close_flags = set(option.effects.close_flags)
         state_assignments = dict(option.effects.state_assignments)
         for branch in option.conditional_effects:
-            if not branch.matches(flags, state_values, ledger_values):
+            if not branch.matches(flags, state_values, ledger_values, known_fact_ids):
                 continue
             if branch.replace_base:
                 metric_deltas = {}

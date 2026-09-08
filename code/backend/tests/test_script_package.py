@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import json
 import unittest
 
 from serious_game_backend.application.action_service import ActionService
@@ -487,7 +488,16 @@ class ScriptPackageTests(unittest.TestCase):
             beat = current_package.story_day(story_day)
             for block in (*beat.opening_blocks, *beat.night_blocks):
                 if block.kind != "system":
-                    self.assertIn(block.text, script_text, block.block_id)
+                    if block.text not in script_text:
+                        # Approved fact corrections retain exact source provenance
+                        # without rewriting the original authoring manuscript.
+                        registry = json.loads((BACKEND_ROOT / 'content/editorial/story_integrity_20260908.json').read_text(encoding='utf8'))
+                        matches = [op for op in registry['operations']
+                                   if op['file']=='story_beats.json'
+                                   and op.get('node_id')==beat.beat_id
+                                   and op.get('after')==block.text]
+                        self.assertEqual(1,len(matches),block.block_id)
+                        self.assertTrue(matches[0]['before'] in script_text,block.block_id)
 
         decision = current_package.decisions["ev1_01_reception_bag"]
         self.assertIn(decision.prompt, script_text)
@@ -574,7 +584,7 @@ class ScriptPackageTests(unittest.TestCase):
         }
         actions = package.resource_actions
 
-        self.assertEqual(18, len(package.facts))
+        self.assertEqual(19, len(package.facts))
         for fact in package.facts.values():
             self.assertTrue(fact.acquisition_methods, fact.fact_id)
             for method in fact.acquisition_methods:

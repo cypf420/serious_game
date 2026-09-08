@@ -36,6 +36,7 @@ from serious_game_backend.application.npc_memory_service import NPCMemoryService
 from serious_game_backend.application.ports import (
     GameSessionRepository,
     OperationRepository,
+    RoleLLMGateway,
     SessionRequestRepository,
     SnapshotRepository,
 )
@@ -170,6 +171,7 @@ def build_container(
     *,
     player_llm_transport: Transport | None = None,
     player_llm_resolver: Resolver | None = None,
+    server_role_llm: RoleLLMGateway | None = None,
 ) -> Container:
     loader = FileScriptPackageLoader()
     package_values = loader.load_all(settings.content_root)
@@ -263,7 +265,9 @@ def build_container(
     event_service = EventService()
     story_clock = StoryClockService(event_service)
     fake_llm = FakeRoleLLMGateway()
-    if settings.role_llm_provider == "openai_compatible":
+    if server_role_llm is not None:
+        pass  # Explicit test injection; normal provider selection is unchanged.
+    elif settings.role_llm_provider == "openai_compatible":
         server_role_llm = OpenAICompatibleRoleLLMGateway(
             settings,
             os.getenv(settings.role_llm_api_key_env, ""),

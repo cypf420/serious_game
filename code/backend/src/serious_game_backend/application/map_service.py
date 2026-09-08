@@ -8,6 +8,7 @@ from serious_game_backend.application.action_variants import (
     map_variant_title,
     configured_variants,
     default_npc_location,
+    governance_action_permission,
     variant_availability,
     variant_target_choices,
     public_variant,
@@ -28,7 +29,13 @@ class MapService:
         if package.gameplay_schema_version >= 4:
             return self._build_governance_map(session, package)
         available_items = self._opportunities.list_available(session, package)
-        available = {item.opportunity_id for item in available_items}
+        available = {
+            item.opportunity_id
+            for item in available_items
+            if governance_action_permission(
+                session, package, item.action_id
+            )[0]
+        }
         opportunities = {item.opportunity_id: item for item in available_items}
         npc_names = {item.npc_id: item.name for item in package.npc_profiles}
         tier = package.action_cost_tier(session.game_state.story_day)
@@ -64,6 +71,9 @@ class MapService:
             elif any(
                 package.resource_actions.get(action_id) is not None
                 and package.resource_actions[action_id].enabled
+                and governance_action_permission(
+                    session, package, action_id
+                )[0]
                 for action_id in linked_action_ids
             ):
                 visual_state = "available"
@@ -77,13 +87,16 @@ class MapService:
                 if opportunity is None:
                     continue
                 rule = package.action_rules[opportunity.action_id]
+                permission, permission_reason = governance_action_permission(
+                    session, package, opportunity.action_id
+                )
                 entry_cards.append({
                     "title": f"与{npc_names.get(opportunity.npc_id, '剧情人物')}交谈",
                     "entry_type": "conversation",
                     "description": opportunity.conversation_goal,
                     "cost_action_points": rule.cost_for(tier),
-                    "available": True,
-                    "unavailable_reason": None,
+                    "available": permission,
+                    "unavailable_reason": permission_reason,
                     "submit": {
                         "opportunity_id": opportunity.opportunity_id,
                         "npc_id": opportunity.npc_id,
@@ -97,6 +110,12 @@ class MapService:
                 available_action, unavailable_reason = self._resource_availability(
                     session, definition, rule
                 )
+                permission, permission_reason = governance_action_permission(
+                    session, package, action_id
+                )
+                if not permission:
+                    available_action = False
+                    unavailable_reason = permission_reason
                 entry_cards.append({
                     "title": rule.name,
                     "entry_type": "resource_action",
@@ -151,6 +170,12 @@ class MapService:
                 if location.location_id not in variant["legal_location_ids"]:
                     continue
                 available, reason = variant_availability(session, variant)
+                permission, permission_reason = governance_action_permission(
+                    session, package, str(variant["action_id"])
+                )
+                if not permission:
+                    available = False
+                    reason = permission_reason
                 if not location_unlocked:
                     available = False
                     reason = reason or f"第 {location.unlock_day} 日后开放"

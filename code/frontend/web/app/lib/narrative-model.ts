@@ -90,9 +90,15 @@ export function dedupeNarrative(items: readonly NarrativeItem[]): NarrativeItem[
 
 function splitLatestDay(items: readonly NarrativeItem[]) {
   const latestDay = Math.max(0, ...items.map(item => item.storyDay || 0));
+  // End-day returns last night's new entries together with the next morning.
+  // Keep that bridge on incremental merges AND full reloads, instead of
+  // archiving it before the player has had a chance to read it.
+  const inReadingWindow = (item: NarrativeItem) => (item.storyDay || latestDay) === latestDay
+    || (item.storyDay === latestDay - 1
+      && (item.presentationPhase === "night" || item.kind === "night"));
   return {
-    items: items.filter(item => (item.storyDay || latestDay) === latestDay),
-    historyItems: items.filter(item => (item.storyDay || latestDay) < latestDay),
+    items: items.filter(inReadingWindow),
+    historyItems: items.filter(item => !inReadingWindow(item)),
     latestDay,
   };
 }

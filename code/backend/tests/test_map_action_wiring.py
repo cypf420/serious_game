@@ -7,7 +7,7 @@ import unittest
 from fastapi.testclient import TestClient
 
 from serious_game_backend.api.app import create_app
-from serious_game_backend.bootstrap import build_container
+from tests.test_doubles import build_test_container as build_container
 from serious_game_backend.config import Settings
 
 
@@ -21,7 +21,7 @@ class MapActionWiringTests(unittest.TestCase):
             content_root=BACKEND_ROOT / "content" / "packages",
             default_package_id="pkg_gameplay_v2",
             repository="memory",
-            role_llm_provider="fake",
+            role_llm_provider="none",
         )
         self.runtime = build_container(settings)
         self.client = TestClient(create_app(settings, self.runtime))
@@ -50,6 +50,14 @@ class MapActionWiringTests(unittest.TestCase):
         )
 
     def test_map_uses_authoritative_backend_target_choices(self) -> None:
+        session = self.runtime.sessions.get_owned(
+            self.session_id, "acct_map_wiring"
+        )
+        session.pending_decision = None
+        session.pending_decision_queue.clear()
+        self.runtime.sessions.save(
+            session, expected_version=session.state_version
+        )
         action = self._map_action("loc_liulin_village", "请党员户示范带头")
         self.assertTrue(action["available"])
         self.assertEqual(36, len(action["target_choices"]))

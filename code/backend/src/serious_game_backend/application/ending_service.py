@@ -8,6 +8,27 @@ from serious_game_backend.domain.game_session import GameSession
 from serious_game_backend.domain.script_package import ScriptPackage
 
 
+# Shared by runtime selection and editorial exports. Selection priority stays below.
+ROSTER_APPENDIX_TEXTS = {
+    "未获取": "名册原件没有到你手里；此前见过的检测结果和已有记录，仍须按各自来源追查。",
+    "己方封存": "名册原件封存在己方，纸上的名字和检测记录仍待逐项跟进。",
+    "呈交上级": "名册原件进了上级机关，纸已经不在你手里。",
+    "交给记者": "名册原件到了陈默手里；材料的交付已经记下，是否见报还要看报道的后续。",
+    "被销毁": "原始名册被销毁，原件已无法翻查；已经知道的检测结果不会随纸张消失。",
+}
+IRON_APPENDIX_TEXTS = {
+    "账目揭发": "铁盒里的账被完整揭发，成为证据链的一环。",
+    "铁盒封存": "己方尚存的铁盒材料被封存归档，账还在，封条也还在；已移交的原件仍由接收单位保管，不因这次封存改变去向。",
+    "收受贿赂": "铁盒最后成了别人手里锁住你的把柄。",
+    "未入卷": "那只铁盒是否作为实物入卷，还要核对接收记录。县里后续处置只涉及己方尚存材料，已移交的原件仍由接收单位保管。",
+}
+ROPE_APPENDIX_TEXTS = {
+    "暴力驱逐": "暴力驱逐留下的伤害没有随着验收结束。被带离现场的人，仍在等一个交代。",
+    "失信": "那些没有接住的诉求留在村民心里。受损的信任，不会因报表归档而回来。",
+    "未激化": "在这条冲突记录里，没有留下暴力驱逐或上访升级的结案标记；平静本身并不等于每一项诉求都已解决。",
+}
+
+
 class EndingAxisProjector:
     POSITIVE_PEOPLE_FLAGS = {
         "flag_wu_alliance",
@@ -278,27 +299,21 @@ class EndingService:
 
     @staticmethod
     def _appendices(session: GameSession, package: ScriptPackage) -> list[dict]:
-        roster_text = {
-            "未获取": "名册始终没到你手里，那些孩子的名字没能落进任何一份档案。",
-            "己方封存": "名册锁在你自己的抽屉里，压着没动。",
-            "呈交上级": "档案进了上级机关，纸已经不在你手里。",
-            "交给记者": "名册到了陈默手里，那串数字最终见了报。",
-            "被销毁": "原始名册被销毁，按名按户的签字再也翻不出来。",
-        }[session.state_values.get("lead_roster_disposition", "未获取")]
+        roster_text = ROSTER_APPENDIX_TEXTS[session.state_values.get("lead_roster_disposition", "未获取")]
         if "账目揭发" in session.flags:
-            iron_text = "铁盒里的账被完整揭发，成为证据链的一环。"
+            iron_text = IRON_APPENDIX_TEXTS["账目揭发"]
         elif "铁盒封存" in session.flags:
-            iron_text = "那只铁盒被封存归档，账还在，却没有见光。"
+            iron_text = IRON_APPENDIX_TEXTS["铁盒封存"]
         elif "收受贿赂" in session.flags:
-            iron_text = "铁盒最后成了别人手里锁住你的把柄。"
+            iron_text = IRON_APPENDIX_TEXTS["收受贿赂"]
         else:
-            iron_text = "那只铁盒没有进入最终的案卷。"
+            iron_text = IRON_APPENDIX_TEXTS["未入卷"]
         if "暴力驱逐" in session.flags:
-            rope_text = "那根绳子最终留下了暴力驱逐的痕迹。"
+            rope_text = ROPE_APPENDIX_TEXTS["暴力驱逐"]
         elif "秀英寒心" in session.flags or "越级上访" in session.flags:
-            rope_text = "那根绳子留在村民记忆里，成了不再信任你的由头。"
+            rope_text = ROPE_APPENDIX_TEXTS["失信"]
         else:
-            rope_text = "那根绳子没有被拉紧，冲突没有走到最坏一步。"
+            rope_text = ROPE_APPENDIX_TEXTS["未激化"]
         values = {
             "lead_roster_disposition": roster_text,
             "iron_box_flags": iron_text,

@@ -22,6 +22,7 @@ def test_v3_archive_investigations_have_authoritative_unlock_contract() -> None:
         "archive_original_vouchers": (18, ("fact_original_vouchers",)),
         "archive_environmental_report_versions": (21, ("fact_identical_reports",)),
         "archive_signing_ledger_comparison": (30, ("fact_false_signing",)),
+        "archive_tan_land_arrears": (38, ("fact_tan_land_arrears",)),
         "archive_lead_census_master": (45, ("fact_lead_census",)),
         "archive_eia_raw_data": (45, ("fact_eia_original",)),
         "archive_inspection_schedule": (58, ("fact_inspection_anchors",)),

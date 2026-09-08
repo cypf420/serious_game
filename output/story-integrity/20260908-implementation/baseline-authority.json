@@ -1,0 +1,153 @@
+{
+  "contract_id": "story-authority-d13-d30-v1",
+  "authority_source": "最终剧本.md",
+  "projection": "canonical JSON of one story beat and all decisions whose story_day matches",
+  "hash_algorithm": "sha256",
+  "days": [
+    {
+      "story_day": 13,
+      "source_lines": [
+        3033,
+        3085
+      ],
+      "sha256": "35847b163df4c7407b78a51a27894edabce199d8f8bd851108f86a012c786d30"
+    },
+    {
+      "story_day": 14,
+      "source_lines": [
+        3084,
+        3267
+      ],
+      "sha256": "b8842337d1ae6a36554206baad08ad68041f62b65bfacccea125cacbeb1045a5"
+    },
+    {
+      "story_day": 15,
+      "source_lines": [
+        3086,
+        3140
+      ],
+      "sha256": "79e9b22ed5f051d3dceb6d290342582d83488de6639331f526e99489c7ce62e9"
+    },
+    {
+      "story_day": 16,
+      "source_lines": [
+        3422,
+        3518
+      ],
+      "sha256": "1fee14d758091cdc9331caadfc52eea604b14dd2742025f04ee54291e78cfb89"
+    },
+    {
+      "story_day": 17,
+      "source_lines": [
+        3519,
+        3583
+      ],
+      "sha256": "ccba17662564c3d4cc3d82762394951d9932e1b8a880ba9dedf139c376408d12"
+    },
+    {
+      "story_day": 18,
+      "source_lines": [
+        3585,
+        3653
+      ],
+      "sha256": "456193bae37b44b5335c92f58b74870c21b43fade25754f3d7c763fbf3264fe9"
+    },
+    {
+      "story_day": 19,
+      "source_lines": [
+        3654,
+        3656
+      ],
+      "sha256": "46407394ac4532d446ee901c28ad646dba3c54975c011bd6b5b84e1638c5f24d"
+    },
+    {
+      "story_day": 20,
+      "source_lines": [
+        3657,
+        3729
+      ],
+      "sha256": "6c1b5b43dbee0fec215124b5c54755131f810c220c2fb75dc4c12f8c617d42cc"
+    },
+    {
+      "story_day": 21,
+      "source_lines": [
+        3657,
+        3729
+      ],
+      "sha256": "a2d0b81489285f4f1e747954310f9ed0a6b228c941eff67c0edb514ffcdcb504"
+    },
+    {
+      "story_day": 22,
+      "source_lines": [
+        3730,
+        3799
+      ],
+      "sha256": "91b5506947c5e182354b5f001abfeaf6dc50573c8af5515b2e10433430aed43a"
+    },
+    {
+      "story_day": 23,
+      "source_lines": [
+        3730,
+        3799
+      ],
+      "sha256": "64c7747dc05a17fa530f5be0030d6fb4a31d98cab2e66c4fd39eba62e7039d9f"
+    },
+    {
+      "story_day": 24,
+      "source_lines": [
+        3800,
+        3854
+      ],
+      "sha256": "f19e7ebfd80d8abb95e34562dac41c807115c614d86fb47cbfc923d4adc4bcc5"
+    },
+    {
+      "story_day": 25,
+      "source_lines": [
+        3855,
+        3915
+      ],
+      "sha256": "7053e66c05b8c2ca3819a9020754dcd0567663a178d41352e72794221813c0b4"
+    },
+    {
+      "story_day": 26,
+      "source_lines": [
+        3916,
+        4114
+      ],
+      "sha256": "4e25f28bb257d6438d95c43d9dd384e455fb3f25e046fd1cb76773d7dc2ba691"
+    },
+    {
+      "story_day": 27,
+      "source_lines": [
+        4115,
+        4174
+      ],
+      "sha256": "dba96415c46559cea6148ebb769764cfec97ae72e87b44565b36806ff2868f8b"
+    },
+    {
+      "story_day": 28,
+      "source_lines": [
+        4175,
+        4329
+      ],
+      "sha256": "cd1ee18fbe59b93116767f29908f6fb30d516aa82ab2bfa9fe35c58666ca214a"
+    },
+    {
+      "story_day": 29,
+      "source_lines": [
+        4330,
+        4392
+      ],
+      "sha256": "00746b85a07096ac8ec8a42b147dff51436a1e444f9f508d97380e665b4c8d3e"
+    },
+    {
+      "story_day": 30,
+      "source_lines": [
+        4393,
+        4458
+      ],
+      "sha256": "85827e8b127b0f8a5a0243285ed0914f5b998e2f03364b7fac4ff540ea81d70a"
+    }
+  ],
+  "editorial_revision": "2026-09-05: feedback 23-28 reviewed text and camera corrections; removed fixed claims of zero or newly signed households from D14/15/25/27/30; feedback 31 free actions after required decisions. Choice effects and source line anchors preserved."
+}

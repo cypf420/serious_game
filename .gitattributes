@@ -1,3 +1,7 @@
 *.bat text eol=crlf
 code/backend/content/packages/pkg_gameplay_v2/** -text
+code/backend/content/packages/pkg_gameplay_v3/** -text whitespace=cr-at-eol
+# Editorial rebuilds verify the immutable baseline by exact byte hashes.
+output/story-integrity/20260908-implementation/baseline-package/** -text whitespace=cr-at-eol
+output/story-integrity/20260908-implementation/baseline-authority.json -text whitespace=cr-at-eol
 最终剧本.md text eol=lf

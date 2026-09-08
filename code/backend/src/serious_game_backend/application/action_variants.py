@@ -21,6 +21,49 @@ TARGET_SELECTION_RULES = {
 }
 
 
+def governance_action_permission(
+    session: GameSession,
+    package: ScriptPackage,
+    action_id: str,
+) -> tuple[bool, str | None]:
+    """Return the shared write gate for action catalog, map and submission.
+
+    A pending narrative decision pauses ordinary actions, while archive
+    inspection remains a legal read operation.  The check intentionally does
+    not include action-point cost or target availability; those are evaluated
+    by the caller after this permission gate.
+    """
+    if package.status == "retired":
+        return False, "该剧本包已退役，本局仅供复盘"
+    if getattr(session.status, "value", session.status) != "active":
+        return False, "本局已经结束"
+    if session.processing_action_id is not None:
+        return False, "上一操作仍在处理中，请等待原操作完成"
+    if session.active_group_conversation is not None:
+        return False, "必须先完成NPC发起的群组会谈"
+    if any(item.status == "active" for item in session.governance_actions.values()):
+        return False, "基础行动场景正在进行，请先继续或结束"
+    if session.active_conversation is not None:
+        return False, "会谈正在进行，请先继续或结束当前会谈"
+
+    beat = package.story_day(session.game_state.story_day)
+    allow_actions = (
+        beat is None
+        or beat.allow_actions
+        or (
+            package.gameplay_schema_version >= 2
+            and session.game_state.story_day < 90
+        )
+    )
+    if action_id == "inspect_archives" and session.pending_decision is not None:
+        return True, None
+    if session.pending_decision is not None:
+        return False, "必须先处理当前决策"
+    if not allow_actions:
+        return False, "当前剧情节点不开放自主行动"
+    return True, None
+
+
 def participant_rules(action_id: str) -> dict[str, int]:
     return dict(TARGET_SELECTION_RULES[action_id])
 

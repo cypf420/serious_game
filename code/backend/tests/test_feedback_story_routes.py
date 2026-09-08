@@ -6,13 +6,13 @@ from pathlib import Path
 import pytest
 from serious_game_backend.application.event_service import EventService
 from serious_game_backend.application.story_flow_service import StoryFlowService
-from serious_game_backend.bootstrap import build_container
+from tests.test_doubles import build_test_container as build_container
 from serious_game_backend.config import Settings
 
 
 @pytest.fixture(scope="module")
 def world():
-    r = build_container(Settings(environment="test", repository="memory", role_llm_provider="fake",
+    r = build_container(Settings(environment="test", repository="memory", role_llm_provider="none",
         content_root=Path(__file__).resolve().parents[1] / "content/packages",
         default_package_id="pkg_gameplay_v3"))
     p = r.packages.get("pkg_gameplay_v3")
@@ -106,24 +106,113 @@ def test_d9_restores_invitation_payoff_and_d44_keeps_later_scene_after_first_cho
     assert p.decisions["dp5_09"].presentation_blocks[0].scene_id == "C05_S02"
 
 
-def test_reviewed_sqlite_upgrade_backs_up_progress_and_keeps_existing_history(world, tmp_path):
-    import json
-    import sqlite3
+@pytest.fixture
+def feedback_upgrade_baseline(tmp_path):
+    """Rebuild the real 3.5.13 package and same-ref authority from tracked Git blobs."""
+    from unittest.mock import patch
+    from tools.upgrade_feedback_session import NEW_VERSION
+    from tests.test_content_hash_portability import (
+        PACKAGE_BASELINE_REF, _materialize_package_from_git_blobs,
+        _materialize_authority_from_git_blobs,
+    )
+
+    root = tmp_path / "feedback-baseline"
+    _materialize_package_from_git_blobs(root / "content/packages", "pkg_gameplay_v3",
+                                        autocrlf=False, ref=PACKAGE_BASELINE_REF)
+    authority = _materialize_authority_from_git_blobs(root / "baseline-authority.json",
+                                                     ref=PACKAGE_BASELINE_REF)
+    with patch("serious_game_backend.infrastructure.script_packages.file_loader.STORY_AUTHORITY_CONTRACT",
+               authority):
+        runtime = build_container(Settings(environment="test", repository="memory", role_llm_provider="none",
+            content_root=root / "content/packages", default_package_id="pkg_gameplay_v3"))
+        package = runtime.packages.get("pkg_gameplay_v3")
+        assert package.package_version == NEW_VERSION
+        session = runtime.game_sessions.start_session(account_id="feedback-upgrade-test",
+            package_id=package.package_id, client_request_id="feedback-upgrade-session", origin_id="technical")
+    return root, authority, package, session
+
+
+def test_feedback_upgrade_baseline_builds_without_output_and_without_head(tmp_path, monkeypatch):
+    import sys
+    from tests import test_content_hash_portability as blobs
+
+    # A checkout without generated output must still supply the historical fixture.
+    checkout = tmp_path / "fresh-checkout"
+    test_file = checkout / "code/backend/tests/test_feedback_story_routes.py"
+    assert not (checkout / "output").exists()
+    git = blobs._git
+
+    def pinned_git(*args):
+        assert all("HEAD" not in arg for arg in args), "Fixture must not drift with HEAD"
+        return git(*args)
+
+    monkeypatch.setattr(sys.modules[__name__], "__file__", str(test_file))
+    monkeypatch.setattr(blobs, "_git", pinned_git)
+    root, authority, package, _ = feedback_upgrade_baseline.__wrapped__(tmp_path)
+    assert package.package_version == "3.5.13-feedback-reading-actions"
+    assert package.content_hash == "sha256:d32346777561cd929b7222ce3a6ceb14e0735798e860dff7dabe9e19487d072c"
+    assert authority.read_bytes() == git(
+        "show", "057ff492282d22326dde04a81379142ddb2fa361:code/backend/content/authority/story_authority_d13_d30.json")
+    for path in (root / "content/packages/pkg_gameplay_v3").rglob("*"):
+        if path.is_file():
+            relative = path.relative_to(root).as_posix()
+            assert path.read_bytes() == git("show", f"057ff492282d22326dde04a81379142ddb2fa361:code/backend/{relative}")
+    assert not (checkout / "output").exists()
+
+
+def _run_feedback_upgrade(database, session_id, root, authority):
+    """Run the actual CLI, changing only its test input root and authority path."""
     import subprocess
     import sys
-    from serious_game_backend.infrastructure.repositories.sqlite import SqliteRuntimeStore, SqliteGameSessionRepository, SqliteSnapshotRepository
-    from serious_game_backend.infrastructure.repositories.codec import encode_session, decode_session
+
+    tool = Path(__file__).resolve().parents[1] / "tools/upgrade_feedback_session.py"
+    launcher = """
+import runpy
+import sys
+from pathlib import Path
+from unittest.mock import patch
+tool, root, authority = sys.argv[1:4]
+sys.argv = [tool, *sys.argv[4:]]
+namespace = runpy.run_path(tool)
+main = namespace['main']
+main.__globals__['ROOT'] = Path(root)
+with patch('serious_game_backend.infrastructure.script_packages.file_loader.STORY_AUTHORITY_CONTRACT', Path(authority)):
+    main()
+"""
+    return subprocess.run([sys.executable, "-X", "utf8", "-c", launcher, str(tool), str(root), str(authority),
+        "--database", str(database), "--session-id", session_id, "--apply"],
+        capture_output=True, text=True, encoding="utf-8")
+
+
+def _recorded_legacy_progress(prototype):
+    """Construct the old-lock save fixture using its actual historical manifest."""
+    import json
+    from tests.test_content_hash_portability import _git
     from tools.upgrade_feedback_session import OLD_VERSION, OLD_HASH
-    _, p, original = world
-    s = deepcopy(original)
-    s.package_version, s.package_content_hash = OLD_VERSION, OLD_HASH
+
+    legacy = json.loads(_git(
+        "show", "057ff492282d22326dde04a81379142ddb2fa361^:code/backend/content/packages/pkg_gameplay_v3/package_manifest.json"
+    ))
+    assert (legacy["package_version"], legacy["content_hash"]) == (OLD_VERSION, OLD_HASH)
+    session = deepcopy(prototype)
+    session.package_version = legacy["package_version"]
+    session.package_content_hash = legacy["content_hash"]
+    return session
+
+
+def test_reviewed_sqlite_upgrade_backs_up_progress_and_keeps_existing_history(feedback_upgrade_baseline, tmp_path):
+    import json
+    import sqlite3
+    from serious_game_backend.infrastructure.repositories.sqlite import SqliteRuntimeStore, SqliteGameSessionRepository
+    from serious_game_backend.infrastructure.repositories.codec import encode_session
+    root, authority, p, original = feedback_upgrade_baseline
+    s = _recorded_legacy_progress(original)
     db = tmp_path / "progress.db"
     store = SqliteRuntimeStore(db)
     sessions = SqliteGameSessionRepository(store)
     sessions.create(s)
     before = encode_session(s)
-    tool = Path(__file__).resolve().parents[1] / "tools/upgrade_feedback_session.py"
-    result = subprocess.run([sys.executable, str(tool), "--database", str(db), "--session-id", s.session_id, "--apply"], capture_output=True, text=True)
+    result = _run_feedback_upgrade(db, s.session_id, root, authority)
     assert result.returncode == 0, result.stderr
     after = encode_session(sessions.get_owned(s.session_id, s.account_id))
     for key in before:
@@ -138,3 +227,35 @@ def test_reviewed_sqlite_upgrade_backs_up_progress_and_keeps_existing_history(wo
     with sqlite3.connect(db) as c:
         versions = [r[0] for r in c.execute("select state_version from runtime_game_snapshots order by state_version")]
         assert versions == [before["state_version"], after["state_version"]]
+
+
+@pytest.mark.parametrize("current_revision", ["target", "progress"])
+def test_old_feedback_migrator_rejects_current_revision_without_database_changes(
+    world, feedback_upgrade_baseline, tmp_path, current_revision
+):
+    from serious_game_backend.infrastructure.repositories.sqlite import SqliteRuntimeStore, SqliteGameSessionRepository
+    from serious_game_backend.infrastructure.repositories.codec import encode_session
+    from tools.upgrade_feedback_session import NEW_VERSION
+
+    root, authority, _, prototype = feedback_upgrade_baseline
+    _, current_package, current_progress = world
+    assert current_package.package_version != NEW_VERSION
+    if current_revision == "target":
+        session = _recorded_legacy_progress(prototype)
+        root = Path(__file__).resolve().parents[1]
+        authority = root / "content/authority/story_authority_d13_d30.json"
+        expected_error = "Unexpected target content revision"
+    else:
+        session = deepcopy(current_progress)
+        expected_error = "This progress does not match the reviewed source revision"
+    database = tmp_path / "rejected.db"
+    sessions = SqliteGameSessionRepository(SqliteRuntimeStore(database))
+    sessions.create(session)
+    before = database.read_bytes()
+    saved = encode_session(sessions.get_owned(session.session_id, session.account_id))
+    result = _run_feedback_upgrade(database, session.session_id, root, authority)
+    assert result.returncode != 0
+    assert expected_error in result.stderr
+    assert database.read_bytes() == before
+    assert encode_session(sessions.get_owned(session.session_id, session.account_id)) == saved
+    assert not list(tmp_path.glob("rejected.db.before-feedback-*.bak"))

@@ -8,10 +8,10 @@ from fastapi.testclient import TestClient
 
 from serious_game_backend.api.app import create_app
 from serious_game_backend.application.disclosure_gate_service import DisclosureGateService
-from serious_game_backend.bootstrap import build_container
+from tests.test_doubles import build_test_container as build_container
 from serious_game_backend.config import Settings
 from serious_game_backend.domain.llm import RoleTurnContext, RoleTurnResult
-from serious_game_backend.infrastructure.llm.fake import FakeRoleLLMGateway
+from tests.test_doubles import DeterministicRoleLLMGateway
 from serious_game_backend.infrastructure.repositories.codec import (
     decode_session,
     encode_session,
@@ -22,7 +22,7 @@ BACKEND_ROOT = Path(__file__).resolve().parents[1]
 PACKAGE_ROOT = BACKEND_ROOT / "content" / "packages"
 
 
-class FactDisclosureGateway(FakeRoleLLMGateway):
+class FactDisclosureGateway(DeterministicRoleLLMGateway):
     def __init__(self, fact_id: str) -> None:
         super().__init__()
         self.fact_id = fact_id
@@ -42,7 +42,7 @@ class TestEveryClueAcquisitionPath:
             content_root=PACKAGE_ROOT,
             default_package_id="pkg_gameplay_v3",
             repository="memory",
-            role_llm_provider="fake",
+            role_llm_provider="none",
         )
         self.runtime = build_container(settings)
         self.client = TestClient(create_app(settings, self.runtime))
@@ -233,7 +233,7 @@ class TestEveryClueAcquisitionPath:
             if variant["variant_id"] == "consult_county_archives"
         )
 
-    def test_all_eleven_archive_paths_commit_once_and_survive_serialization(self) -> None:
+    def test_all_twelve_archive_paths_commit_once_and_survive_serialization(self) -> None:
         archives = {
             item.archive_id: item for item in self.package.archive_investigations
         }
@@ -243,7 +243,7 @@ class TestEveryClueAcquisitionPath:
             for method in fact.acquisition_methods
             if method["route_type"] == "archive"
         ]
-        assert len(methods) == 11
+        assert len(methods) == 12
 
         for fact_id, method in methods:
             archive = archives[str(method["source_id"])]

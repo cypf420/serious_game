@@ -1,0 +1,3831 @@
+{
+  "contract_terms": {
+    "DENG-01": {
+      "approval_document_ids": [
+        "doc_compensation_policy_v1"
+      ],
+      "authorization_confirmed": true,
+      "budget_envelope": "property_land",
+      "cash_amount": 36,
+      "housing_delivery_day": 84,
+      "housing_resource_id": "housing_d1_100_accessible",
+      "ledger_disclosed": true,
+      "move_out_day": 88,
+      "old_case_resolved": false,
+      "payment_day": 84,
+      "policy_document_id": "doc_compensation_policy_v1",
+      "prior_payment_verified": true,
+      "public_window_reward": false,
+      "real_unit_viewed": true,
+      "service_allocations": {
+        "elder_support_slot": 1
+      },
+      "transition_months": 12
+    },
+    "HE-01": {
+      "approval_document_ids": [
+        "doc_compensation_policy_v1"
+      ],
+      "authorization_confirmed": true,
+      "budget_envelope": "property_land",
+      "cash_amount": 69,
+      "housing_delivery_day": 57,
+      "housing_resource_id": "housing_d30_140",
+      "ledger_disclosed": true,
+      "move_out_day": 61,
+      "old_case_resolved": false,
+      "payment_day": 57,
+      "policy_document_id": "doc_compensation_policy_v1",
+      "prior_payment_verified": true,
+      "public_window_reward": true,
+      "real_unit_viewed": true,
+      "service_allocations": {
+        "lead_recheck_slot": 1,
+        "stable_job_slot": 1
+      },
+      "transition_months": 12
+    },
+    "HE-02": {
+      "approval_document_ids": [
+        "doc_compensation_policy_v1"
+      ],
+      "authorization_confirmed": true,
+      "budget_envelope": "property_land",
+      "cash_amount": 60,
+      "housing_delivery_day": 57,
+      "housing_resource_id": "housing_d1_120",
+      "ledger_disclosed": true,
+      "move_out_day": 61,
+      "old_case_resolved": false,
+      "payment_day": 57,
+      "policy_document_id": "doc_compensation_policy_v1",
+      "prior_payment_verified": true,
+      "public_window_reward": true,
+      "real_unit_viewed": true,
+      "service_allocations": {
+        "lead_recheck_slot": 1,
+        "stable_job_slot": 1
+      },
+      "transition_months": 12
+    },
+    "HE-03": {
+      "approval_document_ids": [
+        "doc_compensation_policy_v1"
+      ],
+      "authorization_confirmed": true,
+      "budget_envelope": "property_land",
+      "cash_amount": 58,
+      "housing_delivery_day": 57,
+      "housing_resource_id": "housing_d30_120",
+      "ledger_disclosed": true,
+      "move_out_day": 61,
+      "old_case_resolved": false,
+      "payment_day": 57,
+      "policy_document_id": "doc_compensation_policy_v1",
+      "prior_payment_verified": true,
+      "public_window_reward": true,
+      "real_unit_viewed": true,
+      "service_allocations": {
+        "lead_recheck_slot": 1,
+        "stable_job_slot": 1
+      },
+      "transition_months": 12
+    },
+    "HE-04": {
+      "approval_document_ids": [
+        "doc_compensation_policy_v1"
+      ],
+      "authorization_confirmed": true,
+      "budget_envelope": "property_land",
+      "cash_amount": 46,
+      "housing_delivery_day": 57,
+      "housing_resource_id": "housing_d1_100",
+      "ledger_disclosed": true,
+      "move_out_day": 61,
+      "old_case_resolved": false,
+      "payment_day": 57,
+      "policy_document_id": "doc_compensation_policy_v1",
+      "prior_payment_verified": true,
+      "public_window_reward": true,
+      "real_unit_viewed": true,
+      "service_allocations": {
+        "stable_job_slot": 1
+      },
+      "transition_months": 12
+    },
+    "LAO-01": {
+      "approval_document_ids": [
+        "doc_compensation_policy_v1"
+      ],
+      "authorization_confirmed": true,
+      "budget_envelope": "property_land",
+      "cash_amount": 30,
+      "housing_delivery_day": 77,
+      "housing_resource_id": "housing_d60_80",
+      "ledger_disclosed": true,
+      "move_out_day": 81,
+      "old_case_resolved": false,
+      "payment_day": 77,
+      "policy_document_id": "doc_compensation_policy_v1",
+      "prior_payment_verified": true,
+      "public_window_reward": false,
+      "real_unit_viewed": true,
+      "service_allocations": {
+        "elder_support_slot": 1
+      },
+      "transition_months": 12
+    },
+    "MA-01": {
+      "approval_document_ids": [
+        "doc_compensation_policy_v1"
+      ],
+      "authorization_confirmed": true,
+      "budget_envelope": "property_land",
+      "cash_amount": 49,
+      "housing_delivery_day": 73,
+      "housing_resource_id": "housing_d60_120",
+      "ledger_disclosed": true,
+      "move_out_day": 77,
+      "old_case_resolved": false,
+      "payment_day": 73,
+      "policy_document_id": "doc_compensation_policy_v1",
+      "prior_payment_verified": true,
+      "public_window_reward": true,
+      "real_unit_viewed": true,
+      "service_allocations": {
+        "business_restart_package": 1
+      },
+      "transition_months": 12
+    },
+    "MA-02": {
+      "approval_document_ids": [
+        "doc_compensation_policy_v1"
+      ],
+      "authorization_confirmed": true,
+      "budget_envelope": "property_land",
+      "cash_amount": 46,
+      "housing_delivery_day": 73,
+      "housing_resource_id": "housing_d60_100",
+      "ledger_disclosed": true,
+      "move_out_day": 77,
+      "old_case_resolved": false,
+      "payment_day": 73,
+      "policy_document_id": "doc_compensation_policy_v1",
+      "prior_payment_verified": true,
+      "public_window_reward": true,
+      "real_unit_viewed": true,
+      "service_allocations": {},
+      "transition_months": 12
+    },
+    "MA-03": {
+      "approval_document_ids": [
+        "doc_compensation_policy_v1"
+      ],
+      "authorization_confirmed": true,
+      "budget_envelope": "property_land",
+      "cash_amount": 51,
+      "housing_delivery_day": 73,
+      "housing_resource_id": "housing_d60_120",
+      "ledger_disclosed": true,
+      "move_out_day": 77,
+      "old_case_resolved": false,
+      "payment_day": 73,
+      "policy_document_id": "doc_compensation_policy_v1",
+      "prior_payment_verified": true,
+      "public_window_reward": true,
+      "real_unit_viewed": true,
+      "service_allocations": {},
+      "transition_months": 12
+    },
+    "MIAO-01": {
+      "approval_document_ids": [
+        "doc_compensation_policy_v1"
+      ],
+      "authorization_confirmed": true,
+      "budget_envelope": "property_land",
+      "cash_amount": 48,
+      "housing_delivery_day": 78,
+      "housing_resource_id": "housing_d60_120",
+      "ledger_disclosed": true,
+      "move_out_day": 82,
+      "old_case_resolved": false,
+      "payment_day": 78,
+      "policy_document_id": "doc_compensation_policy_v1",
+      "prior_payment_verified": true,
+      "public_window_reward": false,
+      "real_unit_viewed": true,
+      "service_allocations": {
+        "lead_recheck_slot": 1
+      },
+      "transition_months": 12
+    },
+    "NING-01": {
+      "approval_document_ids": [
+        "doc_compensation_policy_v1"
+      ],
+      "authorization_confirmed": true,
+      "budget_envelope": "property_land",
+      "cash_amount": 52,
+      "housing_delivery_day": 71,
+      "housing_resource_id": "housing_d30_80",
+      "ledger_disclosed": true,
+      "move_out_day": 75,
+      "old_case_resolved": false,
+      "payment_day": 71,
+      "policy_document_id": "doc_compensation_policy_v1",
+      "prior_payment_verified": true,
+      "public_window_reward": true,
+      "real_unit_viewed": true,
+      "service_allocations": {},
+      "transition_months": 12
+    },
+    "NING-02": {
+      "approval_document_ids": [
+        "doc_compensation_policy_v1"
+      ],
+      "authorization_confirmed": true,
+      "budget_envelope": "property_land",
+      "cash_amount": 47,
+      "housing_delivery_day": 71,
+      "housing_resource_id": "housing_d60_100",
+      "ledger_disclosed": true,
+      "move_out_day": 75,
+      "old_case_resolved": false,
+      "payment_day": 71,
+      "policy_document_id": "doc_compensation_policy_v1",
+      "prior_payment_verified": true,
+      "public_window_reward": true,
+      "real_unit_viewed": true,
+      "service_allocations": {},
+      "transition_months": 12
+    },
+    "TAN-01": {
+      "approval_document_ids": [
+        "doc_compensation_policy_v1"
+      ],
+      "authorization_confirmed": true,
+      "budget_envelope": "property_land",
+      "cash_amount": 31,
+      "housing_delivery_day": 60,
+      "housing_resource_id": "housing_d1_80",
+      "ledger_disclosed": true,
+      "move_out_day": 60,
+      "old_case_resolved": true,
+      "payment_day": 53,
+      "policy_document_id": "doc_compensation_policy_v1",
+      "prior_payment_verified": true,
+      "public_window_reward": true,
+      "real_unit_viewed": true,
+      "service_allocations": {},
+      "transition_months": 12
+    },
+    "TAN-02": {
+      "approval_document_ids": [
+        "doc_compensation_policy_v1"
+      ],
+      "authorization_confirmed": true,
+      "budget_envelope": "property_land",
+      "cash_amount": 41,
+      "housing_delivery_day": 60,
+      "housing_resource_id": "housing_d1_100",
+      "ledger_disclosed": true,
+      "move_out_day": 60,
+      "old_case_resolved": true,
+      "payment_day": 53,
+      "policy_document_id": "doc_compensation_policy_v1",
+      "prior_payment_verified": true,
+      "public_window_reward": true,
+      "real_unit_viewed": true,
+      "service_allocations": {},
+      "transition_months": 12
+    },
+    "TAN-03": {
+      "approval_document_ids": [
+        "doc_compensation_policy_v1"
+      ],
+      "authorization_confirmed": true,
+      "budget_envelope": "property_land",
+      "cash_amount": 35,
+      "housing_delivery_day": 60,
+      "housing_resource_id": "housing_d1_80",
+      "ledger_disclosed": true,
+      "move_out_day": 60,
+      "old_case_resolved": true,
+      "payment_day": 53,
+      "policy_document_id": "doc_compensation_policy_v1",
+      "prior_payment_verified": true,
+      "public_window_reward": true,
+      "real_unit_viewed": true,
+      "service_allocations": {},
+      "transition_months": 12
+    },
+    "WU-01": {
+      "approval_document_ids": [
+        "doc_compensation_policy_v1"
+      ],
+      "authorization_confirmed": true,
+      "budget_envelope": "property_land",
+      "cash_amount": 47,
+      "housing_delivery_day": 56,
+      "housing_resource_id": "housing_d1_80",
+      "ledger_disclosed": true,
+      "move_out_day": 60,
+      "old_case_resolved": false,
+      "payment_day": 56,
+      "policy_document_id": "doc_compensation_policy_v1",
+      "prior_payment_verified": true,
+      "public_window_reward": true,
+      "real_unit_viewed": true,
+      "service_allocations": {
+        "grave_relocation_service": 1
+      },
+      "transition_months": 12
+    },
+    "WU-02": {
+      "approval_document_ids": [
+        "doc_compensation_policy_v1"
+      ],
+      "authorization_confirmed": true,
+      "budget_envelope": "property_land",
+      "cash_amount": 52,
+      "housing_delivery_day": 56,
+      "housing_resource_id": "housing_d1_120",
+      "ledger_disclosed": true,
+      "move_out_day": 60,
+      "old_case_resolved": false,
+      "payment_day": 56,
+      "policy_document_id": "doc_compensation_policy_v1",
+      "prior_payment_verified": true,
+      "public_window_reward": true,
+      "real_unit_viewed": true,
+      "service_allocations": {
+        "school_transition_seat": 1
+      },
+      "transition_months": 12
+    },
+    "WU-03": {
+      "approval_document_ids": [
+        "doc_compensation_policy_v1"
+      ],
+      "authorization_confirmed": true,
+      "budget_envelope": "property_land",
+      "cash_amount": 58,
+      "housing_delivery_day": 56,
+      "housing_resource_id": "housing_d1_140",
+      "ledger_disclosed": true,
+      "move_out_day": 60,
+      "old_case_resolved": false,
+      "payment_day": 56,
+      "policy_document_id": "doc_compensation_policy_v1",
+      "prior_payment_verified": true,
+      "public_window_reward": true,
+      "real_unit_viewed": true,
+      "service_allocations": {
+        "lead_recheck_slot": 1,
+        "school_transition_seat": 1
+      },
+      "transition_months": 12
+    },
+    "WU-04": {
+      "approval_document_ids": [
+        "doc_compensation_policy_v1"
+      ],
+      "authorization_confirmed": true,
+      "budget_envelope": "property_land",
+      "cash_amount": 43,
+      "housing_delivery_day": 56,
+      "housing_resource_id": "housing_d1_100",
+      "ledger_disclosed": true,
+      "move_out_day": 60,
+      "old_case_resolved": false,
+      "payment_day": 56,
+      "policy_document_id": "doc_compensation_policy_v1",
+      "prior_payment_verified": true,
+      "public_window_reward": true,
+      "real_unit_viewed": true,
+      "service_allocations": {},
+      "transition_months": 12
+    },
+    "WU-05": {
+      "approval_document_ids": [
+        "doc_compensation_policy_v1"
+      ],
+      "authorization_confirmed": true,
+      "budget_envelope": "property_land",
+      "cash_amount": 52,
+      "housing_delivery_day": 56,
+      "housing_resource_id": "housing_d1_120",
+      "ledger_disclosed": true,
+      "move_out_day": 60,
+      "old_case_resolved": false,
+      "payment_day": 56,
+      "policy_document_id": "doc_compensation_policy_v1",
+      "prior_payment_verified": true,
+      "public_window_reward": true,
+      "real_unit_viewed": true,
+      "service_allocations": {
+        "school_transition_seat": 1
+      },
+      "transition_months": 12
+    },
+    "WU-06": {
+      "approval_document_ids": [
+        "doc_compensation_policy_v1"
+      ],
+      "authorization_confirmed": true,
+      "budget_envelope": "property_land",
+      "cash_amount": 57,
+      "housing_delivery_day": 56,
+      "housing_resource_id": "housing_d1_120",
+      "ledger_disclosed": true,
+      "move_out_day": 60,
+      "old_case_resolved": false,
+      "payment_day": 56,
+      "policy_document_id": "doc_compensation_policy_v1",
+      "prior_payment_verified": true,
+      "public_window_reward": true,
+      "real_unit_viewed": true,
+      "service_allocations": {},
+      "transition_months": 12
+    },
+    "YANG-01": {
+      "approval_document_ids": [
+        "doc_compensation_policy_v1"
+      ],
+      "authorization_confirmed": true,
+      "budget_envelope": "property_land",
+      "cash_amount": 45,
+      "housing_delivery_day": 57,
+      "housing_resource_id": "housing_d30_120",
+      "ledger_disclosed": true,
+      "move_out_day": 61,
+      "old_case_resolved": false,
+      "payment_day": 57,
+      "policy_document_id": "doc_compensation_policy_v1",
+      "prior_payment_verified": true,
+      "public_window_reward": true,
+      "real_unit_viewed": true,
+      "service_allocations": {
+        "broadband_transition_slot": 1,
+        "school_transition_seat": 1,
+        "startup_interest_slot": 1
+      },
+      "transition_months": 12
+    },
+    "YANG-02": {
+      "approval_document_ids": [
+        "doc_compensation_policy_v1"
+      ],
+      "authorization_confirmed": true,
+      "budget_envelope": "property_land",
+      "cash_amount": 42,
+      "housing_delivery_day": 57,
+      "housing_resource_id": "housing_d30_100",
+      "ledger_disclosed": true,
+      "move_out_day": 61,
+      "old_case_resolved": false,
+      "payment_day": 57,
+      "policy_document_id": "doc_compensation_policy_v1",
+      "prior_payment_verified": true,
+      "public_window_reward": true,
+      "real_unit_viewed": true,
+      "service_allocations": {
+        "broadband_transition_slot": 1,
+        "startup_interest_slot": 1
+      },
+      "transition_months": 12
+    },
+    "YUAN-01": {
+      "approval_document_ids": [
+        "doc_compensation_policy_v1"
+      ],
+      "authorization_confirmed": true,
+      "budget_envelope": "property_land",
+      "cash_amount": 27,
+      "housing_delivery_day": 56,
+      "housing_resource_id": "housing_d1_100_accessible",
+      "ledger_disclosed": true,
+      "move_out_day": 60,
+      "old_case_resolved": false,
+      "payment_day": 56,
+      "policy_document_id": "doc_compensation_policy_v1",
+      "prior_payment_verified": true,
+      "public_window_reward": true,
+      "real_unit_viewed": true,
+      "service_allocations": {
+        "elder_support_slot": 1,
+        "lead_recheck_slot": 1
+      },
+      "transition_months": 12
+    },
+    "YUAN-02": {
+      "approval_document_ids": [
+        "doc_compensation_policy_v1"
+      ],
+      "authorization_confirmed": true,
+      "budget_envelope": "property_land",
+      "cash_amount": 33,
+      "housing_delivery_day": 56,
+      "housing_resource_id": "housing_d1_120_accessible",
+      "ledger_disclosed": true,
+      "move_out_day": 60,
+      "old_case_resolved": false,
+      "payment_day": 56,
+      "policy_document_id": "doc_compensation_policy_v1",
+      "prior_payment_verified": true,
+      "public_window_reward": true,
+      "real_unit_viewed": true,
+      "service_allocations": {
+        "elder_support_slot": 1,
+        "lead_recheck_slot": 1
+      },
+      "transition_months": 12
+    },
+    "ZDS-01": {
+      "approval_document_ids": [
+        "doc_compensation_policy_v1"
+      ],
+      "authorization_confirmed": true,
+      "budget_envelope": "property_land",
+      "cash_amount": 88,
+      "housing_delivery_day": 53,
+      "housing_resource_id": "housing_d1_120",
+      "ledger_disclosed": true,
+      "move_out_day": 57,
+      "old_case_resolved": false,
+      "payment_day": 53,
+      "policy_document_id": "doc_compensation_policy_v1",
+      "prior_payment_verified": true,
+      "public_window_reward": true,
+      "real_unit_viewed": true,
+      "service_allocations": {
+        "grave_relocation_service": 1
+      },
+      "transition_months": 12
+    },
+    "ZDS-02": {
+      "approval_document_ids": [
+        "doc_compensation_policy_v1"
+      ],
+      "authorization_confirmed": true,
+      "budget_envelope": "property_land",
+      "cash_amount": 86,
+      "housing_delivery_day": 53,
+      "housing_resource_id": "housing_d1_140",
+      "ledger_disclosed": true,
+      "move_out_day": 57,
+      "old_case_resolved": false,
+      "payment_day": 53,
+      "policy_document_id": "doc_compensation_policy_v1",
+      "prior_payment_verified": true,
+      "public_window_reward": true,
+      "real_unit_viewed": true,
+      "service_allocations": {},
+      "transition_months": 12
+    },
+    "ZDS-03": {
+      "approval_document_ids": [
+        "doc_compensation_policy_v1"
+      ],
+      "authorization_confirmed": true,
+      "budget_envelope": "property_land",
+      "cash_amount": 70,
+      "housing_delivery_day": 53,
+      "housing_resource_id": "housing_d1_120",
+      "ledger_disclosed": true,
+      "move_out_day": 57,
+      "old_case_resolved": false,
+      "payment_day": 53,
+      "policy_document_id": "doc_compensation_policy_v1",
+      "prior_payment_verified": true,
+      "public_window_reward": true,
+      "real_unit_viewed": true,
+      "service_allocations": {},
+      "transition_months": 12
+    },
+    "ZDS-04": {
+      "approval_document_ids": [
+        "doc_compensation_policy_v1"
+      ],
+      "authorization_confirmed": true,
+      "budget_envelope": "property_land",
+      "cash_amount": 61,
+      "housing_delivery_day": 53,
+      "housing_resource_id": "housing_d1_100",
+      "ledger_disclosed": true,
+      "move_out_day": 57,
+      "old_case_resolved": false,
+      "payment_day": 53,
+      "policy_document_id": "doc_compensation_policy_v1",
+      "prior_payment_verified": true,
+      "public_window_reward": true,
+      "real_unit_viewed": true,
+      "service_allocations": {},
+      "transition_months": 12
+    },
+    "ZDS-05": {
+      "approval_document_ids": [
+        "doc_compensation_policy_v1"
+      ],
+      "authorization_confirmed": true,
+      "budget_envelope": "property_land",
+      "cash_amount": 78,
+      "housing_delivery_day": 53,
+      "housing_resource_id": "housing_d1_120",
+      "ledger_disclosed": true,
+      "move_out_day": 57,
+      "old_case_resolved": false,
+      "payment_day": 53,
+      "policy_document_id": "doc_compensation_policy_v1",
+      "prior_payment_verified": true,
+      "public_window_reward": true,
+      "real_unit_viewed": true,
+      "service_allocations": {},
+      "transition_months": 12
+    },
+    "ZDS-06": {
+      "approval_document_ids": [
+        "doc_compensation_policy_v1"
+      ],
+      "authorization_confirmed": true,
+      "budget_envelope": "property_land",
+      "cash_amount": 51,
+      "housing_delivery_day": 53,
+      "housing_resource_id": "housing_d1_80",
+      "ledger_disclosed": true,
+      "move_out_day": 57,
+      "old_case_resolved": false,
+      "payment_day": 53,
+      "policy_document_id": "doc_compensation_policy_v1",
+      "prior_payment_verified": true,
+      "public_window_reward": true,
+      "real_unit_viewed": true,
+      "service_allocations": {},
+      "transition_months": 12
+    },
+    "ZKY-01": {
+      "approval_document_ids": [
+        "doc_compensation_policy_v1"
+      ],
+      "authorization_confirmed": true,
+      "budget_envelope": "property_land",
+      "cash_amount": 52,
+      "housing_delivery_day": 64,
+      "housing_resource_id": "housing_d30_80",
+      "ledger_disclosed": true,
+      "move_out_day": 68,
+      "old_case_resolved": false,
+      "payment_day": 64,
+      "policy_document_id": "doc_compensation_policy_v1",
+      "prior_payment_verified": true,
+      "public_window_reward": true,
+      "real_unit_viewed": true,
+      "service_allocations": {
+        "grave_relocation_service": 1
+      },
+      "transition_months": 12
+    },
+    "ZKY-02": {
+      "approval_document_ids": [
+        "doc_compensation_policy_v1"
+      ],
+      "authorization_confirmed": true,
+      "budget_envelope": "property_land",
+      "cash_amount": 61,
+      "housing_delivery_day": 64,
+      "housing_resource_id": "housing_d30_120",
+      "ledger_disclosed": true,
+      "move_out_day": 68,
+      "old_case_resolved": false,
+      "payment_day": 64,
+      "policy_document_id": "doc_compensation_policy_v1",
+      "prior_payment_verified": true,
+      "public_window_reward": true,
+      "real_unit_viewed": true,
+      "service_allocations": {
+        "grave_relocation_service": 1
+      },
+      "transition_months": 12
+    },
+    "ZKY-03": {
+      "approval_document_ids": [
+        "doc_compensation_policy_v1"
+      ],
+      "authorization_confirmed": true,
+      "budget_envelope": "property_land",
+      "cash_amount": 57,
+      "housing_delivery_day": 64,
+      "housing_resource_id": "housing_d30_100",
+      "ledger_disclosed": true,
+      "move_out_day": 68,
+      "old_case_resolved": false,
+      "payment_day": 64,
+      "policy_document_id": "doc_compensation_policy_v1",
+      "prior_payment_verified": true,
+      "public_window_reward": true,
+      "real_unit_viewed": true,
+      "service_allocations": {
+        "grave_relocation_service": 1
+      },
+      "transition_months": 12
+    },
+    "ZMC-01": {
+      "approval_document_ids": [
+        "doc_compensation_policy_v1"
+      ],
+      "authorization_confirmed": true,
+      "budget_envelope": "property_land",
+      "cash_amount": 71,
+      "housing_delivery_day": 68,
+      "housing_resource_id": "housing_d30_120",
+      "ledger_disclosed": true,
+      "move_out_day": 72,
+      "old_case_resolved": false,
+      "payment_day": 68,
+      "policy_document_id": "doc_compensation_policy_v1",
+      "prior_payment_verified": true,
+      "public_window_reward": true,
+      "real_unit_viewed": true,
+      "service_allocations": {},
+      "transition_months": 12
+    },
+    "ZMC-02": {
+      "approval_document_ids": [
+        "doc_compensation_policy_v1"
+      ],
+      "authorization_confirmed": true,
+      "budget_envelope": "property_land",
+      "cash_amount": 64,
+      "housing_delivery_day": 68,
+      "housing_resource_id": "housing_d30_100",
+      "ledger_disclosed": true,
+      "move_out_day": 72,
+      "old_case_resolved": false,
+      "payment_day": 68,
+      "policy_document_id": "doc_compensation_policy_v1",
+      "prior_payment_verified": true,
+      "public_window_reward": true,
+      "real_unit_viewed": true,
+      "service_allocations": {},
+      "transition_months": 12
+    }
+  },
+  "decision_policy_templates": {
+    "concealed": {
+      "dp1_01_taskforce_faction_map": "b_build_independent_team",
+      "dp1_02": "b",
+      "dp1_03": "b",
+      "dp1_04": "b",
+      "dp1_05": "b",
+      "dp1_06": "a",
+      "dp1_07": "a",
+      "dp1_08": "a",
+      "dp1_09": "c",
+      "dp2_01": "a",
+      "dp2_02": "a",
+      "dp2_03": "a",
+      "dp2_04": "c",
+      "dp2_05": "c",
+      "dp2_06": "a",
+      "dp2_07": "a",
+      "dp2_08": "a_b_c_d",
+      "dp2_09": "a",
+      "dp2_10": "submit",
+      "dp3_01": "a",
+      "dp3_02": "b",
+      "dp3_03": "b",
+      "dp3_04": "b",
+      "dp3_05": "a",
+      "dp3_06": "a",
+      "dp3_07": "b_d_c_a",
+      "dp3_08": "a",
+      "dp3_09": "a",
+      "dp3_10": "a",
+      "dp3_tea_disposition": "c",
+      "dp4_01": "a",
+      "dp4_02": "a_b_d_e_c",
+      "dp4_03": "a",
+      "dp4_04": "c",
+      "dp4_05": "a",
+      "dp4_06": "a",
+      "dp4_07": "b",
+      "dp4_08": "a",
+      "dp4_09": "a",
+      "dp4_10": "a",
+      "dp4_11": "b",
+      "dp4_roster_disposition": "c",
+      "dp5_01": "d",
+      "dp5_02": "a",
+      "dp5_03": "d",
+      "dp5_04": "d",
+      "dp5_05": "b",
+      "dp5_06": "a",
+      "dp5_07": "a",
+      "dp5_08": "a",
+      "dp5_09": "a",
+      "dp5_10": "b",
+      "dp5_11": "b",
+      "dp5_12": "a_c_b_d_e",
+      "dp6_01": "a",
+      "dp6_02": "b",
+      "dp6_03": "a",
+      "dp6_04": "e",
+      "dp6_05": "c",
+      "dp6_06": "d",
+      "dp6_07": "a_b_c_d_e",
+      "dp6_08": "a",
+      "dp6_09": "a",
+      "dp6_10": "a",
+      "ev1_01_reception_bag": "a_reject_on_site",
+      "ev1_02": "a",
+      "ev1_03": "a",
+      "ev2_01": "d",
+      "ev3_01": "a",
+      "ev4_01": "a",
+      "ev4_02": "b",
+      "ev4_03": "a",
+      "ev4_04": "a",
+      "ev5_01": "b",
+      "ev5_02": "a",
+      "ev5_03": "c",
+      "ev6_01": "a",
+      "ev6_02": "b"
+    },
+    "lawful": {
+      "dp1_01_taskforce_faction_map": "b_build_independent_team",
+      "dp1_02": "b",
+      "dp1_03": "b",
+      "dp1_04": "b",
+      "dp1_05": "b",
+      "dp1_06": "a",
+      "dp1_07": "a",
+      "dp1_08": "a",
+      "dp1_09": "c",
+      "dp2_01": "a",
+      "dp2_02": "a",
+      "dp2_03": "a",
+      "dp2_04": "c",
+      "dp2_05": "c",
+      "dp2_06": "a",
+      "dp2_07": "a",
+      "dp2_08": "a_b_c_d",
+      "dp2_09": "a",
+      "dp2_10": "submit",
+      "dp3_01": "a",
+      "dp3_02": "b",
+      "dp3_03": "b",
+      "dp3_04": "b",
+      "dp3_05": "a",
+      "dp3_06": "a",
+      "dp3_07": "b_d_c_a",
+      "dp3_08": "a",
+      "dp3_09": "a",
+      "dp3_10": "a",
+      "dp3_tea_disposition": "c",
+      "dp4_01": "a",
+      "dp4_02": "a_b_d_e_c",
+      "dp4_03": "a",
+      "dp4_04": "c",
+      "dp4_05": "a",
+      "dp4_06": "a",
+      "dp4_07": "b",
+      "dp4_08": "a",
+      "dp4_09": "b",
+      "dp4_10": "a",
+      "dp4_11": "b",
+      "dp4_roster_disposition": "c",
+      "dp5_01": "d",
+      "dp5_02": "a",
+      "dp5_03": "d",
+      "dp5_04": "d",
+      "dp5_05": "b",
+      "dp5_06": "a",
+      "dp5_07": "a",
+      "dp5_08": "a",
+      "dp5_09": "a",
+      "dp5_10": "b",
+      "dp5_11": "b",
+      "dp5_12": "a_c_b_d_e",
+      "dp6_01": "a",
+      "dp6_02": "b",
+      "dp6_03": "a",
+      "dp6_04": "c",
+      "dp6_05": "c",
+      "dp6_06": "a",
+      "dp6_07": "a_b_c_d_e",
+      "dp6_08": "b",
+      "dp6_09": "a",
+      "dp6_10": "a",
+      "ev1_01_reception_bag": "a_reject_on_site",
+      "ev1_02": "a",
+      "ev1_03": "a",
+      "ev2_01": "d",
+      "ev3_01": "a",
+      "ev4_01": "a",
+      "ev4_02": "b",
+      "ev4_03": "a",
+      "ev4_04": "a",
+      "ev5_01": "b",
+      "ev5_02": "a",
+      "ev5_03": "c",
+      "ev6_01": "a",
+      "ev6_02": "a"
+    },
+    "unknown": {
+      "dp1_01_taskforce_faction_map": "b_build_independent_team",
+      "dp1_02": "b",
+      "dp1_03": "b",
+      "dp1_04": "b",
+      "dp1_05": "b",
+      "dp1_06": "a",
+      "dp1_07": "a",
+      "dp1_08": "a",
+      "dp1_09": "c",
+      "dp2_01": "a",
+      "dp2_02": "a",
+      "dp2_03": "a",
+      "dp2_04": "c",
+      "dp2_05": "c",
+      "dp2_06": "a",
+      "dp2_07": "a",
+      "dp2_08": "a_b_c_d",
+      "dp2_09": "a",
+      "dp2_10": "submit",
+      "dp3_01": "a",
+      "dp3_02": "b",
+      "dp3_03": "b",
+      "dp3_04": "b",
+      "dp3_05": "a",
+      "dp3_06": "a",
+      "dp3_07": "b_d_c_a",
+      "dp3_08": "a",
+      "dp3_09": "a",
+      "dp3_10": "a",
+      "dp3_tea_disposition": "c",
+      "dp4_01": "e",
+      "dp4_02": "a_b_d_e_c",
+      "dp4_03": "a",
+      "dp4_04": "c",
+      "dp4_05": "a",
+      "dp4_06": "a",
+      "dp4_07": "b",
+      "dp4_08": "a",
+      "dp4_09": "b",
+      "dp4_10": "a",
+      "dp4_11": "b",
+      "dp4_roster_disposition": "c",
+      "dp5_01": "d",
+      "dp5_02": "a",
+      "dp5_03": "d",
+      "dp5_04": "d",
+      "dp5_05": "b",
+      "dp5_06": "a",
+      "dp5_07": "a",
+      "dp5_08": "a",
+      "dp5_09": "a",
+      "dp5_10": "b",
+      "dp5_11": "b",
+      "dp5_12": "a_c_b_d_e",
+      "dp6_01": "a",
+      "dp6_02": "b",
+      "dp6_03": "a",
+      "dp6_04": "c",
+      "dp6_05": "c",
+      "dp6_06": "a",
+      "dp6_07": "a_b_c_d_e",
+      "dp6_08": "b",
+      "dp6_09": "a",
+      "dp6_10": "a",
+      "ev1_01_reception_bag": "a_reject_on_site",
+      "ev1_02": "a",
+      "ev1_03": "a",
+      "ev2_01": "d",
+      "ev3_01": "a",
+      "ev4_01": "a",
+      "ev4_02": "b",
+      "ev4_03": "a",
+      "ev4_04": "a",
+      "ev5_01": "b",
+      "ev5_02": "a",
+      "ev5_03": "c",
+      "ev6_01": "a",
+      "ev6_02": "b"
+    }
+  },
+  "main_ending_policy_overrides": {
+    "ending_02": {
+      "dp6_05": "a"
+    },
+    "ending_08": {
+      "dp6_03": "b"
+    },
+    "ending_09": {
+      "dp4_10": "e",
+      "dp6_01": "d"
+    },
+    "ending_11": {
+      "dp6_01": "b"
+    },
+    "ending_12": {
+      "dp6_03": "c",
+      "dp6_08": "b"
+    },
+    "ending_20": {
+      "dp6_03": "b"
+    },
+    "ending_24": {
+      "dp2_02": "c",
+      "dp4_03": "a"
+    }
+  },
+  "sub_ending_policy_overrides": {
+    "ending_08a": {
+      "dp5_03": "d"
+    },
+    "ending_08b": {
+      "dp4_05": "b",
+      "dp5_03": "d"
+    },
+    "ending_08c": {
+      "dp4_05": "b",
+      "dp5_03": "d"
+    },
+    "ending_15b": {
+      "dp6_07": "d_a_b_c_e"
+    },
+    "ending_18c": {
+      "dp6_08": "b"
+    },
+    "ending_21b": {
+      "dp4_06": "d",
+      "dp5_10": "a",
+      "dp6_09": "e",
+      "dp6_10": "b"
+    },
+    "ending_21d": {
+      "dp6_05": "a",
+      "dp6_09": "e",
+      "dp6_10": "a"
+    },
+    "ending_23b": {
+      "dp4_05": "b",
+      "dp5_03": "d"
+    },
+    "ending_23c": {
+      "dp5_03": "d"
+    },
+    "ending_23d": {
+      "dp4_05": "b",
+      "dp5_03": "d"
+    }
+  },
+  "profiles": [
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 27
+        }
+      ],
+      "decision_policy": {
+        "dp4_03": "b",
+        "dp4_09": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "integrity",
+      "route_id": "route-ending-01a",
+      "target_main_ending_ids": [
+        "ending_01"
+      ],
+      "target_sub_ending_ids": [
+        "ending_01a"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 29
+        }
+      ],
+      "decision_policy": {
+        "dp4_03": "b",
+        "dp4_09": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "technical",
+      "route_id": "route-ending-01b",
+      "target_main_ending_ids": [
+        "ending_01"
+      ],
+      "target_sub_ending_ids": [
+        "ending_01b"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 30
+        }
+      ],
+      "decision_policy": {
+        "dp4_03": "b",
+        "dp4_09": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "grassroots",
+      "route_id": "route-ending-01c",
+      "target_main_ending_ids": [
+        "ending_01"
+      ],
+      "target_sub_ending_ids": [
+        "ending_01c"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp4_03": "b",
+        "dp4_09": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "integrity",
+      "route_id": "route-ending-01d",
+      "target_main_ending_ids": [
+        "ending_01"
+      ],
+      "target_sub_ending_ids": [
+        "ending_01d"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 34
+        }
+      ],
+      "decision_policy": {
+        "dp4_03": "b",
+        "dp4_09": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "technical",
+      "route_id": "route-ending-01e",
+      "target_main_ending_ids": [
+        "ending_01"
+      ],
+      "target_sub_ending_ids": [
+        "ending_01e"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 27
+        }
+      ],
+      "decision_policy": {
+        "dp5_10": "b",
+        "dp6_03": "a",
+        "dp6_09": "e"
+      },
+      "decision_policy_template_id": "unknown",
+      "expected_end_day": 90,
+      "origin_id": "grassroots",
+      "route_id": "route-ending-02a",
+      "target_main_ending_ids": [
+        "ending_02"
+      ],
+      "target_sub_ending_ids": [
+        "ending_02a"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 29
+        }
+      ],
+      "decision_policy": {
+        "dp5_10": "b",
+        "dp6_03": "a",
+        "dp6_09": "e"
+      },
+      "decision_policy_template_id": "unknown",
+      "expected_end_day": 90,
+      "origin_id": "integrity",
+      "route_id": "route-ending-02b",
+      "target_main_ending_ids": [
+        "ending_02"
+      ],
+      "target_sub_ending_ids": [
+        "ending_02b"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 30
+        }
+      ],
+      "decision_policy": {
+        "dp5_10": "b",
+        "dp6_03": "a",
+        "dp6_09": "e"
+      },
+      "decision_policy_template_id": "unknown",
+      "expected_end_day": 90,
+      "origin_id": "technical",
+      "route_id": "route-ending-02c",
+      "target_main_ending_ids": [
+        "ending_02"
+      ],
+      "target_sub_ending_ids": [
+        "ending_02c"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp5_10": "b",
+        "dp6_03": "a",
+        "dp6_09": "e"
+      },
+      "decision_policy_template_id": "unknown",
+      "expected_end_day": 90,
+      "origin_id": "grassroots",
+      "route_id": "route-ending-02d",
+      "target_main_ending_ids": [
+        "ending_02"
+      ],
+      "target_sub_ending_ids": [
+        "ending_02d"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 34
+        }
+      ],
+      "decision_policy": {
+        "dp5_10": "b",
+        "dp6_03": "a",
+        "dp6_09": "e"
+      },
+      "decision_policy_template_id": "unknown",
+      "expected_end_day": 90,
+      "origin_id": "integrity",
+      "route_id": "route-ending-02e",
+      "target_main_ending_ids": [
+        "ending_02"
+      ],
+      "target_sub_ending_ids": [
+        "ending_02e"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 27
+        }
+      ],
+      "decision_policy": {
+        "ev6_01": "c"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "technical",
+      "route_id": "route-ending-03a",
+      "target_main_ending_ids": [
+        "ending_03"
+      ],
+      "target_sub_ending_ids": [
+        "ending_03a"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 29
+        }
+      ],
+      "decision_policy": {
+        "ev6_01": "c"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "grassroots",
+      "route_id": "route-ending-03b",
+      "target_main_ending_ids": [
+        "ending_03"
+      ],
+      "target_sub_ending_ids": [
+        "ending_03b"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 30
+        }
+      ],
+      "decision_policy": {
+        "ev6_01": "c"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "integrity",
+      "route_id": "route-ending-03c",
+      "target_main_ending_ids": [
+        "ending_03"
+      ],
+      "target_sub_ending_ids": [
+        "ending_03c"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "ev6_01": "c"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "technical",
+      "route_id": "route-ending-03d",
+      "target_main_ending_ids": [
+        "ending_03"
+      ],
+      "target_sub_ending_ids": [
+        "ending_03d"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 34
+        }
+      ],
+      "decision_policy": {
+        "ev6_01": "c"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "grassroots",
+      "route_id": "route-ending-03e",
+      "target_main_ending_ids": [
+        "ending_03"
+      ],
+      "target_sub_ending_ids": [
+        "ending_03e"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 27
+        }
+      ],
+      "decision_policy": {
+        "dp5_03": "c",
+        "dp6_03": "b",
+        "dp6_09": "a"
+      },
+      "decision_policy_template_id": "unknown",
+      "expected_end_day": 90,
+      "origin_id": "integrity",
+      "route_id": "route-ending-04a",
+      "target_main_ending_ids": [
+        "ending_04"
+      ],
+      "target_sub_ending_ids": [
+        "ending_04a"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 27
+        }
+      ],
+      "decision_policy": {
+        "dp5_03": "c",
+        "dp6_03": "c",
+        "dp6_09": "a"
+      },
+      "decision_policy_template_id": "concealed",
+      "expected_end_day": 90,
+      "origin_id": "technical",
+      "route_id": "route-ending-04b",
+      "target_main_ending_ids": [
+        "ending_04"
+      ],
+      "target_sub_ending_ids": [
+        "ending_04b"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 27
+        }
+      ],
+      "decision_policy": {
+        "dp5_03": "c",
+        "dp6_03": "b",
+        "dp6_09": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "grassroots",
+      "route_id": "route-ending-04c",
+      "target_main_ending_ids": [
+        "ending_04"
+      ],
+      "target_sub_ending_ids": [
+        "ending_04c"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 27
+        }
+      ],
+      "decision_policy": {
+        "dp5_03": "c",
+        "dp6_03": "a",
+        "dp6_09": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "integrity",
+      "route_id": "route-ending-04d",
+      "target_main_ending_ids": [
+        "ending_04"
+      ],
+      "target_sub_ending_ids": [
+        "ending_04d"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 27
+        }
+      ],
+      "decision_policy": {
+        "dp6_02": "c",
+        "dp6_10": "c"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "technical",
+      "route_id": "route-ending-05a",
+      "target_main_ending_ids": [
+        "ending_05"
+      ],
+      "target_sub_ending_ids": [
+        "ending_05a"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 29
+        }
+      ],
+      "decision_policy": {
+        "dp6_02": "c",
+        "dp6_10": "c"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "grassroots",
+      "route_id": "route-ending-05b",
+      "target_main_ending_ids": [
+        "ending_05"
+      ],
+      "target_sub_ending_ids": [
+        "ending_05b"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 30
+        }
+      ],
+      "decision_policy": {
+        "dp6_02": "c",
+        "dp6_10": "c"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "integrity",
+      "route_id": "route-ending-05c",
+      "target_main_ending_ids": [
+        "ending_05"
+      ],
+      "target_sub_ending_ids": [
+        "ending_05c"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp6_02": "c",
+        "dp6_10": "c"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "technical",
+      "route_id": "route-ending-05d",
+      "target_main_ending_ids": [
+        "ending_05"
+      ],
+      "target_sub_ending_ids": [
+        "ending_05d"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 34
+        }
+      ],
+      "decision_policy": {
+        "dp6_02": "c",
+        "dp6_10": "c"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "grassroots",
+      "route_id": "route-ending-05e",
+      "target_main_ending_ids": [
+        "ending_05"
+      ],
+      "target_sub_ending_ids": [
+        "ending_05e"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 27
+        }
+      ],
+      "decision_policy": {
+        "dp6_05": "c"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "integrity",
+      "route_id": "route-ending-06a",
+      "target_main_ending_ids": [
+        "ending_06"
+      ],
+      "target_sub_ending_ids": [
+        "ending_06a"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 27
+        }
+      ],
+      "decision_policy": {
+        "dp6_05": "d"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "technical",
+      "route_id": "route-ending-06b",
+      "target_main_ending_ids": [
+        "ending_06"
+      ],
+      "target_sub_ending_ids": [
+        "ending_06b"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 27
+        }
+      ],
+      "decision_policy": {
+        "dp6_05": "b"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "grassroots",
+      "route_id": "route-ending-06c",
+      "target_main_ending_ids": [
+        "ending_06"
+      ],
+      "target_sub_ending_ids": [
+        "ending_06c"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 27
+        }
+      ],
+      "decision_policy": {
+        "dp6_05": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "integrity",
+      "route_id": "route-ending-06d",
+      "target_main_ending_ids": [
+        "ending_06"
+      ],
+      "target_sub_ending_ids": [
+        "ending_06d"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "归心"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 29
+        }
+      ],
+      "decision_policy": {
+        "dp1_03": "b",
+        "dp2_05": "c",
+        "dp4_05": "a",
+        "dp6_02": "d",
+        "dp6_03": "a",
+        "dp6_07": "a_b_c_d_e",
+        "dp6_09": "a",
+        "ev6_01": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "technical",
+      "route_id": "route-ending-07a",
+      "target_main_ending_ids": [
+        "ending_07"
+      ],
+      "target_sub_ending_ids": [
+        "ending_07a"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "认可"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 29
+        }
+      ],
+      "decision_policy": {
+        "dp1_03": "b",
+        "dp2_05": "c",
+        "dp4_05": "b",
+        "dp6_02": "a",
+        "dp6_03": "a",
+        "dp6_07": "e_a_b_c_d",
+        "dp6_09": "a",
+        "ev6_01": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "grassroots",
+      "route_id": "route-ending-07b",
+      "target_main_ending_ids": [
+        "ending_07"
+      ],
+      "target_sub_ending_ids": [
+        "ending_07b"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "疏离"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 29
+        }
+      ],
+      "decision_policy": {
+        "dp4_05": "b",
+        "dp6_02": "a",
+        "dp6_03": "a",
+        "dp6_07": "a_b_c_d_e",
+        "dp6_09": "a",
+        "ev6_01": "b"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "integrity",
+      "route_id": "route-ending-07c",
+      "target_main_ending_ids": [
+        "ending_07"
+      ],
+      "target_sub_ending_ids": [
+        "ending_07c"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "离散"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 29
+        }
+      ],
+      "decision_policy": {
+        "dp1_08": "b",
+        "dp4_05": "b",
+        "dp6_02": "a",
+        "dp6_03": "a",
+        "dp6_07": "e_a_b_c_d",
+        "dp6_09": "a",
+        "ev1_03": "b",
+        "ev6_01": "b"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "technical",
+      "route_id": "route-ending-07d",
+      "target_main_ending_ids": [
+        "ending_07"
+      ],
+      "target_sub_ending_ids": [
+        "ending_07d"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 29
+        }
+      ],
+      "decision_policy": {
+        "dp4_05": "a",
+        "dp5_03": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "grassroots",
+      "route_id": "route-ending-08a",
+      "target_main_ending_ids": [
+        "ending_08"
+      ],
+      "target_sub_ending_ids": [
+        "ending_08a"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 29
+        }
+      ],
+      "decision_policy": {
+        "dp4_05": "b",
+        "dp5_03": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "integrity",
+      "route_id": "route-ending-08b",
+      "target_main_ending_ids": [
+        "ending_08"
+      ],
+      "target_sub_ending_ids": [
+        "ending_08b"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 29
+        }
+      ],
+      "decision_policy": {
+        "dp1_08": "b",
+        "dp4_05": "b",
+        "dp5_03": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "technical",
+      "route_id": "route-ending-08c",
+      "target_main_ending_ids": [
+        "ending_08"
+      ],
+      "target_sub_ending_ids": [
+        "ending_08c"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 29
+        }
+      ],
+      "decision_policy": {
+        "dp5_03": "c"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "grassroots",
+      "route_id": "route-ending-08d",
+      "target_main_ending_ids": [
+        "ending_08"
+      ],
+      "target_sub_ending_ids": [
+        "ending_08d"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp3_10": "c",
+        "dp6_03": "b",
+        "dp6_09": "a"
+      },
+      "decision_policy_template_id": "unknown",
+      "expected_end_day": 90,
+      "origin_id": "integrity",
+      "route_id": "route-ending-09a",
+      "target_main_ending_ids": [
+        "ending_09"
+      ],
+      "target_sub_ending_ids": [
+        "ending_09a"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp3_10": "c",
+        "dp6_03": "c",
+        "dp6_09": "a"
+      },
+      "decision_policy_template_id": "concealed",
+      "expected_end_day": 90,
+      "origin_id": "technical",
+      "route_id": "route-ending-09b",
+      "target_main_ending_ids": [
+        "ending_09"
+      ],
+      "target_sub_ending_ids": [
+        "ending_09b"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp3_10": "c",
+        "dp6_03": "b",
+        "dp6_09": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "grassroots",
+      "route_id": "route-ending-09c",
+      "target_main_ending_ids": [
+        "ending_09"
+      ],
+      "target_sub_ending_ids": [
+        "ending_09c"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp3_10": "c",
+        "dp6_03": "a",
+        "dp6_09": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "integrity",
+      "route_id": "route-ending-09d",
+      "target_main_ending_ids": [
+        "ending_09"
+      ],
+      "target_sub_ending_ids": [
+        "ending_09d"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp2_07": "b",
+        "dp6_03": "b",
+        "dp6_09": "a"
+      },
+      "decision_policy_template_id": "unknown",
+      "expected_end_day": 90,
+      "origin_id": "technical",
+      "route_id": "route-ending-10a",
+      "target_main_ending_ids": [
+        "ending_10"
+      ],
+      "target_sub_ending_ids": [
+        "ending_10a"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp2_07": "b",
+        "dp6_03": "c",
+        "dp6_09": "a"
+      },
+      "decision_policy_template_id": "concealed",
+      "expected_end_day": 90,
+      "origin_id": "grassroots",
+      "route_id": "route-ending-10b",
+      "target_main_ending_ids": [
+        "ending_10"
+      ],
+      "target_sub_ending_ids": [
+        "ending_10b"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp2_07": "b",
+        "dp6_03": "b",
+        "dp6_09": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "integrity",
+      "route_id": "route-ending-10c",
+      "target_main_ending_ids": [
+        "ending_10"
+      ],
+      "target_sub_ending_ids": [
+        "ending_10c"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp2_07": "b",
+        "dp6_03": "a",
+        "dp6_09": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "technical",
+      "route_id": "route-ending-10d",
+      "target_main_ending_ids": [
+        "ending_10"
+      ],
+      "target_sub_ending_ids": [
+        "ending_10d"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp4_10": "b",
+        "dp6_03": "b",
+        "dp6_09": "a"
+      },
+      "decision_policy_template_id": "unknown",
+      "expected_end_day": 90,
+      "origin_id": "grassroots",
+      "route_id": "route-ending-11a",
+      "target_main_ending_ids": [
+        "ending_11"
+      ],
+      "target_sub_ending_ids": [
+        "ending_11a"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp4_10": "b",
+        "dp6_03": "c",
+        "dp6_09": "a"
+      },
+      "decision_policy_template_id": "concealed",
+      "expected_end_day": 90,
+      "origin_id": "integrity",
+      "route_id": "route-ending-11b",
+      "target_main_ending_ids": [
+        "ending_11"
+      ],
+      "target_sub_ending_ids": [
+        "ending_11b"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp4_10": "b",
+        "dp6_03": "b",
+        "dp6_09": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "technical",
+      "route_id": "route-ending-11c",
+      "target_main_ending_ids": [
+        "ending_11"
+      ],
+      "target_sub_ending_ids": [
+        "ending_11c"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp4_10": "b",
+        "dp6_03": "a",
+        "dp6_09": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "grassroots",
+      "route_id": "route-ending-11d",
+      "target_main_ending_ids": [
+        "ending_11"
+      ],
+      "target_sub_ending_ids": [
+        "ending_11d"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp6_05": "c"
+      },
+      "decision_policy_template_id": "concealed",
+      "expected_end_day": 90,
+      "origin_id": "integrity",
+      "route_id": "route-ending-12a",
+      "target_main_ending_ids": [
+        "ending_12"
+      ],
+      "target_sub_ending_ids": [
+        "ending_12a"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp6_05": "d"
+      },
+      "decision_policy_template_id": "concealed",
+      "expected_end_day": 90,
+      "origin_id": "technical",
+      "route_id": "route-ending-12b",
+      "target_main_ending_ids": [
+        "ending_12"
+      ],
+      "target_sub_ending_ids": [
+        "ending_12b"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp6_05": "b"
+      },
+      "decision_policy_template_id": "concealed",
+      "expected_end_day": 90,
+      "origin_id": "grassroots",
+      "route_id": "route-ending-12c",
+      "target_main_ending_ids": [
+        "ending_12"
+      ],
+      "target_sub_ending_ids": [
+        "ending_12c"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp6_05": "a"
+      },
+      "decision_policy_template_id": "concealed",
+      "expected_end_day": 90,
+      "origin_id": "integrity",
+      "route_id": "route-ending-12d",
+      "target_main_ending_ids": [
+        "ending_12"
+      ],
+      "target_sub_ending_ids": [
+        "ending_12d"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "归心"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp1_03": "b",
+        "dp2_05": "c",
+        "dp4_05": "a",
+        "dp4_09": "b",
+        "dp5_05": "a",
+        "dp6_02": "d",
+        "dp6_04": "c",
+        "dp6_05": "b",
+        "dp6_07": "a_b_c_d_e",
+        "ev6_01": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "technical",
+      "route_id": "route-ending-13a",
+      "target_main_ending_ids": [
+        "ending_13"
+      ],
+      "target_sub_ending_ids": [
+        "ending_13a"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "认可"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp1_03": "b",
+        "dp2_05": "c",
+        "dp4_05": "b",
+        "dp4_09": "b",
+        "dp5_05": "a",
+        "dp6_02": "a",
+        "dp6_04": "c",
+        "dp6_05": "b",
+        "dp6_07": "e_a_b_c_d",
+        "ev6_01": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "grassroots",
+      "route_id": "route-ending-13b",
+      "target_main_ending_ids": [
+        "ending_13"
+      ],
+      "target_sub_ending_ids": [
+        "ending_13b"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "疏离"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp4_05": "b",
+        "dp4_09": "b",
+        "dp5_05": "a",
+        "dp6_02": "a",
+        "dp6_04": "c",
+        "dp6_05": "b",
+        "dp6_07": "a_b_c_d_e",
+        "ev6_01": "b"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "integrity",
+      "route_id": "route-ending-13c",
+      "target_main_ending_ids": [
+        "ending_13"
+      ],
+      "target_sub_ending_ids": [
+        "ending_13c"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "离散"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp1_08": "b",
+        "dp4_05": "b",
+        "dp4_09": "b",
+        "dp5_05": "a",
+        "dp6_02": "a",
+        "dp6_04": "c",
+        "dp6_05": "b",
+        "dp6_07": "e_a_b_c_d",
+        "ev1_03": "b",
+        "ev6_01": "b"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "technical",
+      "route_id": "route-ending-13d",
+      "target_main_ending_ids": [
+        "ending_13"
+      ],
+      "target_sub_ending_ids": [
+        "ending_13d"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "归心"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp1_03": "b",
+        "dp2_05": "c",
+        "dp4_05": "a",
+        "dp4_09": "b",
+        "dp5_05": "a",
+        "dp6_02": "d",
+        "dp6_04": "c",
+        "dp6_05": "d",
+        "dp6_07": "a_b_c_d_e",
+        "ev6_01": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "grassroots",
+      "route_id": "route-ending-14a",
+      "target_main_ending_ids": [
+        "ending_14"
+      ],
+      "target_sub_ending_ids": [
+        "ending_14a"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "认可"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp1_03": "b",
+        "dp2_05": "c",
+        "dp4_05": "b",
+        "dp4_09": "b",
+        "dp5_05": "a",
+        "dp6_02": "a",
+        "dp6_04": "c",
+        "dp6_05": "d",
+        "dp6_07": "e_a_b_c_d",
+        "ev6_01": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "integrity",
+      "route_id": "route-ending-14b",
+      "target_main_ending_ids": [
+        "ending_14"
+      ],
+      "target_sub_ending_ids": [
+        "ending_14b"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "疏离"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp4_05": "b",
+        "dp4_09": "b",
+        "dp5_05": "a",
+        "dp6_02": "a",
+        "dp6_04": "c",
+        "dp6_05": "d",
+        "dp6_07": "a_b_c_d_e",
+        "ev6_01": "b"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "technical",
+      "route_id": "route-ending-14c",
+      "target_main_ending_ids": [
+        "ending_14"
+      ],
+      "target_sub_ending_ids": [
+        "ending_14c"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "离散"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp1_08": "b",
+        "dp4_05": "b",
+        "dp4_09": "b",
+        "dp5_05": "a",
+        "dp6_02": "a",
+        "dp6_04": "c",
+        "dp6_05": "d",
+        "dp6_07": "e_a_b_c_d",
+        "ev1_03": "b",
+        "ev6_01": "b"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "grassroots",
+      "route_id": "route-ending-14d",
+      "target_main_ending_ids": [
+        "ending_14"
+      ],
+      "target_sub_ending_ids": [
+        "ending_14d"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp4_04": "d",
+        "dp4_09": "b",
+        "dp5_05": "a",
+        "dp6_04": "c"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "integrity",
+      "route_id": "route-ending-15a",
+      "target_main_ending_ids": [
+        "ending_15"
+      ],
+      "target_sub_ending_ids": [
+        "ending_15a"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp4_04": "d",
+        "dp4_09": "b",
+        "dp5_05": "d",
+        "dp6_04": "c"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "technical",
+      "route_id": "route-ending-15b",
+      "target_main_ending_ids": [
+        "ending_15"
+      ],
+      "target_sub_ending_ids": [
+        "ending_15b"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp4_04": "d",
+        "dp4_09": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "grassroots",
+      "route_id": "route-ending-15c",
+      "target_main_ending_ids": [
+        "ending_15"
+      ],
+      "target_sub_ending_ids": [
+        "ending_15c"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp1_08": "b",
+        "dp4_05": "b",
+        "dp6_02": "a",
+        "dp6_07": "e_a_b_c_d",
+        "dp6_08": "b",
+        "ev1_03": "b",
+        "ev6_01": "b"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "integrity",
+      "route_id": "route-ending-16a",
+      "target_main_ending_ids": [
+        "ending_16"
+      ],
+      "target_sub_ending_ids": [
+        "ending_16a"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp1_08": "b",
+        "dp4_05": "b",
+        "dp6_02": "a",
+        "dp6_07": "e_a_b_c_d",
+        "dp6_08": "c",
+        "ev1_03": "b",
+        "ev6_01": "b"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "technical",
+      "route_id": "route-ending-16b",
+      "target_main_ending_ids": [
+        "ending_16"
+      ],
+      "target_sub_ending_ids": [
+        "ending_16b"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp1_08": "b",
+        "dp4_05": "b",
+        "dp6_02": "a",
+        "dp6_07": "e_a_b_c_d",
+        "dp6_08": "a",
+        "ev1_03": "b",
+        "ev6_01": "b"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "grassroots",
+      "route_id": "route-ending-16c",
+      "target_main_ending_ids": [
+        "ending_16"
+      ],
+      "target_sub_ending_ids": [
+        "ending_16c"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp6_06": "d",
+        "dp6_08": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "integrity",
+      "route_id": "route-ending-17a",
+      "target_main_ending_ids": [
+        "ending_17"
+      ],
+      "target_sub_ending_ids": [
+        "ending_17a"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp6_06": "a",
+        "dp6_08": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "technical",
+      "route_id": "route-ending-17b",
+      "target_main_ending_ids": [
+        "ending_17"
+      ],
+      "target_sub_ending_ids": [
+        "ending_17b"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp6_06": "c",
+        "dp6_08": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "grassroots",
+      "route_id": "route-ending-17c",
+      "target_main_ending_ids": [
+        "ending_17"
+      ],
+      "target_sub_ending_ids": [
+        "ending_17c"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "认可"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp6_03": "a",
+        "dp6_06": "c",
+        "dp6_09": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "integrity",
+      "route_id": "route-ending-18a",
+      "target_main_ending_ids": [
+        "ending_18"
+      ],
+      "target_sub_ending_ids": [
+        "ending_18a"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "认可"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp6_03": "b",
+        "dp6_06": "c",
+        "dp6_09": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "technical",
+      "route_id": "route-ending-18b",
+      "target_main_ending_ids": [
+        "ending_18"
+      ],
+      "target_sub_ending_ids": [
+        "ending_18b"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "认可"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp6_03": "c",
+        "dp6_06": "c",
+        "dp6_09": "a"
+      },
+      "decision_policy_template_id": "concealed",
+      "expected_end_day": 90,
+      "origin_id": "grassroots",
+      "route_id": "route-ending-18c",
+      "target_main_ending_ids": [
+        "ending_18"
+      ],
+      "target_sub_ending_ids": [
+        "ending_18c"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "认可"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp6_03": "b",
+        "dp6_06": "c",
+        "dp6_09": "a"
+      },
+      "decision_policy_template_id": "unknown",
+      "expected_end_day": 90,
+      "origin_id": "integrity",
+      "route_id": "route-ending-18d",
+      "target_main_ending_ids": [
+        "ending_18"
+      ],
+      "target_sub_ending_ids": [
+        "ending_18d"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp4_09": "a",
+        "dp6_05": "c",
+        "dp6_08": "b"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "technical",
+      "route_id": "route-ending-19a",
+      "target_main_ending_ids": [
+        "ending_19"
+      ],
+      "target_sub_ending_ids": [
+        "ending_19a"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp4_09": "a",
+        "dp6_05": "d",
+        "dp6_08": "b"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "grassroots",
+      "route_id": "route-ending-19b",
+      "target_main_ending_ids": [
+        "ending_19"
+      ],
+      "target_sub_ending_ids": [
+        "ending_19b"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp4_09": "a",
+        "dp6_05": "b",
+        "dp6_08": "b"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "integrity",
+      "route_id": "route-ending-19c",
+      "target_main_ending_ids": [
+        "ending_19"
+      ],
+      "target_sub_ending_ids": [
+        "ending_19c"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp4_09": "a",
+        "dp6_05": "a",
+        "dp6_08": "b"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "technical",
+      "route_id": "route-ending-19d",
+      "target_main_ending_ids": [
+        "ending_19"
+      ],
+      "target_sub_ending_ids": [
+        "ending_19d"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp6_10": "a"
+      },
+      "decision_policy_template_id": "unknown",
+      "expected_end_day": 90,
+      "origin_id": "grassroots",
+      "route_id": "route-ending-20a",
+      "target_main_ending_ids": [
+        "ending_20"
+      ],
+      "target_sub_ending_ids": [
+        "ending_20a"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp6_10": "b"
+      },
+      "decision_policy_template_id": "unknown",
+      "expected_end_day": 90,
+      "origin_id": "integrity",
+      "route_id": "route-ending-20b",
+      "target_main_ending_ids": [
+        "ending_20"
+      ],
+      "target_sub_ending_ids": [
+        "ending_20b"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp6_10": "c"
+      },
+      "decision_policy_template_id": "unknown",
+      "expected_end_day": 90,
+      "origin_id": "technical",
+      "route_id": "route-ending-20c",
+      "target_main_ending_ids": [
+        "ending_20"
+      ],
+      "target_sub_ending_ids": [
+        "ending_20c"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp6_03": "b",
+        "dp6_09": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "grassroots",
+      "route_id": "route-ending-21a",
+      "target_main_ending_ids": [
+        "ending_21"
+      ],
+      "target_sub_ending_ids": [
+        "ending_21a"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp5_10": "a",
+        "dp6_03": "b",
+        "dp6_09": "c"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "integrity",
+      "route_id": "route-ending-21b",
+      "target_main_ending_ids": [
+        "ending_21"
+      ],
+      "target_sub_ending_ids": [
+        "ending_21b"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp5_10": "b",
+        "dp6_03": "b",
+        "dp6_09": "c"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "technical",
+      "route_id": "route-ending-21c",
+      "target_main_ending_ids": [
+        "ending_21"
+      ],
+      "target_sub_ending_ids": [
+        "ending_21c"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp5_10": "b",
+        "dp6_03": "b",
+        "dp6_09": "e"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "grassroots",
+      "route_id": "route-ending-21d",
+      "target_main_ending_ids": [
+        "ending_21"
+      ],
+      "target_sub_ending_ids": [
+        "ending_21d"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "归心"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp1_03": "b",
+        "dp2_05": "c",
+        "dp4_05": "a",
+        "dp6_02": "d",
+        "dp6_03": "a",
+        "dp6_05": "a",
+        "dp6_07": "a_b_c_d_e",
+        "dp6_08": "b",
+        "dp6_09": "a",
+        "ev6_01": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "integrity",
+      "route_id": "route-ending-22a",
+      "target_main_ending_ids": [
+        "ending_22"
+      ],
+      "target_sub_ending_ids": [
+        "ending_22a"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "认可"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp1_03": "b",
+        "dp2_05": "c",
+        "dp4_05": "b",
+        "dp6_02": "a",
+        "dp6_03": "a",
+        "dp6_05": "a",
+        "dp6_07": "e_a_b_c_d",
+        "dp6_08": "b",
+        "dp6_09": "a",
+        "ev6_01": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "technical",
+      "route_id": "route-ending-22b",
+      "target_main_ending_ids": [
+        "ending_22"
+      ],
+      "target_sub_ending_ids": [
+        "ending_22b"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "疏离"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp4_05": "b",
+        "dp6_02": "a",
+        "dp6_03": "a",
+        "dp6_05": "a",
+        "dp6_07": "a_b_c_d_e",
+        "dp6_08": "b",
+        "dp6_09": "a",
+        "ev6_01": "b"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "grassroots",
+      "route_id": "route-ending-22c",
+      "target_main_ending_ids": [
+        "ending_22"
+      ],
+      "target_sub_ending_ids": [
+        "ending_22c"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "离散"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp1_08": "b",
+        "dp4_05": "b",
+        "dp6_02": "a",
+        "dp6_03": "a",
+        "dp6_05": "a",
+        "dp6_07": "e_a_b_c_d",
+        "dp6_08": "b",
+        "dp6_09": "a",
+        "ev1_03": "b",
+        "ev6_01": "b"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "integrity",
+      "route_id": "route-ending-22d",
+      "target_main_ending_ids": [
+        "ending_22"
+      ],
+      "target_sub_ending_ids": [
+        "ending_22d"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp5_03": "c",
+        "dp6_03": "a",
+        "dp6_05": "c",
+        "dp6_08": "b",
+        "dp6_09": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "technical",
+      "route_id": "route-ending-23a",
+      "target_main_ending_ids": [
+        "ending_23"
+      ],
+      "target_sub_ending_ids": [
+        "ending_23a"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp1_08": "b",
+        "dp4_05": "b",
+        "dp5_03": "a",
+        "dp6_03": "a",
+        "dp6_05": "c",
+        "dp6_08": "b",
+        "dp6_09": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "grassroots",
+      "route_id": "route-ending-23b",
+      "target_main_ending_ids": [
+        "ending_23"
+      ],
+      "target_sub_ending_ids": [
+        "ending_23b"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp4_05": "a",
+        "dp5_03": "a",
+        "dp6_03": "a",
+        "dp6_05": "c",
+        "dp6_08": "b",
+        "dp6_09": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "integrity",
+      "route_id": "route-ending-23c",
+      "target_main_ending_ids": [
+        "ending_23"
+      ],
+      "target_sub_ending_ids": [
+        "ending_23c"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp4_05": "b",
+        "dp5_03": "a",
+        "dp6_03": "a",
+        "dp6_05": "c",
+        "dp6_08": "b",
+        "dp6_09": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "technical",
+      "route_id": "route-ending-23d",
+      "target_main_ending_ids": [
+        "ending_23"
+      ],
+      "target_sub_ending_ids": [
+        "ending_23d"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp4_03": "b",
+        "dp4_09": "b",
+        "dp5_05": "a",
+        "dp6_03": "a",
+        "dp6_05": "c",
+        "dp6_08": "b",
+        "dp6_09": "a",
+        "dp6_10": "a"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "grassroots",
+      "route_id": "route-ending-24a",
+      "target_main_ending_ids": [
+        "ending_24"
+      ],
+      "target_sub_ending_ids": [
+        "ending_24a"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp4_03": "b",
+        "dp4_09": "b",
+        "dp5_05": "a",
+        "dp6_03": "a",
+        "dp6_05": "c",
+        "dp6_08": "b",
+        "dp6_09": "a",
+        "dp6_10": "b"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "integrity",
+      "route_id": "route-ending-24b",
+      "target_main_ending_ids": [
+        "ending_24"
+      ],
+      "target_sub_ending_ids": [
+        "ending_24b"
+      ]
+    },
+    {
+      "conversation_strategies": {
+        "forced_group": "credible_plan",
+        "mandatory_d2": "truth_first",
+        "people_axis": "route_default"
+      },
+      "daily_action_policy": [
+        {
+          "action_kind": "sign_households_through_contracts",
+          "target_signed_households": 32
+        }
+      ],
+      "decision_policy": {
+        "dp4_03": "b",
+        "dp4_09": "b",
+        "dp5_05": "a",
+        "dp6_03": "a",
+        "dp6_05": "c",
+        "dp6_08": "b",
+        "dp6_09": "a",
+        "dp6_10": "c"
+      },
+      "decision_policy_template_id": "lawful",
+      "expected_end_day": 90,
+      "origin_id": "technical",
+      "route_id": "route-ending-24c",
+      "target_main_ending_ids": [
+        "ending_24"
+      ],
+      "target_sub_ending_ids": [
+        "ending_24c"
+      ]
+    }
+  ],
+  "schema_version": 1
+}

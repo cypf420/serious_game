@@ -11,7 +11,7 @@ from unittest.mock import patch
 from fastapi.testclient import TestClient
 
 from serious_game_backend.api.app import create_app
-from serious_game_backend.bootstrap import build_container
+from tests.test_doubles import build_test_container as build_container
 from serious_game_backend.config import Settings
 from serious_game_backend.domain.errors import ContentValidationError
 from serious_game_backend.infrastructure.script_packages.file_loader import (
@@ -31,7 +31,7 @@ class StoryReviewRound1Tests(unittest.TestCase):
             content_root=PACKAGE_ROOT,
             default_package_id="pkg_gameplay_v3",
             repository="memory",
-            role_llm_provider="fake",
+            role_llm_provider="none",
         )
         container = build_container(settings)
         client = TestClient(create_app(settings, container=container))
@@ -250,7 +250,7 @@ class StoryReviewRound1Tests(unittest.TestCase):
         )
         pending = result["visible_state"]["pending_decision"]
         self.assertEqual("dp5_09", pending["decision_id"])
-        self.assertEqual("场景三·祠堂那块地。", pending["title"])
+        self.assertEqual("祠堂用地手续。", pending["title"])
         self.assertEqual("C05_S02", pending["scene_id"])
 
     def test_multistage_decision_journals_each_presented_choice(self) -> None:
