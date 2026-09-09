@@ -1,4 +1,5 @@
 export type TutorialRecord = Record<string, unknown>;
+export type ContractTutorialStage = "terms" | "preview" | "feedback" | "signed" | "legacy";
 
 export interface TutorialStep {
   id: string;
@@ -29,6 +30,8 @@ export interface TutorialContext {
   form: TutorialRecord | null;
   actions: TutorialRecord[];
   scene: string | null;
+  contractStage?: ContractTutorialStage | null;
+  contractId?: string;
 }
 
 export interface TutorialProgress {

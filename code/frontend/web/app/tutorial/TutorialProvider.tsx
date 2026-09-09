@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { BASIC_TUTORIAL, actionTutorial, actionTour, formTutorial, sceneTutorial } from "./definitions";
+import { contractTutorial } from "./contract";
 import { loadProgress, markChapter, saveProgress, shouldAutoShow } from "./progress";
 import TutorialOverlay from "./TutorialOverlay";
 import type { TutorialContext, TutorialDefinition, TutorialRecord } from "./types";
@@ -36,6 +37,10 @@ export function TutorialProvider({ context, onNavigate, children }: {
   const [sceneHistory, setSceneHistory] = useState<string[]>([]);
   const formId = String(context.form?.variant_id || "");
   const sceneModal = ["archive-result", "contract", "document"].includes(context.scene || "");
+  const sceneDefinition = context.scene === "contract"
+    ? context.contractStage ? contractTutorial(context.contractStage) : null
+    : context.scene ? sceneTutorial(context.scene) : null;
+  const sceneKey = context.scene === "contract" ? `${context.contractId}:${context.contractStage}` : context.scene;
   const formKey = context.form ? `${context.sessionId}:${formId}` : "";
   const attemptedForm = useRef("");
   const directoryRef = useRef<HTMLDivElement>(null);
@@ -66,13 +71,13 @@ export function TutorialProvider({ context, onNavigate, children }: {
 
   const start = (definition: TutorialDefinition, step = 0) => {
     if (context.blocked || context.readOnly) return;
-    if (sceneModal && definition.id !== `scene:${context.scene}`) return;
+    if (sceneModal && definition.id !== sceneDefinition?.id) return;
     const steps = definition.steps;
     if (!steps.length) return;
     const readyDefinition = { ...definition, steps };
     update(markChapter(progress, definition, "seen", step));
     setDirectory(false);
-    setActive({ definition: readyDefinition, step: Math.min(step, steps.length - 1), panel: context.panel, formId, scene: context.scene });
+    setActive({ definition: readyDefinition, step: Math.min(step, steps.length - 1), panel: context.panel, formId, scene: sceneKey });
   };
 
   useEffect(() => {
@@ -109,10 +114,10 @@ export function TutorialProvider({ context, onNavigate, children }: {
   }, [formKey, context.blocked, context.readOnly, context.form, active, directory, progress]);
 
   const applicable = active && !context.blocked && !context.readOnly
-    && (!sceneModal || active.definition.id === `scene:${context.scene}`)
+    && (!sceneModal || active.definition.id === sceneDefinition?.id)
     && active.panel === context.panel
     && active.formId === formId
-    && (active.definition.id === BASIC_TUTORIAL.id || !active.definition.id.startsWith("scene:") || active.scene === context.scene);
+    && (active.definition.id === BASIC_TUTORIAL.id || !active.definition.id.startsWith("scene:") || active.scene === sceneKey);
 
   const close = (completed = false) => {
     if (!active) return;
@@ -144,7 +149,6 @@ export function TutorialProvider({ context, onNavigate, children }: {
     return items.map(item => actionTutorial(item));
   }, [publicActions]);
   const intro = context.entryKind === "new" && canAuto(BASIC_TUTORIAL) && !active && !directory && !context.form && !sceneModal;
-  const sceneDefinition = context.scene ? sceneTutorial(context.scene) : null;
   const sceneInvite = sceneDefinition && canAuto(sceneDefinition) && !intro && !active && !directory && !context.form;
   const resumable = progress.paused && [BASIC_TUTORIAL, actionTour(publicActions), ...availableChapters,
     ...(context.form ? [formTutorial(context.form)] : []), ...(sceneDefinition ? [sceneDefinition] : [])]
@@ -152,7 +156,7 @@ export function TutorialProvider({ context, onNavigate, children }: {
       && progress.chapters[definition.id]?.revision === definition.revision
       && (definition.id === "basic" ? !context.form && visibleTargetSafe("narrative-controls")
         : definition.id === "actions" || definition.id.startsWith("action:") ? context.panel === "actions" && !context.form : true)
-      && (!sceneModal || definition.id === `scene:${context.scene}`));
+      && (!sceneModal || definition.id === sceneDefinition?.id));
 
   useEffect(() => {
     if (!directory || context.blocked) return;
@@ -180,7 +184,7 @@ export function TutorialProvider({ context, onNavigate, children }: {
   };
   return <Controls.Provider value={{ openDirectory: () => setDirectory(true), start, context, canAuto, dismiss }}>
     {children}
-    {intro && <aside className="tutorial-invitation" aria-label="赴任指南邀请"><b>赴任指南</b><p>用六个小步骤认识案头。操作与决定始终由你掌握。</p><button type="button" onClick={() => start(BASIC_TUTORIAL)}>开始赴任指南</button><button type="button" onClick={() => dismiss(BASIC_TUTORIAL)}>稍后再看</button></aside>}
+    {intro && <aside className="tutorial-invitation" aria-label="赴任指南邀请"><b>赴任指南</b><p>用八个小步骤认识案头。操作与决定始终由你掌握。</p><button type="button" onClick={() => start(BASIC_TUTORIAL)}>开始赴任指南</button><button type="button" onClick={() => dismiss(BASIC_TUTORIAL)}>稍后再看</button></aside>}
     {sceneInvite && <aside className="tutorial-invitation" aria-label="场景操作帮助"><b>{sceneDefinition.title}</b><button type="button" onClick={() => start(sceneDefinition)}>查看操作提示</button><button type="button" onClick={() => dismiss(sceneDefinition)}>知道了</button></aside>}
     {active && applicable && !directory && <TutorialOverlay key={active.definition.id} definition={active.definition} initialStep={active.step} onStep={stepChanged} onClose={() => close()} onComplete={() => close(true)} onPause={() => close()} />}
     {active && !applicable && !context.blocked && !directory && <aside className="tutorial-invitation"><b>教程已暂停</b><p>回到对应场景后可继续，或先自由操作。</p><button type="button" onClick={() => close()}>关闭本节</button></aside>}
@@ -194,7 +198,7 @@ export function TutorialProvider({ context, onNavigate, children }: {
         {!publicActions.length && <button type="button" disabled={!context.sessionId || Boolean(context.form)} onClick={async () => { setDirectory(false); await onNavigate("actions"); }}>前往行动页查看教程</button>}
         {availableChapters.map(definition => <button type="button" key={definition.id} disabled={Boolean(context.form)} onClick={() => void openChapter(definition)}>{definition.title}<small>{progress.chapters[definition.id]?.status === "completed" ? "已学 · 重播" : "查看介绍"}</small></button>)}
         {context.form && <button type="button" onClick={() => start(formTutorial(context.form!))}>重新查看本次填写指南</button>}
-        {sceneHistory.map(scene => { const definition = sceneTutorial(scene); return definition ? <button type="button" key={scene} disabled={scene !== context.scene} onClick={() => start(definition)}>{definition.title}{scene !== context.scene && <small>回到对应场景后可重播</small>}</button> : null; })}
+        {sceneHistory.map(scene => { const definition = scene === "contract" ? sceneDefinition?.id.startsWith("scene:contract:") ? sceneDefinition : null : sceneTutorial(scene); return definition ? <button type="button" key={scene} disabled={scene !== context.scene} onClick={() => start(definition)}>{definition.title}{scene !== context.scene && <small>回到对应场景后可重播</small>}</button> : null; })}
       </>}
     </div></div>}
   </Controls.Provider>;
@@ -208,16 +212,6 @@ export function TutorialButton({ label = "赴任指南" }: { label?: string }) {
 export function ActionTutorialButton({ item }: { item: TutorialRecord }) {
   const controls = useContext(Controls);
   return <button type="button" className="tutorial-action-help" onClick={() => controls?.start(actionTutorial(item))}>了解此行动</button>;
-}
-
-export function ActionsTutorialIntro({ items }: { items: TutorialRecord[] }) {
-  const controls = useContext(Controls);
-  const definition = actionTour(items);
-  if (!definition.steps.length || !controls) return null;
-  const variants = items.flatMap(item => Array.isArray(item.variants) ? (item.variants as TutorialRecord[]).map(variant => ({ ...item, ...variant })) : [item]);
-  const unseen = variants.filter(item => item.available === true && controls.canAuto(actionTutorial(item)));
-  const fresh = controls.canAuto(definition) || unseen.length > 0;
-  return <section className="tutorial-action-intro"><b>行动指南</b><p>{fresh ? `有 ${unseen.length || definition.steps.length} 项可用行动尚未介绍，可逐项了解，也可选择单项。` : "随时重看当前可用行动的用途、消耗与结果。"}</p><button type="button" onClick={() => controls.start(definition)}>逐项了解</button>{fresh && <button type="button" onClick={() => controls.dismiss(definition)}>稍后再看</button>}</section>;
 }
 
 function visibleTargetSafe(id: string) {

@@ -420,6 +420,12 @@ class ApiClient:
             {"state_version": state_version, "confirmed": confirmed},
         )
 
+    def get_contract(self, session_id: str, contract_id: str) -> dict:
+        return self._request(
+            "GET",
+            f"{self._session_path(session_id)}/governance/contracts/{quote(contract_id, safe='')}",
+        )
+
     def set_contract_terms(
         self,
         session_id: str,

@@ -85,15 +85,13 @@ class ContractAccountingTests(unittest.TestCase):
         self.save(s); before=self.session(); self.review(409); self.assertEqual(before,self.session())
     def test_explicit_npc_rejection_does_not_spend(self):
         self.draft(); before=self.session()
-        # Only the NPC's willingness is simulated. All accounting and evidence checks run.
-        result=SimpleNamespace(data={'decision':'reject','reason':'我还不愿意签。','counteroffer':{}})
-        with patch.object(self.runtime.gameplay_governance._gateway,'run_governance_task',return_value=result):
+        # Unbounded model refusals no longer veto an eligible scheme.
+        with patch.object(self.runtime.gameplay_governance._gateway,'run_governance_task',side_effect=AssertionError('formal signing must not invoke model')):
             response=self.review()
         after=self.session()
-        self.assertEqual('rejected',response['contract']['status'])
-        self.assertEqual(before.game_state,after.game_state)
-        self.assertEqual(before.resource_reservations,after.resource_reservations)
-        self.assertEqual(before.resource_ledger_entries,after.resource_ledger_entries)
+        self.assertEqual('signed',response['contract']['status'])
+        self.assertEqual(before.game_state.budget_remaining-self.cash,after.game_state.budget_remaining)
+        self.assertEqual(before.game_state.signed_households+1,after.game_state.signed_households)
     def test_stale_review_retry_does_not_spend_again(self):
         self.draft(); version=self.session().state_version; self.review(); before=self.session()
         self.post(f'/governance/contracts/{self.cid}/review',{'state_version':version},409)
@@ -151,7 +149,11 @@ class ContractAccountingTests(unittest.TestCase):
                 terms=dict(draft['contract']['term_sheet'])
                 terms.pop('policy_minimum_cash',None)
                 terms.pop('payment_timing',None)
+                # Keep the draft valid without an uncovered housing gap; this
+                # regression concerns expiry after saving, not transition rules.
                 terms[field]=10
+                if field == 'move_out_day':
+                    terms['housing_delivery_day']=10
                 r=self.client.put(self.base+f'/governance/contracts/{self.cid}/terms',
                     headers=self.headers,json={'state_version':self.session().state_version,**terms})
                 self.assertEqual(200,r.status_code,r.text)

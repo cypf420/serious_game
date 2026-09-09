@@ -520,7 +520,7 @@ class StoryRoutesV3Tests(unittest.TestCase):
                 )
                 self.assertEqual(200, drafted.status_code, drafted.text)
                 draft_body = drafted.json()
-                self.assertEqual("pass", draft_body["contract"]["audit_status"])
+                self.assertEqual("not_required", draft_body["contract"]["audit_status"])
                 if household_id == "LAO-01" and terms.get("housing_resource_id"):
                     # Perform a present-tense invitation through the real action
                     # route. The NPC decides; the application records a viewing

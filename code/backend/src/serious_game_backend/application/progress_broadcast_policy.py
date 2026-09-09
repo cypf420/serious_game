@@ -29,8 +29,6 @@ def progress_broadcast(session: GameSession) -> dict | None:
         pressure += 2
     if state.media_pressure >= 61:
         pressure += 1
-    if state.fatigue >= 70:
-        pressure += 1
     if state.budget_remaining <= state.budget_base_authorized * 0.25:
         pressure += 1
 
@@ -71,8 +69,6 @@ def progress_broadcast(session: GameSession) -> dict | None:
         signals.append("社会稳定偏低：先拆风险，不要把每一次沉默都当成同意。")
     if state.media_pressure >= 61:
         signals.append("舆论压力较高：口径之外，还需要可核验的事实和进展。")
-    if state.fatigue >= 70:
-        signals.append("你确实很累；遗憾的是，疲惫不能折算成签约户数。")
     if state.budget_remaining <= state.budget_base_authorized * 0.25:
         signals.append("财政余量偏紧：别拿明天的资源安抚今天的情绪。")
     if not signals:

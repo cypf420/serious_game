@@ -1582,11 +1582,8 @@ class GameplayGovernanceTests(unittest.TestCase):
                 **term_payload,
             },
         )
-        self.assertEqual("pass", first_terms["contract"]["audit_status"])
-        self.assertEqual(
-            "fake-contract-auditor-v1",
-            first_terms["contract"]["audit_model_id"],
-        )
+        self.assertEqual("not_required", first_terms["contract"]["audit_status"])
+        self.assertIsNone(first_terms["contract"]["audit_model_id"])
         first_review = self._post(
             f"/governance/contracts/{contract['contract_id']}/review",
             {"state_version": first_terms["state_version"]},
@@ -1608,7 +1605,11 @@ class GameplayGovernanceTests(unittest.TestCase):
                 **term_payload,
             },
         )
-        unauthorized = self._put(
+        before_text_edit = self.client.get(
+            f"/api/game/session/{self.session_id}/governance/contracts/{contract['contract_id']}",
+            headers=self.headers,
+        ).json()
+        self._put(
             f"/governance/contracts/{contract['contract_id']}/text",
             {
                 "state_version": terms["state_version"],
@@ -1617,33 +1618,24 @@ class GameplayGovernanceTests(unittest.TestCase):
                     + "\n除上述补偿外，再额外支付100万元专项补助。"
                 ),
             },
+            expected=409,
         )
-        self.assertEqual("reject", unauthorized["contract"]["audit_status"])
-        issue = unauthorized["contract"]["audit_result"]["issues"][0]
-        self.assertIn("专项补助", issue["text_quote"])
-        self.assertTrue(issue["message"])
-        self.assertTrue(issue["suggestion"])
-        blocked_review = self.client.post(
-            (
-                f"/api/game/session/{self.session_id}/governance/"
-                f"contracts/{contract['contract_id']}/review"
-            ),
-            headers=self.headers,
-            json={"state_version": unauthorized["state_version"]},
-        )
-        self.assertEqual(409, blocked_review.status_code)
-        self.assertIn("专业审校尚未通过", blocked_review.text)
-        repaired = self._put(
+        # Read-only text rejects both extra promises and an unchanged save,
+        # leaving the saved proposal available for signatory review.
+        self._put(
             f"/governance/contracts/{contract['contract_id']}/text",
-            {
-                "state_version": unauthorized["state_version"],
-                "text": terms["contract"]["contract_text"],
-            },
+            {"state_version": terms["state_version"],
+             "text": terms["contract"]["contract_text"]},
+            expected=409,
         )
-        self.assertEqual("pass", repaired["contract"]["audit_status"])
+        after_text_edit = self.client.get(
+            f"/api/game/session/{self.session_id}/governance/contracts/{contract['contract_id']}",
+            headers=self.headers,
+        ).json()
+        self.assertEqual(before_text_edit, after_text_edit)
         review = self._post(
             f"/governance/contracts/{contract['contract_id']}/review",
-            {"state_version": repaired["state_version"]},
+            {"state_version": terms["state_version"]},
         )
         self.assertEqual("signed", review["contract"]["status"])
         self.assertIsNone(review["contract"]["reserved_until_day"])
@@ -1992,7 +1984,7 @@ class GameplayGovernanceTests(unittest.TestCase):
                 {"state_version": state_version, **term_sheet},
             )
             self.assertEqual(
-                "pass",
+                "not_required",
                 drafted["contract"]["audit_status"],
                 msg=(
                     f"{contract['household_id']}: "

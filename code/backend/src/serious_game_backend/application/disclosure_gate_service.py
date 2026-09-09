@@ -48,11 +48,8 @@ class DisclosureGateService:
         if state.trust_score is None:
             # 有限角色按剧情白名单说话，不套用数值信任。
             return DisclosureGate(4, "剧情许可", tuple(opportunity.allowed_fact_ids))
-        penalty = 10 if session.game_state.fatigue >= 75 else (
-            5 if session.game_state.fatigue >= 50 else 0
-        )
         repeat_penalty = 15 if repeat_count >= 2 else 5 if repeat_count == 1 else 0
-        effective = max(0, state.trust_score - penalty - repeat_penalty)
+        effective = max(0, state.trust_score - repeat_penalty)
         tier = 1 if effective <= 25 else 2 if effective <= 50 else 3 if effective <= 75 else 4
         values: list[str] = []
         for fact_id in opportunity.allowed_fact_ids:

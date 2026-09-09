@@ -82,7 +82,7 @@ for (const width of [1433, 1081, 390]) {
     await expect(page.getByText("可主动联系", { exact: false })).toBeVisible();
     await page.getByRole("button", { name: "入户协商", exact: true }).click();
     await expect(page.getByRole("radio", { name: /周大山/ })).toBeChecked();
-    await page.getByRole("button", { name: "发起行动", exact: true }).click();
+    await page.locator('[data-tutorial-id="form-submit"]').click();
     await page.getByRole("button", { name: "准备逐户合同", exact: true }).click();
     const notice = page.locator(".governance-inline-notice");
     await expect(notice).toContainText("请先核对住户条款");
@@ -221,7 +221,7 @@ test("long governance timelines preserve scroll position and expose new replies"
   const initial = await timeline.evaluate(element => ({ scrollHeight: element.scrollHeight, clientHeight: element.clientHeight }));
   expect(initial.scrollHeight).toBeGreaterThan(initial.clientHeight);
   await timeline.evaluate(element => { element.scrollTop = 0; element.dispatchEvent(new Event("scroll", { bubbles: true })); });
-  const input = page.getByRole("textbox", { name: "继续询问或说明" });
+  const input = page.locator('[data-tutorial-id="conversation-input"] textarea');
   await input.fill("请把安置房交付节点和户主签字顺序再说明一遍。");
   await page.getByRole("button", { name: "送出回应", exact: true }).click();
   await expect.poll(() => timeline.evaluate(element => element.scrollHeight)).toBeGreaterThan(initial.scrollHeight);
@@ -273,4 +273,102 @@ test("resolved group conversations keep the input and explicit finish action", a
   await input.fill("我补充说明复核安排和后续联系人。");
   await expect(page.getByRole("button", { name: "结束夜间会谈", exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "送出回应", exact: true })).toBeEnabled();
+});
+
+test("contract preview preserves text, prevents dirty submit, and resumes existing discussion", async ({ page }) => {
+  const writes: string[] = [];
+  let saveAttempts = 0;
+  const action = { action_instance_id: "visit-contract", action_kind: "household_visit", status: "active", target_ids: ["npc_yuan_guilan"], topic: "安置协商", transcript: [] };
+  const state = { session_id: "contract-ui", status: "active", state_version: 1, story: { day: 10 }, onboarding: { free_action_completed: false }, ledger: { action_points: { remaining: 8, daily_cap: 8 }, budget: { available: 7800 }, relocation: { signed: 0, total: 36 } } };
+  let contract = { contract_id: "c1", batch_id: "b1", household_id: "YUAN-01", signatory_npc_id: "npc_yuan_guilan", signatory_name: "袁桂兰", status: "rejected", current_version: 2, review_version: 1, review_reason: "请确认扶手。", audit_status: "not_required", contract_text: "搬离日：第83日\n交房日：第83日\n住房已核实设有扶手。", can_review: true, conversation_available: true, term_sheet: { cash_amount: 27, move_out_day: 83, housing_delivery_day: 83, transition_months: 12 } };
+  const signed = { ...contract, contract_id: "c2", household_id: "YUAN-02", status: "signed", signed_day: 10, signed_hash: "NEVER_DISPLAY_HASH", contract_text: "原始签署正文 D83\n原始标点 ; unchanged", can_review: false };
+  let legacy = { ...contract, contract_id: "c3", household_id: "YUAN-03", legacy_draft: true, can_review: false, legacy_versions: [{ version: 2, text: "旧约定：搬家协助与扶手保障。" }] };
+  await page.route("**/api/backend/**", async route => {
+    const endpoint = new URL(route.request().url()).pathname.replace(/^\/api\/backend/, "");
+    let body: unknown = {};
+    if (endpoint === "/health/ready") body = { authentication_required: false, model_consent_required: false };
+    else if (endpoint === "/api/ai/config") body = { active: true, mode: "personal", model: "fixture", endpoint: "https://fixture.invalid/v1" };
+    else if (endpoint === "/api/game/session") body = { session_id: state.session_id };
+    else if (endpoint.endsWith("/view")) body = { state, commands: {}, feed: { items: [{ id: "opening", story_day: 10, text: "安置会谈正在进行。", block_id: "d10_source_opening", scene_id: "C01_S12" }], cursor: 1 } };
+    else if (endpoint.endsWith("/governance")) body = { governance_actions: [action], contracts: [contract, signed, legacy], contract_batches: [{ batch_id: "b1", representative_npc_id: "npc_yuan_guilan", status: "confirmed" }], resources: { resource_pools: [], budget_envelopes: { property_land: { available: 100 } } } };
+    else if (endpoint.endsWith("/contracts/c1")) body = { contract };
+    else if (endpoint.endsWith("/contracts/c2")) body = { contract: signed };
+    else if (endpoint.endsWith("/contracts/c3")) body = { contract: legacy };
+    else if (endpoint.endsWith("/contracts/c3/terms")) {
+      expect(route.request().postDataJSON().acknowledge_legacy_text).toBe(true);
+      legacy = { ...legacy, legacy_draft: false, current_version: 3, contract_text: "新方案：27万元。", can_review: true };
+      body = { contract: legacy, state_version: ++state.state_version };
+    }
+    else if (endpoint.endsWith("/terms")) {
+      if (++saveAttempts === 1) {
+        await route.fulfill({ status: 409, contentType: "application/json", body: JSON.stringify({ error: { code: "RESOURCE_INSUFFICIENT", message: "预算不足，请调整现金补偿。", details: { field_errors: { cash_amount: "现金补偿超过可用预算。" } } } }) });
+        return;
+      }
+      if (saveAttempts === 2) {
+        await route.fulfill({ status: 409, contentType: "application/json", body: JSON.stringify({ error: { code: "ACTION_UNAVAILABLE", message: "请先继续本户会谈。", details: {} } }) });
+        return;
+      }
+      writes.push(endpoint);
+      contract = { ...contract, status: "draft", current_version: 3, term_sheet: { ...contract.term_sheet, cash_amount: 28 }, contract_text: "现金补偿：28万元\n搬离日：第83日\n交房日：第83日", review_reason: "", review_version: 0, review_history: [{ version: 1, reason: "请确认扶手。" }] } as typeof contract;
+      body = { contract, state_version: ++state.state_version };
+    } else if (endpoint.endsWith("/review")) {
+      writes.push(endpoint);
+      expect(route.request().postDataJSON().expected_contract_version).toBe(3);
+      contract = { ...contract, status: "explanation_requested", review_version: 3, review_reason: "我想去看看房子。", can_review: false };
+      body = { contract, state_version: ++state.state_version };
+    }
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(body) });
+  });
+  await page.goto("/");
+  await page.getByRole("button", { name: "进入游戏", exact: true }).click();
+  await page.getByRole("button", { name: /开始新游戏/ }).click();
+  await page.getByRole("button", { name: "继续办理合同", exact: true }).click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog.locator(".contract-body")).toHaveText(contract.contract_text);
+  await expect(dialog.locator("textarea")).toHaveCount(0);
+  await expect(dialog).not.toContainText("专业审校");
+  await expect(dialog.getByText("请确认扶手。", { exact: true })).not.toBeVisible();
+  await page.screenshot({ path: "E:/严肃游戏/serious_game_code/output/contract-workflow-2026-09-09/contract-desktop.png", fullPage: true });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.screenshot({ path: "E:/严肃游戏/serious_game_code/output/contract-workflow-2026-09-09/contract-mobile.png", fullPage: true });
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await dialog.getByRole("button", { name: /YUAN-02/ }).click();
+  await expect(dialog.locator(".contract-body")).toHaveText(signed.contract_text);
+  await expect(dialog).not.toContainText("NEVER_DISPLAY_HASH");
+  await expect(dialog.getByRole("button", { name: "提交签约", exact: true })).toHaveCount(0);
+  await dialog.getByRole("button", { name: /YUAN-03/ }).click();
+  await expect(dialog.getByRole("button", { name: "保存方案并预览合同", exact: true })).toBeDisabled();
+  await dialog.getByText("旧版正文存档", { exact: true }).click();
+  await expect(dialog.locator(".contract-body")).toHaveText(legacy.legacy_versions[0].text);
+  await dialog.getByRole("checkbox", { name: /我已核对旧正文/ }).check();
+  await expect(dialog.getByRole("button", { name: "保存方案并预览合同", exact: true })).toBeEnabled();
+  await expect(dialog.getByRole("button", { name: "提交签约", exact: true })).toBeDisabled();
+  await dialog.getByRole("button", { name: "保存方案并预览合同", exact: true }).click();
+  await expect(dialog.getByRole("button", { name: "提交签约", exact: true })).toBeEnabled();
+  await expect(dialog.getByText("旧版正文存档", { exact: true })).toBeVisible();
+  await dialog.getByRole("button", { name: /YUAN-01/ }).click();
+  await dialog.getByRole("button", { name: "修改方案", exact: true }).click();
+  await dialog.locator('[name="cash_amount"]').fill("28");
+  await dialog.locator('[name="move_out_day"]').fill("1");
+  await dialog.getByRole("button", { name: "保存方案并预览合同", exact: true }).click();
+  await expect(dialog.getByRole("alert").filter({ hasText: "请检查方案中的输入" })).toBeVisible();
+  expect(saveAttempts).toBe(0);
+  await dialog.locator('[name="move_out_day"]').fill("83");
+  await expect(dialog.getByRole("button", { name: "提交签约", exact: true })).toBeDisabled();
+  page.once("dialog", prompt => prompt.dismiss());
+  await dialog.getByRole("button", { name: "继续协商", exact: true }).click();
+  await expect(dialog).toBeVisible();
+  await expect(dialog.locator('[name="cash_amount"]')).toHaveValue("28");
+  await dialog.getByRole("button", { name: "保存方案并预览合同", exact: true }).click();
+  await expect(dialog.locator('label').filter({ has: page.locator('[name="cash_amount"]') })).toContainText("现金补偿超过可用预算。");
+  await expect(dialog.locator('[name="cash_amount"]')).toHaveValue("28");
+  await dialog.getByRole("button", { name: "保存方案并预览合同", exact: true }).click();
+  await expect(dialog.getByRole("alert")).toContainText("请先继续本户会谈。");
+  await dialog.getByRole("button", { name: "保存方案并预览合同", exact: true }).click();
+  await expect(dialog.getByRole("button", { name: "提交签约", exact: true })).toBeEnabled();
+  await dialog.getByRole("button", { name: "提交签约", exact: true }).click();
+  await expect(dialog).toContainText("对方的签约答复 · 方案第3版");
+  await dialog.getByRole("button", { name: "继续协商", exact: true }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  expect(writes).toHaveLength(2);
 });

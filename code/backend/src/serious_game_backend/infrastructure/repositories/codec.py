@@ -237,7 +237,7 @@ def decode_session(value: dict) -> GameSession:
         package_version=str(value["package_version"]),
         package_content_hash=str(value["package_content_hash"]),
         random_seed=str(value["random_seed"]),
-        game_state=GameState(**value["game_state"]),
+        game_state=_decode_current_game_state(value["game_state"]),
         origin_id=str(value["origin_id"]),
         timeline_id=str(
             value.get("timeline_id") or f"timeline_{value['session_id']}"
@@ -439,3 +439,14 @@ def decode_operation(value: dict) -> OperationRecord:
         updated_at=str(value["updated_at"]),
         lease_token=str(value.get("lease_token", "")),
     )
+
+
+def _decode_current_game_state(value: dict) -> GameState:
+    # Retired mechanics are stripped when loading, without rewriting the saved record.
+    values = dict(value)
+    for key in ("fatigue", "overtime_points_today", "overtime_used_today", "consecutive_full_load_days", "chapter_overtime_count"):
+        values.pop(key, None)
+    old_cap = int(values.get("daily_action_point_cap", 8))
+    values["action_points"] = min(8, max(0, int(values.get("action_points", 8)) + max(0, 8 - old_cap)))
+    values["daily_action_point_cap"] = 8
+    return GameState(**values)

@@ -127,6 +127,8 @@ class ScriptedEffectService:
 
         updates: dict[str, int] = {}
         for field_name, (minimum, maximum) in effects.metric_deltas.items():
+            if field_name == "fatigue":
+                continue  # Legacy packages may still declare the retired metric.
             if field_name not in SCORE_FIELDS:
                 raise ContentValidationError(
                     "硬结算尝试写入未授权字段",
@@ -148,6 +150,8 @@ class ScriptedEffectService:
         }
         budget_change: dict | None = None
         for field_name, (minimum, maximum) in effects.ledger_deltas.items():
+            if field_name == "chapter_overtime_count":
+                continue  # Retired mechanic; never reintroduce it from old content.
             if field_name not in ledger_bounds:
                 raise ContentValidationError(
                     "硬结算尝试写入未授权台账字段",

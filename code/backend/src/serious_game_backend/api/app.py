@@ -707,8 +707,6 @@ def create_app(settings: Settings | None = None, container: Container | None = N
                 available, reason = False, "今日次数已用尽"
             elif reason is None and rule.half_day and state.half_day_action_used:
                 available, reason = False, "今日半日行程已占用"
-            elif reason is None and rule.hard_force and state.fatigue >= 75:
-                available, reason = False, "当前状态不能执行"
             elif reason is None and rule.precondition_flags_any and not any(
                 flag in session.flags for flag in rule.precondition_flags_any
             ):
@@ -1855,6 +1853,7 @@ def create_app(settings: Settings | None = None, container: Container | None = N
             state_version=body.state_version,
             contract_id=contract_id,
             term_sheet=body.term_sheet(),
+            acknowledge_legacy_text=body.acknowledge_legacy_text,
         )
 
     @app.put(
@@ -1888,6 +1887,7 @@ def create_app(settings: Settings | None = None, container: Container | None = N
             session_id=session_id,
             state_version=body.state_version,
             contract_id=contract_id,
+            expected_contract_version=body.expected_contract_version,
         )
 
     @app.post(

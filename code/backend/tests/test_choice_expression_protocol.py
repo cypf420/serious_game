@@ -554,10 +554,10 @@ class ChoiceExpressionProtocolTests(unittest.TestCase):
         ))
 
         expression_prompt = prompts[-1]
-        self.assertIn("优先直接回应玩家本轮发言", expression_prompt)
-        self.assertIn("不得自行重提历史中但本轮未提及的话题", expression_prompt)
-        self.assertIn("不得重复近期NPC已经表达过的结论或句式", expression_prompt)
-        self.assertIn("不要复述场景标签、会谈类型或‘县长正在……’等开场说明", expression_prompt)
+        self.assertNotIn("优先直接回应玩家本轮发言", expression_prompt)
+        self.assertNotIn("不得自行重提历史中但本轮未提及的话题", expression_prompt)
+        self.assertNotIn("不得重复近期NPC已经表达过的结论或句式", expression_prompt)
+        self.assertNotIn("不要复述场景标签、会谈类型或‘县长正在……’等开场说明", expression_prompt)
         self.assertIn("玩家本轮发言：你好。", expression_prompt)
         self.assertNotIn("谨慎但仍针对玩家当前问题作答", expression_prompt)
         self.assertNotIn("合作、直接地回应玩家当前问题", expression_prompt)
@@ -762,11 +762,11 @@ class ChoiceExpressionProtocolTests(unittest.TestCase):
         self.assertIn("本场景必须至少联系1人", requests[0])
         self.assertNotIn("没有必要时返回空数组", requests[0])
         self.assertIn("核心担忧是口径是否真实", requests[2])
-        self.assertIn("不得追加议题之外的新验收门槛", requests[2])
-        self.assertIn("不得要求玩家交代剧本未提供的具体标准", requests[2])
+        self.assertNotIn("不得追加议题之外的新验收门槛", requests[2])
+        self.assertNotIn("不得要求玩家交代剧本未提供的具体标准", requests[2])
         self.assertIn("核心担忧是口径是否真实", requests[3])
-        self.assertIn("不得复述其他在场人物已经说过的句子", requests[3])
-        self.assertIn("只指出其回避或尚未回答", requests[3])
+        self.assertNotIn("不得复述其他在场人物已经说过的句子", requests[3])
+        self.assertNotIn("只指出其回避或尚未回答", requests[3])
 
     def test_technical_night_failure_aborts_instead_of_settling_hold_position(self) -> None:
         service = NightSimulationService(

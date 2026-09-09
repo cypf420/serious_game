@@ -34,6 +34,40 @@ class StoryFlowService:
         "状态量", "代码照此算", "行动点重置", "轴 T", "flag_",
     )
 
+    @staticmethod
+    def current_pending_decision(session: GameSession, package: ScriptPackage) -> PendingDecision | None:
+        """Re-evaluate the pending instance without replaying its narrative or effects."""
+        pending = session.pending_decision
+        if pending is None:
+            return None
+        decision = package.decisions.get(pending.decision_id)
+        if decision is None:
+            return pending
+        ledger = {
+            key: getattr(session.game_state, key)
+            for key in ("budget_remaining", "signed_households", "reported_signed_households")
+        }
+        options = []
+        for option in decision.options:
+            available = option.is_available(
+                session.flags, session.state_values, ledger,
+                known_fact_ids=session.known_fact_ids,
+            ) and not (
+                decision.decision_id == "dp4_04" and option.option_id == "a"
+                and pending.context.get("listened_once")
+            )
+            options.append(VisibleDecisionOption(
+                option.option_id,
+                StoryFlowService._visible_option_text(decision, option, session, pending.context),
+                available=available,
+                unavailable_reason=None if available else StoryFlowService._option_unavailable_reason(option, session.known_fact_ids),
+                unlock_requirements=option.unlock_requirements,
+            ))
+        return replace(
+            pending, options=tuple(options),
+            option_ids=tuple(option.option_id for option in options if option.available),
+        )
+
     def initialize(self, session: GameSession, package: ScriptPackage) -> None:
         self._enter_day(session, package, session.game_state.story_day)
 
@@ -64,7 +98,7 @@ class StoryFlowService:
         option_id: str,
         complete: bool = True,
     ) -> DecisionOptionDefinition:
-        pending = session.pending_decision
+        pending = self.current_pending_decision(session, package)
         if pending is None or pending.decision_id != decision_id:
             raise ActionUnavailableError("当前待处理决策与提交不一致")
         decision = package.decisions.get(decision_id)
@@ -147,6 +181,10 @@ class StoryFlowService:
         cls, decision, option, session: GameSession, context: dict
     ) -> str:
         text = decision.visible_option_text(option, session.flags, session.known_fact_ids)
+        if decision.decision_id == "dp5_03" and decision.action_point_cost == 0:
+            # This mandatory story decision is free. Older package text still
+            # contains obsolete per-option costs; normalize saved games too.
+            text = text.removesuffix("（0 点）").removesuffix("（强制清场 6 点）")
         if decision.decision_id == "dp4_04" and option.option_id == "b":
             text = REPEATED_MONEY_OPTION_TEXTS.get(int(context.get("talk_money_count", 0)), text)
         return cls.session_public_text(text, session)
@@ -331,7 +369,6 @@ class StoryFlowService:
             "budget_remaining": session.game_state.budget_remaining,
             "signed_households": session.game_state.signed_households,
             "reported_signed_households": session.game_state.reported_signed_households,
-            "chapter_overtime_count": session.game_state.chapter_overtime_count,
         }
         context = (
             session.pending_decision.context
@@ -451,14 +488,31 @@ class StoryFlowService:
         if not any(marker in text for marker in cls.INTERNAL_MARKERS):
             return text
         parts = []
-        for sentence in text.replace("\n", "。").split("。"):
-            value = sentence.strip()
-            if value and not any(marker in value for marker in cls.INTERNAL_MARKERS):
-                parts.append(value)
-        return (
-            "。".join(parts) + ("。" if parts else "")
-            if parts else "相关处置已经记录，后续影响将在剧情中体现。"
-        )
+        quote_pairs = {"“": "”", "‘": "’", "「": "」", "『": "』"}
+        closing = []
+        start = 0
+        # Preserve complete quoted utterances and their original punctuation.
+        # Splitting at every 。 used to detach closing quotes from the dialogue.
+        for index, char in enumerate(text):
+            if char in quote_pairs:
+                closing.append(quote_pairs[char])
+            elif closing and char == closing[-1]:
+                closing.pop()
+            boundary = not closing and (
+                char in "。！？\n"
+                or (char in "”’」』" and text[start:index + 1].rstrip("”’」』").endswith(("。", "！", "？", "…")))
+            )
+            if boundary or index == len(text) - 1:
+                sentence = text[start:index + 1]
+                if sentence.strip() and not any(marker in sentence for marker in cls.INTERNAL_MARKERS):
+                    parts.append(sentence)
+                elif not sentence.strip() and parts:
+                    # Retain a paragraph separator without accumulating empty
+                    # lines left behind by discarded internal sentences.
+                    if not parts[-1].endswith("\n"):
+                        parts.append(sentence)
+                start = index + 1
+        return "".join(parts).strip() or "相关处置已经记录，后续影响将在剧情中体现。"
 
     @classmethod
     def public_text(cls, text: str) -> str:

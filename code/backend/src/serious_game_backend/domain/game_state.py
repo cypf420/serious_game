@@ -13,7 +13,6 @@ SCORE_FIELDS = (
     "env_clue",
     "integrity",
     "cadre_discontent",
-    "fatigue",
     "corruption_evidence",
 )
 
@@ -41,16 +40,11 @@ class GameState:
     env_clue: int = 0
     integrity: int = 100
     cadre_discontent: int = 30
-    fatigue: int = 0
     stability_low_water: int = 70
     field_visit_count: int = 0
     lead_roster_disposition: str = "neutral"
     corruption_evidence: int = 0
     points_spent_today: int = 0
-    overtime_points_today: int = 0
-    overtime_used_today: bool = False
-    consecutive_full_load_days: int = 0
-    chapter_overtime_count: int = 0
     half_day_action_used: bool = False
     daily_action_counts: dict[str, int] = field(default_factory=dict)
 
@@ -59,10 +53,10 @@ class GameState:
             raise ValueError("story_day must be between 1 and 90")
         if not 0 <= self.days_left <= 90:
             raise ValueError("days_left must be between 0 and 90")
-        if not 0 <= self.action_points <= self.daily_action_point_cap + 3:
+        if not 0 <= self.action_points <= self.daily_action_point_cap:
             raise ValueError("action_points is outside the daily allowance")
-        if not 5 <= self.daily_action_point_cap <= 8:
-            raise ValueError("daily_action_point_cap must be between 5 and 8")
+        if self.daily_action_point_cap != 8:
+            raise ValueError("daily_action_point_cap must be 8")
         if self.budget_remaining < 0:
             raise ValueError("budget_remaining must not be negative")
         if any(value < 0 for value in (
@@ -123,9 +117,6 @@ class GameState:
         story_day: int,
         days_left: int,
         action_point_cap: int,
-        fatigue: int,
-        consecutive_full_load_days: int,
-        chapter_overtime_count: int,
     ) -> "GameState":
         return replace(
             self,
@@ -133,12 +124,7 @@ class GameState:
             days_left=days_left,
             action_points=action_point_cap,
             daily_action_point_cap=action_point_cap,
-            fatigue=fatigue,
             points_spent_today=0,
-            overtime_points_today=0,
-            overtime_used_today=False,
-            consecutive_full_load_days=consecutive_full_load_days,
-            chapter_overtime_count=chapter_overtime_count,
             half_day_action_used=False,
             daily_action_counts={},
         )

@@ -1,4 +1,5 @@
 import { actionPointLabel } from "../lib/player-ui.ts";
+import { actionPresentation } from "../lib/action-presentation.ts";
 import type { TutorialDefinition, TutorialRecord, TutorialStep } from "./types.ts";
 
 const target = (id: string) => `[data-tutorial-id="${id}"]`;
@@ -14,13 +15,15 @@ export const QUICK_START = [
 ];
 
 export const BASIC_TUTORIAL: TutorialDefinition = {
-  id: "basic", revision: 1, title: "认识工作台",
+  id: "basic", revision: 3, title: "认识工作台",
   steps: [
+    { id: "play-at-your-pace", title: "行动、剧情与存档", body: "自由行动与剧情决策相对独立。行动开放时，可以先自由行动再推进剧情，也可以完成剧情决策后再自由行动；必须当场处理的决定，请按现场提示完成。游戏进度会随每次行动与决定自动保存，无需手动保存。", target: target("today") },
     { id: "today", title: "今日案头", body: "这里汇总今日目标与现场情况。结合当前叙事和必须处理的事项，安排今天的工作。", target: target("today") },
     { id: "metrics", title: "日期、阶段与精力", body: "日期、阶段和各项指标反映当前局面。精力决定今天还能安排多少工作；以当前显示的消耗为准。", target: target("metrics") },
     { id: "narrative-controls", title: "阅读与推进", body: "使用这里的阅读控制查看叙事。出现必须处理的事项时，先完成现场选择，再继续安排工作。", target: target("narrative-controls") },
     { id: "nav-actions", title: "行动：安排工作", body: "这里按办理方式列出当前公开的行动。每张卡片会说明用途、精力消耗和不可用原因；选择要办理的行动后，核对对象与条件，再由你确认发起。", target: target("nav-actions") },
     { id: "nav-opportunities", title: "人物：了解与会谈", body: "这里列出已公开的人物与当前会谈入口。先了解人物状态与说明，再选择当前可以进入的会谈。", target: target("nav-opportunities") },
+    { id: "advance-signing", title: "主动推进签约", body: "点击这里筛选可办理签约的住户或代表，进入会谈了解顾虑，再准备逐户合同。保存方案、预览合同并由本户接受签署后，才计入签约进度。", detail: "打开入口不会直接签约或扣除资源。会谈消耗以当前行动提示为准；本户接受合同后才实际签署，并扣除合同约定的资金、房源与服务。", target: target("advance-signing") },
     { id: "nav-desk", title: "卷宗与线索", body: "卷宗页查看任务与政策；线索页整理已掌握的事实、证据和调查途径。办理记录、档案、会议与文件可到治理页查看。", target: target("nav-desk") },
   ],
 };
@@ -80,7 +83,7 @@ export function actionTour(items: TutorialRecord[]): TutorialDefinition {
 export function formTutorial(item: TutorialRecord): TutorialDefinition {
   const variantId = text(item.variant_id);
   const isArchive = item.action_id === "inspect_archives";
-  const isMeeting = item.action_id === "leadership_meeting";
+  const isMeeting = actionPresentation(item).leadership;
   const steps: TutorialStep[] = [];
   const topicHelp: Record<string, string> = {
     field_visit: "写明本次要了解的现场情况与对象诉求。固定机会的重点可能已锁定，请核对页面说明。",
@@ -103,7 +106,7 @@ export function formTutorial(item: TutorialRecord): TutorialDefinition {
   }
   if (isArchive) input("form-archives", "选择一份待查阅档案", "查看档案说明、证据等级和首次查阅消耗，再选择一份。实际开始查阅后才登记结果，已读档案可到治理页免费重读。");
   steps.push({ id: "form-submit", title: "确认前再核对一次", body: "讲解结束后，请自行核对行动安排与按钮状态。只有表单满足当前要求才可提交；点击实际办理按钮会推进游戏。", detail: `当前消耗：${costDetail(item)}。`, target: target("form-submit") });
-  return { id: `form:${variantId}`, revision: 1, title: "核对行动安排", steps, finishLabel: "讲解完成，自主操作", finishFocusTarget: target("form-submit") };
+  return { id: `form:${variantId}`, revision: 2, title: "核对行动安排", steps, finishLabel: "讲解完成，自主操作", finishFocusTarget: target("form-submit") };
 }
 
 const SCENES: Record<string, { title: string; body: string; detail?: string }> = {
@@ -112,8 +115,10 @@ const SCENES: Record<string, { title: string; body: string; detail?: string }> =
   group: { title: "多人现场交流", body: "留意每段发言的说话人，结合现场问题阅读各方意见，再自行选择回应。" },
   governance: { title: "推进当前行动", body: "这里展示正在办理的行动与当前进展。先阅读记录和操作说明，再决定继续、结束或取消；消耗以现场提示为准。" },
   meeting: { title: "主持会议", body: "围绕已确定的议题阅读汇报与参会意见，再查看当前可形成的决议。实际发言、推进和确认由你操作。" },
+  hearing: { title: "主持公开听证", body: "围绕争议事项听取当前参与人的意见，核对公开记录，再按页面要求形成听证结论。实际发言与确认由你操作。" },
+  clan: { title: "开展宗族议事", body: "围绕本次议题阅读相关人物的意见，核对协商记录与后续安排，再按页面要求形成议事结论。" },
   document: { title: "查看与办理文件", body: "先读正文、审校意见和必要会签状态，再看页面提示的下一步。", detail: "文书审校通过后才能请其会签；会签齐备后，按当前状态办理印发与公示。修订正文会重新开始会签。讲解结束后，请自行使用原有办理按钮。" },
-  contract: { title: "核对合同", body: "核对本户对象、合同条款、资源数量及专业审校状态，再查看当前办理要求。", detail: "每户独立核定条款与签署。专业审校通过后才可送交本户复核；本户接受会直接签署并从对应资源项扣除。讲解结束后，再自行操作原有按钮。" },
+  contract: { title: "核对合同", body: "填写补偿与安置方案，保存后核对合同预览，再提交本户签约。", detail: "每户独立签署。对方接受后合同立即生效，并扣除约定资源。有疑问可点击继续协商，回到入户会谈；调整约定请修改方案并保存。" },
   "archive-result": { title: "阅读查档结果", body: "这里展示本次调阅的正文、新获事实与用途。读完后可到线索页查看调查收获，到治理页重读已读档案。" },
   "action-result": { title: "回看行动结果", body: "核对本次反馈与待办事项。治理页查看办理记录与材料，线索页回看已获事实和证据，复盘页查看完整会谈记录。" },
   "end-day": { title: "结束今天", body: "结束一天会推进时间。先核对今日工作与剩余精力，处理必须完成的现场事项，再自行确认结束。" },
@@ -124,7 +129,7 @@ export function sceneTutorial(scene: string): TutorialDefinition | null {
   const copy = SCENES[scene];
   if (!copy) return null;
   const steps: TutorialStep[] = [{ id: scene, ...copy, target: target(scene) }];
-  if (["conversation", "group", "governance", "meeting"].includes(scene)) {
+  if (["conversation", "group", "governance", "meeting", "hearing", "clan"].includes(scene)) {
     steps.push(
       { id: `${scene}:input`, title: "准备你的发言", body: "这里填写你要表达的具体问题或意见。先结合现场记录组织内容，讲解结束后再自行输入。", target: target("conversation-input") },
       { id: `${scene}:send`, title: "发送与后续操作", body: "发送会将你的发言提交到当前现场。先核对内容与按钮状态，讲解结束后再由你发送。", detail: scene === "group" ? "继续阅读各方回应，按现场要求处理当前问题。是否可以结束或返回，以问题处理后的页面按钮为准。" : "收到回应后继续阅读记录。需要结束或返回时，先查看原有按钮的说明与当前条件，再自行操作。", target: target("conversation-send") },

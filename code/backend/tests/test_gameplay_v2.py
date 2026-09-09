@@ -862,24 +862,16 @@ class GameplayV2Tests(unittest.TestCase):
             points_spent_today=8,
         )
         self.container.sessions.save(internal, expected_version=internal.state_version)
-        result = self.action({
-            "input_mode": "overtime",
-            "client_action_id": "gameplay-v2-overtime-0001",
-            "state_version": internal.state_version,
-            "parameters": {"points": 3},
-        })
-        self.assertEqual(3, result["visible_state"]["ledger"]["action_points"]["remaining"])
-        duplicate = self.client.post(
+        response = self.client.post(
             f"/api/game/session/{self.session_id}/action",
-            json={
-                "input_mode": "overtime",
-                "client_action_id": "gameplay-v2-overtime-0002",
-                "state_version": result["state_version"],
-                "parameters": {"points": 1},
-            },
+            json={"input_mode": "overtime", "client_action_id": "retired-overtime-0001",
+                  "state_version": internal.state_version, "parameters": {"points": 3}},
             headers=self.headers,
         )
-        self.assertEqual(409, duplicate.status_code, duplicate.text)
+        self.assertEqual(409, response.status_code, response.text)
+        self.assertIn("加班机制已取消", response.text)
+        stored = self.container.sessions.get_owned(self.session_id, "acct_gameplay_v2")
+        self.assertEqual(0, stored.game_state.action_points)
 
     def test_flag_trust_derivation_is_once_only_and_hidden(self) -> None:
         internal = self.container.sessions.get_owned(

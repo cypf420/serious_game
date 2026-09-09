@@ -63,14 +63,6 @@ class ActionQuoteService:
             raise ActionUnavailableError("该行动已达到今日次数上限")
         if rule.half_day and state.half_day_action_used:
             raise ActionUnavailableError("今日半日行程已经占用")
-        if rule.hard_force and state.fatigue >= 75:
-            raise ActionUnavailableError("当前状态不能执行强制手段")
-        if (
-            state.fatigue >= 50
-            and rule.category in {"调查手段", "强制手段"}
-            and state.daily_action_counts.get(f"category:{rule.category}", 0) >= 1
-        ):
-            raise ActionUnavailableError("当前疲惫档位下，该类行动今日最多一次")
         cost = rule.cost_for(package.action_cost_tier(state.story_day))
         if state.action_points < cost:
             raise InsufficientActionPointsError(

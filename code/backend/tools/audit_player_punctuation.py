@@ -49,6 +49,8 @@ def _issues_for(text: str) -> list[str]:
     if not text.strip() or URL_OR_CODE.fullmatch(text.strip()):
         return []
     issues: list[str] = []
+    if re.search(r"[「」『』]", text):
+        issues.append("正文含角引号，玩家界面应统一为中文外层“”与内层‘’")
     if ASCII_PUNCTUATION.search(text):
         issues.append("中英文标点相邻或混用")
     if '"' in text:

@@ -1635,8 +1635,10 @@ def _personal_contract_workflow(
             },
         )
     )
-    if terms["contract"]["audit_status"] != "pass":
-        raise AssertionError(f"contract draft audit failed: {terms['contract']['audit_result']}")
+    if (terms["contract"]["audit_status"] != "not_required"
+            or not terms["contract"]["contract_text"]
+            or not terms["contract"].get("can_review")):
+        raise AssertionError("saved proposal did not produce a reviewable contract preview")
     reviewed = _expect(
         client.post(
             f"/api/game/session/{session_id}/governance/contracts/{contract['contract_id']}/review",

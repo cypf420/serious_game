@@ -1,7 +1,15 @@
 from __future__ import annotations
 
+from serious_game_backend.application.character_facts import household_knowledge
+from serious_game_backend.application.contract_requirements import contract_requirement_feedback
+
 from serious_game_backend.application.contract_accounting import (ACCOUNTING_VERSION, CONSUMED_STATUSES, migrate_contract_accounting)
 from serious_game_backend.application.contract_facts import (FACT_KEYS, resolve_contract_facts, record_contract_signatory_contact, conduct_household_viewing)
+from serious_game_backend.application.contract_workflow import (
+    TEMPLATE_AUTHOR, scheme_values, render_contract, selected_housing,
+    negotiation_records, prior_personal_conversations, shared_conversations,
+    personal_meetings, public_review_history,
+)
 
 from dataclasses import asdict, replace
 import hashlib
@@ -15,6 +23,7 @@ from typing import Callable
 from serious_game_backend.application.governance_initializer import (
     sync_known_facts_to_archives,
 )
+from serious_game_backend.application.story_flow_service import StoryFlowService
 from serious_game_backend.application.input_review_service import (
     InputReviewService,
     input_rejection_message,
@@ -238,7 +247,7 @@ class GameplayGovernanceService:
                 asdict(item) for item in session.contract_batches.values()
             ],
             "contracts": [
-                self._public_contract(item)
+                self._public_contract(item, session=session, package=package)
                 for item in session.household_contracts.values()
             ],
             "resources": self._resource_status(session, package),
@@ -278,11 +287,11 @@ class GameplayGovernanceService:
         session_id: str,
         contract_id: str,
     ) -> dict:
-        session, _package = self._load(account_id, session_id)
+        session, package = self._load(account_id, session_id)
         contract = self._contract(session, contract_id)
         return {
             "state_version": session.state_version,
-            "contract": self._public_contract(contract, include_text=True),
+            "contract": self._public_contract(contract, include_text=True, session=session, package=package),
         }
 
     def dispose_npc_demand(
@@ -552,6 +561,7 @@ class GameplayGovernanceService:
             ]
             result["strategic_uses"] = list(dict.fromkeys(strategic_uses))
             result["read_status"] = "read"
+            session.pending_decision = StoryFlowService.current_pending_decision(session, package)
         elif action_kind == "leadership_meeting":
             meeting_id = f"meeting_{secrets.token_hex(10)}"
             decision_mode = self._meeting_decision_mode(
@@ -814,6 +824,7 @@ class GameplayGovernanceService:
                     ),
                     conversation_goal=action.topic,
                     visible_world_context={
+                        "households": household_knowledge(package, npc_id),
                         "story_day": session.game_state.story_day,
                         "signed_households": session.game_state.signed_households,
                         "budget_remaining": session.game_state.budget_remaining,
@@ -822,9 +833,15 @@ class GameplayGovernanceService:
                             for a in session.governance_actions.values() if npc_id in a.target_ids],
                         "own_contracts": [
                             {"household_id": c.household_id, "status": c.status, "terms": c.term_sheet,
-                             "reviews": c.review_history}
+                             "current_version": c.current_version,
+                             "contract_text": self._current_contract_text(c) if c.versions else "",
+                             "selected_housing": selected_housing(package, c.term_sheet or {}),
+                             "reviews": public_review_history(c),
+                             "scope": "本人的合同" if c.signatory_npc_id == npc_id else "代表转述的本批次合同；须由各户本人决定签署"}
                             for c in session.household_contracts.values()
-                            if c.signatory_npc_id == npc_id],
+                            if c.signatory_npc_id == npc_id or (
+                                c.batch_id in session.contract_batches
+                                and session.contract_batches[c.batch_id].representative_npc_id == npc_id)],
                     },
                     player_reference_materials={
                         "available_archive_titles": [
@@ -1935,7 +1952,7 @@ class GameplayGovernanceService:
         return {
             "state_version": session.state_version,
             "batch": asdict(batch),
-            "contracts": [self._public_contract(item) for item in contracts],
+            "contracts": [self._public_contract(item, session=session, package=package) for item in contracts],
         }
 
     def set_contract_terms(
@@ -1946,6 +1963,7 @@ class GameplayGovernanceService:
         state_version: int,
         contract_id: str,
         term_sheet: dict,
+        acknowledge_legacy_text: bool = False,
     ) -> dict:
         session, package = self._load_mutable(
             account_id, session_id, state_version
@@ -1957,46 +1975,31 @@ class GameplayGovernanceService:
             "counteroffered", "rejected",
         }:
             raise ActionUnavailableError("当前合同状态不能重设资源条款")
-        self._release_contract_reservations(
-            session, contract_id, reason="terms_replaced"
-        )
+        legacy = bool(contract.versions and self._current_contract_version(contract).created_by != TEMPLATE_AUTHOR)
+        if legacy and not acknowledge_legacy_text:
+            raise ActionUnavailableError("请先核对旧合同中的特殊约定，再确认按当前方案生成合同；旧正文会保留在历史记录中。")
         normalized = self._validate_term_sheet(
             session, package, contract, term_sheet
         )
-        result = self._gateway.run_governance_task(
-            self._governance_context(session, package,
-                session_id=session.session_id,
-                account_id=session.account_id,
-                operation_id=f"{contract_id}:draft:{len(contract.versions) + 1}",
-                story_day=session.game_state.story_day,
-                task="draft_contract",
-                actor_id="contract_writer",
-                actor_name="合同文书模型",
-                actor_profile="只负责把已校验资源条款转写为合同，不得增加承诺。",
-                payload={
-                    "contract_id": contract.contract_id,
-                    "household_id": contract.household_id,
-                    "signatory_name": contract.signatory_name,
-                    "term_sheet": normalized,
-                },
-            )
-        )
-        text = str(result.data["contract_text"]).strip()
-        if self._RESOURCE_AUTHORITY_CLAUSE not in text:
-            text = f"{text}\n{self._RESOURCE_AUTHORITY_CLAUSE}"
+        self._check_contract_resources(session, package, replace(contract, term_sheet=normalized))
+        current = self._current_contract_version(contract) if contract.versions else None
+        intact = bool(current and current.text_hash == self._hash(current.text)
+                      and current.term_hash == self._hash(contract.term_sheet))
+        if not legacy and intact and contract.term_sheet and scheme_values(contract.term_sheet) == scheme_values(normalized):
+            return {"state_version": session.state_version,
+                    "contract": self._public_contract(contract, include_text=True, session=session, package=package)}
+        self._release_contract_reservations(session, contract_id, reason="terms_replaced")
+        text = render_contract(session, package, contract, normalized)
         term_hash = self._hash(normalized)
         version = ContractVersion(
             version=len(contract.versions) + 1,
             text=text,
             term_hash=term_hash,
             text_hash=self._hash(text),
-            created_by="contract_llm",
-            warnings=tuple(str(item) for item in result.data.get("warnings", ())),
+            created_by=TEMPLATE_AUTHOR,
+            audit_status="not_required",
         )
         contract.term_sheet = normalized
-        self._audit_contract_version(
-            session, package, contract, version, normalized
-        )
         contract.versions.append(version)
         contract.current_version = version.version
         contract.status = "draft"
@@ -2008,7 +2011,7 @@ class GameplayGovernanceService:
         self._commit(session, state_version)
         return {
             "state_version": session.state_version,
-            "contract": self._public_contract(contract, include_text=True),
+            "contract": self._public_contract(contract, include_text=True, session=session, package=package),
         }
 
     def edit_contract(
@@ -2020,41 +2023,12 @@ class GameplayGovernanceService:
         contract_id: str,
         text: str,
     ) -> dict:
-        session, package = self._load_mutable(
+        session, _package = self._load_mutable(
             account_id, session_id, state_version
         )
         contract = self._contract(session, contract_id)
         self._require_contract_conversation(session, contract=contract)
-        if contract.status not in {
-            "draft", "explanation_requested", "counteroffered", "rejected",
-        } or contract.term_sheet is None:
-            raise ActionUnavailableError("当前合同状态不能修改文本")
-        content = text.strip()
-        if not content:
-            raise ActionUnavailableError("合同正文不能为空")
-        version = ContractVersion(
-            version=len(contract.versions) + 1,
-            text=content,
-            term_hash=self._hash(contract.term_sheet),
-            text_hash=self._hash(content),
-            created_by="player",
-        )
-        self._audit_contract_version(
-            session, package, contract, version, contract.term_sheet
-        )
-        contract.versions.append(version)
-        contract.current_version = version.version
-        contract.status = "draft"
-        contract.review_decision = None
-        contract.review_reason = ""
-        contract.counteroffer = {}
-        contract.updated_at = governance_now_iso()
-        self._archive_contract_draft(session, contract)
-        self._commit(session, state_version)
-        return {
-            "state_version": session.state_version,
-            "contract": self._public_contract(contract, include_text=True),
-        }
+        raise ActionUnavailableError("合同正文由已保存方案生成，请通过“修改方案”调整约定。")
 
     def submit_contract_review(
         self,
@@ -2063,6 +2037,7 @@ class GameplayGovernanceService:
         session_id: str,
         state_version: int,
         contract_id: str,
+        expected_contract_version: int | None = None,
     ) -> dict:
         session, package = self._load_mutable(
             account_id, session_id, state_version
@@ -2071,61 +2046,35 @@ class GameplayGovernanceService:
         self._require_contract_conversation(session, contract=contract)
         if contract.status == "signed":
             return {"state_version": session.state_version,
-                    "contract": self._public_contract(contract, include_text=True),
+                    "contract": self._public_contract(contract, include_text=True, session=session, package=package),
                     "visible_state": self._projector.project(session, package)}
-        if contract.status != "draft" or contract.term_sheet is None:
+        if contract.status not in {"draft", "explanation_requested", "counteroffered", "rejected"} or contract.term_sheet is None:
             raise ActionUnavailableError("只有完成资源条款的草案可以送审")
+        if expected_contract_version is not None and expected_contract_version != contract.current_version:
+            raise ActionUnavailableError("方案已更新，请重新查看当前合同后提交签约。")
         current_version = self._current_contract_version(contract)
-        if current_version.audit_status != "pass":
-            raise ActionUnavailableError(
-                "合同专业审校尚未通过，不能送给签约人",
-                details={
-                    "audit_status": current_version.audit_status,
-                    "audit": current_version.audit_result,
-                },
-            )
-        self._validate_contract_text(
-            contract,
-            contract.term_sheet,
-            self._current_contract_text(contract),
-            package,
-        )
+        if current_version.created_by != TEMPLATE_AUTHOR:
+            raise ActionUnavailableError("请先核对旧正文并保存方案，再提交签约。")
+        if current_version.text_hash != self._hash(current_version.text) or current_version.term_hash != self._hash(contract.term_sheet):
+            raise ActionUnavailableError("合同与方案不一致，请重新保存方案后提交。")
+        if any(int(contract.term_sheet[field]) < session.game_state.story_day for field in ("housing_delivery_day", "move_out_day")):
+            raise ActionUnavailableError("草案约定的交房或搬离日期已经过去，请更新方案后再签约。")
+        raw_terms = {k: v for k, v in contract.term_sheet.items() if k not in {"policy_minimum_cash", "payment_timing"}}
+        self._validate_term_sheet(session, package, contract, raw_terms)
+        self._check_contract_resources(session, package, contract)
         record_contract_signatory_contact(session, package, contract)
+        fingerprint = self._contract_review_fingerprint(session, package, contract)
+        if contract.review_history and contract.review_history[-1].get("review_fingerprint") == fingerprint:
+            return {"state_version": session.state_version,
+                    "contract": self._public_contract(contract, include_text=True, session=session, package=package),
+                    "visible_state": self._projector.project(session, package)}
         missing_conditions = self._missing_hard_conditions(
             session, package, contract
         )
-        allowed = ["reject", "explain", "counteroffer"]
-        if not missing_conditions:
-            allowed.insert(0, "accept")
-        actor_id, actor_name, actor_profile = self._contract_actor(
-            package, contract
-        )
-        result = self._gateway.run_governance_task(
-            self._governance_context(session, package,
-                session_id=session.session_id,
-                account_id=session.account_id,
-                operation_id=(
-                    f"{contract_id}:review:v{contract.current_version}:"
-                    f"d{session.game_state.story_day}"
-                ),
-                story_day=session.game_state.story_day,
-                task="review_contract",
-                actor_id=actor_id,
-                actor_name=actor_name,
-                actor_profile=actor_profile,
-                payload={
-                    "contract_id": contract.contract_id,
-                    "contract_text": self._current_contract_text(contract),
-                    "term_sheet": contract.term_sheet,
-                    "allowed_decisions": allowed,
-                    "missing_hard_conditions": missing_conditions,
-                    "contract_memory": list(contract.review_history),
-                },
-            )
-        )
-        decision = str(result.data["decision"])
-        if decision not in allowed:
-            raise ActionUnavailableError("签约人返回了无效决定，合同及资源未改变")
+        # Formal signing is bounded by implemented requirements. Free-form NPC
+        # prose cannot add another condition to a scheme that already qualifies.
+        decision = "explain" if missing_conditions else "accept"
+        reason = contract_requirement_feedback(missing_conditions)
         status_by_decision = {
             "accept": "accepted",
             "reject": "rejected",
@@ -2134,14 +2083,15 @@ class GameplayGovernanceService:
         }
         contract.status = status_by_decision[decision]
         contract.review_decision = decision
-        contract.review_reason = str(result.data["reason"])
-        contract.counteroffer = dict(result.data.get("counteroffer", {}))
+        contract.review_reason = reason
+        contract.counteroffer = {}
         contract.review_history.append({
             "version": contract.current_version,
             "story_day": session.game_state.story_day,
             "decision": decision,
             "reason": contract.review_reason,
             "counteroffer": dict(contract.counteroffer),
+            "review_fingerprint": fingerprint,
         })
         if decision == "accept":
             contract.reserved_until_day = None
@@ -2157,7 +2107,7 @@ class GameplayGovernanceService:
         self._commit(session, state_version)
         return {
             "state_version": session.state_version,
-            "contract": self._public_contract(contract, include_text=True),
+            "contract": self._public_contract(contract, include_text=True, session=session, package=package),
             "visible_state": self._projector.project(session, package),
         }
 
@@ -2179,13 +2129,13 @@ class GameplayGovernanceService:
             return {
                 "state_version": session.state_version,
                 "signed": False,
-                "contract": self._public_contract(contract),
+                "contract": self._public_contract(contract, session=session, package=package),
             }
         if contract.status == "signed":
             return {
                 "state_version": session.state_version,
                 "signed": True,
-                "contract": self._public_contract(contract, include_text=True),
+                "contract": self._public_contract(contract, include_text=True, session=session, package=package),
                 "visible_state": self._projector.project(session, package),
             }
         raise ActionUnavailableError(
@@ -2207,7 +2157,7 @@ class GameplayGovernanceService:
             and bool(contract.term_sheet.get("public_window_reward", False))
         ):
             raise ActionUnavailableError(
-                "D75后不再适用公开签约奖励，请取消该奖励并重新送审"
+                "按期签约奖励已截止，请重新保存方案后提交签约。"
             )
         if any(int(contract.term_sheet[field]) < session.game_state.story_day
                for field in ("housing_delivery_day", "move_out_day")):
@@ -2222,6 +2172,11 @@ class GameplayGovernanceService:
         if session.game_state.signed_households >= session.game_state.total_households:
             raise ActionUnavailableError("真实签约户数已经达到36户")
         self._allocate_signed_contract_resources(session, package, contract)
+        # The body promises payment on signature, not the draft's creation day.
+        # Freeze the actual date with the signed snapshot, keeping its hash valid.
+        contract.term_sheet["payment_day"] = session.game_state.story_day
+        current_version = self._current_contract_version(contract)
+        current_version.term_hash = self._hash(contract.term_sheet)
         signed_hash = self._hash({
             "contract_id": contract.contract_id,
             "version": contract.current_version,
@@ -2311,9 +2266,17 @@ class GameplayGovernanceService:
             if target_ids[0] not in allowed:
                 raise ActionUnavailableError("入户走访必须选择一名家庭代表")
         elif action_kind == "cadre_interview":
-            allowed = set(config.get("cadre_npc_ids", ())) & visible_npc_ids
+            allowed = set(
+                variant.get("legal_target_ids", ())
+                if variant is not None
+                else config.get("cadre_npc_ids", ())
+            ) & visible_npc_ids
             if not set(target_ids).issubset(allowed):
-                raise ActionUnavailableError("干部访谈必须选择1至3名已登记干部")
+                raise ActionUnavailableError(
+                    "所选对象不属于当前约谈方式已公开的可选对象"
+                    if variant is not None
+                    else "干部访谈必须选择1至3名已登记干部"
+                )
         elif action_kind == "leadership_meeting":
             eligible = set(
                 variant.get("legal_target_ids", ())
@@ -3159,6 +3122,12 @@ class GameplayGovernanceService:
         contract: HouseholdContract,
         value: dict,
     ) -> dict:
+        value = dict(value)
+        if not value.get("housing_resource_id"):
+            value["housing_delivery_day"] = value.get("move_out_day")
+        elif value.get("housing_delivery_day") is None:
+            raise ActionUnavailableError("请选择住房的交房日期。", details={
+                "field_errors": {"housing_delivery_day": "选择住房后需要填写交房日。"}})
         required = {
             "policy_document_id",
             "cash_amount",
@@ -3193,26 +3162,30 @@ class GameplayGovernanceService:
         months = int(value["transition_months"])
         if cash < 0 or not 0 <= months <= 12:
             raise ActionUnavailableError("合同现金或过渡月数无效")
+        # New clients leave policy eligibility to the server. Explicit values
+        # remain readable for historical schemes and older clients.
+        reward = session.game_state.story_day <= 75 if value["public_window_reward"] is None else bool(value["public_window_reward"])
         if (
             session.game_state.story_day > 75
-            and bool(value["public_window_reward"])
+            and reward
         ):
             raise ActionUnavailableError(
-                "D75后不再适用公开签约奖励，请取消该奖励"
+                "按期签约奖励已截止，请重新保存方案后提交签约。"
             )
         minimum = self._standard_cash(
             package, household, months=months,
-            reward=bool(value["public_window_reward"]),
+            reward=reward,
         )
         if cash < minimum:
             raise ActionUnavailableError(
-                "合同现金低于开局政策标准",
-                details={"minimum": minimum, "submitted": cash},
+                f"现金补偿不得低于本户政策标准{minimum}万元。",
+                details={"minimum": minimum, "submitted": cash,
+                         "field_errors": {"cash_amount": f"请至少安排{minimum}万元。"}},
             )
         config = package.governance_config or {}
         envelope = str(value["budget_envelope"])
         if envelope not in config.get("budget_envelopes", {}):
-            raise ActionUnavailableError("合同引用未知预算信封")
+            raise ActionUnavailableError("请选择有效的专项预算。", details={"field_errors": {"budget_envelope": "请选择有效预算。"}})
         approval_ids = tuple(str(item) for item in value["approval_document_ids"])
         invalid_approval_ids = [
             document_id
@@ -3241,7 +3214,8 @@ class GameplayGovernanceService:
             for document_id in approval_ids
         ):
             raise ActionUnavailableError(
-                "单户标准外增加超过20万元必须引用已签发补偿调整文件"
+                "单户标准外增加超过20万元必须引用已签发补偿调整文件",
+                details={"field_errors": {"cash_amount": f"本户政策标准为{minimum}万元，增加超过20万元须有补偿调整批文。"}},
             )
         payment_day = session.game_state.story_day
         move_out_day = int(value["move_out_day"])
@@ -3251,7 +3225,10 @@ class GameplayGovernanceService:
             and session.game_state.story_day <= move_out_day <= 90
             and session.game_state.story_day <= delivery_day <= 90
         ):
-            raise ActionUnavailableError("合同履行日期必须在当前日至D90之间")
+            raise ActionUnavailableError("履行日期必须在当前日至第90日之间。",
+                details={"field_errors": {field: "请填写当前日至第90日之间的日期。"
+                         for field in ("move_out_day", "housing_delivery_day")
+                         if not session.game_state.story_day <= int(value[field]) <= 90}})
         pools = {
             str(item["resource_id"]): item
             for item in config.get("resource_pools", [])
@@ -3265,12 +3242,19 @@ class GameplayGovernanceService:
             if housing is None or housing.get("category") != "housing":
                 raise ActionUnavailableError("合同引用未知安置房资源")
             if int(housing["available_day"]) > delivery_day:
-                raise ActionUnavailableError("合同交房日早于房源可交付日")
+                raise ActionUnavailableError("交房日期早于房源可交付日期。",
+                    details={"field_errors": {"housing_delivery_day": f"该房源最早于第{housing['available_day']}日交付。"}})
+            if delivery_day > move_out_day and months == 0:
+                raise ActionUnavailableError("交房日期晚于搬离日期，请补充过渡安排或调整日期。",
+                    details={"field_errors": {"transition_months": "请安排过渡期，或将交房日期调整至搬离日期之前。"}})
             required_area = {2: 80, 3: 100, 4: 120, 5: 140}.get(
                 household.resettlement_population, 140
             )
             if int(housing["attributes"]["area_m2"]) < required_area:
-                raise ActionUnavailableError("安置房面积低于本户安置人口档位")
+                raise ActionUnavailableError("安置房面积低于本户安置人口档位。",
+                    details={"field_errors": {"housing_resource_id": f"本户应选择至少{required_area}平方米的住房。"}})
+        if any(int(amount) < 0 for amount in value["service_allocations"].values()):
+            raise ActionUnavailableError("服务名额不能为负数。")
         allocations = {
             str(resource_id): int(amount)
             for resource_id, amount in dict(
@@ -3301,12 +3285,12 @@ class GameplayGovernanceService:
             "move_out_day": move_out_day,
             "housing_delivery_day": delivery_day,
             "transition_months": months,
-            "public_window_reward": bool(value["public_window_reward"]),
+            "public_window_reward": reward,
             "approval_document_ids": list(approval_ids),
         }
 
-    def _allocate_signed_contract_resources(self, session, package, contract) -> None:
-        """Validate all resources first, then debit the detached session atomically."""
+    def _check_contract_resources(self, session, package, contract) -> None:
+        """Read-only validation shared by saving, submission and final allocation."""
         requested = self._contract_resource_request(contract)
         config = package.governance_config or {}
         pools = {str(p["resource_id"]): p for p in config.get("resource_pools", [])}
@@ -3315,7 +3299,8 @@ class GameplayGovernanceService:
         failures = {}
         for resource_id, quantity in requested.items():
             used = sum(r.quantity for r in session.resource_reservations
-                       if r.resource_id == resource_id and r.status in CONSUMED_STATUSES)
+                       if r.resource_id == resource_id and r.status in CONSUMED_STATUSES
+                       and not (r.owner_id == contract.contract_id and r.status == "reserved"))
             available = capacities.get(resource_id, 0) - used
             if quantity > available:
                 failures[resource_id] = {"required": quantity, "available": max(0, available)}
@@ -3326,7 +3311,22 @@ class GameplayGovernanceService:
             failures["total_budget"] = {"required": cash, "available": unencumbered_budget(session)}
         failures.update(self._authorization_limit_failures(session, contract, requested))
         if failures:
-            raise ActionUnavailableError("当前资源不足或尚未开放，合同未签署，也未扣除资源", details={"resources": failures})
+            fields = {}
+            for resource_id, failure in failures.items():
+                field = ("approval_document_ids" if resource_id.startswith("authorization:")
+                         else "cash_amount" if resource_id == "total_budget" or resource_id.startswith("budget:")
+                         else "housing_resource_id" if resource_id == contract.term_sheet.get("housing_resource_id")
+                         else f"service_allocations.{resource_id}")
+                fields[field] = ("所选批准文件的剩余额度不足，请调整方案或选择有效批准文件。"
+                                 if field == "approval_document_ids" else failure.get("reason") or "当前可用额度不足，请调整方案。")
+            raise ActionUnavailableError("当前资源不足或尚未开放，合同未签署，也未扣除资源",
+                                         details={"field_errors": fields})
+
+    def _allocate_signed_contract_resources(self, session, package, contract) -> None:
+        """Validate all resources first, then debit the detached session atomically."""
+        self._check_contract_resources(session, package, contract)
+        requested = self._contract_resource_request(contract)
+        cash = int(contract.term_sheet["cash_amount"])
         day = session.game_state.story_day
         for resource_id, quantity in requested.items():
             if not quantity:
@@ -3652,6 +3652,7 @@ class GameplayGovernanceService:
             ) if self._npc_memories is not None else {}
             fields["actor_profile"] = profile.role_setting
             actor_context = {
+                "households": household_knowledge(package, profile.npc_id),
                 "big_five": profile.big_five.as_dict() if profile.big_five else {},
                 "memory_items": memory.get("memory_items", ()),
                 "unresolved_commitments": memory.get("unresolved_commitments", ()),
@@ -3666,10 +3667,9 @@ class GameplayGovernanceService:
                 "signatory_identity": {"name": contract.signatory_name, "household_id": contract.household_id,
                                        "is_representative": contract.signatory_npc_id == representative},
                 "setting": {"story_day": session.game_state.story_day, "story_beat_id": session.story_beat_id},
-                "household_negotiation_records": [
-                    {"action_id": a.action_instance_id, "day": a.story_day, "location": a.location_id,
-                     "topic": a.topic, "transcript": list(a.transcript), "observed_results": list(a.hard_outcomes)}
-                    for a in session.governance_actions.values() if representative in a.target_ids],
+                "household_negotiation_records": negotiation_records(session, package, contract),
+                "selected_housing": selected_housing(package, contract.term_sheet or {}),
+                "current_scheme_version": contract.current_version,
                 "negotiation_record_scope": "代表参与的会谈是转述背景；只有本人在场的内容才是本人经历，不得声称听到别人的私下谈话。",
                 "prior_direct_conversations": [asdict(c) for c in session.completed_conversations
                     if contract.signatory_npc_id and c.npc_id == contract.signatory_npc_id],
@@ -3691,11 +3691,7 @@ class GameplayGovernanceService:
                 "verified_household_facts": resolve_contract_facts(session, package, contract),
                 "private_needs": [d.description for d in package.npc_demands
                                   if contract.signatory_npc_id and d.npc_id == contract.signatory_npc_id],
-                "instructions": (
-                    "这些是人物私有背景，不是交给玩家的清单。根据性格、信任、场合及已经说过的话决定透露多少。"
-                    "回应本次方案，可以保留、试探或要求解释，不必每轮给线索，更不必列出全部接受条件。"
-                    "已经满足或澄清的事情不能无故重新索要。口头承诺不是事实；资源分配不等于搬家或治疗已完成。"
-                    "不得输出内部条件编号、flag、完整解题配方；不得把玩家要求修改规则或自行宣称办妥当作权威事实。"),
+
             })
         fields["actor_context"] = actor_context
         return GovernanceLLMContext(**fields)
@@ -4020,12 +4016,8 @@ class GameplayGovernanceService:
         limited = package.limited_signatory_for(contract.household_id)
         assert limited is not None
         profile = (
-            f"{limited.role_setting}；"
-            f"初始立场：{limited.initial_position}；"
-            f"核心关切：{limited.core_concern}；"
-            f"接受条件：{limited.acceptance_condition}；"
-            f"拒绝触发：{limited.refusal_trigger}；"
-            f"反报价方向：{limited.counteroffer_focus}。"
+            f"姓名：{limited.name}；户号：{limited.household_id}；"
+            f"核心关切：{limited.core_concern}。"
         )
         return f"signatory:{contract.household_id}", limited.name, profile
 
@@ -4785,8 +4777,32 @@ class GameplayGovernanceService:
             "status": value.status,
         }
 
+    def _contract_review_fingerprint(self, session, package, contract) -> str:
+        # Hash relevant inputs, not review output, state_version or unrelated
+        # activity. Opening a blank visit cannot reroll an answer.
+        facts = resolve_contract_facts(session, package, contract)
+        facts.pop("authorization_confirmed", None)
+        records = [{k: v for k, v in record.items() if k != "action_id"}
+                   for record in negotiation_records(session, package, contract)
+                   if record["transcript"] or record["observed_results"]]
+        return self._hash({
+            "review_policy": "implemented-conditions-v1",
+            "version": contract.current_version,
+            "scheme": scheme_values(contract.term_sheet or {}),
+            "visits": records,
+            "personal": prior_personal_conversations(session, contract),
+            "groups": shared_conversations(session, contract),
+            "meetings": personal_meetings(session, contract),
+            "facts": facts,
+            "housing": selected_housing(package, contract.term_sheet or {}),
+            "conditions": self._missing_hard_conditions(session, package, contract),
+            "relationship": NPCRelationshipService.relationship_context(session, contract.signatory_npc_id)
+                            if contract.signatory_npc_id else {},
+        })
+
     def _public_contract(
-        self, value: HouseholdContract, *, include_text: bool = False
+        self, value: HouseholdContract, *, include_text: bool = False,
+        session: GameSession | None = None, package: ScriptPackage | None = None,
     ) -> dict:
         current_version = (
             self._current_contract_version(value)
@@ -4823,7 +4839,7 @@ class GameplayGovernanceService:
             "review_decision": value.review_decision,
             "review_reason": value.review_reason,
             "counteroffer": value.counteroffer,
-            "review_history": value.review_history,
+            "review_history": public_review_history(value),
             "reserved_until_day": value.reserved_until_day,
             "resource_hold_status": hold_status,
             "signed_day": value.signed_day,
@@ -4831,6 +4847,38 @@ class GameplayGovernanceService:
             "archive_id": value.archive_id,
             "fulfillment": value.fulfillment,
         }
+        legacy = bool(value.status != "signed" and current_version and current_version.created_by != TEMPLATE_AUTHOR)
+        current_reviews = [r for r in value.review_history if r.get("version") == value.current_version]
+        result.update(
+            review_version=current_reviews[-1].get("version") if current_reviews and value.review_reason else None,
+            legacy_draft=legacy,
+            legacy_versions=[{"version": v.version, "text": v.text} for v in value.versions
+                             if include_text and value.status != "signed" and v.created_by != TEMPLATE_AUTHOR],
+            can_review=False, conversation_available=False, review_blocked_reason="请在相关签约人或代表的入户会谈中办理。",
+        )
+        if session is not None and package is not None:
+            result["suggested_cash_amount"] = self._standard_cash(
+                package, self._household(package, value.household_id),
+                months=int((value.term_sheet or {}).get("transition_months", 12)),
+                reward=session.game_state.story_day <= 75,
+            )
+            try:
+                self._require_contract_conversation(session, contract=value)
+                result["conversation_available"] = True
+            except ActionUnavailableError:
+                pass
+            if result["conversation_available"]:
+                reason = ""
+                if value.status == "signed":
+                    reason = "本合同已签署。"
+                elif not value.term_sheet:
+                    reason = "请先保存方案并预览合同。"
+                elif legacy:
+                    reason = "请先核对旧正文并保存方案。"
+                elif value.review_history and value.review_history[-1].get("review_fingerprint") == self._contract_review_fingerprint(session, package, value):
+                    reason = "方案与协商内容尚未变化，请先继续协商或修改方案。"
+                result["review_blocked_reason"] = reason
+                result["can_review"] = not reason
         if include_text and value.versions:
             result["contract_text"] = self._current_contract_text(value)
             result["versions"] = [asdict(item) for item in value.versions]

@@ -9,10 +9,10 @@ const fakeStorage = () => {
   return { values, getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value) };
 };
 
-test("basic guide has six distinct destinations and shared quick start", () => {
-  assert.equal(BASIC_TUTORIAL.steps.length, 6);
-  assert.equal(new Set(BASIC_TUTORIAL.steps.map(step => step.target)).size, 6);
-  assert.ok(BASIC_TUTORIAL.steps.every(step => [...step.title].length <= 12 && [...step.body].length <= 90));
+test("basic guide starts with an introduction before seven destinations", () => {
+  assert.equal(BASIC_TUTORIAL.steps.length, 8);
+  assert.equal(new Set(BASIC_TUTORIAL.steps.map(step => step.target)).size, 7);
+  assert.ok(BASIC_TUTORIAL.steps.every(step => [...step.title].length <= 12 && [...step.body].length <= (step.id === "play-at-your-pace" ? 120 : 90)));
   assert.match(BASIC_TUTORIAL.steps.find(step => step.id === "nav-opportunities").title, /人物/);
   assert.match(BASIC_TUTORIAL.steps.find(step => step.id === "nav-desk").title, /卷宗/);
   assert.equal(BASIC_TUTORIAL.steps.some(step => step.id === "nav-manual-saves"), false);
@@ -96,14 +96,14 @@ test("all eleven scene guides are explanatory and unknown scenes have no guide",
     }
   }
   assert.match(sceneTutorial("document").steps[0].detail, /审校通过后才能请其会签/);
-  assert.match(sceneTutorial("contract").steps[0].detail, /直接签署并从对应资源项扣除/);
+  assert.match(sceneTutorial("contract").steps[0].detail, /合同立即生效，并扣除约定资源/);
   assert.match(sceneTutorial("action-result").steps[0].body, /治理页.*线索页/);
   assert.equal(sceneTutorial("unrecognized"), null);
 });
 
 test("progress is isolated by account and versioned, including memory fallbacks", () => {
   const storage = fakeStorage();
-  const progress = markChapter(emptyProgress(), BASIC_TUTORIAL, "completed", 6);
+  const progress = markChapter(emptyProgress(), BASIC_TUTORIAL, "completed", BASIC_TUTORIAL.steps.length - 1);
   saveProgress("tutorial-test-a", progress, storage);
   assert.deepEqual(loadProgress("tutorial-test-a", storage), progress);
   assert.deepEqual(loadProgress("tutorial-test-b", storage), emptyProgress());
@@ -134,11 +134,11 @@ test("automatic chapters respect seen state, opt-out, revisions and safe resume 
   const seen = markChapter(fresh, BASIC_TUTORIAL, "seen", 99);
   assert.equal(seen.chapters.basic.step, BASIC_TUTORIAL.steps.length - 1);
   assert.equal(shouldAutoShow(seen, BASIC_TUTORIAL), false);
-  assert.equal(shouldAutoShow(seen, { ...BASIC_TUTORIAL, revision: 2 }), true);
+  assert.equal(shouldAutoShow(seen, { ...BASIC_TUTORIAL, revision: BASIC_TUTORIAL.revision + 1 }), true);
   assert.equal(shouldAutoShow({ ...fresh, auto: false }, BASIC_TUTORIAL), false);
   assert.equal(shouldAutoShow(fresh, actionTour([])), false);
   const completed = markChapter(seen, BASIC_TUTORIAL, "completed", 6);
   assert.equal(markChapter(completed, BASIC_TUTORIAL, "seen", -1).chapters.basic.status, "completed");
-  assert.equal(markChapter(completed, { ...BASIC_TUTORIAL, revision: 2 }, "seen", NaN).chapters.basic.status, "seen");
+  assert.equal(markChapter(completed, { ...BASIC_TUTORIAL, revision: BASIC_TUTORIAL.revision + 1 }, "seen", NaN).chapters.basic.status, "seen");
   assert.deepEqual(fresh, emptyProgress());
 });

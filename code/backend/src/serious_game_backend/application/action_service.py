@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from serious_game_backend.application.character_facts import household_knowledge
+
 from dataclasses import replace
 import secrets
 from typing import Callable
@@ -489,7 +491,7 @@ class ActionService:
                 "narrative": definition.narrative,
             }
         if command.input_mode is ActionInputMode.DECISION:
-            pending = session.pending_decision
+            pending = StoryFlowService.current_pending_decision(session, package)
             if pending is None:
                 raise ActionUnavailableError("当前没有待处理决策")
             decision = package.decisions.get(command.decision_id)
@@ -530,22 +532,7 @@ class ActionService:
                 ),
             }
         if command.input_mode is ActionInputMode.OVERTIME:
-            state = session.game_state
-            points = int(command.parameters["points"])
-            if state.action_points != 0:
-                raise ActionUnavailableError("只有当日可用行动点用尽后才能申请加班")
-            if state.overtime_used_today:
-                raise ActionUnavailableError("今天已经申请过加班")
-            if state.chapter_overtime_count >= 3:
-                raise ActionUnavailableError("本章加班次数已经用尽")
-            if state.fatigue >= 75:
-                raise ActionUnavailableError("当前已接近崩溃，不能继续加班")
-            return {
-                "kind": "overtime",
-                "points": points,
-                "cost": 0,
-                "narrative": f"你决定再加班处理 {points} 点工作。新增行动点已经到账，疲惫将在日终结算。",
-            }
+            raise ActionUnavailableError("加班机制已取消，请结束今日后恢复精力")
         if (
             not command.conversation_id
             or not command.opportunity_id
@@ -653,6 +640,7 @@ class ActionService:
                 conversation_opening=opportunity.opening_narrative,
                 conversation_goal=opportunity.conversation_goal,
                 visible_world_context={
+                    "households": household_knowledge(package, profile.npc_id),
                     "player_identity": "李致远，云溪县县长",
                     "story_day": session.game_state.story_day,
                     "story_title": beat.title if beat is not None else "",
@@ -669,12 +657,6 @@ class ActionService:
                         memory_context["unresolved_commitments"]
                     ),
                     "unresolved_demands": list(unresolved_demands),
-                    "fatigue_posture": (
-                        "撑不住了" if session.game_state.fatigue >= 75 else
-                        "有些吃力" if session.game_state.fatigue >= 50 else
-                        "略显疲乏" if session.game_state.fatigue >= 25 else
-                        "精神尚可"
-                    ),
                 },
                 player_reference_materials={
                     "mission": package.public_briefing["mission"],
@@ -705,11 +687,6 @@ class ActionService:
                 "npc_id": opportunity.npc_id,
                 "narrative": turn.dialogue,
             }
-        if turn.attitude_delta > 0 and session.game_state.fatigue >= 25:
-            factor = 0.9 if session.game_state.fatigue < 50 else (
-                0.8 if session.game_state.fatigue < 75 else 0.7
-            )
-            turn = replace(turn, attitude_delta=int(turn.attitude_delta * factor))
         return {
             "kind": "free_text",
             "rule": rule,
@@ -752,8 +729,6 @@ class ActionService:
                 raise ActionUnavailableError("该行动已达到今日次数上限")
         if rule.half_day and state.half_day_action_used:
             raise ActionUnavailableError("今日半日行程已经占用")
-        if rule.hard_force and state.fatigue >= 75:
-            raise ActionUnavailableError("当前状态不能执行强制手段")
         if rule.precondition_flags_any and not any(
             flag in session.flags for flag in rule.precondition_flags_any
         ):
@@ -777,7 +752,6 @@ class ActionService:
         if draft["kind"] in {
             "tool", "resource_action", "conversation_start", "free_text", "input_rejected",
             "conversation_end",
-            "overtime",
         }:
             rule: ActionRule | None = draft.get("rule")
             if draft["kind"] in {"tool", "resource_action"} or (
@@ -1051,19 +1025,6 @@ class ActionService:
                 log["conversation_id"] = draft["conversation_id"]
                 log["ended_by"] = "player"
                 log["completion_status"] = draft["completion_status"]
-            elif draft["kind"] == "overtime":
-                state = session.game_state
-                session.game_state = replace(
-                    state,
-                    action_points=state.action_points + draft["points"],
-                    overtime_points_today=draft["points"],
-                    overtime_used_today=True,
-                    chapter_overtime_count=state.chapter_overtime_count + 1,
-                )
-                log.update({
-                    "type": "overtime_requested",
-                    "points": draft["points"],
-                })
             session.logs.append(log)
             if (
                 opportunity is not None
@@ -1485,7 +1446,6 @@ class ActionService:
             "budget_remaining": session.game_state.budget_remaining,
             "signed_households": session.game_state.signed_households,
             "reported_signed_households": session.game_state.reported_signed_households,
-            "chapter_overtime_count": session.game_state.chapter_overtime_count,
         }
 
     @staticmethod

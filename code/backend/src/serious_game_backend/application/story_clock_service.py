@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from serious_game_backend.application.event_service import EventService
-from serious_game_backend.application.fatigue import action_point_cap_for, settle_fatigue
 from serious_game_backend.domain.enums import SessionStatus
 from serious_game_backend.domain.errors import DecisionRequiredError, SessionEndedError
 from serious_game_backend.domain.game_session import GameSession
@@ -29,9 +28,6 @@ class StoryClockService:
                 story_day=90,
                 days_left=0,
                 action_point_cap=state.daily_action_point_cap,
-                fatigue=state.fatigue,
-                consecutive_full_load_days=state.consecutive_full_load_days,
-                chapter_overtime_count=state.chapter_overtime_count,
             )
             session.status = SessionStatus.ENDED
             session.logs.append({
@@ -44,26 +40,10 @@ class StoryClockService:
         next_day = state.story_day + 1
         next_days_left = max(0, state.days_left - 1)
         chapter_transition = package.chapter_for(next_day) != package.chapter_for(state.story_day)
-        fatigue = settle_fatigue(
-            current=state.fatigue,
-            points_spent=state.points_spent_today,
-            overtime_used=state.overtime_used_today,
-            overtime_points=state.overtime_points_today,
-            chapter_transition=chapter_transition,
-        )
-        if state.points_spent_today >= 8:
-            consecutive = state.consecutive_full_load_days + 1
-        else:
-            consecutive = 0
-        overtime_count = 0 if chapter_transition else state.chapter_overtime_count
-        cap = action_point_cap_for(fatigue, consecutive)
         session.game_state = state.reset_for_day(
             story_day=next_day,
             days_left=next_days_left,
-            action_point_cap=cap,
-            fatigue=fatigue,
-            consecutive_full_load_days=consecutive,
-            chapter_overtime_count=overtime_count,
+            action_point_cap=8,
         )
         if chapter_transition:
             for npc_id, npc_state in tuple(session.npc_states.items()):

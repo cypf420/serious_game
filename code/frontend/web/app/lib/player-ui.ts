@@ -107,7 +107,7 @@ export function conversationContractWorkflow(
         && allConfirmedBatchIds.has(String(item.batch_id || ""))
       )
     )
-      && !["signed", "rejected"].includes(String(item.status || "")),
+      && String(item.status || "") !== "signed",
   );
   return contract ? { proposal: null, contract } : null;
 }
@@ -342,8 +342,25 @@ export function reviewEndingView(value: PlayerRecord | null | undefined): {
 const INTERNAL_PREFIX = /^\s*(?:(?:DP|BEAT|EV|CH|NPC)[A-Z0-9_-]+\s*[·:：\u2014-]\s*)/i;
 const INTERNAL_BRACKET = /[【\[](?:突发[·:：-])?(?:(?:DP|BEAT|EV|CH|NPC)[A-Z0-9_-]+)[】\]]\s*/gi;
 
+function normalizeDialogueQuotes(text: string): string {
+  if (!/[「」『』]/.test(text)) return text;
+  const closing: string[] = [];
+  return text.replace(/[「」『』“”‘’]/g, (mark: string, offset: number) => {
+    if (mark === "’" && /[A-Za-z]/.test(text[offset - 1] || "") && /[A-Za-z]/.test(text[offset + 1] || "")) return mark;
+    if (/[「『“‘]/.test(mark)) {
+      const single = closing.length ? closing.at(-1) === "”" : mark === "‘";
+      closing.push(single ? "’" : "”");
+      return single ? "‘" : "“";
+    }
+    return closing.pop() || (mark === "’" ? "’" : "”");
+  });
+}
+
 export function toPlayerText(value: unknown, fallback = ""): string {
-  return String(value ?? fallback)
+  return normalizeDialogueQuotes(String(value ?? fallback))
+    // Older saved feeds may contain a full stop appended after a complete
+    // quoted sentence. Keep the sentence's own punctuation and closing quotes.
+    .replace(/([。！？…][”’]+)[ \t\u3000]*。+/gu, "$1")
     .replace(INTERNAL_PREFIX, "")
     .replace(INTERNAL_BRACKET, "")
     .replace(/\bD(\d{1,2})\b/g, "第$1日")
@@ -508,6 +525,7 @@ export function governanceDisplayTitle(
   const mapTitle = action?.map_entry_id && action?.title;
   if (typeof mapTitle === "string" && mapTitle.trim()) return mapTitle.trim();
   const variantId = String(action?.variant_id || "");
+  if (variantId && typeof action?.name === "string" && action.name.trim()) return action.name.trim();
   const actionId = String(action?.action_id || action?.action_kind || "");
   const targetKind = String(action?.target_kind || "");
   const targetIds = [
@@ -528,6 +546,9 @@ export function governanceActionButtonLabel(
 ): string {
   const variantId = String(action?.variant_id || "");
   const actionId = String(action?.action_id || action?.action_kind || "");
+  if (variantId === "public_hearing") return "发起听证";
+  if (variantId === "clan_leader_campaign") return "发起议事";
+  if (variantId === "collect_blood_lead_report") return "调取材料";
   if (actionId === "inspect_archives") return "开始查阅";
   if (actionId === "leadership_meeting") return "发起会议";
   if (actionId === "household_visit") return "开始走访";
@@ -540,7 +561,7 @@ export function governanceActionProgressLabels(
   action: PlayerRecord | null | undefined,
   fallback: string,
 ): { footer: string; task: string } {
-  const title = governanceActionTitle(action, fallback);
+  const title = governanceDisplayTitle(action, fallback);
   return {
     footer: `${title}进行中`,
     task: `完成正在进行的${title}`,

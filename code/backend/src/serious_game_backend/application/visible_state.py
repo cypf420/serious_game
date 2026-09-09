@@ -5,6 +5,7 @@ from __future__ import annotations
 from serious_game_backend.domain.game_session import GameSession
 from serious_game_backend.domain.script_package import MetricBand, ScriptPackage
 from serious_game_backend.application.npc_demand_service import NPCDemandService
+from serious_game_backend.application.story_flow_service import StoryFlowService
 from serious_game_backend.application.progress_broadcast_policy import (
     progress_broadcast,
 )
@@ -36,31 +37,33 @@ class VisibleStateProjector:
             for key in VISIBLE_INDICATORS
         }
         pending = None
-        if session.pending_decision is not None:
-            input_schema = dict(session.pending_decision.input_schema or {})
-            labels = STRUCTURED_DECISION_LABELS.get(session.pending_decision.decision_id)
+        current_pending = StoryFlowService.current_pending_decision(session, package)
+        if current_pending is not None:
+            input_schema = dict(current_pending.input_schema or {})
+            labels = STRUCTURED_DECISION_LABELS.get(current_pending.decision_id)
             if labels:
                 input_schema["labels"] = labels
             pending = {
-                "event_instance_id": session.pending_decision.event_instance_id,
-                "decision_id": session.pending_decision.decision_id,
-                "option_ids": list(session.pending_decision.option_ids),
+                "event_instance_id": current_pending.event_instance_id,
+                "decision_id": current_pending.decision_id,
+                "option_ids": list(current_pending.option_ids),
                 "options": [
                     {
                         "option_id": item.option_id,
                         "text": item.text,
                         "available": item.available,
                         "unavailable_reason": item.unavailable_reason,
+                        "unlock_requirements": list(item.unlock_requirements),
                     }
-                    for item in session.pending_decision.options
+                    for item in current_pending.options
                 ],
-                "title": session.pending_decision.visible_title,
-                "text": session.pending_decision.visible_text,
-                "scene_id": session.pending_decision.scene_id,
-                "input_kind": session.pending_decision.input_kind,
+                "title": current_pending.visible_title,
+                "text": current_pending.visible_text,
+                "scene_id": current_pending.scene_id,
+                "input_kind": current_pending.input_kind,
                 "input_schema": input_schema or None,
                 "presentation_entry_id": (
-                    session.pending_decision.presentation_entry_id
+                    current_pending.presentation_entry_id
                 ),
             }
         return {
@@ -87,15 +90,6 @@ class VisibleStateProjector:
                 "action_points": {
                     "remaining": state.action_points,
                     "daily_cap": state.daily_action_point_cap,
-                    "overtime_available": (
-                        state.action_points == 0
-                        and not state.overtime_used_today
-                        and state.chapter_overtime_count < 3
-                        and state.fatigue < 75
-                    ),
-                    "chapter_overtime_remaining": max(
-                        0, 3 - state.chapter_overtime_count
-                    ),
                 },
                 "signed_households": {
                     "signed": state.signed_households,
@@ -110,9 +104,6 @@ class VisibleStateProjector:
                     "paid": state.budget_paid,
                     "precoord_suspense": state.budget_precoord_suspense,
                     "unit": state.budget_unit,
-                },
-                "fatigue": {
-                    "label": self._fatigue_label(state.fatigue),
                 },
             },
             "indicators": indicators,
@@ -202,12 +193,3 @@ class VisibleStateProjector:
             raise ValueError(f"visible metric value {value} has no unique band")
         return matches[0]
 
-    @staticmethod
-    def _fatigue_label(value: int) -> str:
-        if value >= 75:
-            return "撑不住了"
-        if value >= 50:
-            return "有些吃力"
-        if value >= 25:
-            return "略显疲乏"
-        return "精神尚可"

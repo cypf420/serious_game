@@ -263,6 +263,7 @@ class ContractBatchConfirmRequest(BaseModel):
 class ContractTermsRequest(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
     state_version: int = Field(ge=1)
+    acknowledge_legacy_text: bool = False
     policy_document_id: str = Field(min_length=1, max_length=128)
     cash_amount: int = Field(ge=0, le=8000)
     budget_envelope: str = Field(min_length=1, max_length=128)
@@ -270,9 +271,9 @@ class ContractTermsRequest(BaseModel):
     service_allocations: dict[str, int] = Field(default_factory=dict)
     payment_day: int = Field(ge=1, le=90)
     move_out_day: int = Field(ge=1, le=90)
-    housing_delivery_day: int = Field(ge=1, le=90)
+    housing_delivery_day: int | None = Field(default=None, ge=1, le=90)
     transition_months: int = Field(ge=0, le=12)
-    public_window_reward: bool = False
+    public_window_reward: bool | None = None
     approval_document_ids: list[str] = Field(default_factory=list, max_length=16)
     authorization_confirmed: bool = False
     real_unit_viewed: bool = False
@@ -281,7 +282,7 @@ class ContractTermsRequest(BaseModel):
     prior_payment_verified: bool = False
 
     def term_sheet(self) -> dict:
-        return self.model_dump(exclude={"state_version"})
+        return self.model_dump(exclude={"state_version", "acknowledge_legacy_text"})
 
 
 class ContractEditRequest(BaseModel):
@@ -293,6 +294,7 @@ class ContractEditRequest(BaseModel):
 class ContractStateRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     state_version: int = Field(ge=1)
+    expected_contract_version: int | None = Field(default=None, ge=1)
 
 
 class ContractSignRequest(ContractStateRequest):

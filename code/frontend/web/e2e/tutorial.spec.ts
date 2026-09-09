@@ -106,13 +106,20 @@ async function guideForm(page: Page, variant: string) {
 }
 function gameplayWrites(result: Awaited<ReturnType<typeof fixture>>) { return result.writes.filter(item => item.path !== "/api/game/session"); }
 
-test("new game invites six-step basic tour, skip/replay/next do not write game state", async ({ page }) => {
+test("new game invites eight-step basic tour, skip/replay/next do not write game state", async ({ page }) => {
   const result = await fixture(page);
   await enter(page);
+  await expect(page.getByRole("complementary", { name: "游戏导航" }).locator("small")).toHaveCount(0);
   await page.getByRole("button", { name: "开始赴任指南" }).click();
   for (let index = 0; index < BASIC_TUTORIAL.steps.length; index++) {
     await expect(card(page).getByRole("heading", { name: BASIC_TUTORIAL.steps[index].title, exact: true })).toBeVisible();
-    await expect(card(page).locator(".tutorial-step-count")).toHaveText(`第 ${index + 1} / 6 步`);
+    await expect(card(page).locator(".tutorial-step-count")).toHaveText(`第 ${index + 1} / 8 步`);
+    if (BASIC_TUTORIAL.steps[index].id === "advance-signing") {
+      await expect(target(page, "advance-signing")).toHaveText("推进签约");
+      await expect(card(page)).toContainText("准备逐户合同");
+      await mkdir(shotDir, { recursive: true });
+      await page.screenshot({ path: `${shotDir}/advance-signing-guide.png` });
+    }
     if (index < BASIC_TUTORIAL.steps.length - 1) await next(page);
   }
   await card(page).getByRole("button", { name: "完成本节" }).click();
@@ -129,7 +136,7 @@ test("paused basic chapter resumes its saved step after reload without inviting 
   const result = await fixture(page);
   await enter(page);
   await page.getByRole("button", { name: "开始赴任指南" }).click();
-  await next(page); await next(page);
+  await next(page); await next(page); await next(page);
   await expect(card(page).getByRole("heading", { name: "阅读与推进" })).toBeVisible();
   await card(page).getByRole("button", { name: "暂停，稍后继续" }).click();
   await enter(page, "load");
@@ -137,7 +144,7 @@ test("paused basic chapter resumes its saved step after reload without inviting 
   await page.getByRole("button", { name: "赴任指南", exact: true }).click();
   await page.getByRole("button", { name: "继续上次学习" }).click();
   await expect(card(page).getByRole("heading", { name: "阅读与推进" })).toBeVisible();
-  await expect(card(page).locator(".tutorial-step-count")).toHaveText("第 3 / 6 步");
+  await expect(card(page).locator(".tutorial-step-count")).toHaveText("第 4 / 8 步");
   expect(gameplayWrites(result)).toEqual([]);
   expect(result.errors).toEqual([]);
 });
@@ -194,12 +201,7 @@ test("all nine actual action cards have individual help and current cost details
     await page.screenshot({ path: `${shotDir}/action-${id}-1920.png` });
     await card(page).getByRole("button", { name: "完成本节" }).click();
   }
-  await page.getByRole("button", { name: "逐项了解" }).click();
-  for (let index = 0; index < 9; index++) {
-    await expect(card(page).locator(".tutorial-step-count")).toHaveText(`第 ${index + 1} / 9 步`);
-    if (index < 8) await next(page);
-  }
-  await card(page).getByRole("button", { name: "完成本节" }).click();
+  await expect(page.locator(".tutorial-action-intro")).toHaveCount(0);
   await target(page, "nav-scene").click();
   await page.getByRole("button", { name: "赴任指南", exact: true }).click();
   await page.getByRole("dialog", { name: "赴任指南目录" }).getByRole("button", { name: /^现场走访/ }).click();
@@ -223,20 +225,18 @@ test("unavailable action help gives blocking reason; unreturned action never ent
   expect(gameplayWrites(result)).toEqual([]);
 });
 
-test("dismissed action introductions stay quiet until a newly returned public action appears", async ({ page }) => {
+test("action intro card stays removed while individual guides remain available", async ({ page }) => {
   const result = await fixture(page, { hidden: true });
   await enter(page);
   await page.getByRole("complementary", { name: "赴任指南邀请" }).getByRole("button", { name: "稍后再看" }).click();
   await target(page, "nav-actions").click();
   await expect(page.locator(".canonical-actions [data-variant-id]")).toHaveCount(8);
-  await page.locator(".tutorial-action-intro").getByRole("button", { name: "稍后再看" }).click();
-  await target(page, "nav-scene").click(); await target(page, "nav-actions").click();
-  await expect(page.locator(".tutorial-action-intro")).toContainText("随时重看当前可用行动");
-  await expect(page.locator(".tutorial-action-intro").getByRole("button", { name: "稍后再看" })).toHaveCount(0);
+  await expect(page.locator(".tutorial-action-intro")).toHaveCount(0);
   result.revealNewAction();
   await target(page, "nav-scene").click(); await target(page, "nav-actions").click();
   await expect(page.locator(".canonical-actions [data-variant-id]")).toHaveCount(9);
-  await expect(page.locator(".tutorial-action-intro")).toContainText("有 1 项可用行动尚未介绍");
+  await expect(page.locator(".tutorial-action-intro")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "了解此行动", exact: true })).toHaveCount(9);
   expect(gameplayWrites(result)).toEqual([]);
   expect(result.errors).toEqual([]);
 });
@@ -272,13 +272,13 @@ test("actual form validation blocks next and Enter; finish focuses submit; faile
   await target(page, "form-submit").click();
   await expect(page.locator(".governance-action-form .form-notice")).toContainText("游戏服务暂时没有响应");
   await expect(target(page, "form-topic").locator("textarea")).toHaveValue("核实搬迁安排");
-  await expect(page.getByText("行动已经发起", { exact: true })).toHaveCount(0);
+  await expect(page.getByText("现场走访已经发起", { exact: true })).toHaveCount(0);
   expect(gameplayWrites(result)).toHaveLength(1);
   expect(gameplayWrites(result)[0].body).toMatchObject({ variant_id: "field_visit", location_id: "county", target_ids: ["npc_sun_qiang"], topic: "核实搬迁安排" });
   result.allowWrites();
   await target(page, "form-submit").click();
   await expect(page.locator(".governance-action-form")).toHaveCount(0);
-  await expect(page.getByText("行动已经发起", { exact: true })).toBeVisible();
+  await expect(page.getByText("现场走访已经发起", { exact: true })).toBeVisible();
   expect(gameplayWrites(result)).toHaveLength(2);
   expect(result.errors).toEqual([]);
 });
@@ -366,7 +366,8 @@ test("spotlight remains on current target during desktop/mobile resize and captu
   const result = await fixture(page);
   await page.setViewportSize({ width: 1920, height: 1080 });
   await enter(page); await page.getByRole("button", { name: "开始赴任指南" }).click();
-  await next(page);
+  await next(page); // 玩法概述 → 今日案头
+  await next(page); // 今日案头 → 状态栏
   await mkdir(shotDir, { recursive: true });
   for (const viewport of [{ width: 1920, height: 1080 }, { width: 1366, height: 768 }, { width: 390, height: 844 }]) {
     await page.setViewportSize(viewport);

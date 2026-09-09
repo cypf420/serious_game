@@ -107,14 +107,13 @@ def test_progress_broadcast_turns_stern_when_governance_is_slipping(package):
         public_trust=35,
         social_stability=30,
         media_pressure=70,
-        fatigue=75,
     )
     session.npc_demand_states["broken_promise"] = {"status": "breached"}
     broadcast = progress_broadcast(session)
     assert broadcast is not None
     assert broadcast["tone"] == "stern"
     assert "会议纪要" in broadcast["message"]
-    assert any("疲惫不能折算" in item for item in broadcast["signals"])
+    assert not any("疲惫" in item for item in broadcast["signals"])
     assert not any("承诺违约" in item for item in broadcast["signals"])
     # Historical manual statuses no longer affect the ten-day assessment.
     session.npc_demand_states.clear()

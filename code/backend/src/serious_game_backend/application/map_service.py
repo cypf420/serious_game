@@ -266,8 +266,6 @@ class MapService:
             return False, "今日次数已用尽"
         if rule.half_day and state.half_day_action_used:
             return False, "今日半日行程已占用"
-        if rule.hard_force and state.fatigue >= 75:
-            return False, "当前身心状态不能执行强制手段"
         if rule.precondition_flags_any and not any(
             flag in session.flags for flag in rule.precondition_flags_any
         ):

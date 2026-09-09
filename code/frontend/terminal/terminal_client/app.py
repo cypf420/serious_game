@@ -1143,7 +1143,9 @@ class TerminalApp:
             key for key in self.CONTRACT_FIELD_LABELS
             if key not in {
                 "contract_id", "household_id", "signatory_name",
-                "policy_document_id",
+                "policy_document_id", "payment_day", "authorization_confirmed",
+                "real_unit_viewed", "ledger_disclosed", "old_case_resolved",
+                "prior_payment_verified",
             }
         ]
         selected = self._select(
@@ -1227,10 +1229,23 @@ class TerminalApp:
         )
         if contract is None:
             raise ValueError("合同不存在；输入 governance 查看合同清单")
+        detail = self.api.get_contract(self._require_session(), contract_id)
+        self.state_version = int(detail["state_version"])
+        contract = detail["contract"]
         if contract["status"] == "signed":
-            self.output(
-                f"该合同已经签署；资源状态：{contract['resource_hold_status']}"
-            )
+            self.output(str(contract.get("contract_text", "")))
+            self.output(f"该合同已经签署；资源状态：{contract['resource_hold_status']}")
+            return
+        legacy_ack = False
+        if contract.get("legacy_draft"):
+            self.output("【旧合同正文，请核对特殊约定】\n" + str(contract.get("contract_text", "")))
+            legacy_ack = self._select(
+                "核对旧约定后，是否按方案重新生成？旧正文将保留。",
+                ["已核对，按方案生成合同"], back_label="返回会谈",
+            ) == 0
+            if not legacy_ack:
+                return
+        elif contract.get("term_sheet") and not self._preview_contract(contract):
             return
         documents = [
             item for item in overview.get("documents", [])
@@ -1281,6 +1296,7 @@ class TerminalApp:
         service_resources = [
             item for item in pools
             if item.get("category") != "housing"
+            and item.get("allocatable_scope") != "npc_demand"
             and int(item.get("available", 0)) > 0
         ]
         housing_index = self._select(
@@ -1298,24 +1314,21 @@ class TerminalApp:
         )
         cash = self._input_contract_integer("核心现金补偿额（万元）")
         day = int(self.state.get("story", {}).get("day", 1))
-        payment_day = self._input_contract_integer(
-            f"付款日（D{day}至D90）"
-        )
+        payment_day = day
+        self.output("现金补偿于签署当日支付。")
         move_out_day = self._input_contract_integer("搬离日")
         delivery_day = self._input_contract_integer("交房日")
         months = self._input_contract_integer("过渡月数（0至12）")
         booleans = {}
         for key, label in (
             ("public_window_reward", "是否适用公开时间窗奖励"),
-            ("authorization_confirmed", "外出户本人授权是否已核验"),
-            ("real_unit_viewed", "签约人是否已看过实房"),
-            ("ledger_disclosed", "逐项测算账是否已公开"),
-            ("old_case_resolved", "历史旧案是否已有书面结果"),
-            ("prior_payment_verified", "既往额外付款是否已核验"),
         ):
-            booleans[key] = self._select(
+            choice = self._select(
                 label, ["是", "否"], back_label="取消拟约"
-            ) == 0
+            )
+            if choice is None:
+                return
+            booleans[key] = choice == 0
         approval_documents = [
             item for item in documents
             if item["document_id"] != policy["document_id"]
@@ -1340,85 +1353,51 @@ class TerminalApp:
             "approval_document_ids": approval_ids,
             **booleans,
         }
+        if legacy_ack:
+            terms["acknowledge_legacy_text"] = True
         while True:
             try:
                 drafted = self.api.set_contract_terms(
-                    self._require_session(),
-                    contract_id,
-                    state_version=self._require_version(),
-                    term_sheet=terms,
+                    self._require_session(), contract_id,
+                    state_version=self._require_version(), term_sheet=terms,
                 )
-                break
+                self.state_version = int(drafted["state_version"])
+                if not self._preview_contract(drafted["contract"]):
+                    return
             except ApiError as exc:
-                if self._is_retryable_contract_audit_error(exc):
-                    if not self._prompt_contract_audit_retry(
-                        exc,
-                        retained_content="当前填写的合同条件",
-                    ):
-                        return
-                    continue
                 if not self._is_editable_contract_error(exc):
                     raise
                 self._render_contract_form_error(exc)
-                if not self._edit_contract_term(
-                    terms,
-                    envelopes=envelopes,
-                    budget_envelopes=resources["budget_envelopes"],
-                    housing=housing,
-                    service_resources=service_resources,
-                    approval_documents=approval_documents,
-                    resource_names=resource_names,
-                ):
-                    return
-        self.state_version = int(drafted["state_version"])
-        contract = drafted["contract"]
-        while True:
-            self.output(
-                "【合同草案】\n" + str(contract.get("contract_text", ""))
-            )
-            self._render_contract_audit(contract)
-            audit_passed = contract.get("audit_status") == "pass"
-            edit = self._select(
-                "合同专业审校",
-                (
-                    ["审校通过，保持当前文本并送给签约人", "修改完整合同文本"]
-                    if audit_passed
-                    else ["根据以上问题修改完整合同文本"]
-                ),
-                back_label="暂不送审",
-            )
-            if edit is None:
+            if not self._edit_contract_term(
+                terms, envelopes=envelopes,
+                budget_envelopes=resources["budget_envelopes"], housing=housing,
+                service_resources=service_resources,
+                approval_documents=approval_documents, resource_names=resource_names,
+            ):
                 return
-            if audit_passed and edit == 0:
-                break
-            replacement = self._input_multiline_contract()
-            if not replacement:
-                continue
-            while True:
-                try:
-                    edited = self.api.edit_contract_text(
-                        self._require_session(),
-                        contract_id,
-                        state_version=self._require_version(),
-                        text=replacement,
-                    )
-                    break
-                except ApiError as exc:
-                    if not self._is_retryable_contract_audit_error(exc):
-                        raise
-                    if not self._prompt_contract_audit_retry(
-                        exc,
-                        retained_content="刚才输入的完整合同正文",
-                    ):
-                        return
-            self.state_version = int(edited["state_version"])
-            contract = edited["contract"]
-        reviewed = self.api.review_contract(
-            self._require_session(),
-            contract_id,
-            state_version=self._require_version(),
-        )
-        self._handle_contract_review_result(reviewed)
+
+    def _preview_contract(self, contract: dict) -> bool:
+        """Return True only when the player chooses to modify the scheme."""
+        self.output("【合同预览】\n" + str(contract.get("contract_text", "")))
+        if contract.get("review_reason"):
+            self.output(f"【对方的签约答复 · 方案第{contract.get('review_version', '?')}版】\n"
+                        + str(contract["review_reason"]))
+        can_review = bool(contract.get("can_review"))
+        if not can_review:
+            self.output(str(contract.get("review_blocked_reason") or "请先继续协商或修改方案。"))
+        options = (["提交签约（对方接受后立即生效并扣除资源）"] if can_review else [])
+        options += ["修改方案", "返回会谈继续协商"]
+        choice = self._select("合同办理", options, back_label="返回会谈")
+        if choice is None:
+            return False
+        if can_review and choice == 0:
+            result = self.api.review_contract(
+                self._require_session(), str(contract["contract_id"]),
+                state_version=self._require_version(),
+            )
+            self._handle_contract_review_result(result)
+            return False
+        return choice == (1 if can_review else 0)
 
     def _handle_contract_review_result(self, reviewed: dict) -> bool:
         self.state_version = int(reviewed["state_version"])

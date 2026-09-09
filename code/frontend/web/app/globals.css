@@ -1123,3 +1123,5 @@ footer { grid-column: 1 / -1; display: flex; align-items: center; justify-conten
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
   .scene-backdrop, .gal-portrait, .gal-dialogue { animation: none !important; transform: none !important; }
 }
+
+.contract-body { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; line-height: 1.8; margin: 0; max-height: 440px; overflow-y: auto; }

@@ -528,7 +528,7 @@ async function completeOneOptionalOpportunity(page: Page, testInfo: TestInfo, ro
   await expect(actionForm).toBeVisible();
   const started = page.waitForResponse(response => response.request().method() === "POST"
     && /\/api\/game\/session\/[^/]+\/governance\/actions$/.test(new URL(response.url()).pathname));
-  await actionForm.getByRole("button", { name: "发起行动", exact: true }).click();
+  await actionForm.locator('[data-tutorial-id="form-submit"]').click();
   expect((await started).ok(), `${String(opportunity.opportunity_id)} must start through its visible entry`).toBe(true);
   const prompt = String(opportunity.opportunity_id) === "opp_03_zhou_kuiyuan_contact"
     ? "请把迁坟的四件事说清楚：择地、择日、起灵和祭祀延续，我会按村里旧例逐项核对。"
@@ -555,7 +555,7 @@ async function satisfyMandatoryOpportunity(page: Page) {
     response.request().method() === "POST"
       && /\/api\/game\/session\/[^/]+\/governance\/actions$/.test(new URL(response.url()).pathname),
   );
-  await actionDialog.getByRole("button", { name: "发起行动", exact: true }).click();
+  await actionDialog.locator('[data-tutorial-id="form-submit"]').click();
   expect((await started).ok(), "mandatory opportunity must start through its canonical action").toBe(true);
   await expect(page.locator("form.conversation-bar textarea")).toBeVisible({ timeout: 60_000 });
   await finishOpenInteraction(page);
@@ -684,7 +684,7 @@ async function signContractsTowardTarget(
     await actionForm.locator("textarea").fill("逐户合同与正式签约");
     const started = page.waitForResponse(response => response.request().method() === "POST"
       && /\/governance\/actions$/.test(new URL(response.url()).pathname));
-    await actionForm.getByRole("button", { name: "发起行动", exact: true }).click();
+    await actionForm.locator('[data-tutorial-id="form-submit"]').click();
     expect((await started).ok(), `contract visit for ${representative} must start`).toBe(true);
     const talk = page.locator("form.conversation-bar textarea");
     await expect(talk).toBeVisible();
@@ -716,7 +716,7 @@ async function signContractsTowardTarget(
       await fillContractTerms(termsForm, terms!, storyDay);
       const drafted = page.waitForResponse(response => response.request().method() === "PUT"
         && /\/governance\/contracts\/[^/]+\/terms$/.test(new URL(response.url()).pathname));
-      await termsForm.getByRole("button", { name: "核验条款并生成合同", exact: true }).click();
+      await termsForm.getByRole("button", { name: "保存方案并预览合同", exact: true }).click();
       expect((await drafted).ok(), `${householdId} lawful terms must pass`).toBe(true);
       const review = contractDialog.getByRole("button", { name: "提交签约", exact: true });
       await expect(review).toBeEnabled({ timeout: 600_000 });
@@ -1019,7 +1019,7 @@ async function exerciseMapAction(
   if (await targets.count()) await targets.first().check();
   const started = page.waitForResponse(response => response.request().method() === "POST"
     && /\/governance\/actions$/.test(new URL(response.url()).pathname));
-  await form.getByRole("button", { name: "发起行动", exact: true }).click();
+  await form.locator('[data-tutorial-id="form-submit"]').click();
   expect((await started).ok(), "map action must start through its locked player-visible entry").toBe(true);
   await recordVisualState(page, testInfo, routeId, "map-action", "location-locked");
   await finishOpenInteraction(page, "请只围绕这个地点当前已经公开的事实、程序风险和下一步安排作答。");

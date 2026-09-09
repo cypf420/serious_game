@@ -885,7 +885,9 @@ test("keeps the visible conversation loop and removes the old terminal surface",
   assert.match(source, /末位表态并形成决定/);
   assert.match(source, /指定分管或牵头领导/);
   assert.match(source, /lead_npc_id: requiresLead \? leadNpcId : null/);
-  assert.match(source, /普通干部、村民和外部人员不能进入班子会议/);
+  const { actionPresentation } = await import("../app/lib/action-presentation.ts");
+  assert.match(actionPresentation({ variant_id: "convene_leadership_meeting" }).participantHelp, /领导干部/);
+  assert.doesNotMatch(actionPresentation({ variant_id: "public_hearing" }).participantHelp, /只有领导|普通干部、村民和外部人员不能/);
   assert.match(source, /resource_mode: "authorization_ceiling"/);
   assert.match(source, /governance-inline-notice/);
   assert.match(source, /api\.archiveDetail\(sessionId, archiveId\)/);
@@ -898,7 +900,9 @@ test("keeps the visible conversation loop and removes the old terminal surface",
   assert.match(source, /if \(\(error as ApiError\)\?\.status !== 401\)/);
   assert.match(source, /clearAuthenticatedClientState\(\);[\s\S]*setAuthOpen\(true\)/);
   assert.match(source, /function GovernanceRecordDetail/);
-  assert.match(source, /document \? "查看决议" : "查看纪要"/);
+  assert.equal(actionPresentation({ variant_id: "convene_leadership_meeting" }).result, "会议纪要");
+  assert.equal(actionPresentation({ variant_id: "public_hearing" }).result, "听证记录");
+  assert.equal(actionPresentation({ variant_id: "clan_leader_campaign" }).result, "议事记录");
   assert.match(source, /文书 Agent 审校/);
   assert.match(source, /自动修订记录/);
   assert.match(source, /文书审校通过后才能会签/);
@@ -930,7 +934,7 @@ test("keeps the visible conversation loop and removes the old terminal surface",
   assert.doesNotMatch(source, /placeholder=.*输入命令/);
   assert.doesNotMatch(source, /aria-label="终端命令"/);
   assert.doesNotMatch(source, /item\.glyph/);
-  assert.match(source, /卷宗 \{chineseIndex\(index\)\}/);
+  assert.doesNotMatch(source, /<small>卷宗 \{chineseIndex\(index\)\}<\/small>/);
   const images = source.split("\n").filter(line => line.includes("<Image"));
   assert.equal(images.length, 2);
   for (const image of images) {

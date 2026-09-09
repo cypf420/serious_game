@@ -33,7 +33,10 @@ def player_visible_sentence(text: str) -> str:
         return value
     if value.endswith(_SOFT_TERMINAL):
         value = value[:-1].rstrip() + "。"
-    elif not value.endswith(_TERMINAL):
+    # A complete utterance keeps its terminal mark inside the closing quotes.
+    # Ignore closing quotes only for this check: quoted phrases without their
+    # own terminal mark still need an outer full stop (这叫“先核实”。).
+    elif not value.rstrip('”’」』').endswith(_TERMINAL):
         value += "。"
     validate_player_visible_text(value)
     return value

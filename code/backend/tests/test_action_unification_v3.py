@@ -693,12 +693,9 @@ class GameplayV3PlayerRegressionTests(unittest.TestCase):
         finished = self._complete_wu_governance_visit()
 
         latest_view = None
-        for action_points, overtime_used in (
-            (8, False), (7, False), (0, False), (0, True),
-        ):
+        for action_points in (8, 7, 0):
             with self.subTest(
                 action_points=action_points,
-                overtime_used=overtime_used,
             ):
                 stored = self.runtime.sessions.get_owned(
                     self.session_id, self.account_id
@@ -707,8 +704,6 @@ class GameplayV3PlayerRegressionTests(unittest.TestCase):
                 stored.game_state = replace(
                     stored.game_state,
                     action_points=action_points,
-                    overtime_used_today=overtime_used,
-                    overtime_points_today=1 if overtime_used else 0,
                 )
                 self.runtime.sessions.save(
                     stored, expected_version=stored.state_version
