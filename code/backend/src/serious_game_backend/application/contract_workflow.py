@@ -38,6 +38,9 @@ def render_contract(session, package, contract, terms: dict) -> str:
              f"家庭登记号：{contract.household_id}", f"依据补偿方案：{policy.title}", "",
              f"一、现金补偿：{terms['cash_amount']}万元，签署当日付款。",
              f"二、搬离日期：第{terms['move_out_day']}日。"]
+    automatic = terms.get("automatic_arrangement")
+    if automatic:
+        lines.insert(6, f"其中：基础补偿{automatic['base_cash_amount']}万元，自动计入过渡补偿{automatic['transition_cash_amount']}万元。")
     housing = selected_housing(package, terms)
     if housing:
         lines.append(f"三、安置住房：{housing['name']}，共1套；交房日期：第{terms['housing_delivery_day']}日。")

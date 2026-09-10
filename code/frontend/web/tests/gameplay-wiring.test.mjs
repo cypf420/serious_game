@@ -56,7 +56,8 @@ test("people cards show one compact metric projection and only confirmed relatio
     readFile(new URL("../app/lib/player-ui.ts", import.meta.url), "utf8"),
   ]);
   assert.doesNotMatch(shell, /relationship-reasons/);
-  assert.doesNotMatch(shell, /待核实/);
+  const peoplePanel = shell.slice(shell.indexOf("function OpportunityPanel("), shell.indexOf("function ReviewPanel("));
+  assert.doesNotMatch(peoplePanel, /relationship-reasons|关系待核实/);
   assert.match(playerUi, /visibility !== "confirmed"/);
 });
 
@@ -78,8 +79,8 @@ test("signs an accepted household contract without a second confirmation step", 
   assert.match(shell, /activeContractWorkflow/);
   assert.match(shell, /openContractDetail\(activeContractWorkflow\.contract\)/);
   assert.match(shell, /确认逐户合同提议/);
-  assert.match(shell, /核验条款并生成合同/);
-  assert.match(shell, /保存正文并重新审校/);
+  assert.match(shell, /保存方案并预览合同/);
+  assert.doesNotMatch(shell, /保存正文并重新审校/);
   assert.match(shell, /提交签约/);
   assert.doesNotMatch(shell, /正式签署并入账/);
   assert.doesNotMatch(shell, /确认本人签署/);
@@ -98,16 +99,9 @@ test("renders the authoritative final ending in the review panel", async () => {
   assert.match(shell, /ending\.appendices/);
 });
 
-test("surfaces the backend overtime mechanism when daily energy reaches zero", async () => {
+test("retired overtime and fatigue cannot be submitted from the frontend", async () => {
   const shell = await readFile(shellPath, "utf8");
-  assert.match(shell, /ledger\.action_points\.overtime_available/);
-  assert.match(shell, /ledger\.action_points\.chapter_overtime_remaining/);
-  assert.match(shell, /input_mode: "overtime"/);
-  assert.match(shell, /parameters: \{ points \}/);
-  assert.match(shell, /申请加班/);
-  assert.match(shell, /fatigue\.label/);
-  assert.match(shell, /新增精力会增加日终疲惫/);
-  assert.doesNotMatch(shell, /active_rest:\s*true/);
+  assert.doesNotMatch(shell, /input_mode: "overtime"|申请加班|fatigue\.label|chapter_overtime_remaining/);
 });
 
 test("surfaces required model consent before NPC gameplay", async () => {
@@ -123,13 +117,14 @@ test("surfaces required model consent before NPC gameplay", async () => {
   assert.match(shell, /撤回授权/);
 });
 
-test("uses in-game confirmation panels instead of browser-native blocking dialogs", async () => {
+test("day-end uses an in-game confirmation panel", async () => {
   const shell = await readFile(shellPath, "utf8");
-  assert.doesNotMatch(shell, /window\.confirm/);
+  const endDay = shell.slice(shell.indexOf("function confirmEndDay"), shell.indexOf("function confirmEndDay") + 1000);
+  assert.ok(endDay.includes("confirmLabel"));
+  assert.doesNotMatch(endDay, /window\.confirm/);
   assert.match(shell, /结束今日工作/);
   assert.match(shell, /进入夜间结算/);
-  assert.doesNotMatch(shell, /载入关键节点/);
-  assert.doesNotMatch(shell, /覆盖已有关键节点/);
+  assert.match(shell, /confirmLabel: "进入夜间结算"/);
 });
 
 test("routes retired saves to review and disables unavailable locked content", async () => {

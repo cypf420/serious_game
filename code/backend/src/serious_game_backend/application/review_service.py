@@ -127,7 +127,7 @@ class ReviewService:
                 for fact_id in sorted(session.known_fact_ids)
                 if fact_id in package.facts
             ],
-            "ending": session.ending_result,
+            "ending": state["ending"],
             "final_visible_state": state if session.ending_result else None,
             "untriggered_paths": {
                 "decision_ids": [

@@ -71,7 +71,7 @@ for (const [width, initialStage] of [[1366, "preview"], [390, "preview"], [1366,
   if (initialStage !== 'legacy') await dialog.getByRole('button', { name: '修改方案', exact: true }).click();
   await expect(dialog.locator('[name="housing_delivery_day"]')).toHaveCount(0);
   await dialog.locator('[name="housing_resource_id"]').selectOption('housing_d1_140');
-  await expect(dialog.locator('[name="housing_delivery_day"]')).toBeVisible();
+  await expect(dialog.locator('[name="housing_delivery_day"], [name="move_out_day"], [name="transition_months"], [name="budget_envelope"]')).toHaveCount(0);
   await dialog.locator('[name="housing_resource_id"]').selectOption('');
   await expect(dialog.locator('[name="housing_delivery_day"]')).toHaveCount(0);
   if (initialStage !== 'legacy') await guide('填写合同方案', 5);

@@ -11,6 +11,7 @@ from tests.test_doubles import build_test_container as build_container
 from serious_game_backend.config import Settings
 from serious_game_backend.application.contract_accounting import migrate_contract_accounting, ACCOUNTING_VERSION
 from serious_game_backend.domain.errors import ActionUnavailableError
+from serious_game_backend.domain.llm import GovernanceLLMResult
 from serious_game_backend.domain.gameplay_governance import HouseholdContract, ResourceReservation
 
 class ContractAccountingTests(unittest.TestCase):
@@ -86,8 +87,10 @@ class ContractAccountingTests(unittest.TestCase):
     def test_explicit_npc_rejection_does_not_spend(self):
         self.draft(); before=self.session()
         # Unbounded model refusals no longer veto an eligible scheme.
-        with patch.object(self.runtime.gameplay_governance._gateway,'run_governance_task',side_effect=AssertionError('formal signing must not invoke model')):
+        with patch.object(self.runtime.gameplay_governance._gateway,'run_governance_task',return_value=GovernanceLLMResult(task='review_contract', data={'decision':'reject','reason':'房子和补偿都安排到了，我同意。'},model_id='test-ai')) as call:
             response=self.review()
+        self.assertEqual(call.call_count, 1)
+        self.assertEqual(call.call_args.args[0].payload['confirmed_decision'], 'accept')
         after=self.session()
         self.assertEqual('signed',response['contract']['status'])
         self.assertEqual(before.game_state.budget_remaining-self.cash,after.game_state.budget_remaining)

@@ -5,6 +5,7 @@ from __future__ import annotations
 from serious_game_backend.domain.game_session import GameSession
 from serious_game_backend.domain.script_package import MetricBand, ScriptPackage
 from serious_game_backend.application.npc_demand_service import NPCDemandService
+from serious_game_backend.application.ending_service import EndingService
 from serious_game_backend.application.story_flow_service import StoryFlowService
 from serious_game_backend.application.progress_broadcast_policy import (
     progress_broadcast,
@@ -92,7 +93,7 @@ class VisibleStateProjector:
                     "daily_cap": state.daily_action_point_cap,
                 },
                 "signed_households": {
-                    "signed": state.signed_households,
+                    "signed": session.audited_signed_households(),
                     "total": state.total_households,
                     "batches": session.signing_batch_summary(),
                 },
@@ -183,7 +184,7 @@ class VisibleStateProjector:
                 }
                 for item in session.visible_events[-20:]
             ],
-            "ending": session.ending_result,
+            "ending": EndingService.project_result(session),
         }
 
     @staticmethod

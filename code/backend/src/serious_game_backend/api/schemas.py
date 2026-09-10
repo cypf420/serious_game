@@ -266,13 +266,14 @@ class ContractTermsRequest(BaseModel):
     acknowledge_legacy_text: bool = False
     policy_document_id: str = Field(min_length=1, max_length=128)
     cash_amount: int = Field(ge=0, le=8000)
-    budget_envelope: str = Field(min_length=1, max_length=128)
+    auto_arrange: bool = False
+    budget_envelope: str = Field(default="property_land", min_length=1, max_length=128)
     housing_resource_id: str | None = Field(default=None, max_length=128)
     service_allocations: dict[str, int] = Field(default_factory=dict)
-    payment_day: int = Field(ge=1, le=90)
-    move_out_day: int = Field(ge=1, le=90)
+    payment_day: int = Field(default=1, ge=1, le=90)
+    move_out_day: int = Field(default=1, ge=1, le=90)
     housing_delivery_day: int | None = Field(default=None, ge=1, le=90)
-    transition_months: int = Field(ge=0, le=12)
+    transition_months: int = Field(default=0, ge=0, le=12)
     public_window_reward: bool | None = None
     approval_document_ids: list[str] = Field(default_factory=list, max_length=16)
     authorization_confirmed: bool = False

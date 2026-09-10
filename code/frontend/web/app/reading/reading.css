@@ -1,0 +1,13 @@
+.paged-reading { position:relative; display:flex; flex-direction:column; min-height:0; gap:12px; }
+.reading-viewport { min-height:0; height:clamp(140px,30dvh,320px); overflow:auto; flex:1 1 auto; }
+.reading-text { white-space:pre-wrap; overflow-wrap:anywhere; font:inherit; line-height:1.85; }
+.reading-measure { position:absolute; top:0; left:0; height:auto; visibility:hidden; pointer-events:none; z-index:-1; }
+.reading-controls { flex:0 0 auto; display:flex; align-items:center; justify-content:flex-end; flex-wrap:wrap; gap:10px; }
+.reading-controls button { cursor:pointer; color:inherit; background:transparent; border:1px solid #a88b5c; padding:8px 13px; font:inherit; }
+.reading-controls button:disabled { opacity:.4; cursor:default; }
+.reading-controls span { font-size:12px; font-variant-numeric:tabular-nums; }
+.reading-controls button:focus-visible,.reading-viewport:focus-visible { outline:2px solid #ad6944; outline-offset:2px; }
+.ending-reading .reading-viewport { height:0; }
+.history-drawer .paged-reading { margin-top:8px; }
+.gal-dialogue > p,.review-panel p,.ending-review-text { white-space:pre-wrap; }
+@media(max-width:640px) { .reading-controls { gap:6px; } .reading-controls button { padding:7px 10px; } }

@@ -10,12 +10,12 @@ const records = (value: unknown): TutorialRecord[] => Array.isArray(value)
 
 export const QUICK_START = [
   { title: "阅读并决定", body: "先读当前叙事，处理需要你决定的事项。" },
-  { title: "安排工作与会谈", body: "从行动安排工作，或从人物进入会谈，核对当前条件与消耗。" },
+  { title: "安排工作与会谈", body: "从行动安排工作，或从人物进入会谈。推进签约需另行逐户办理，剧情不会自动完成签约。" },
   { title: "结束今天", body: "完成当天安排后自行结束一天，查看随后发生的事件与工作结果。" },
 ];
 
 export const BASIC_TUTORIAL: TutorialDefinition = {
-  id: "basic", revision: 3, title: "认识工作台",
+  id: "basic", revision: 4, title: "认识工作台",
   steps: [
     { id: "play-at-your-pace", title: "行动、剧情与存档", body: "自由行动与剧情决策相对独立。行动开放时，可以先自由行动再推进剧情，也可以完成剧情决策后再自由行动；必须当场处理的决定，请按现场提示完成。游戏进度会随每次行动与决定自动保存，无需手动保存。", target: target("today") },
     { id: "today", title: "今日案头", body: "这里汇总今日目标与现场情况。结合当前叙事和必须处理的事项，安排今天的工作。", target: target("today") },
@@ -23,7 +23,7 @@ export const BASIC_TUTORIAL: TutorialDefinition = {
     { id: "narrative-controls", title: "阅读与推进", body: "使用这里的阅读控制查看叙事。出现必须处理的事项时，先完成现场选择，再继续安排工作。", target: target("narrative-controls") },
     { id: "nav-actions", title: "行动：安排工作", body: "这里按办理方式列出当前公开的行动。每张卡片会说明用途、精力消耗和不可用原因；选择要办理的行动后，核对对象与条件，再由你确认发起。", target: target("nav-actions") },
     { id: "nav-opportunities", title: "人物：了解与会谈", body: "这里列出已公开的人物与当前会谈入口。先了解人物状态与说明，再选择当前可以进入的会谈。", target: target("nav-opportunities") },
-    { id: "advance-signing", title: "主动推进签约", body: "点击这里筛选可办理签约的住户或代表，进入会谈了解顾虑，再准备逐户合同。保存方案、预览合同并由本户接受签署后，才计入签约进度。", detail: "打开入口不会直接签约或扣除资源。会谈消耗以当前行动提示为准；本户接受合同后才实际签署，并扣除合同约定的资金、房源与服务。", target: target("advance-signing") },
+    { id: "advance-signing", title: "主动推进签约", body: "推进签约是独立于剧情阅读和决策的自由行动，剧情推进不会自动完成签约。最终实际签约数直接影响结局，但不是唯一判定因素。", detail: "从这里选择住户或代表，会谈后准备逐户合同。只有本户接受并签署才计入进度。打开入口不会直接签约或扣除资源。会谈消耗以当前行动提示为准；本户接受合同后才实际签署，并扣除合同约定的资金、房源与服务。", target: target("advance-signing") },
     { id: "nav-desk", title: "卷宗与线索", body: "卷宗页查看任务与政策；线索页整理已掌握的事实、证据和调查途径。办理记录、档案、会议与文件可到治理页查看。", target: target("nav-desk") },
   ],
 };

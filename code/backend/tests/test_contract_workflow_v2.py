@@ -103,17 +103,17 @@ def test_explanation_then_current_visit_turn_can_resubmit_same_version(game):
     seen = []
     def review(context):
         seen.append(context)
-        return SimpleNamespace(data={'decision': 'explain', 'reason': '我想再聊聊。', 'counteroffer': {}})
+        return SimpleNamespace(model_id="test-ai", data={'decision': 'explain', 'reason': '我想再聊聊。', 'counteroffer': {}})
     with patch.object(game.runtime.gameplay_governance._gateway, 'run_governance_task', side_effect=review):
         first = game.review()
         again = game.review()
-        assert len(seen) == 0
+        assert len(seen) == 1
         assert not again['contract']['can_review']
         s = game.session()
         s.governance_actions[game.action_id].transcript.append({'speaker_type': 'player', 'text': '我们先一起核实搬迁安排。'})
         game.save(s)
         second = game.review()
-    assert len(seen) == 0
+    assert len(seen) == 2
     assert first['contract']['current_version'] == second['contract']['current_version']
     assert second['contract']['review_version'] == second['contract']['current_version']
     assert first['contract']['review_reason'] == second['contract']['review_reason']
@@ -190,10 +190,11 @@ def test_accessible_housing_context_contains_confirmed_attributes(game):
     seen = []
     def review(context):
         seen.append(context)
-        return SimpleNamespace(data={'decision': 'explain', 'reason': '我想去看看。', 'counteroffer': {}})
+        return SimpleNamespace(model_id="test-ai", data={'decision': 'explain', 'reason': '我想去看看。', 'counteroffer': {}})
     with patch.object(game.runtime.gameplay_governance._gateway, 'run_governance_task', side_effect=review):
         game.review()
-    assert not seen
+    assert len(seen) == 1
+    assert seen[0].actor_context["selected_housing"]["attributes"]["accessible"]
     assert game.session().household_contracts[game.cid].status == 'signed'
 
 
@@ -211,7 +212,7 @@ def test_signed_legacy_read_does_not_rewrite_original(game):
 
 def test_representative_visit_receives_current_independent_contract_and_answer(game):
     game.draft()
-    result = SimpleNamespace(data={'decision': 'explain', 'reason': '先说清楚安置安排。', 'counteroffer': {}})
+    result = SimpleNamespace(model_id="test-ai", data={'decision': 'explain', 'reason': '先说清楚安置安排。', 'counteroffer': {}})
     svc = game.runtime.gameplay_governance
     with patch.object(svc._gateway, 'run_governance_task', return_value=result):
         game.review()
@@ -224,7 +225,7 @@ def test_representative_visit_receives_current_independent_contract_and_answer(g
         game.post(f'/governance/actions/{game.action_id}/turn', {'player_text': '请解释这份合同的安置安排。'})
     contracts = seen[0].visible_world_context['own_contracts']
     current = next(c for c in contracts if c['household_id'] == 'ZDS-03')
-    assert '合同已签署' in str(current['reviews'])
+    assert '先说清楚安置安排。' in str(current['reviews'])
     assert '第60日' in current['contract_text']
     assert current['selected_housing']['name']
     assert current['current_version'] == 1

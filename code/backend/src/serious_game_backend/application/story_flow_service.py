@@ -8,6 +8,7 @@ from serious_game_backend.domain.game_session import GameSession
 from serious_game_backend.domain.script_package import ScriptPackage
 from serious_game_backend.domain.story import DecisionOptionDefinition, StoryDayDefinition
 from serious_game_backend.application.player_text_policy import player_visible_sentence
+from serious_game_backend.application.ending_service import EndingService
 
 
 PERMIT_ALREADY_ISSUED_TEXT = (
@@ -191,6 +192,14 @@ class StoryFlowService:
 
     @staticmethod
     def feed_since(session: GameSession, after: int) -> dict:
+        ending = EndingService.project_result(session)
+        ending_text = (
+            f"余波：{ending['sub_ending_title']}\n\n{ending['main_text']}\n\n{ending['sub_text']}"
+            if ending is not None and all(
+                isinstance(ending.get(key), str)
+                for key in ("sub_ending_title", "main_text", "sub_text")
+            ) else None
+        )
         items = []
         seen_content_ids: set[str] = set()
         for item in session.narrative_feed:
@@ -209,7 +218,12 @@ class StoryFlowService:
                     "story_day": item.story_day,
                     "kind": item.kind,
                     "speaker": item.speaker,
-                    "text": item.text,
+                    "text": (
+                        ending_text
+                        if ending_text is not None and item.kind == "ending"
+                        and item.content_instance_id == "ending:final"
+                        else item.text
+                    ),
                     "content_instance_id": item.content_instance_id,
                     "block_id": item.block_id,
                     "beat_id": item.beat_id,

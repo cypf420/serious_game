@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from serious_game_backend.application.character_facts import household_knowledge
-from serious_game_backend.application.contract_requirements import contract_requirement_feedback
 
 from serious_game_backend.application.contract_accounting import (ACCOUNTING_VERSION, CONSUMED_STATUSES, migrate_contract_accounting)
 from serious_game_backend.application.contract_facts import (FACT_KEYS, resolve_contract_facts, record_contract_signatory_contact, conduct_household_viewing)
@@ -1978,9 +1977,22 @@ class GameplayGovernanceService:
         legacy = bool(contract.versions and self._current_contract_version(contract).created_by != TEMPLATE_AUTHOR)
         if legacy and not acknowledge_legacy_text:
             raise ActionUnavailableError("请先核对旧合同中的特殊约定，再确认按当前方案生成合同；旧正文会保留在历史记录中。")
+        term_sheet = dict(term_sheet)
+        auto_arrange = term_sheet.pop("auto_arrange", False)
+        automatic = {}
+        if auto_arrange:
+            base_minimum = self._standard_cash(package, self._household(package, contract.household_id),
+                                               months=0, reward=session.game_state.story_day <= 75)
+            if int(term_sheet["cash_amount"]) < base_minimum:
+                raise ActionUnavailableError(f"基础补偿不得低于本户政策标准{base_minimum}万元。",
+                    details={"field_errors": {"cash_amount": f"基础补偿请至少安排{base_minimum}万元，过渡补偿另行自动计入。"}})
+            from .contract_arrangement import arrange_contract
+            term_sheet, automatic = arrange_contract(session, package, contract, term_sheet)
         normalized = self._validate_term_sheet(
             session, package, contract, term_sheet
         )
+        if auto_arrange:
+            normalized["automatic_arrangement"] = automatic
         self._check_contract_resources(session, package, replace(contract, term_sheet=normalized))
         current = self._current_contract_version(contract) if contract.versions else None
         intact = bool(current and current.text_hash == self._hash(current.text)
@@ -2059,7 +2071,7 @@ class GameplayGovernanceService:
             raise ActionUnavailableError("合同与方案不一致，请重新保存方案后提交。")
         if any(int(contract.term_sheet[field]) < session.game_state.story_day for field in ("housing_delivery_day", "move_out_day")):
             raise ActionUnavailableError("草案约定的交房或搬离日期已经过去，请更新方案后再签约。")
-        raw_terms = {k: v for k, v in contract.term_sheet.items() if k not in {"policy_minimum_cash", "payment_timing"}}
+        raw_terms = {k: v for k, v in contract.term_sheet.items() if k not in {"policy_minimum_cash", "payment_timing", "automatic_arrangement"}}
         self._validate_term_sheet(session, package, contract, raw_terms)
         self._check_contract_resources(session, package, contract)
         record_contract_signatory_contact(session, package, contract)
@@ -2074,7 +2086,20 @@ class GameplayGovernanceService:
         # Formal signing is bounded by implemented requirements. Free-form NPC
         # prose cannot add another condition to a scheme that already qualifies.
         decision = "explain" if missing_conditions else "accept"
-        reason = contract_requirement_feedback(missing_conditions)
+        result = self._gateway.run_governance_task(self._governance_context(
+            session, package, session_id=session.session_id, account_id=session.account_id,
+            operation_id=f"contract-response:{contract.contract_id}:{fingerprint}",
+            story_day=session.game_state.story_day, task="review_contract",
+            actor_id=contract.signatory_npc_id or "", actor_name=contract.signatory_name,
+            actor_profile="", prompt_version="contract-response-ai-v1",
+            payload={"contract_id": contract.contract_id, "term_sheet": contract.term_sheet,
+                     "allowed_decisions": [decision], "confirmed_decision": decision,
+                     "remaining_concern": missing_conditions[:1],
+                     "contract_text": current_version.text},
+        ))
+        reason = str(result.data.get("reason") or "").strip()
+        if not reason:
+            raise ActionUnavailableError("AI 未返回有效签约答复，请重试；合同尚未签署，未扣除资源。")
         status_by_decision = {
             "accept": "accepted",
             "reject": "rejected",
@@ -2090,6 +2115,8 @@ class GameplayGovernanceService:
             "story_day": session.game_state.story_day,
             "decision": decision,
             "reason": contract.review_reason,
+            "response_source": "ai",
+            "model_id": result.model_id,
             "counteroffer": dict(contract.counteroffer),
             "review_fingerprint": fingerprint,
         })
@@ -3304,7 +3331,7 @@ class GameplayGovernanceService:
             available = capacities.get(resource_id, 0) - used
             if quantity > available:
                 failures[resource_id] = {"required": quantity, "available": max(0, available)}
-            if quantity and resource_id in pools and int(pools[resource_id]["available_day"]) > session.game_state.story_day:
+            if quantity and resource_id in pools and int(pools[resource_id]["available_day"]) > session.game_state.story_day and not (contract.term_sheet.get("automatic_arrangement") and pools[resource_id].get("category") == "housing"):
                 failures[resource_id] = {"reason": "该资源尚未开放"}
         cash = int(contract.term_sheet["cash_amount"])
         if cash > unencumbered_budget(session):
@@ -3427,7 +3454,7 @@ class GameplayGovernanceService:
             return {}
         terms = contract.term_sheet
         return {
-            f"budget:{terms['budget_envelope']}": int(terms["cash_amount"]),
+            **{f"budget:{key}": int(amount) for key, amount in terms.get("automatic_arrangement", {}).get("budget_allocations", {terms["budget_envelope"]: terms["cash_amount"]}).items()},
             **({
                 str(terms["housing_resource_id"]): 1
             } if terms.get("housing_resource_id") else {}),
@@ -4786,7 +4813,7 @@ class GameplayGovernanceService:
                    for record in negotiation_records(session, package, contract)
                    if record["transcript"] or record["observed_results"]]
         return self._hash({
-            "review_policy": "implemented-conditions-v1",
+            "review_policy": "implemented-conditions-ai-response-v2",
             "version": contract.current_version,
             "scheme": scheme_values(contract.term_sheet or {}),
             "visits": records,
@@ -4857,6 +4884,10 @@ class GameplayGovernanceService:
             can_review=False, conversation_available=False, review_blocked_reason="请在相关签约人或代表的入户会谈中办理。",
         )
         if session is not None and package is not None:
+            result["suggested_base_cash_amount"] = self._standard_cash(
+                package, self._household(package, value.household_id), months=0,
+                reward=session.game_state.story_day <= 75,
+            )
             result["suggested_cash_amount"] = self._standard_cash(
                 package, self._household(package, value.household_id),
                 months=int((value.term_sheet or {}).get("transition_months", 12)),

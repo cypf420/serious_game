@@ -25,5 +25,6 @@ test("removes resource commitment controls and client asserted facts", () => {
   assert.doesNotMatch(shell, /governance\/npc-demands|onDisposeDemand|name="(?:authorization_confirmed|real_unit_viewed|ledger_disclosed|old_case_resolved|prior_payment_verified|payment_day)"/);
   assert.doesNotMatch(shell, /JSON.stringify\(contract.counteroffer/);
   assert.match(shell, /当前方案扣除预览/);
-  assert.match(shell, />提交签约<\/button>/);
+  assert.match(shell, /contract-submit/);
+  assert.match(shell, /提交签约/);
 });

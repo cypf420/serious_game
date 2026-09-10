@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import replace
+from serious_game_backend.application.ending_prose import revise_ending_prose
 
 from serious_game_backend.domain.enums import SessionStatus
 from serious_game_backend.domain.errors import ContentValidationError
@@ -206,7 +207,7 @@ class EndingService:
 
     def finalize(self, session: GameSession, package: ScriptPackage) -> dict:
         if session.ending_result is not None:
-            return session.ending_result
+            return self.project_result(session)
         session.game_state = replace(session.game_state, days_left=0)
         signed = session.audited_signed_households()
         if signed != session.game_state.signed_households:
@@ -247,13 +248,17 @@ class EndingService:
         rendered_sub_text = self._render_sub_text(
             sub.text, signed
         )
+        rendered_main_text = self._render_sub_text(main.text, signed)
         result = {
+            "signed_households": signed,
+            "total_households": 36,
+            "target_signed_households": 30,
             "main_ending_id": main.ending_id,
             "main_ending_name": main.name,
             "tone": main.tone,
             "sub_ending_id": sub.sub_ending_id,
             "sub_ending_title": sub.title,
-            "main_text": main.text,
+            "main_text": rendered_main_text,
             "sub_text": rendered_sub_text,
             "axes": axes,
             "appendices": self._appendices(session, package),
@@ -271,9 +276,26 @@ class EndingService:
         session.append_narrative(
             story_day=90,
             kind="ending",
-            text=f"余波：{sub.title}\n\n{main.text}\n\n{rendered_sub_text}",
+            text=f"余波：{sub.title}\n\n{rendered_main_text}\n\n{rendered_sub_text}",
             content_instance_id="ending:final",
         )
+        return result
+
+    @staticmethod
+    def project_result(session: GameSession) -> dict | None:
+        """Enrich old results on reads without reselecting endings or changing the save."""
+        if session.ending_result is None:
+            return None
+        signed = session.audited_signed_households()
+        result = dict(session.ending_result)
+        result.update(
+            signed_households=signed,
+            total_households=36,
+            target_signed_households=30,
+        )
+        for key in ("main_text", "sub_text"):
+            if isinstance(result.get(key), str):
+                result[key] = EndingService._render_sub_text(result[key], signed)
         return result
 
     @staticmethod
@@ -287,15 +309,36 @@ class EndingService:
 
     @staticmethod
     def _render_sub_text(text: str, signed_households: int) -> str:
-        """轴 A 的“全额”覆盖 34-36；正文不得把 34/35 误写成 36。"""
-        if signed_households >= 36:
-            return text
+        """Render actual ledger counts; editorial bands and target rules stay unchanged."""
         count = f"{signed_households}/36 户"
-        return (
-            text.replace("三十六户全签下来了", f"台账签到了 {count}")
-            .replace("34/36 户以上，一个不落地清完了", f"台账签到了 {count}，已经进入全额档")
-            .replace("三十六户全签了，一户不差", f"台账签到了 {count}，已经进入全额档")
-        )
+        replacements = {
+            "台账停在 27/36 户以下": f"台账最终签到了 {count}",
+            "台账没有超过 27/36 户": f"台账最终签到了 {count}",
+            "台账还是没过 27/36 户": f"台账最终签到了 {count}",
+            "台账已经落在 32—33/36 户这一档": f"台账已经签到了 {count}",
+            "台账落在 32—33/36 户这一档": f"台账签到了 {count}",
+            "台账进入 34—36/36 户这一档，离满盘已经很近": f"台账签到了 {count}，进入全额档",
+            "台账已经过了 32/36 户": f"台账已经签到了 {count}",
+            "台账过了 32/36 户": f"台账签到了 {count}",
+            "台账过了 34/36 户": f"台账签到了 {count}",
+            "台账最终停在 29/36 户，离三十户差一个门牌号": f"台账最终签到了 {count}，离三十户还差 {max(0, 30 - signed_households)} 户",
+            "台账停在 29/36 户": f"台账签到了 {count}",
+            "台账走到 29/36 户": f"台账签到了 {count}",
+            "硬是啃到 29/36 户": f"硬是争取到 {count}",
+            "追到 29/36 户": f"争取到 {count}",
+            "你从别处凑到 29/36 户": f"你从别处争取到 {count}",
+            "三十六户全签下来了": f"台账签到了 {count}",
+            "34/36 户以上，一个不落地清完了": f"台账签到了 {count}，已经进入全额档",
+            "三十六户全签了，一户不差": f"台账签到了 {count}，已经进入全额档",
+            "三十户是够了": f"{count}，目标线是够了",
+            "三十户签下来了": f"{count} 签下来了",
+            "三十户，": f"{count}，",
+            "三十户以上签了字": f"{count} 签了字",
+            "三十户以上，压线": f"{count}，达线",
+        }
+        for source, replacement in replacements.items():
+            text = text.replace(source, replacement)
+        return revise_ending_prose(text)
 
     @staticmethod
     def _appendices(session: GameSession, package: ScriptPackage) -> list[dict]:
