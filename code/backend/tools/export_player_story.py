@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 
 from tools.story_revision import enumerate_visible_records
+from serious_game_backend.application.ending_prose import revise_ending_prose
 
 CONDITIONS = ('origin_ids','required_flags','required_any_flags','forbidden_flags',
               'required_state_values','forbidden_state_values','required_fact_ids',
@@ -73,7 +74,8 @@ def build_export(package_dir: Path) -> tuple[str,dict]:
                 chunks.extend(['播放时机：满足该会谈的完成条件，并由玩家正常结束后播放；NPC 主动离场时不叠加此固定收尾，采用实际会谈经校验的离场叙事。', ''])
             elif record['pointer'].endswith('/opening_narrative'):
                 chunks.extend(['播放时机：玩家开始对应互动会谈时。此后回复由真实 LLM 生成，不属于固定正文。', ''])
-        chunks.extend([record['text'],''])
+        text = revise_ending_prose(record['text']) if record['file'] == 'ending_rules.json' else record['text']
+        chunks.extend([text,''])
     chunks.extend(['说明：模拟回复不属于本剧情；本文只导出正式注册的固定文本及其播放条件，不收录自动化测试替身的台词。', '', '## 运行时固定附录与办理反馈',''])
     runtime = runtime_records()
     for rid, text in runtime:

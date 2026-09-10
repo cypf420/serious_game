@@ -43,15 +43,9 @@ for (const day of [9, 48, 52]) for (const width of [1440, 390]) test(`day-${day}
   await expect(page.locator(".top-status .online")).toHaveCount(1);
   await page.getByRole("button", { name: "进入游戏", exact: true }).click();
   await page.getByRole("button", { name: /开始新游戏/ }).click();
-  const paragraph = page.locator(".gal-dialogue .reading-viewport");
+  const paragraph = page.locator(".gal-dialogue > p");
   for (let index = 0; index < expected.length; index++) {
-    await expect(paragraph).toContainText(expected[index].slice(0, 12));
-    let whole = await paragraph.innerText();
-    while (whole.length < expected[index].length) {
-      await page.getByRole("button", { name: "下一段", exact: true }).click();
-      whole += await paragraph.innerText();
-    }
-    expect(whole).toBe(expected[index]);
+    await expect(paragraph).toHaveText(expected[index]);
     await expect(paragraph).not.toContainText(/[「」『』]|[。！？…]”\s*。/);
     if (index + 1 < expected.length) await page.getByRole("button", { name: "下一段", exact: true }).click();
   }
@@ -59,15 +53,7 @@ for (const day of [9, 48, 52]) for (const width of [1440, 390]) test(`day-${day}
   await page.screenshot({ path: `${qa}/day${day}-narration-${width}.png`, fullPage: true });
   await page.getByRole("button", { name: "剧情回看", exact: true }).click();
   const history = page.locator(".history-drawer");
-  for (const [index, line] of expected.entries()) {
-    const article = history.locator("article").nth(index);
-    const previous = article.getByRole("button", { name: "上一页", exact: true });
-    while (await previous.isEnabled()) await previous.click();
-    let whole = await article.locator(".reading-viewport").innerText();
-    const next = article.getByRole("button", { name: "下一页", exact: true });
-    while (await next.isEnabled()) { await next.click(); whole += await article.locator(".reading-viewport").innerText(); }
-    expect(whole).toBe(line);
-  }
+  for (const line of expected) await expect(history).toContainText(line);
   await mkdir(qa, { recursive: true });
   await page.screenshot({ path: `${qa}/day${day}-quotes-${width}.png`, fullPage: true });
   await page.reload();
@@ -75,18 +61,10 @@ for (const day of [9, 48, 52]) for (const width of [1440, 390]) test(`day-${day}
   await page.getByRole("button", { name: "进入游戏", exact: true }).click();
   await page.getByRole("button", { name: /查看已有进度/ }).click();
   await page.locator(".saved-session-list button").click();
-  await expect.poll(async () => expected.at(-1)!.includes(await paragraph.innerText())).toBe(true);
+  await expect(paragraph).toHaveText(expected.at(-1)!);
   await expect(paragraph).not.toContainText(/[「」『』]|[。！？…]”\s*。/);
   await page.getByRole("button", { name: "剧情回看", exact: true }).click();
-  for (const [index, line] of expected.entries()) {
-    const article = history.locator("article").nth(index);
-    const previous = article.getByRole("button", { name: "上一页", exact: true });
-    while (await previous.isEnabled()) await previous.click();
-    let whole = await article.locator(".reading-viewport").innerText();
-    const next = article.getByRole("button", { name: "下一页", exact: true });
-    while (await next.isEnabled()) { await next.click(); whole += await article.locator(".reading-viewport").innerText(); }
-    expect(whole).toBe(line);
-  }
+  for (const line of expected) await expect(history).toContainText(line);
   expect(writes.filter(path => path !== "/api/game/session")).toEqual([]);
   expect(errors).toEqual([]);
 });

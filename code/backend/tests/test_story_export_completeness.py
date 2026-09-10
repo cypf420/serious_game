@@ -3,6 +3,7 @@ from pathlib import Path
 
 from tools.export_player_story import build_export
 from tools.story_revision import enumerate_visible_records
+from serious_game_backend.application.ending_prose import revise_ending_prose
 
 PACKAGE = Path(__file__).resolve().parents[1] / 'content/packages/pkg_gameplay_v3'
 
@@ -14,7 +15,8 @@ def test_every_registered_player_string_and_runtime_appendix_is_exported():
     assert len(set(coverage['runtime_ids'])) == len(coverage['runtime_ids'])
     assert len([i for i in coverage['runtime_ids'] if i.startswith('ending:')]) == 12
     for record in expected:
-        assert record['text'] in markdown, record['review_id']
+        text = revise_ending_prose(record['text']) if record['file'] == 'ending_rules.json' else record['text']
+        assert text in markdown, record['review_id']
 
 def test_source_option_and_ending_counts_independent_of_exporter():
     markdown, coverage = build_export(PACKAGE)

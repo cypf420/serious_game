@@ -9,5 +9,5 @@
 .reading-controls button:focus-visible,.reading-viewport:focus-visible { outline:2px solid #ad6944; outline-offset:2px; }
 .ending-reading .reading-viewport { height:0; }
 .history-drawer .paged-reading { margin-top:8px; }
-.gal-dialogue > p,.review-panel p,.ending-review-text { white-space:pre-wrap; }
+.ending-review-text { white-space:pre-wrap; }
 @media(max-width:640px) { .reading-controls { gap:6px; } .reading-controls button { padding:7px 10px; } }

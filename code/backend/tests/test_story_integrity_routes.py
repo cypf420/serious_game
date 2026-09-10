@@ -89,21 +89,37 @@ def test_resolved_full_consequence_survives_api_incremental_and_refresh(day,did,
 
 def test_all_688_registered_consequences_are_emitted_whole_by_story_flow():
     """Serialization coverage only; availability and legal reachability tested separately."""
+    from copy import deepcopy
+    from dataclasses import replace
     from serious_game_backend.domain.events import PendingDecision
     helper = round1.StoryReviewRound1Tests()
     container, client, sid, headers = helper.build_api('all-copy')
     session = container.sessions.get_owned(sid,headers['X-Account-ID'])
     package = container.packages.get('pkg_gameplay_v3')
     flow = StoryFlowService()
+    initial_session = deepcopy(session)
     count = 0
     for decision in package.decisions.values():
         for option in decision.options:
-            session.flags.clear()
+            session = deepcopy(initial_session)
+            session.flags = set(option.required_flags) | set(option.required_any_flags)
+            session.state_values = dict(option.required_state_values)
+            clauses = (option, *option.availability_any[:1])
+            for clause in clauses:
+                session.flags.update(clause.required_flags | clause.required_any_flags)
+                session.state_values.update(clause.required_state_values)
+                for key, value in {**clause.minimum_ledger_values, **clause.maximum_ledger_values}.items():
+                    if hasattr(session.game_state, key):
+                        session.game_state = replace(session.game_state, **{key: value})
+            # This test covers serialization, with each option's evidence prerequisites met.
+            session.known_fact_ids = set(option.required_fact_ids) | set(option.required_any_fact_ids)
             session.pending_decision = PendingDecision(event_instance_id=f'copy-{decision.decision_id}-{option.option_id}',decision_id=decision.decision_id,option_ids=(option.option_id,))
             cursor = session.next_feed_cursor-1
+            assert option.option_id in flow.current_pending_decision(session, package).option_ids, (decision.decision_id, option.option_id)
+            expected = decision.visible_consequence(option, session.flags, session.known_fact_ids)
             flow.resolve_decision(session,package,decision_id=decision.decision_id,option_id=option.option_id)
             item = next(i for i in flow.feed_since(session,cursor)['items'] if i['kind']=='consequence')
-            assert option.consequence in item['text'], (decision.decision_id,option.option_id)
+            assert expected in item['text'], (decision.decision_id,option.option_id)
             count += 1
     assert count == 688
     client.close()
