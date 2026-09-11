@@ -1624,11 +1624,9 @@ class NightSimulationService:
                 for item in visible_blocks
                 if item.presentation_phase == "morning"
             ]
-            return observed[:3] or ["县城昨夜无事。"]
+            return observed[:3]
         # night_blocks 已在前一晚进入叙事 feed；晨间卡不再复制同一批文本。
         lines: list[str] = []
-        if propagated:
-            lines.append("昨夜，与你白天接触有关的消息在熟人圈里传开了。")
         summaries = list(dict.fromkeys(
             str(item.get("public_summary", "")).strip()
             for item in agent_exchanges
@@ -1636,5 +1634,4 @@ class NightSimulationService:
         ))
         if summaries:
             lines.append("夜间动向：" + "；".join(summaries))
-        lines.append(f"D{day + 1} 清晨，专班完成了昨日材料结转。")
         return lines[:3]

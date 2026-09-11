@@ -373,3 +373,212 @@ test("contract preview preserves text, prevents dirty submit, and resumes existi
   await expect(page.getByRole("dialog")).toHaveCount(0);
   expect(writes).toHaveLength(2);
 });
+
+for (const mode of ["governance", "conversation", "group"]) for (const width of [1366, 390]) test(`archive references and unread end-day guard ${mode} at ${width}`, async ({ page }, testInfo) => {
+  await page.setViewportSize({ width, height: 900 });
+  let active = false;
+  const writes: Record<string, unknown>[] = [];
+  const state = { session_id: "references-ui", status: "active", state_version: 1, story: { day: 35 }, ledger: { action_points: { remaining: 8, daily_cap: 8 } } };
+  const docs = [{ id: "meeting:hearing-1", title: "谭老六旧案听证记录", category: "meeting", status: "completed", body: "听证已完成，法审处理仍待落实。", version: 1, can_reference: true }, { id: "document:draft-1", title: "旧案处理草案", category: "document", status: "draft", body: "尚未签发。", can_reference: true }];
+  await page.route("**/api/backend/**", async route => {
+    const endpoint = new URL(route.request().url()).pathname.replace(/^\/api\/backend/, "");
+    let body: Record<string, unknown> = {};
+    if (endpoint === "/health/ready") body = { authentication_required: false, model_consent_required: false };
+    else if (endpoint === "/api/ai/config") body = { active: true, mode: "personal", model: "fixture", endpoint: "https://fixture.invalid/v1" };
+    else if (endpoint === "/api/game/session") body = { session_id: state.session_id };
+    else if (endpoint.endsWith("/view")) body = { state, commands: { can_end_day: true, can_act: true }, feed: { items: [{ id: "opening-34", kind: "night", story_day: 34, text: "昨夜仍有情况需要说明。" }, { id: "opening-35", story_day: 35, text: "今天继续核对各户诉求。" }], cursor: 2 } };
+    else if (endpoint.endsWith("/reference-documents")) body = { documents: docs };
+    else if (endpoint.endsWith("/governance")) body = { governance_actions: active && mode === "governance" ? [{ action_instance_id: "visit-tan", action_kind: "household_visit", status: "active", story_day: 35, target_ids: ["npc_tan_laoliu"], topic: "核对旧案处理", transcript: [] }] : [], meetings: [], archives: [], contracts: [], documents: [] };
+    else if (endpoint.endsWith("/turn/stream") || endpoint.endsWith("/action/stream")) {
+      writes.push(route.request().postDataJSON());
+      await route.fulfill({ status: 200, contentType: "application/x-ndjson", body: '{"type":"complete","result":{}}\n\n' }); return;
+    }
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(body) });
+  });
+  await page.goto("/");
+  await expect(page.locator(".top-status .online")).toHaveCount(1);
+  await page.getByRole("button", { name: "进入游戏", exact: true }).click();
+  await page.getByRole("button", { name: /开始新游戏/ }).click();
+  await expect(page.getByRole("button", { name: "结束今日", exact: true })).toHaveCount(0);
+  await expect(page.locator(".story-head")).toContainText("第 34 日");
+  await page.getByRole("button", { name: "下一段", exact: true }).click();
+  await expect(page.getByRole("button", { name: "结束今日", exact: true })).toHaveCount(2);
+  await page.getByRole("button", { name: "上一段", exact: true }).click();
+  await expect(page.getByRole("button", { name: "结束今日", exact: true })).toHaveCount(0);
+  active = true;
+  if (mode === "conversation") Object.assign(state, { active_conversation: { conversation_id: "regular-tan", opportunity_id: "talk-tan", npc_id: "npc_tan_laoliu", npc_name: "谭老六" } });
+  if (mode === "group") Object.assign(state, { active_group_conversation: { conversation_id: "night-tan", phase: "active", participant_ids: ["npc_tan_laoliu"], initiator_npc_id: "npc_tan_laoliu", participant_states: [], transcript: [], agenda: "核对听证结果" } });
+  await page.locator('[data-tutorial-id="nav-governance"]').click();
+  await expect(page.getByRole("region", { name: "档案系统" })).toContainText("谭老六旧案听证记录");
+  await page.getByText("谭老六旧案听证记录", { exact: false }).first().click();
+  await expect(page.locator(".reference-body").first()).toContainText("法审处理仍待落实");
+  await page.screenshot({ path: testInfo.outputPath(`archive-library-${width}.png`), fullPage: true });
+  // Reload the session view to enter the active visit without changing any real save.
+  await page.reload();
+  await expect(page.locator(".top-status .online")).toHaveCount(1);
+  await page.getByRole("button", { name: "进入游戏", exact: true }).click();
+  await page.getByRole("button", { name: /开始新游戏/ }).click();
+  const input = page.locator('textarea[name="player_text"]');
+  await input.fill("@听证");
+  await expect(page.getByRole("option")).toHaveCount(1);
+  await input.press("Enter");
+  await expect(page.locator(".reference-tags")).toContainText("谭老六旧案听证记录");
+  await page.getByRole("button", { name: "移除引用 谭老六旧案听证记录" }).click();
+  await expect(page.locator(".reference-tags span")).toHaveCount(0);
+  await input.fill("@听证"); await input.press("Enter");
+  await input.fill("听证已经完成，还需要处理什么？");
+  await page.screenshot({ path: testInfo.outputPath(`reference-selected-${width}.png`), fullPage: true });
+  await page.locator('[data-tutorial-id="conversation-send"]').click();
+  await expect.poll(() => writes.length).toBe(1);
+  expect(writes[0].reference_ids).toEqual(["meeting:hearing-1"]);
+  await expect(page.locator(".reference-tags span")).toHaveCount(0);
+  await input.fill("我继续了解要求。");
+  await page.locator('[data-tutorial-id="conversation-send"]').click();
+  await expect.poll(() => writes.length).toBe(2);
+  expect(writes[1]).not.toHaveProperty("reference_ids");
+  await page.screenshot({ path: testInfo.outputPath(`references-${width}.png`), fullPage: true });
+});
+
+test("reference audience refresh and immutable metadata in all conversation reviews", async ({ page }) => {
+  let allowed = true;
+  let reads = 0;
+  const refs = [{ id: "meeting:record", title: "旧案听证记录", version: "old-version", status: "completed" }];
+  const turn = { speaker_type: "player", text: "请查阅这份材料。", references: refs };
+  const state = { session_id: "reference-review", status: "active", state_version: 1, story: { day: 35 }, ledger: { action_points: { remaining: 8, daily_cap: 8 } } };
+  const action = { action_instance_id: "visit-1", action_kind: "household_visit", status: "active", story_day: 35, target_ids: ["npc_tan_laoliu"], topic: "旧案走访", transcript: [turn] };
+  await page.route("**/api/backend/**", async route => {
+    const endpoint = new URL(route.request().url()).pathname.replace(/^\/api\/backend/, "");
+    let body: Record<string, unknown> = {};
+    if (endpoint === "/health/ready") body = { authentication_required: false, model_consent_required: false };
+    else if (endpoint === "/api/ai/config") body = { active: true, mode: "personal", model: "fixture", endpoint: "https://fixture.invalid/v1" };
+    else if (endpoint === "/api/game/session") body = { session_id: state.session_id };
+    else if (endpoint.endsWith("/view")) body = { state, commands: {}, feed: { items: [{ id: "opening", story_day: 35, text: "继续核对各户诉求。" }], cursor: 1 } };
+    else if (endpoint.endsWith("/reference-documents")) { reads++; body = { documents: [{ ...refs[0], category: "meeting", version: "new-version", body: "新版正文不应作为旧发言附件展示", can_reference: allowed, reference_unavailable_reason: allowed ? "" : "此文件不能向当前全部参会人披露" }] }; }
+    else if (endpoint.endsWith("/governance")) body = { governance_actions: [action], meetings: [{ meeting_id: "old-meeting", story_day: 34, topic: "先前会议", transcript: [turn] }], archives: [], contracts: [], documents: [] };
+    else if (endpoint.endsWith("/turn/stream")) { await route.fulfill({ status: 200, contentType: "application/x-ndjson", body: '{"type":"complete","result":{}}\n\n' }); return; }
+    else if (endpoint.endsWith("/review")) body = { status: "active", group_conversation_timeline: [{ conversation_id: "old-group", story_day: 33, agenda: "夜间补充", transcript: [turn] }] };
+    else if (endpoint.endsWith("/conversations")) body = { items: [{ conversation_id: "ordinary", npc_id: "npc_tan_laoliu", story_day: 32, transcript: [turn] }], next_cursor: null };
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(body) });
+  });
+  await page.goto("/");
+  await expect(page.locator(".top-status .online")).toHaveCount(1);
+  await page.getByRole("button", { name: "进入游戏", exact: true }).click();
+  await page.getByRole("button", { name: /开始新游戏/ }).click();
+  await expect(page.locator(".governance-action-timeline .reference-attachments")).toContainText("当时版本 old-version");
+  const input = page.locator('textarea[name="player_text"]');
+  await input.fill("@旧案");
+  await expect(page.getByRole("option")).toBeEnabled();
+  const previousReads = reads;
+  allowed = false; action.action_instance_id = "visit-2"; action.target_ids = ["npc_zhou_dashan"];
+  await input.fill("转交下一场会谈。");
+  await page.locator('[data-tutorial-id="conversation-send"]').click();
+  await page.locator('[data-tutorial-id="nav-governance"]').click();
+  await expect.poll(() => reads).toBeGreaterThan(previousReads);
+  await page.locator(".reference-library summary").click();
+  await expect(page.getByRole("button", { name: "在当前对话中引用" })).toBeDisabled();
+  await expect(page.locator(".reference-library")).toContainText("此文件不能向当前全部参会人披露");
+  await page.locator('[data-tutorial-id="nav-scene"]').click();
+  await input.fill("@旧案");
+  await expect(page.getByRole("option")).toBeDisabled();
+  await input.press("Enter");
+  await expect(page.locator(".reference-tags span")).toHaveCount(0);
+  await page.locator('[data-tutorial-id="nav-review"]').click();
+  const review = page.locator(".review-panel");
+  for (const summary of await review.locator("details > summary").all()) await summary.click();
+  await expect(review.locator(".reference-attachments")).toHaveCount(4);
+  await expect(review).toContainText("当时版本 old-version");
+  await expect(review).not.toContainText("new-version");
+  await expect(review).not.toContainText("新版正文");
+});
+
+for (const household of ["HE-02", "YUAN-01"]) test(`contract followup attachment only for ${household}`, async ({ page }) => {
+  const writes: Record<string, unknown>[] = [];
+  const state = { session_id: "followup-ui", status: "active", state_version: 1, story: { day: 35 }, ledger: { action_points: { remaining: 8, daily_cap: 8 } } };
+  const contract = { contract_id: "c1", batch_id: "b1", household_id: household, signatory_npc_id: "npc_he_jianguo", signatory_name: "何建军", status: "awaiting_terms", current_version: 0, conversation_available: true };
+  await page.route("**/api/backend/**", async route => {
+    const endpoint = new URL(route.request().url()).pathname.replace(/^\/api\/backend/, "");
+    let body: Record<string, unknown> = {};
+    if (endpoint === "/health/ready") body = { authentication_required: false, model_consent_required: false };
+    else if (endpoint === "/api/ai/config") body = { active: true, mode: "personal", model: "fixture", endpoint: "https://fixture.invalid/v1" };
+    else if (endpoint === "/api/game/session") body = { session_id: state.session_id };
+    else if (endpoint.endsWith("/view")) body = { state, commands: {}, feed: { items: [{ id: "opening", story_day: 35, text: "核对医疗保障。" }], cursor: 1 } };
+    else if (endpoint.endsWith("/governance")) body = { governance_actions: [{ action_instance_id: "visit", action_kind: "household_visit", status: "active", target_ids: ["npc_he_jianguo"], transcript: [] }], contracts: [contract], contract_batches: [{ batch_id: "b1", representative_npc_id: "npc_he_jianguo", status: "confirmed" }], resources: { resource_pools: [] } };
+    else if (endpoint.endsWith("/contracts/c1")) body = { contract };
+    else if (endpoint.endsWith("/terms")) { writes.push(route.request().postDataJSON()); body = { contract, state_version: ++state.state_version }; }
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(body) });
+  });
+  await page.goto("/");
+  await expect(page.locator(".top-status .online")).toHaveCount(1);
+  await page.getByRole("button", { name: "进入游戏", exact: true }).click();
+  await page.getByRole("button", { name: /开始新游戏/ }).click();
+  await page.getByRole("button", { name: "继续办理合同", exact: true }).click();
+  const dialog = page.getByRole("dialog");
+  await dialog.locator('[name="cash_amount"]').fill("30");
+  if (household === "HE-02") {
+    await expect(dialog.locator('[name="medical_provider"]')).toHaveValue("");
+    await dialog.locator('[name="medical_provider"]').fill("县医院");
+    await dialog.locator('[name="recheck_interval_days"]').fill("30");
+    await dialog.locator('[name="employment_receiver"]').fill("县就业服务中心");
+    await dialog.locator('[name="medical_fee_arrangement"]').selectOption("allocated_medical_service");
+  } else await expect(dialog.locator(".contract-followup-plan")).toHaveCount(0);
+  await dialog.getByRole("button", { name: "保存方案并预览合同", exact: true }).click();
+  await expect.poll(() => writes.length).toBe(1);
+  if (household === "HE-02") expect(writes[0].followup_plan).toEqual({ medical_provider: "县医院", recheck_interval_days: 30, employment_receiver: "县就业服务中心", medical_fee_arrangement: "allocated_medical_service" });
+  else expect(writes[0]).not.toHaveProperty("followup_plan");
+});
+
+for (const failure of ["view", "governance", "panel"]) test(`saved operation recovers with reads only after ${failure} failure`, async ({ page }) => {
+  let writes = 0;
+  let failReads = true;
+  let governanceReadsAfterWrite = 0;
+  const state = { session_id: "saved-sync-ui", status: "active", state_version: 1, story: { day: 35 }, active_conversation: { conversation_id: "talk", opportunity_id: "op", npc_id: "npc_tan_laoliu", npc_name: "谭老六" }, ledger: { action_points: { remaining: 8, daily_cap: 8 } } };
+  await page.route("**/api/backend/**", async route => {
+    const endpoint = new URL(route.request().url()).pathname.replace(/^\/api\/backend/, "");
+    let body: Record<string, unknown> = {};
+    if (endpoint === "/health/ready") body = { authentication_required: false, model_consent_required: false };
+    else if (endpoint === "/api/ai/config") body = { active: true, mode: "personal", model: "fixture", endpoint: "https://fixture.invalid/v1" };
+    else if (endpoint === "/api/game/session") body = { session_id: state.session_id };
+    else if (endpoint.endsWith("/action/stream")) {
+      writes++; state.state_version++;
+      await route.fulfill({ status: 200, contentType: "application/x-ndjson", body: JSON.stringify({ type: "complete", result: { visible_state: state } }) + "\n\n" }); return;
+    }
+    else if (endpoint.endsWith("/view")) {
+      if (writes && failReads && failure === "view") { await route.fulfill({ status: 503, contentType: "application/json", body: '{"message":"视图暂不可用"}' }); return; }
+      body = { state, commands: {}, feed: { items: [{ id: "opening", story_day: 35, text: "继续核对情况。" }], cursor: 1 } };
+    }
+    else if (endpoint.endsWith("/governance")) {
+      if (writes) governanceReadsAfterWrite++;
+      if (writes && failReads && (failure === "governance" || (failure === "panel" && governanceReadsAfterWrite >= 2))) { await route.fulfill({ status: 503, contentType: "application/json", body: '{"message":"治理面板暂不可用"}' }); return; }
+      body = { governance_actions: [], meetings: [], archives: [], contracts: [], documents: [] };
+    }
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(body) });
+  });
+  await page.goto("/");
+  await expect(page.locator(".top-status .online")).toHaveCount(1);
+  await page.getByRole("button", { name: "进入游戏", exact: true }).click();
+  await page.getByRole("button", { name: /开始新游戏/ }).click();
+  if (failure === "panel") await page.locator('[data-tutorial-id="nav-governance"]').click();
+  const input = page.locator('textarea[name="player_text"]');
+  await input.fill("保存这一次明确回复。");
+  await page.locator('[data-tutorial-id="conversation-send"]').click();
+  await expect(page.locator(".saved-sync-recovery")).toContainText("操作已保存");
+  await expect(page.getByRole("button", { name: "重新同步现场", exact: true })).toBeEnabled();
+  await expect(input).toHaveValue("");
+  expect(writes).toBe(1);
+  await input.fill("同步前的新回复应保留。");
+  await page.locator('[data-tutorial-id="conversation-send"]').click();
+  await expect(input).toHaveValue("同步前的新回复应保留。");
+  expect(writes).toBe(1);
+  await page.getByRole("button", { name: "重新同步现场", exact: true }).click();
+  await expect(page.getByRole("button", { name: "重新同步现场", exact: true })).toBeEnabled();
+  expect(writes).toBe(1);
+  failReads = false;
+  await page.getByRole("button", { name: "重新同步现场", exact: true }).click();
+  await expect(page.locator(".saved-sync-recovery")).toHaveCount(0);
+  await expect(input).toHaveValue("同步前的新回复应保留。");
+  expect(writes).toBe(1);
+  await page.locator('[data-tutorial-id="conversation-send"]').click();
+  await expect.poll(() => writes).toBe(2);
+  await expect(input).toHaveValue("");
+  await expect(page.locator(".saved-sync-recovery")).toHaveCount(0);
+});

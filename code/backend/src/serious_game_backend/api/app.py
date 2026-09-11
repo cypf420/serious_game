@@ -545,6 +545,7 @@ def create_app(settings: Settings | None = None, container: Container | None = N
             session, package, "inspect_archives"
         )
         required = required_opportunity(session, package)
+        remaining_story_items = len(runtime.story_flow.unread_day_continuation(session, package))
         return {
             "can_choose": (
                 package.status != "retired" and active and not busy and pending
@@ -564,7 +565,15 @@ def create_app(settings: Settings | None = None, container: Container | None = N
                 package.status != "retired"
                 and active and not busy and not pending and not conversing
                 and not group_conversing and not governance_active and allow_end_day
+                and not remaining_story_items
             ),
+            "can_continue_story": (
+                package.status != "retired"
+                and active and not busy and not pending and not conversing
+                and not group_conversing and not governance_active and allow_end_day
+                and remaining_story_items > 0
+            ),
+            "remaining_story_items": remaining_story_items,
             # A pending decision blocks ordinary actions but still permits the
             # player to inspect already-acquired archives.  This is a separate
             # capability so callers cannot accidentally treat it as permission
@@ -1230,6 +1239,8 @@ def create_app(settings: Settings | None = None, container: Container | None = N
             "can_choose": gate["can_choose"],
             "can_act": gate["can_act"],
             "can_end_day": gate["can_end_day"],
+            "can_continue_story": gate["can_continue_story"],
+            "remaining_story_items": gate["remaining_story_items"],
             "can_talk": gate["can_talk"] and (
                 session.active_conversation is not None
                 or bool(runtime.opportunities.list_available(session, package))
@@ -1564,6 +1575,11 @@ def create_app(settings: Settings | None = None, container: Container | None = N
             archive_id=archive_id,
         )
 
+    @app.get("/api/game/session/{session_id}/governance/reference-documents")
+    def governance_reference_documents(session_id: str, x_account_id: str | None = Header(default=None)) -> dict:
+        return runtime.gameplay_governance.reference_documents(
+            account_id=current_account_id(x_account_id), session_id=session_id)
+
     @app.post("/api/game/session/{session_id}/governance/actions", status_code=201)
     def start_governance_action(
         session_id: str,
@@ -1601,6 +1617,7 @@ def create_app(settings: Settings | None = None, container: Container | None = N
             state_version=body.state_version,
             action_instance_id=action_instance_id,
             player_text=body.player_text,
+            reference_ids=tuple(body.reference_ids),
             client_action_id=body.client_action_id,
             retry=body.retry,
         )
@@ -1627,6 +1644,7 @@ def create_app(settings: Settings | None = None, container: Container | None = N
             state_version=body.state_version,
             action_instance_id=action_instance_id,
             player_text=body.player_text,
+            reference_ids=tuple(body.reference_ids),
             client_action_id=body.client_action_id,
             retry=body.retry,
         )
@@ -1678,6 +1696,7 @@ def create_app(settings: Settings | None = None, container: Container | None = N
             state_version=body.state_version,
             meeting_id=meeting_id,
             player_text=body.player_text,
+            reference_ids=tuple(body.reference_ids),
             addressed_npc_id=body.addressed_npc_id,
             client_action_id=body.client_action_id,
             retry=body.retry,
@@ -1705,6 +1724,7 @@ def create_app(settings: Settings | None = None, container: Container | None = N
             state_version=body.state_version,
             meeting_id=meeting_id,
             player_text=body.player_text,
+            reference_ids=tuple(body.reference_ids),
             addressed_npc_id=body.addressed_npc_id,
             client_action_id=body.client_action_id,
             retry=body.retry,
@@ -2114,6 +2134,10 @@ def create_app(settings: Settings | None = None, container: Container | None = N
                                 {"npc_name": str(turn["npc_name"])}
                                 if turn.get("npc_name") else {}
                             ),
+                            **({"references": [
+                                {key: ref[key] for key in ("id", "title", "version", "status") if key in ref}
+                                for ref in turn["references"] if isinstance(ref, dict)
+                            ]} if isinstance(turn.get("references"), list) else {}),
                         }
                         for turn in item.transcript
                     ],
@@ -2190,6 +2214,21 @@ def create_app(settings: Settings | None = None, container: Container | None = N
         definition = package.resource_actions[body.action_id]
         return runtime.action_quotes.public(quote, definition)
 
+    @app.post("/api/game/session/{session_id}/story/continue")
+    async def continue_story(
+        session_id: str,
+        body: EndDayRequest,
+        x_account_id: str | None = Header(default=None),
+    ):
+        result = runtime.end_days.end_day(
+            account_id=current_account_id(x_account_id), session_id=session_id,
+            client_action_id=body.client_action_id, state_version=body.state_version,
+            retry=body.retry, continue_story_only=True,
+        )
+        if result.get("status") == "processing":
+            return JSONResponse(status_code=202, content=result)
+        return result
+
     @app.post("/api/game/session/{session_id}/end-day")
     async def end_day(
         session_id: str,
@@ -2203,6 +2242,7 @@ def create_app(settings: Settings | None = None, container: Container | None = N
             client_action_id=body.client_action_id,
             state_version=body.state_version,
             retry=body.retry,
+            read_night_first=body.read_night_first,
         )
         if result.get("status") == "processing":
             return JSONResponse(status_code=202, content=result)
@@ -2220,6 +2260,7 @@ def create_app(settings: Settings | None = None, container: Container | None = N
             session_id=session_id,
             state_version=body.state_version,
             player_text=body.player_text,
+            reference_ids=tuple(body.reference_ids),
             client_action_id=body.client_action_id,
             retry=body.retry,
         )
@@ -2241,6 +2282,7 @@ def create_app(settings: Settings | None = None, container: Container | None = N
             session_id=session_id,
             state_version=body.state_version,
             player_text=body.player_text,
+            reference_ids=tuple(body.reference_ids),
             client_action_id=body.client_action_id,
             retry=body.retry,
         )

@@ -276,7 +276,7 @@ class GameplayGovernanceTests(unittest.TestCase):
         self.assertEqual("pending", action.cost_status)
 
     def _create_authorization_document(
-        self, *, deadline_day: int = 10
+        self, *, deadline_day: int = 10, target_scope: str = "专项安置家庭"
     ) -> dict:
         started = self._post("/governance/actions", {
             "state_version": self.state["state_version"],
@@ -302,7 +302,7 @@ class GameplayGovernanceTests(unittest.TestCase):
                 "adopt": True,
                 "resolution": {
                     "decision": "授权最多配置两套首批安置房",
-                    "target_scope": "专项安置家庭",
+                    "target_scope": target_scope,
                     "resources": {"housing_d1_120": 2},
                     "resource_mode": "authorization_ceiling",
                     "responsible_ids": [
@@ -1492,7 +1492,7 @@ class GameplayGovernanceTests(unittest.TestCase):
 
     def test_representative_request_creates_independent_contracts_and_settles_resources(self) -> None:
         self._resolve_opening()
-        authorization = self._create_authorization_document()
+        authorization = self._create_authorization_document(target_scope="ZDS-01、ZDS-02")
         authorization_document = authorization["document"]
         countersigned = self._post(
             (
@@ -1944,6 +1944,14 @@ class GameplayGovernanceTests(unittest.TestCase):
                 "public_window_reward": False,
                 "approval_document_ids": [],
             }
+            if household.household_id == "HE-02":
+                allocations["stable_job_slot"] = 1
+                term_sheet["followup_plan"] = {
+                    "medical_provider": "县医院儿科",
+                    "recheck_interval_days": 30,
+                    "employment_receiver": "县就业服务中心",
+                    "medical_fee_arrangement": "allocated_medical_service",
+                }
             current = self.runtime.sessions.get_owned(
                 self.session_id, "acct_gameplay_governance"
             )

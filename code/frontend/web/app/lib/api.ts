@@ -265,6 +265,10 @@ export class GameApi {
   }
   session(sessionId: string) { return this.request<Record<string, unknown>>("GET", `/api/game/session/${encodeURIComponent(sessionId)}`); }
   panel(sessionId: string, name: string) { return this.request<Record<string, unknown>>("GET", `/api/game/session/${encodeURIComponent(sessionId)}/${name}`); }
+  referenceDocuments(sessionId: string) {
+    return this.request<{ documents: import("../ReferenceDocuments").ReferenceDocument[] }>("GET", `/api/game/session/${encodeURIComponent(sessionId)}/governance/reference-documents`);
+  }
+
   archiveDetail(sessionId: string, archiveId: string) {
     return this.request<Record<string, unknown>>(
       "GET",

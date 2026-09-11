@@ -81,6 +81,7 @@ class ExpressionTask:
         "不要推断未提供的职责、事实、数字或承诺",
     )
     prompt_version: str = "expression-v1"
+    character_dialogue: bool = False
 
     def __post_init__(self) -> None:
         if not self.task_id.strip() or not self.role_id.strip():
@@ -196,6 +197,7 @@ class NightAgentContext:
     unresolved_commitments: tuple[str, ...] = ()
     relationship_context: dict[str, str] = field(default_factory=dict)
     public_expression_context: str = ""
+    reference_context: str = ""
     participant_state: str = "active"
     allowed_dialogue_acts: tuple[str, ...] = ()
     all_other_participants_settled: bool = False

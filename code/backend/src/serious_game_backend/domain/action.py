@@ -80,6 +80,7 @@ class ActionCommand:
     ordered_option_ids: tuple[str, ...] = ()
     parameters: dict[str, Any] = field(default_factory=dict)
     retry: bool = False
+    reference_ids: tuple[str, ...] = ()
 
     def canonical_payload(self) -> dict[str, Any]:
         # retry 是传输控制位，不属于业务请求；否则同一次可重试失败无法保持相同 hash。
@@ -98,4 +99,6 @@ class ActionCommand:
             "option_id": self.option_id,
             "ordered_option_ids": list(self.ordered_option_ids),
             "parameters": self.parameters,
+            # Preserve hashes of existing/legacy requests without attachments.
+            **({"reference_ids": list(self.reference_ids)} if self.reference_ids else {}),
         }

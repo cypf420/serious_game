@@ -869,7 +869,8 @@ test("keeps the visible conversation loop and removes the old terminal surface",
   // Manual snapshot controls were removed at the player's request.
   assert.match(source, /refresh\(0, id, true, true, kind === "load" \? "latest" : "start"\)/);
   assert.match(source, /decisionReady && pending/);
-  assert.match(source, /disabled=\{narrative\.currentIndex >= playerLines\.length - 1\}>下一段/);
+  assert.match(source, /disabled=\{busy \|\| \(narrative\.currentIndex >= playerLines\.length - 1 && !commands\.can_continue_story\)\}>下一段/);
+  assert.match(source, /api\.write\(sessionId, "\/story\/continue", "POST"/);
   assert.match(source, /visibleHistoryLines\.map/);
   assert.match(source, />自定义会议主题</);
   assert.match(source, /meetingTopicMode === "custom"/);
@@ -921,7 +922,9 @@ test("keeps the visible conversation loop and removes the old terminal surface",
   assert.match(source, /\/action\/stream/);
   assert.match(source, /group-conversation\/turn\/stream/);
   assert.equal((source.match(/new FormData\(event\.currentTarget as HTMLFormElement\)/g) || []).length, 2);
-  assert.match(source, /name="player_text"/);
+  assert.match(source, /<ReferenceInput/);
+  const referenceInput = await readFile(new URL("../app/ReferenceDocuments.tsx", import.meta.url), "utf8");
+  assert.match(referenceInput, /name="player_text"/);
   assert.match(source, /data-state-version=\{state\.state_version\}/);
   assert.match(source, /governance\/meetings\/\$\{encodeURIComponent[\s\S]*\/turn\/stream/);
   assert.match(source, /governance\/actions\/\$\{encodeURIComponent[\s\S]*\/turn\/stream/);
@@ -1025,7 +1028,7 @@ test("uses the authoritative Yunxi county name throughout the player shell", asy
 
 test("refreshes the active side panel after every successful player write", async () => {
   const source = await readFile(path.join(projectRoot, "app", "GameShell.tsx"), "utf8");
-  assert.match(source, /if \(panel !== "scene"\) \{\s*setPanel\(panel\);\s*setPanelData\(await api\.panel\(sessionId, panel\)\);/);
+  assert.match(source, /if \(panel !== "scene"\) \{\s*const nextPanel = await api\.panel\(sessionId, panel\);\s*setPanel\(panel\);\s*setPanelData\(nextPanel\);/);
 });
 
 test("hides the retired day-four fatigue exposition from existing saves", async () => {

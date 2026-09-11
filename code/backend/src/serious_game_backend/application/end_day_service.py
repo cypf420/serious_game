@@ -75,12 +75,18 @@ class EndDayService:
         client_action_id: str,
         state_version: int,
         retry: bool = False,
+        read_night_first: bool = False,
+        continue_story_only: bool = False,
     ) -> dict:
         payload = {
             "session_id": session_id,
             "client_action_id": client_action_id,
             "state_version": state_version,
         }
+        if read_night_first:
+            payload["read_night_first"] = True
+        if continue_story_only:
+            payload["continue_story_only"] = True
         request_hash = canonical_request_hash(payload)
         existing = self._operations.get(account_id, session_id, client_action_id)
         if existing is not None:
@@ -115,6 +121,8 @@ class EndDayService:
             raise ActionUnavailableError("会谈正在进行，请先结束当前会谈")
         if session.active_group_conversation is not None:
             raise ActionUnavailableError("强制群组会谈正在进行，请先完成")
+        if any(action.status == "active" for action in session.governance_actions.values()):
+            raise ActionUnavailableError("基础行动场景正在进行，请先继续或结束")
         if session.state_version != state_version:
             raise StateVersionConflictError(
                 "状态版本已变化，请刷新后重试",
@@ -129,6 +137,15 @@ class EndDayService:
             and not beat.end_day_requires_flags.issubset(session.flags)
         ):
             raise ActionUnavailableError("当前剧情节点还有必须完成的互动")
+
+        continuation = self._story_flow.unread_day_continuation(session, package)
+        if continuation and not continue_story_only:
+            raise ActionUnavailableError(
+                "当日还有后续剧情，请点击下一段读完后再结束今日。",
+                details={"reason": "STORY_CONTINUATION_REQUIRED"},
+            )
+        if continue_story_only and not continuation:
+            raise ActionUnavailableError("当前没有尚未展开的后续剧情，请刷新现场。")
 
         operation = (
             replace(
@@ -165,7 +182,29 @@ class EndDayService:
             if current.state_version != state_version:
                 raise StateVersionConflictError("状态版本已变化，请刷新后重试")
 
-            self._story_flow.append_night(current, package)
+            if continue_story_only:
+                # Normal story navigation persists the next passage without
+                # touching the date, resources, or night simulation.
+                self._story_flow.append_night(current, package)
+                current.processing_action_id = None
+                current.state_version += 1
+                current.touch()
+                response = {
+                    "operation_id": operation.operation_id,
+                    "status": OperationStatus.SUCCEEDED.value,
+                    "phase": "story_continued",
+                    "state_version": current.state_version,
+                    "visible_state": self._projector.project(current, package),
+                }
+                self._transactions.finish_operation(
+                    current,
+                    expected_version=state_version,
+                    operation=replace(
+                        operation, status=OperationStatus.SUCCEEDED,
+                        response=response, updated_at=utc_now_iso(),
+                    ),
+                )
+                return response
             night_record = self._nights.run_night(current, package)
             triggered: list[str] = []
             contract_settlements: list[dict] = []

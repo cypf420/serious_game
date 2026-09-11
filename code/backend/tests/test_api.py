@@ -565,11 +565,18 @@ class ApiTests(unittest.TestCase):
         ])
         consequence_cursor = consequence.json()["cursor"]
 
+        continued_d1 = self.client.post(
+            f"/api/game/session/{session_id}/story/continue",
+            json={"client_action_id": "api-d1-story", "state_version": decision.json()["state_version"]},
+            headers=self.headers,
+        )
+        self.assertEqual(200, continued_d1.status_code, continued_d1.text)
+        self.assertEqual(1, continued_d1.json()["visible_state"]["story"]["day"])
         ended = self.client.post(
             f"/api/game/session/{session_id}/end-day",
             json={
                 "client_action_id": "api-d1-end-day-1",
-                "state_version": 2,
+                "state_version": continued_d1.json()["state_version"],
                 "active_rest": False,
             },
             headers=self.headers,
@@ -618,7 +625,7 @@ class ApiTests(unittest.TestCase):
             json={
                 "input_mode": "decision",
                 "client_action_id": "api-d2-taskforce-1",
-                "state_version": 3,
+                "state_version": ended.json()["state_version"],
                 "decision_id": "dp1_01_taskforce_faction_map",
                 "option_id": "c_public_rules_covert_check",
             },
@@ -675,7 +682,7 @@ class ApiTests(unittest.TestCase):
             json={
                 "input_mode": "conversation_start",
                 "client_action_id": "api-d2-wu-start-1",
-                "state_version": 4,
+                "state_version": taskforce.json()["state_version"],
                 "opportunity_id": "opp_d02_wu_xiuying_first_talk",
                 "target_npc_id": "npc_wu_xiuying",
             },
@@ -695,7 +702,7 @@ class ApiTests(unittest.TestCase):
             json={
                 "input_mode": "free_text",
                 "client_action_id": "api-d2-wu-talk-1",
-                "state_version": 5,
+                "state_version": started.json()["state_version"],
                 "conversation_id": conversation_id,
                 "opportunity_id": "opp_d02_wu_xiuying_first_talk",
                 "target_npc_id": "npc_wu_xiuying",
@@ -704,7 +711,7 @@ class ApiTests(unittest.TestCase):
             headers=self.headers,
         )
         self.assertEqual(200, talk.status_code, talk.text)
-        self.assertEqual(6, talk.json()["state_version"])
+        self.assertEqual(started.json()["state_version"] + 1, talk.json()["state_version"])
         self.assertIn("谁的话在谁面前好使", talk.json()["npc_reply"]["text"])
         self.assertEqual("active", talk.json()["conversation"]["status"])
         self.assertEqual(
@@ -724,7 +731,7 @@ class ApiTests(unittest.TestCase):
             json={
                 "input_mode": "free_text",
                 "client_action_id": "api-d2-wu-talk-2",
-                "state_version": 6,
+                "state_version": talk.json()["state_version"],
                 "conversation_id": conversation_id,
                 "opportunity_id": "opp_d02_wu_xiuying_first_talk",
                 "target_npc_id": "npc_wu_xiuying",
@@ -765,11 +772,18 @@ class ApiTests(unittest.TestCase):
         self.assertIn("周姓11户", knowledge.json()["facts"][0]["text"])
         self.assertIn("可用于", knowledge.json()["facts"][0]["use_hint"])
 
+        continued_d2 = self.client.post(
+            f"/api/game/session/{session_id}/story/continue",
+            json={"client_action_id": "api-d2-story", "state_version": second_talk.json()["state_version"]},
+            headers=self.headers,
+        )
+        self.assertEqual(200, continued_d2.status_code, continued_d2.text)
+        self.assertEqual(2, continued_d2.json()["visible_state"]["story"]["day"])
         ended_d2 = self.client.post(
             f"/api/game/session/{session_id}/end-day",
             json={
                 "client_action_id": "api-d2-end-day-1",
-                "state_version": 7,
+                "state_version": continued_d2.json()["state_version"],
                 "active_rest": False,
             },
             headers=self.headers,

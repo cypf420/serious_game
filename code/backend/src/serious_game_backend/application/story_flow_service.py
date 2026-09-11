@@ -9,6 +9,8 @@ from serious_game_backend.domain.script_package import ScriptPackage
 from serious_game_backend.domain.story import DecisionOptionDefinition, StoryDayDefinition
 from serious_game_backend.application.player_text_policy import player_visible_sentence
 from serious_game_backend.application.ending_service import EndingService
+from serious_game_backend.application.story_prose import DAY62_OPENING, project_saved_prose, restore_prose
+from serious_game_backend.application.story_prose_round_two import restore_round_two, secretary_fallback
 
 
 PERMIT_ALREADY_ISSUED_TEXT = (
@@ -20,6 +22,10 @@ REPEATED_MONEY_OPTION_TEXTS = {
     1: "见他没有还价，你把补偿数又往上提了一次。",
     2: "你把补偿数提到第三次，要求他当场给个答复。",
 }
+
+# The original arrival-night paragraph crosses midnight. Keep the immutable
+# package and saved-game hash intact, but present its dawn passage on day two.
+ARRIVAL_DAWN_START = "天蒙蒙亮时你起身"
 
 
 def should_skip_permit_reissue(decision_id: str, flags: set[str]) -> bool:
@@ -72,6 +78,20 @@ class StoryFlowService:
     def initialize(self, session: GameSession, package: ScriptPackage) -> None:
         self._enter_day(session, package, session.game_state.story_day)
 
+    @staticmethod
+    def unread_day_continuation(session: GameSession, package: ScriptPackage):
+        """Eligible same-day story blocks still awaiting the reader's Next action."""
+        beat = package.story_day(session.game_state.story_day)
+        if beat is None:
+            return ()
+        return tuple(
+            block for block in beat.night_blocks
+            if block.presentation_phase != "morning"
+            and block.text.strip()
+            and block.is_visible(origin_id=session.origin_id, flags=session.flags)
+            and f"block:{block.block_id}" not in session.rendered_content_ids
+        )
+
     def append_night(self, session: GameSession, package: ScriptPackage) -> None:
         beat = package.story_day(session.game_state.story_day)
         if beat is None:
@@ -79,9 +99,10 @@ class StoryFlowService:
         self._append_blocks(
             session,
             tuple(
-                block
-                for block in beat.night_blocks
-                if block.presentation_phase != "morning"
+                replace(block, text=block.text.partition(ARRIVAL_DAWN_START)[0])
+                if block.block_id == "d01_night" and ARRIVAL_DAWN_START in block.text
+                else block
+                for block in self.unread_day_continuation(session, package)
             ),
             beat_id=beat.beat_id,
             presentation_phase="night",
@@ -201,6 +222,10 @@ class StoryFlowService:
             ) else None
         )
         items = []
+        decision_days = {item.story_day for item in session.narrative_feed
+                         if item.presentation_phase in {"decision", "decision_setup"}}
+        restore_package = session.package_id == "pkg_gameplay_v3"
+        has_day62_visit = any(item.block_id == "d62_restored_visit_1" for item in session.narrative_feed)
         seen_content_ids: set[str] = set()
         for item in session.narrative_feed:
             if item.content_instance_id is not None:
@@ -208,7 +233,12 @@ class StoryFlowService:
                     continue
                 seen_content_ids.add(item.content_instance_id)
             if item.cursor > after:
-                items.append(item)
+                if (item.kind == "day_intro" and item.content_instance_id == f"day:{item.story_day}:intro"
+                        and item.story_day in decision_days
+                        and "今天没有必须处理的主线事项" in item.text):
+                    item = replace(item, text="", read_gate="advance")
+                items.append(restore_round_two(project_saved_prose(item, has_day62_visit=has_day62_visit), session)
+                             if restore_package else item)
         return {
             "after": after,
             "cursor": session.next_feed_cursor - 1,
@@ -248,10 +278,17 @@ class StoryFlowService:
             session.story_beat_id = None
             return
         session.story_beat_id = beat.beat_id
-        is_free_day = not beat.opening_blocks and not (
-            beat.opening_decision_id
-            or beat.decision_ids
-            or session.pending_decision_queue
+        opening_blocks = (DAY62_OPENING if package.package_id == "pkg_gameplay_v3"
+                          and story_day == 62 and not beat.opening_blocks else beat.opening_blocks)
+        # Resolve conditional arrivals before describing the day to the player.
+        scheduled = list(beat.decision_ids)
+        if beat.opening_decision_id and beat.opening_decision_id not in scheduled:
+            scheduled.insert(0, beat.opening_decision_id)
+        for decision in package.decisions.values():
+            if decision.is_due_early(story_day, session.flags):
+                scheduled.insert(0, decision.decision_id)
+        is_free_day = not opening_blocks and not (
+            scheduled or session.pending_decision_queue or session.pending_decision
         )
         session.append_narrative(
             story_day=story_day,
@@ -267,18 +304,27 @@ class StoryFlowService:
             presentation_phase="day_intro",
             read_gate="free_action" if is_free_day else "advance",
         )
+        previous_beat = package.story_day(story_day - 1)
+        if story_day == 2 and previous_beat is not None:
+            for block in previous_beat.night_blocks:
+                if block.block_id == "d01_night" and ARRIVAL_DAWN_START in block.text:
+                    _, marker, dawn = block.text.partition(ARRIVAL_DAWN_START)
+                    self._append_blocks(session, (replace(
+                        block, block_id="d02_arrival_dawn", kind="narration",
+                        text=marker + dawn, presentation_phase="scene",
+                    ),), beat_id=beat.beat_id)
         self._append_blocks(
             session,
-            beat.opening_blocks,
+            secretary_fallback(session),
             beat_id=beat.beat_id,
             presentation_phase="scene",
         )
-        scheduled = list(beat.decision_ids)
-        if beat.opening_decision_id and beat.opening_decision_id not in scheduled:
-            scheduled.insert(0, beat.opening_decision_id)
-        for decision in package.decisions.values():
-            if decision.is_due_early(story_day, session.flags):
-                scheduled.insert(0, decision.decision_id)
+        self._append_blocks(
+            session,
+            opening_blocks,
+            beat_id=beat.beat_id,
+            presentation_phase="scene",
+        )
         for decision_id in scheduled:
             if decision_id not in session.pending_decision_queue:
                 session.pending_decision_queue.append(decision_id)
@@ -296,6 +342,8 @@ class StoryFlowService:
         for block in blocks:
             if not block.is_visible(origin_id=session.origin_id, flags=session.flags):
                 continue
+            if session.package_id == "pkg_gameplay_v3":
+                block = restore_round_two(restore_prose(block), session)
             session.append_narrative(
                 story_day=session.game_state.story_day,
                 kind=block.kind,

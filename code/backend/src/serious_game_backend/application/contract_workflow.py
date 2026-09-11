@@ -52,6 +52,17 @@ def render_contract(session, package, contract, terms: dict) -> str:
     services = [f"{resource_name(pools[key])}：{amount}{pools[key].get('unit') or '份'}"
                 for key, amount in sorted(terms["service_allocations"].items()) if amount > 0]
     lines.append("五、配套服务：" + ("；".join(services) if services else "未安排配套服务") + "。")
+    followup = terms.get("followup_plan")
+    if followup:
+        lines.extend([
+            "医疗随访与就业转介附件：",
+            f"约定复查机构：{followup.get('medical_provider') or '待补充'}；复查周期：" +
+            (f"每{followup['recheck_interval_days']}日。" if followup.get('recheck_interval_days') else "待补充。"),
+            ("医疗费用：按已分配医疗服务资源承担，不另增现金承诺。"
+             if followup.get('medical_fee_arrangement') == 'allocated_medical_service' else "医疗费用承担方式：待补充。"),
+            f"约定就业接收单位：{followup.get('employment_receiver') or '待补充'}。",
+            "以上机构及单位为本合同约定，尚不表示已确认接收或完成随访、转介；实际履行仍需落实。",
+        ])
     if terms["public_window_reward"]:
         lines.insert(6, "上述现金补偿已包含政策规定的按期签约奖励，不另行支付。")
     approvals = [session.administrative_documents[key].title for key in terms["approval_document_ids"]]

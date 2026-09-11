@@ -645,6 +645,19 @@ class ApiClient:
             },
         )
 
+    def continue_story(
+        self,
+        session_id: str,
+        *,
+        state_version: int,
+        client_action_id: str | None = None,
+    ) -> dict:
+        return self._request(
+            "POST", f"{self._session_path(session_id)}/story/continue",
+            {"client_action_id": client_action_id or self.new_key("story"),
+             "state_version": state_version},
+        )
+
     def end_day(
         self,
         session_id: str,

@@ -163,6 +163,13 @@ class StoryRoutesV3Tests(unittest.TestCase):
         )
 
     def end_day(self, client, session_id, headers, result: dict, key: str) -> dict:
+        view = client.get(f"/api/game/session/{session_id}/view", headers=headers).json()
+        if view["commands"].get("can_continue_story"):
+            continued = client.post(f"/api/game/session/{session_id}/story/continue", headers=headers, json={
+                "client_action_id": f"story-{key}", "state_version": result["state_version"],
+            })
+            self.assertEqual(200, continued.status_code, continued.text)
+            result = continued.json()
         response = client.post(
             f"/api/game/session/{session_id}/end-day",
             headers=headers,
@@ -913,7 +920,7 @@ class StoryRoutesV3Tests(unittest.TestCase):
                     ),
                 )
                 self.assertEqual(
-                    ["县城昨夜无事。"],
+                    [],
                     [
                         item.text
                         for item in stored.narrative_feed

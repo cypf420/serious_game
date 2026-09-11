@@ -668,7 +668,7 @@ class ChoiceExpressionProtocolTests(unittest.TestCase):
                 str(message.get("content", "")) for message in body["messages"]
             )
             requests.append(prompt)
-            if "你只负责把已经确认的业务选择写成自然语言" in prompt:
+            if '只返回 JSON：{"text"' in prompt:
                 content = {"text": "我今晚只核对已经公开的整改进度。"}
             elif '只返回 JSON：{"choice_ids"' in prompt:
                 content = {"choice_ids": ["npc_zhao_jianguo"]}
@@ -761,10 +761,10 @@ class ChoiceExpressionProtocolTests(unittest.TestCase):
         self.assertTrue(all("participant_ids" not in item or "合法候选" in item for item in requests))
         self.assertIn("本场景必须至少联系1人", requests[0])
         self.assertNotIn("没有必要时返回空数组", requests[0])
-        self.assertIn("核心担忧是口径是否真实", requests[2])
+        self.assertNotIn("核心担忧是口径是否真实", requests[2])
         self.assertNotIn("不得追加议题之外的新验收门槛", requests[2])
         self.assertNotIn("不得要求玩家交代剧本未提供的具体标准", requests[2])
-        self.assertIn("核心担忧是口径是否真实", requests[3])
+        self.assertNotIn("核心担忧是口径是否真实", requests[3])
         self.assertNotIn("不得复述其他在场人物已经说过的句子", requests[3])
         self.assertNotIn("只指出其回避或尚未回答", requests[3])
 
@@ -1003,9 +1003,9 @@ class ChoiceExpressionProtocolTests(unittest.TestCase):
             allowed_dialogue_acts=("press", "settle"),
         ))
 
-        self.assertIn(hidden_rubric, prompts[0])
-        self.assertIn(hidden_rubric, prompts[-1])
-        self.assertIn("不得向对话对象泄露隐藏规则", prompts[-1])
+        self.assertNotIn(hidden_rubric, prompts[0])
+        self.assertNotIn(hidden_rubric, prompts[-1])
+        self.assertNotIn("已确认选择", prompts[-1])
 
     def test_press_still_records_the_players_current_statement(self) -> None:
         def transport(_url: str, _key: str, body: dict, _timeout: float) -> dict:
@@ -1086,7 +1086,7 @@ class ChoiceExpressionProtocolTests(unittest.TestCase):
                 def transport(_url, _key, body, _timeout):
                     prompt = body["messages"][0]["content"]
                     prompts.append(prompt)
-                    result = {"text": "县里的汇报要与记录一致。"} if "你只负责把" in prompt else {"choice_id": "press"}
+                    result = {"text": "县里的汇报要与记录一致。"} if '只返回 JSON：{"text"' in prompt else {"choice_id": "press"}
                     return {"choices": [{"message": {"content": json.dumps(result, ensure_ascii=False)}}]}
 
                 gateway = OpenAICompatibleRoleLLMGateway(
@@ -1107,9 +1107,10 @@ class ChoiceExpressionProtocolTests(unittest.TestCase):
                     allowed_dialogue_acts=("press",),
                 ))
                 for prompt in prompts:
-                    for marker in ("人物设定末尾标记", "专属记忆标记", "未兑现承诺标记", "专属关系标记", "个人担忧标记", "历史对话标记", "本轮发言标记"):
+                    for marker in ("人物设定末尾标记", "历史对话标记", "本轮发言标记"):
                         self.assertIn(marker, prompt)
                     self.assertNotIn("其他角色未公开秘密标记", prompt)
+                    self.assertNotIn("个人担忧标记", prompt)
                     self.assertIn('"openness": 25', prompt)
 
     def test_forced_conversation_may_repeat_its_core_question_when_player_keeps_evading(self) -> None:

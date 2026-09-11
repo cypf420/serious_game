@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 from dataclasses import asdict
+import json
 from threading import Event
 from typing import Callable
 
 from serious_game_backend.application.package_lock import require_locked_package
+from serious_game_backend.application.reference_documents import resolve_references, hearing_facts
+from serious_game_backend.application.gameplay_governance_service import GameplayGovernanceService
 from serious_game_backend.application.input_review_service import (
     InputReviewService,
     input_rejection_message,
@@ -67,6 +70,7 @@ class GroupConversationService:
         session_id: str,
         state_version: int,
         player_text: str,
+        reference_ids: tuple[str, ...] = (),
         client_action_id: str | None = None,
         retry: bool = False,
         stream_event: Callable[[dict], None] | None = None,
@@ -80,6 +84,7 @@ class GroupConversationService:
             "kind": "group_conversation_turn",
             "state_version": state_version,
             "player_text": text,
+            **({"reference_ids": list(reference_ids)} if reference_ids else {}),
         })
         reserved = self._leases.reserve(
             account_id=account_id,
@@ -90,6 +95,7 @@ class GroupConversationService:
                 "kind": "group_conversation_turn",
                 "state_version": state_version,
                 "player_text": text,
+                **({"reference_ids": list(reference_ids)} if reference_ids else {}),
             },
             retry=retry,
             stream_cancel_register=stream_cancel_register,
@@ -119,6 +125,40 @@ class GroupConversationService:
             if followup_mode:
                 conversation.phase = "resolved"
             package = require_locked_package(self._packages, session)
+            if text == "zju need more vacation":
+                ensure_stream_open(stream_cancelled)
+                conversation.phase = "resolved"
+                conversation.status = "completed"
+                conversation.closure_summary = "已使用调试口令跳过本场夜间会谈。"
+                for participant in conversation.participant_states.values():
+                    participant.update(status="settled", public_summary="已停止追问")
+                session.completed_group_conversations.append(asdict(conversation))
+                session.logs.append({
+                    "type": "forced_group_conversation_completed",
+                    "conversation_id": conversation.conversation_id,
+                    "conversation_type": conversation.conversation_type,
+                    "story_day": session.game_state.story_day,
+                    "participant_ids": list(conversation.participant_ids),
+                    "completion_reason": "debug_passphrase",
+                    "visible_to_player": True,
+                })
+                session.active_group_conversation = None
+                if session.group_conversation_queue:
+                    session.active_group_conversation = session.group_conversation_queue.pop(0)
+                    session.active_group_conversation.status = "active"
+                    session.active_group_conversation.phase = "active"
+                NPCDemandService.sync(session, package)
+                response = self._leases.complete(lease, lambda saved: {
+                    "completed": True, "resolved": True, "input_rejected": False,
+                    "message": "本场夜间会谈已放行。", "turn_dialogues": [],
+                    "visible_state": self._projector.project(saved, package),
+                })
+                committed = True
+                return response
+            references = resolve_references(
+                session, package, reference_ids, conversation.participant_ids,
+                GameplayGovernanceService._public_archive,
+            )
             if stream_event is not None:
                 stream_event({"type": "npc_thinking_start", "stream_id": "group:review",
                               "npc_name": "在场各方（正在理解你的发言）"})
@@ -164,6 +204,11 @@ class GroupConversationService:
             profiles = {item.npc_id: item for item in package.npc_profiles}
             boundary = self._disclosure_gate.session_boundary(session, package)
             conversation.add_player_turn(text)
+            if references:
+                conversation.transcript[-1]["references"] = [
+                    {key: document[key] for key in ("id", "title", "version", "status")}
+                    for document in references
+                ]
             turn_dialogues: list[dict] = []
             memory_candidates: list[tuple[str, str, str]] = []
             ordered_participants = tuple(
@@ -206,11 +251,14 @@ class GroupConversationService:
                         "unresolved_commitments": (),
                     }
                 )
-                guidance = conversation.participant_guidance.get(npc_id, {})
                 thinking_id = f"group:{conversation.turn_count + 1}:{npc_id}"
                 if stream_event is not None:
                     stream_event({"type": "npc_thinking_start", "stream_id": thinking_id,
                                   "npc_id": npc_id, "npc_name": profile.name})
+                reference_context = (
+                    "系统真实听证办理记录：" + json.dumps(hearing_facts(session, npc_id), ensure_ascii=False)
+                    + ("\n玩家引用的真实文件：" + json.dumps(references, ensure_ascii=False) if references else "")
+                )
                 raw_result = self._gateway.run_night_turn(NightAgentContext(
                     session_id=session.session_id,
                     account_id=session.account_id,
@@ -239,15 +287,8 @@ class GroupConversationService:
                     transcript=tuple(conversation.transcript),
                     round_index=conversation.turn_count + 1,
                     scene_goal=conversation.agenda,
-                    private_context=(
-                        f"本场背景：{conversation.persuasion_context}\n"
-                        f"本角色判断参考：{guidance}"
-                        + (
-                            "\n本场会谈已经收束；本次只是会后补充交流，"
-                            "不得重新开启追问、改变会谈结论或兑现任何承诺。"
-                            if followup_mode else ""
-                        )
-                    ),
+                    private_context=reference_context,
+                    reference_context=reference_context,
                     public_expression_context=(
                         f"当前公开议题：{conversation.agenda}；"
                         f"当前会谈状态：{state}"

@@ -105,6 +105,13 @@ class StoryReviewRound1Tests(unittest.TestCase):
         state_version: int,
         suffix: str,
     ) -> dict:
+        view = client.get(f"/api/game/session/{session_id}/view", headers=headers).json()
+        if view["commands"].get("can_continue_story"):
+            continued = client.post(f"/api/game/session/{session_id}/story/continue", headers=headers, json={
+                "client_action_id": f"review-story-{suffix}", "state_version": state_version,
+            })
+            self.assertEqual(200, continued.status_code, continued.text)
+            state_version = continued.json()["state_version"]
         response = client.post(
             f"/api/game/session/{session_id}/end-day",
             headers=headers,
@@ -362,7 +369,7 @@ class StoryReviewRound1Tests(unittest.TestCase):
             (
                 "none-triggered",
                 {"与钱伟撕破脸"},
-                ("县城昨夜无事。",),
+                (),
             ),
         )
         for suffix, flags, expected in cases:

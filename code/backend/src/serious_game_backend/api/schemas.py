@@ -36,9 +36,15 @@ class ActionRequest(BaseModel):
     ordered_option_ids: list[str] = Field(default_factory=list)
     parameters: dict[str, Any] = Field(default_factory=dict)
     retry: bool = False
+    reference_ids: list[str] = Field(default_factory=list, max_length=8)
 
     @model_validator(mode="after")
     def validate_union(self) -> "ActionRequest":
+        if self.reference_ids and self.input_mode is not ActionInputMode.FREE_TEXT:
+            raise ValueError("仅自由会谈发言支持引用档案")
+        if (len(set(self.reference_ids)) != len(self.reference_ids)
+                or any(not value.strip() or len(value) > 256 for value in self.reference_ids)):
+            raise ValueError("引用档案编号必须有效且不能重复")
         if self.input_mode is ActionInputMode.TOOL:
             if not self.action_id or not self.opportunity_id:
                 raise ValueError("tool 模式必须提供 opportunity_id 和 action_id")
@@ -129,6 +135,7 @@ class ActionRequest(BaseModel):
             ordered_option_ids=tuple(self.ordered_option_ids),
             parameters=self.parameters,
             retry=self.retry,
+            reference_ids=tuple(self.reference_ids),
         )
 
 
@@ -154,6 +161,7 @@ class EndDayRequest(BaseModel):
     client_action_id: str = Field(min_length=8, max_length=128)
     state_version: int = Field(ge=1)
     retry: bool = False
+    read_night_first: bool = False
     # Transitional compatibility only. True is invalid, so there is no
     # player-triggered rest branch in the settlement logic.
     active_rest: Literal[False] | None = None
@@ -166,6 +174,14 @@ class GroupConversationTurnRequest(BaseModel):
     player_text: str = Field(min_length=1, max_length=2000)
     client_action_id: str | None = Field(default=None, min_length=8, max_length=128)
     retry: bool = False
+    reference_ids: list[str] = Field(default_factory=list, max_length=8)
+
+    @field_validator("reference_ids")
+    @classmethod
+    def valid_references(cls, values: list[str]) -> list[str]:
+        if len(set(values)) != len(values) or any(not value.strip() or len(value) > 256 for value in values):
+            raise ValueError("引用档案编号必须有效且不能重复")
+        return values
 
 
 class GroupConversationFinishRequest(BaseModel):
@@ -209,6 +225,7 @@ class GovernanceTurnRequest(BaseModel):
     state_version: int = Field(ge=1)
     player_text: str = Field(min_length=1, max_length=4000)
     client_action_id: str | None = Field(default=None, min_length=8, max_length=128)
+    reference_ids: list[str] = Field(default_factory=list, max_length=8)
     retry: bool = False
 
 
@@ -260,6 +277,14 @@ class ContractBatchConfirmRequest(BaseModel):
     confirmed: bool
 
 
+class ContractFollowupPlan(BaseModel):
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+    medical_provider: str | None = Field(default=None, min_length=1, max_length=120)
+    recheck_interval_days: int | None = Field(default=None, ge=1, le=365)
+    employment_receiver: str | None = Field(default=None, min_length=1, max_length=120)
+    medical_fee_arrangement: Literal["allocated_medical_service"] | None = None
+
+
 class ContractTermsRequest(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
     state_version: int = Field(ge=1)
@@ -276,6 +301,7 @@ class ContractTermsRequest(BaseModel):
     transition_months: int = Field(default=0, ge=0, le=12)
     public_window_reward: bool | None = None
     approval_document_ids: list[str] = Field(default_factory=list, max_length=16)
+    followup_plan: ContractFollowupPlan | None = None
     authorization_confirmed: bool = False
     real_unit_viewed: bool = False
     ledger_disclosed: bool = False

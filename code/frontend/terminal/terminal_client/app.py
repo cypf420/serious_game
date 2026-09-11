@@ -24,6 +24,7 @@ HELP_TEXT = """可用命令：
   continue                    继续当前账号最近一局
   load <session_id>           载入已有游戏
   scene                       刷新并显示新剧情、状态和待决策
+  next                        继续阅读当日后续剧情
   status                      显示当前玩家可见状态
   choose <A|option_id>        提交当前强制决策
   order <A B C D [E]>         提交当前排序题的完整顺序
@@ -333,6 +334,8 @@ class TerminalApp:
             self._validate_package()
         elif command == "end":
             self._end_day()
+        elif command == "next":
+            self._continue_story()
         elif command == "overtime":
             if len(args) != 1 or args[0] not in {"1", "2", "3"}:
                 raise ValueError("用法：overtime <1|2|3>")
@@ -399,7 +402,7 @@ class TerminalApp:
         commands = document.get("commands", {})
         self.commands = commands
         if not commands.get("can_choose") and not any(
-            commands.get(key) for key in ("can_act", "can_talk", "can_end_day")
+            commands.get(key) for key in ("can_act", "can_talk", "can_end_day", "can_continue_story")
         ):
             self.output("当前剧情节点暂无可提交命令。")
         self._guide_current(commands)
@@ -1959,6 +1962,18 @@ class TerminalApp:
             "下一步：输入 new 开始新局，或 scene 返回当前游戏。"
         )
 
+    def _continue_story(self) -> None:
+        if not self.commands.get("can_continue_story"):
+            raise ValueError("当前没有可接续的剧情，请先处理当前互动或刷新现场。")
+        client_action_id = self.api.new_key("story")
+        result = self.api.continue_story(
+            self._require_session(), state_version=self._require_version(),
+            client_action_id=client_action_id,
+        )
+        result = self._await_operation(client_action_id, result)
+        self.state_version = int(result["state_version"])
+        self._refresh()
+
     def _end_day(self) -> None:
         client_action_id = self.api.new_key("end")
         result = self.api.end_day(
@@ -2218,6 +2233,8 @@ class TerminalApp:
             return True
 
         options: list[tuple[str, str]] = []
+        if self.commands.get("can_continue_story"):
+            options.append(("next", "继续阅读当日剧情"))
         if self.commands.get("can_talk"):
             active = self.state.get("active_conversation")
             options.append((
@@ -2258,7 +2275,9 @@ class TerminalApp:
         if selected is None:
             return False
         action = options[selected][0]
-        if action == "talk":
+        if action == "next":
+            self._continue_story()
+        elif action == "talk":
             self._menu_talk()
         elif action == "action":
             self._menu_action()
@@ -2637,6 +2656,8 @@ class TerminalApp:
             )
             return f"[D{day} 决策｜{next_command}/help] > "
         available = []
+        if self.commands.get("can_continue_story"):
+            available.append("next")
         if self.commands.get("can_talk"):
             available.append("opportunities")
         if self.commands.get("can_act"):
@@ -2664,6 +2685,8 @@ class TerminalApp:
                 self.output("下一步：输入 choose <字母> 提交当前决策，例如 choose A。")
             return
         choices = []
+        if commands.get("can_continue_story"):
+            choices.append("next 继续阅读当日剧情")
         if commands.get("can_talk"):
             choices.append("opportunities 查看对象，再用 talk 交谈")
         if commands.get("can_act"):
