@@ -9,7 +9,13 @@ from serious_game_backend.application.archive_investigation_service import (
 def source_opportunity(opportunity, session):
     # Author source 4783-4789 places Luo's concrete questioning before D32's choice.
     if session.package_id == "pkg_gameplay_v3" and opportunity.opportunity_id == "opp_31_luo_jian_contact":
-        return replace(opportunity, day_min=32)
+        if session.game_state.story_day < 42:
+            return replace(opportunity, day_min=32,
+                opening_narrative="你找到经手柳林村补偿明细的罗健，继续核对台账。两种补偿标准和三个手印有待逐项查清；他只回答自己经手、亲眼见过的部分，等你提出具体问题。",
+                conversation_goal="核对柳林村补偿明细中的两个标准、异常手印和经手材料的保管来源。",
+                allowed_fact_ids=("fact_false_signing",), disclosure_protocols=(),
+                complete_on_player_exit=False, complete_on_npc_exit=False)
+        return opportunity
     return opportunity
 
 

@@ -4,6 +4,7 @@ from serious_game_backend.application.story_prose_round_two import secretary_opp
 from serious_game_backend.application.character_facts import household_knowledge
 from serious_game_backend.application.reference_documents import hearing_facts, resolve_references
 from serious_game_backend.application.luo_evidence import luo_copy_context, record_luo_copy_inquiry
+from serious_game_backend.application.evidence_guidance import source_opportunity
 from serious_game_backend.application.contract_context import own_saved_contracts
 
 from dataclasses import replace
@@ -420,6 +421,7 @@ class ActionService:
                 item for item in package.interaction_opportunities
                 if item.opportunity_id == conversation.opportunity_id
             )
+            opportunity = source_opportunity(opportunity, session)
             profile = next(
                 item for item in package.npc_profiles
                 if item.npc_id == conversation.npc_id
@@ -564,6 +566,7 @@ class ActionService:
         )
         if opportunity is None:
             raise ActionUnavailableError("当前会谈引用的互动机会不存在")
+        opportunity = source_opportunity(opportunity, session)
         if opportunity.npc_id != command.target_npc_id:
             raise ActionUnavailableError("目标 NPC 与互动机会不匹配")
         rule = package.action_rules[opportunity.action_id]

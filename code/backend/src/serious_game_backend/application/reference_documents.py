@@ -4,12 +4,14 @@ from serious_game_backend.domain.errors import ActionUnavailableError
 
 
 def meeting_display_title(session, meeting):
-    number = next((i for i, key in enumerate(session.meetings, 1) if key == meeting.meeting_id), 1)
+    # Session JSON sorts object keys; map order is not chronological evidence.
+    # Keep the complete stable record suffix rather than inventing a round number.
+    record_id = meeting.meeting_id.removeprefix("meeting_")
     action = session.governance_actions.get(meeting.action_instance_id)
     hearing = action is not None and action.variant_id == "public_hearing"
     status = "cancelled" if action is not None and action.status == "cancelled" else meeting.status
     status_label = {"discussion": "讨论中", "resolved": "已形成结论", "rejected": "结论未通过", "cancelled": "已中止"}.get(status, status)
-    return f"第{meeting.story_day}日·第{number}次·{meeting.topic} {'听证记录' if hearing else '会议记录'}·{status_label}"
+    return f"第{meeting.story_day}日·{meeting.topic} {'听证记录' if hearing else '会议记录'}·{status_label}·记录号{record_id}"
 
 
 def catalog(session, package, project_archive):

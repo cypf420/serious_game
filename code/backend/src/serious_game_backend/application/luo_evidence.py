@@ -10,10 +10,20 @@ def is_copy_inquiry(player_text):
     text = player_text or ""
     if not any(word in text for word in COPY_INQUIRY_WORDS):
         return False
-    if re.search(r"(?:不问|不想问|不用|不要|无需|别再|不需要).{0,12}(?:箱子|留底|复印件|底稿|副本)", text):
+    # Cancelling, postponing or forbidding an inquiry remains a non-inquiry even
+    # when softened with 好吗/行吗 and regardless of which side the material is on.
+    if re.search(r"(?:不(?:想|愿|再|必|用|需要|要|打算)?(?:问|谈|讨论|说|提|看|查|找|拿|出示|提供|给|交|核对|追问)|别(?:再)?(?:问|谈|说|提|看|查|找|拿|出示|提供|给|交|核对)|不用|不要|无需|暂缓|暂不|先不|下次再|以后再|改天再|回头再|不着急)", text):
         return False
-    return any(cue in text for cue in ("为什么", "为何", "哪里", "在哪", "吗", "有没有", "是否", "请问",
-        "想问", "能否", "能不能", "请把", "请出示", "请核对", "我问"))
+    if not any(cue in text for cue in ("为什么", "为何", "哪里", "在哪", "吗", "有没有", "是否", "请问",
+            "想问", "能否", "可否", "能不能", "请把", "请出示", "请核对", "我问", "给我看", "谁", "哪儿")):
+        return False
+    copy_named = any(word in text for word in COPY_INQUIRY_WORDS[1:])
+    if copy_named:
+        # A copy's price/colour is not a request about preservation or evidence.
+        return bool(re.search(r"(?:留(?:着|存|下|了|有)|保管|保存|来源|哪里|哪儿|在哪|出示|给我|交给|核对|有没有|是否有|还有|还在|有.{0,6}(?:留底|复印件|底稿|副本))", text))
+    # The author's precise box-preservation question is meaningful in this scene;
+    # unrelated questions about the price/location of any box are not.
+    return bool(re.fullmatch(r"(?:请问|我想问)?(?:你)?(?:为什么|为何).{0,4}(?:留着|留存|保留|保存).{0,5}箱子[？?吗呢。]*", text.strip()))
 
 
 def luo_copy_context(session, npc_id, player_text):
