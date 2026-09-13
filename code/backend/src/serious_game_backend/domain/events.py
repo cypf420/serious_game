@@ -13,6 +13,7 @@ class VisibleDecisionOption:
     available: bool = True
     unavailable_reason: str | None = None
     unlock_requirements: tuple[dict[str, str], ...] = ()
+    next_steps: tuple[dict, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)

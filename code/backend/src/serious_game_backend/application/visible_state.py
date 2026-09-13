@@ -55,6 +55,7 @@ class VisibleStateProjector:
                         "available": item.available,
                         "unavailable_reason": item.unavailable_reason,
                         "unlock_requirements": list(item.unlock_requirements),
+                        "next_steps": [dict(step) for step in item.next_steps],
                     }
                     for item in current_pending.options
                 ],
