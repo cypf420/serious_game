@@ -6,6 +6,7 @@ from serious_game_backend.application.reference_documents import hearing_facts, 
 from serious_game_backend.application.luo_evidence import luo_copy_context, record_luo_copy_inquiry
 from serious_game_backend.application.evidence_guidance import source_opportunity
 from serious_game_backend.application.contract_context import own_saved_contracts
+from serious_game_backend.application.npc_context_visibility import stage_role_setting, stage_unresolved_demands
 
 from dataclasses import replace
 import secrets
@@ -613,12 +614,7 @@ class ActionService:
                 session, opportunity.npc_id
             )
         )
-        unresolved_demands = tuple(
-            demand.description
-            for demand in package.npc_demands
-            if demand.npc_id == opportunity.npc_id
-            and session.npc_demand_states.get(demand.demand_id, {}).get("status") != "satisfied"
-        )
+        unresolved_demands = stage_unresolved_demands(session, package, opportunity.npc_id)
         prepared_input = (
             self._model_input_policy.prepare(account_id, command.player_text)
             if self._model_input_policy is not None
@@ -638,7 +634,7 @@ class ActionService:
                 required_disclosure_ids=fact_boundary.required_disclosure_ids,
                 npc_name=profile.name,
                 npc_state_tier=profile.state_tier.value,
-                role_setting=profile.role_setting,
+                role_setting=stage_role_setting(session, profile),
                 big_five=(
                     profile.big_five.as_dict()
                     if profile.big_five is not None else {}

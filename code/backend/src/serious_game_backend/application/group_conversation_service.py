@@ -8,6 +8,7 @@ from typing import Callable
 from serious_game_backend.application.package_lock import require_locked_package
 from serious_game_backend.application.reference_documents import resolve_references, hearing_facts
 from serious_game_backend.application.contract_context import own_saved_contracts
+from serious_game_backend.application.npc_context_visibility import stage_role_setting
 from serious_game_backend.application.gameplay_governance_service import GameplayGovernanceService
 from serious_game_backend.application.input_review_service import (
     InputReviewService,
@@ -275,7 +276,7 @@ class GroupConversationService:
                     ),
                     npc_id=npc_id,
                     npc_name=profile.name,
-                    role_setting=profile.role_setting,
+                    role_setting=stage_role_setting(session, profile),
                     big_five=(
                         profile.big_five.as_dict() if profile.big_five else {}
                     ),
