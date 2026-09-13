@@ -275,7 +275,7 @@ test("resolved group conversations keep the input and explicit finish action", a
   await expect(page.getByRole("button", { name: "送出回应", exact: true })).toBeEnabled();
 });
 
-test("contract preview preserves text, prevents dirty submit, and resumes existing discussion", async ({ page }) => {
+test("contract preview preserves text, prevents dirty submit, and resumes existing discussion", async ({ page }, testInfo) => {
   const writes: string[] = [];
   let saveAttempts = 0;
   const action = { action_instance_id: "visit-contract", action_kind: "household_visit", status: "active", target_ids: ["npc_yuan_guilan"], topic: "安置协商", transcript: [] };
@@ -329,9 +329,9 @@ test("contract preview preserves text, prevents dirty submit, and resumes existi
   await expect(dialog.locator("textarea")).toHaveCount(0);
   await expect(dialog).not.toContainText("专业审校");
   await expect(dialog.getByText("请确认扶手。", { exact: true })).not.toBeVisible();
-  await page.screenshot({ path: "E:/严肃游戏/serious_game_code/output/contract-workflow-2026-09-09/contract-desktop.png", fullPage: true });
+  await page.screenshot({ path: testInfo.outputPath("contract-desktop.png"), fullPage: true });
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.screenshot({ path: "E:/严肃游戏/serious_game_code/output/contract-workflow-2026-09-09/contract-mobile.png", fullPage: true });
+  await page.screenshot({ path: testInfo.outputPath("contract-mobile.png"), fullPage: true });
   await page.setViewportSize({ width: 1280, height: 900 });
   await dialog.getByRole("button", { name: /YUAN-02/ }).click();
   await expect(dialog.locator(".contract-body")).toHaveText(signed.contract_text);

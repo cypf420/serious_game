@@ -474,6 +474,15 @@ class OpenAICompatibleRoleLLMGateway(RoleLLMGateway):
     def _run_role_choice_expression(
         self, context: RoleTurnContext
     ) -> RoleTurnResult:
+        # Keep this prompt cleanup scoped to the reviewed secretary conversation.
+        secretary_turn = context.npc_id == "npc_zheng_xiangdong"
+        secretary_context = (
+            self._character_context(context)
+            + "人物诉求与未兑现承诺是动机和待办，不是已存在的文件、已完成事实或新增办理门槛。"
+            "会谈目标和开场是背景，不要求每轮重复；依据当前记录先直接回答玩家本轮问题。"
+            "历史回答和长期记忆可能过时或有误，不能用历史说法覆盖当前已核实事实，"
+            "也不能把记忆中的未解决诉求当作当前仍未解决的证明。\n"
+        ) if secretary_turn else ""
         common = {
             "role_id": context.npc_id,
             "role_name": context.npc_name or context.npc_id,
@@ -487,7 +496,7 @@ class OpenAICompatibleRoleLLMGateway(RoleLLMGateway):
                 "根据玩家本轮发言与当前会谈目标，选择角色的沟通行为。"
                 "只有发言与游戏、治理、案头材料和当前角色会谈完全无关时才选无关。"
             ),
-            context=(
+            context=secretary_context or (
                 self._character_context(context) +
                 "玩家身份：云溪县县长李致远；你正在与县长本人交谈，不要询问其是谁或把他当成村民。\n"
                 f"会谈目标：{context.conversation_goal}\n"
@@ -566,11 +575,11 @@ class OpenAICompatibleRoleLLMGateway(RoleLLMGateway):
             )
         allowed_facts = tuple(
             item for item in (
-                context.conversation_goal,
-                context.conversation_opening,
-                *context.memory_items,
-                *context.unresolved_commitments,
-                *context.unresolved_demands,
+                context.conversation_goal if not secretary_turn else "",
+                context.conversation_opening if not secretary_turn else "",
+                *(context.memory_items if not secretary_turn else ()),
+                *(context.unresolved_commitments if not secretary_turn else ()),
+                *(context.unresolved_demands if not secretary_turn else ()),
                 *context.recent_visible_change_reasons,
                 (
                     context.allowed_fact_texts.get(disclosure_id, "")
@@ -588,7 +597,7 @@ class OpenAICompatibleRoleLLMGateway(RoleLLMGateway):
                 context.big_five,
                 context.role_setting,
             ),
-            context=(
+            context=secretary_context or (
                 self._character_context(context) +
                 f"会谈目标：{context.conversation_goal}\n"
                 f"固定地点与开场：{context.conversation_opening}\n"
@@ -605,7 +614,11 @@ class OpenAICompatibleRoleLLMGateway(RoleLLMGateway):
                 "使用自然、简短、口语化的中文",
                 "控制在2至4句，每句只表达一个明确意思",
                 "不要堆叠括号舞台动作",
-                "不要推断未提供的职责、事实、数字或承诺",
+                (
+                    "不编造未提供的职责、事实、数字或承诺；当前已核实数据明确提供总数和已签数时，"
+                    "可以据此做确定的减法并说明依据；数据缺失或冲突时说明缺口，不用人物诉求代替回答"
+                    if secretary_turn else "不要推断未提供的职责、事实、数字或承诺"
+                ),
             ),
             forbidden_text_signatures=tuple(
                 signature

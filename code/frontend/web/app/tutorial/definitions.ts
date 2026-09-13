@@ -19,12 +19,12 @@ export const BASIC_TUTORIAL: TutorialDefinition = {
   steps: [
     { id: "play-at-your-pace", title: "行动、剧情与存档", body: "自由行动与剧情决策相对独立。行动开放时，可以先自由行动再推进剧情，也可以完成剧情决策后再自由行动；必须当场处理的决定，请按现场提示完成。游戏进度会随每次行动与决定自动保存，无需手动保存。", target: target("today") },
     { id: "today", title: "今日案头", body: "这里汇总今日目标与现场情况。结合当前叙事和必须处理的事项，安排今天的工作。", target: target("today") },
-    { id: "metrics", title: "日期、阶段与精力", body: "日期、阶段和各项指标反映当前局面。精力决定今天还能安排多少工作；以当前显示的消耗为准。", target: target("metrics") },
+    { id: "metrics", title: "日期、阶段与精力", body: "日期、阶段和各项指标反映当前局面。精力决定今天还能安排多少工作；以当前显示的消耗为准。", detail: "资源余额可用于兑换通晓币。通晓币不用于人物会谈或本局行动消耗，将用于后续“百晓生”网站兑换；开放时间、兑换范围和具体规则以百晓生网站公告为准。", target: target("metrics") },
     { id: "narrative-controls", title: "阅读与推进", body: "使用这里的阅读控制查看叙事。读完当前剧情并处理必须完成的事项后，才能结束今日；出现现场决定时先完成选择。", target: target("narrative-controls") },
     { id: "nav-actions", title: "行动：安排工作", body: "这里按办理方式列出当前公开的行动。每张卡片会说明用途、精力消耗和不可用原因；选择要办理的行动后，核对对象与条件，再由你确认发起。", target: target("nav-actions") },
     { id: "nav-opportunities", title: "人物：了解与会谈", body: "这里列出已公开的人物与当前会谈入口。先了解人物状态与说明，再选择当前可以进入的会谈。", target: target("nav-opportunities") },
     { id: "advance-signing", title: "主动推进签约", body: "推进签约是独立于剧情阅读和决策的自由行动，剧情推进不会自动完成签约。最终实际签约数直接影响结局，但不是唯一判定因素。", detail: "可以向代表询问其所代表的各户需求，例如向吴秀英询问本批次其他住户的情况。代表始终以本人身份交流，不扮演其他住户，也不能代签。会谈后准备逐户合同，每户接受并签署后才计入进度并结算本户资源。打开入口不会直接签约或扣除资源，会谈消耗以当前提示为准。", target: target("advance-signing") },
-    { id: "nav-desk", title: "卷宗与线索", body: "卷宗页查看任务与政策；线索页整理事实与调查途径。治理页的档案统一查看已取得材料、会议听证记录和公文。", detail: "对话中输入 @ 选择允许引用的档案，核对名称与状态后随发言发送。引用不会替你查档或完成行动。听证通知表示已安排，形成的听证记录才说明实际办理结果。合同仍只能应用会议形成且符合条件的红头文件。", target: target("nav-desk") },
+    { id: "nav-desk", title: "卷宗与线索", body: "卷宗页查看任务与政策；线索页整理事实与调查途径。治理页的档案统一查看已取得材料、会议听证记录和公文。", detail: "对话中输入 @ 选择允许引用的档案，核对名称与状态后随发言发送。NPC 会收到所选材料的正文、版本和状态。引用不会替你查档或完成行动。听证通知表示已安排，形成的听证记录才说明实际办理结果。合同仍只能应用会议形成且符合条件的红头文件。", target: target("nav-desk") },
   ],
 };
 
@@ -131,7 +131,7 @@ export function sceneTutorial(scene: string): TutorialDefinition | null {
   const steps: TutorialStep[] = [{ id: scene, ...copy, target: target(scene) }];
   if (["conversation", "group", "governance", "meeting", "hearing", "clan"].includes(scene)) {
     steps.push(
-      { id: `${scene}:input`, title: "准备你的发言", body: "这里填写具体问题或意见。支持引用的输入框可输入 @ 选择档案，核对材料状态后发送。引用不代表事项已办妥，也不能代替实际行动。", target: target("conversation-input") },
+      { id: `${scene}:input`, title: "准备你的发言", body: "这里填写具体问题或意见。支持引用的输入框可输入 @ 选择档案，核对材料状态后发送。NPC 会收到所选材料的正文、版本和状态。引用不代表事项已办妥，也不能代替实际行动。", target: target("conversation-input") },
       { id: `${scene}:send`, title: "发送与后续操作", body: "发送会将你的发言提交到当前现场。先核对内容与按钮状态，讲解结束后再由你发送。", detail: scene === "group" ? "继续阅读各方回应，按现场要求处理当前问题。是否可以结束或返回，以问题处理后的页面按钮为准。" : "收到回应后继续阅读记录。需要结束或返回时，先查看原有按钮的说明与当前条件，再自行操作。", target: target("conversation-send") },
     );
   }

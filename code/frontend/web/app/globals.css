@@ -1143,7 +1143,135 @@ footer { grid-column: 1 / -1; display: flex; align-items: center; justify-conten
 
 .reference-attachments { display: block; font-size: .8rem; opacity: .85; margin-top: .4rem; overflow-wrap: anywhere; }
 .reference-attachments > span { display: block; }
+
+/* Feedback 1/2/9/11: local reading sizes, including the compact navigation. */
+.rail button b { font-size: 18px; }
+.rail button em { font-size: 12px; color: #aea28a; }
+.metric-strip small, .metric-strip em { font-size: 12px; }
+.metric-strip strong { font-size: 24px; }
+.contract-terms-form, .contract-text-section,
+.contract-terms-form label, .contract-terms-form legend { font-size: 14px; }
+.contract-resource-hint, .service-resource-label > small,
+.contract-tabs small, .contract-text-section header span { font-size: 12px; }
+.app-shell > footer { font-size: 12px; }
+
+/* Feedback 7/13: reserve real rows for the title and existing record scroller. */
+.story-scroll:has(> .governance-gal-stage) { overflow: hidden; }
+.story-scroll > .governance-gal-stage {
+  height: 100%; min-height: 0; padding: 8px; gap: 8px;
+  grid-template-columns: minmax(80px, .22fr) minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr); align-items: stretch;
+}
+.story-scroll > .governance-gal-stage .gal-scene-meta {
+  position: static; grid-column: 1 / -1; grid-row: 1; padding: 6px 10px;
+  min-width: 0; overflow-wrap: anywhere;
+}
+.story-scroll > .governance-gal-stage .gal-portrait {
+  grid-column: 1; grid-row: 2; width: 100%; height: 100%; min-height: 0; max-height: 100%;
+  margin: 0; align-self: end;
+}
+.story-scroll > .governance-gal-stage .gal-dialogue.has-speaker {
+  grid-column: 2; grid-row: 2; margin: 0; padding: 8px;
+  min-width: 0; min-height: 0; display: flex; flex-direction: column;
+}
+.governance-gal-stage .gal-dialogue > header { flex: none; flex-wrap: wrap; gap: 4px 12px; }
+.governance-gal-stage .governance-action-timeline { flex: 1; min-height: 0; max-height: none; }
+.governance-action-timeline > article { min-width: 0; }
+.governance-action-timeline > article > .reference-attachments { grid-column: 1 / -1; min-width: 0; }
+@media (max-width: 780px) {
+  .metric-strip > div, .metric-strip > div:nth-child(5), .metric-strip > div:nth-child(6) {
+    flex: 0 0 auto; min-width: max-content; column-gap: 8px;
+  }
+  .story-scroll > .governance-gal-stage {
+    height: 520px; min-height: 0; grid-template-columns: minmax(0, 1fr);
+  }
+  .story-scroll > .governance-gal-stage .gal-scene-meta { padding-right: 74px; min-height: 76px; }
+  .story-scroll > .governance-gal-stage .gal-portrait {
+    grid-column: 1; grid-row: 1; width: 60px; height: 76px; justify-self: end; z-index: 2;
+  }
+  .story-scroll > .governance-gal-stage .gal-dialogue.has-speaker { grid-column: 1; }
+}
 .reference-candidates button:disabled { opacity: .55; cursor: not-allowed; }
+
+/* Keep the visit composer compact so the existing dialogue row gets more room. */
+.governance-bar { padding: 6px 12px; }
+.governance-bar label > span { margin-bottom: 3px; }
+.governance-bar textarea {
+  height: 56px; min-height: 56px; padding: 6px 10px;
+  font-size: 14px; line-height: 1.5; overflow-y: auto;
+}
+.governance-bar > div { margin-top: 4px; }
+.governance-bar > div > small { width: auto; margin-right: auto; }
+.governance-bar > div > button { padding: 6px 12px; }
 
 .saved-sync-recovery { position: fixed; z-index: 85; top: 12px; left: 50%; transform: translateX(-50%); width: min(560px, calc(100vw - 24px)); padding: 16px; border: 1px solid var(--gold); background: #282118; color: #f0dfb8; box-shadow: 0 8px 30px #0008; }
 .saved-sync-recovery p { margin: 8px 0; }
+
+/* Feedback 18/23/27/30/33: scope readability to the requested panels. */
+.person-action > button { background: #33281c; color: #f4e5c2; border: 1px solid #9b8054; min-height: 44px; }
+.person-action > button:hover:not(:disabled) { background: #4b3923; }
+.person-action > button:focus-visible { outline: 2px solid #d8b66e; outline-offset: 3px; }
+.person-action > button:disabled { opacity: .55; cursor: not-allowed; }
+.desk-panel p, .desk-panel li { font-size: 14px; overflow-wrap: anywhere; }
+.desk-panel small { font-size: 12px; }
+.desk-panel h3 { font-size: 18px; }
+.knowledge-panel p, .knowledge-panel li { font-size: 14px; overflow-wrap: anywhere; }
+.knowledge-panel .knowledge-provenance, .knowledge-panel .investigation-method b,
+.knowledge-panel small, .knowledge-panel .evidence-head span { font-size: 12px; }
+.knowledge-panel h3, .knowledge-panel h4 { font-size: 18px; overflow-wrap: anywhere; }
+.resource-limit-list .resource-limit-input { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.resource-limit-input input { min-width: 0; width: 100%; }
+.resource-limit-input em { flex: none; font-size: 12px; font-style: normal; }
+.compensation-breakdown { margin: 10px 0; font-size: 14px; line-height: 1.7; overflow-wrap: anywhere; }
+.compensation-breakdown summary { cursor: pointer; }
+
+/* Review item 1: use the full desktop navigation column. */
+@media (min-width: 781px) {
+  .rail { padding: 4px; gap: 3px; }
+  .rail button { flex: 1 0 62px; width: 100%; padding: 8px 10px; display: flex; flex-direction: column; justify-content: center; }
+  .rail button b { font-size: 20px; line-height: 1.6; letter-spacing: .24em; }
+  .rail button em { margin-top: 5px; line-height: 1.7; letter-spacing: .08em; }
+}
+
+/* Conversation composers share compact controls; document and decision forms are untouched. */
+.conversation-bar:is(.gal-conversation-bar, .governance-bar) { padding: 6px 12px; }
+.conversation-bar:is(.gal-conversation-bar, .governance-bar) label > span { margin-bottom: 3px; }
+.conversation-bar:is(.gal-conversation-bar, .governance-bar) textarea {
+  height: 44px; min-height: 44px; padding: 4px 8px; font-size: 14px; line-height: 1.5; overflow-y: auto;
+}
+.conversation-bar:is(.gal-conversation-bar, .governance-bar) > div:not(.governance-inline-notice):not(.conversation-notice) { margin-top: 4px; }
+.conversation-bar:is(.gal-conversation-bar, .governance-bar) > div > button { min-height: 44px; padding: 6px 12px; }
+.conversation-bar:is(.gal-conversation-bar, .governance-bar) .reference-candidates {
+  position: absolute; left: 0; right: 0; bottom: calc(100% + 4px); z-index: 30;
+  max-height: min(240px, 35dvh);
+}
+.conversation-bar:is(.gal-conversation-bar, .governance-bar) .reference-tags { max-height: 80px; overflow-y: auto; }
+.gal-conversation-bar > .group-compact { grid-template-columns: minmax(0, 1fr) auto; }
+.forced-group-timeline { grid-auto-rows: max-content; }
+.forced-group-timeline p { overflow-wrap: anywhere; }
+@media (min-width: 781px) {
+  .conversation-bar:is(.gal-conversation-bar, .governance-bar) { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 6px 10px; }
+  .conversation-bar:is(.gal-conversation-bar, .governance-bar) > label { min-width: 0; }
+  .conversation-bar:is(.gal-conversation-bar, .governance-bar) > div:not(.governance-inline-notice):not(.conversation-notice) { display: flex; flex-wrap: wrap; max-width: 360px; margin: 0; gap: 4px 8px; }
+  .conversation-bar:is(.gal-conversation-bar, .governance-bar) > div > small { flex-basis: 100%; width: auto; }
+  .conversation-bar:is(.gal-conversation-bar, .governance-bar) > :is(header, .governance-inline-notice, .conversation-notice) { grid-column: 1 / -1; }
+  .gal-conversation-bar > .conversation-compact { margin: 0; }
+
+  /* Give the existing reading regions the space released by their composers. */
+  .story-scroll > .gal-stage[data-primary-scene="conversation"] {
+    height: 100%; min-height: 100%; grid-template-rows: minmax(0, 1fr); padding: 12px 18px;
+  }
+  .story-scroll > .gal-stage[data-primary-scene="conversation"] .gal-portrait { grid-row: 1; min-height: 0; margin-bottom: -12px; }
+  .story-scroll > .gal-stage[data-primary-scene="conversation"] .gal-dialogue {
+    grid-row: 1; height: 100%; min-height: 0; display: flex; flex-direction: column;
+  }
+  .story-scroll > .gal-stage[data-primary-scene="conversation"] .gal-dialogue > :is(header, nav) { flex: none; }
+  .story-scroll > .gal-stage[data-primary-scene="conversation"] .gal-dialogue > p { flex: 1; min-height: 0; max-height: none; overflow-y: auto; }
+  .story-scroll > .forced-group-gal-stage { height: 100%; min-height: 0; }
+  .story-scroll > .forced-group-gal-stage .forced-group-timeline { max-height: none; }
+  .story-scroll > .leadership-meeting-scene {
+    height: 100%; min-height: 0; max-width: none; margin: 0; display: flex; flex-direction: column;
+  }
+  .story-scroll > .leadership-meeting-scene > :is(header, .scene-participants, .scene-opening) { flex: none; }
+  .story-scroll > .leadership-meeting-scene > .scene-transcript { flex: 1; min-height: 0; max-height: none; }
+}

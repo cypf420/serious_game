@@ -51,6 +51,14 @@ def conversation():
     helper.setUp()
     first = helper.action(dict(input_mode="decision", client_action_id="ref-first-decision", state_version=1,
                                decision_id="ev1_01_reception_bag", option_id="a_reject_on_site"))
+    view = helper.client.get(f"/api/game/session/{helper.session_id}/view", headers=helper.headers).json()
+    while view["commands"].get("can_continue_story"):
+        continued = helper.client.post(f"/api/game/session/{helper.session_id}/story/continue", headers=helper.headers,
+            json={"client_action_id": f"ref-read-first-day-{view['state']['state_version']}",
+                  "state_version": view["state"]["state_version"]})
+        assert continued.status_code == 200, continued.text
+        first = continued.json()
+        view = helper.client.get(f"/api/game/session/{helper.session_id}/view", headers=helper.headers).json()
     second = helper.end_day(first["state_version"], "ref-end-first-day")
     decision = helper.action(dict(input_mode="decision", client_action_id="ref-second-decision",
                                   state_version=second["state_version"], decision_id="dp1_01_taskforce_faction_map",

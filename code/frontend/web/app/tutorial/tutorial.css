@@ -45,6 +45,28 @@
 .tutorial-action-intro button { margin-right: 8px; font-size: 12px; }
 .tutorial-action-help { margin-top: 8px; font-size: 12px; }
 .tutorial-open { white-space: nowrap; }
+/* Feedback 4/5: one dark palette and a separate, wrapping action row. */
+.tutorial-popover, .tutorial-invitation, .tutorial-directory, .tutorial-action-intro {
+  background: #29251e; color: #f5e6c4; border-color: #9b8257;
+}
+.tutorial-eyebrow, .tutorial-step-count, .tutorial-popover details,
+.tutorial-popover summary, .tutorial-directory small,
+.tutorial-popover .tutorial-secondary button { color: #dcc69d; }
+.tutorial-popover .tutorial-field-hint { background: #3a3225; }
+.tutorial-popover button, .tutorial-invitation button, .tutorial-directory button,
+.tutorial-action-intro button, .tutorial-action-help { background: #413522; color: #f5e6c4; }
+.tutorial-popover button:hover:not(:disabled), .tutorial-invitation button:hover,
+.tutorial-directory button:hover:not(:disabled) { background: #59462c; }
+.tutorial-popover button:disabled, .tutorial-directory button:disabled {
+  background: #332e26; color: #a99b82; border-color: #70634d;
+}
+.tutorial-popover .tutorial-primary:disabled { background: #553d34; color: #b5a48b; }
+.tutorial-invitation { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.tutorial-invitation > b, .tutorial-invitation > p { grid-column: 1 / -1; margin: 0; }
+.tutorial-invitation > button { margin: 0; min-height: 44px; height: 100%; }
+.tutorial-invitation > button:only-of-type { grid-column: 1 / -1; }
+.tutorial-popover .tutorial-controls, .tutorial-secondary { flex-wrap: wrap; }
+.tutorial-popover .tutorial-controls button { flex: 1 1 110px; }
 @media (max-width: 780px) {
   [data-tutorial-scroll-host="true"] { padding-bottom: calc(var(--tutorial-scroll-base, 0px) + var(--tutorial-scroll-reserve, 340px)) !important; scroll-padding-top: 12px; scroll-padding-bottom: var(--tutorial-scroll-reserve, 340px); }
   .tutorial-popover { padding: 16px; font-size: 13px; max-height: min(55dvh, 440px); }

@@ -3,6 +3,7 @@ from serious_game_backend.application.story_prose_round_two import secretary_opp
 
 from serious_game_backend.application.character_facts import household_knowledge
 from serious_game_backend.application.reference_documents import hearing_facts, resolve_references
+from serious_game_backend.application.contract_context import own_saved_contracts
 
 from dataclasses import replace
 import secrets
@@ -654,6 +655,7 @@ class ActionService:
                 conversation_opening=secretary_opportunity(opportunity, session).opening_narrative,
                 conversation_goal=opportunity.conversation_goal,
                 visible_world_context={
+                    "own_contracts": own_saved_contracts(session, package, profile.npc_id),
                     "households": household_knowledge(package, profile.npc_id),
                     "hearing_progress": hearing_facts(session, profile.npc_id),
                     "player_identity": "李致远，云溪县县长",

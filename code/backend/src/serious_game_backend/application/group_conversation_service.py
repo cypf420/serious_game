@@ -7,6 +7,7 @@ from typing import Callable
 
 from serious_game_backend.application.package_lock import require_locked_package
 from serious_game_backend.application.reference_documents import resolve_references, hearing_facts
+from serious_game_backend.application.contract_context import own_saved_contracts
 from serious_game_backend.application.gameplay_governance_service import GameplayGovernanceService
 from serious_game_backend.application.input_review_service import (
     InputReviewService,
@@ -287,7 +288,8 @@ class GroupConversationService:
                     transcript=tuple(conversation.transcript),
                     round_index=conversation.turn_count + 1,
                     scene_goal=conversation.agenda,
-                    private_context=reference_context,
+                    private_context=reference_context + "\n本人或所代表批次的已保存合同：" + json.dumps(
+                        own_saved_contracts(session, package, npc_id), ensure_ascii=False),
                     reference_context=reference_context,
                     public_expression_context=(
                         f"当前公开议题：{conversation.agenda}；"

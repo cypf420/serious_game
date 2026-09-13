@@ -10,7 +10,7 @@ test.beforeEach(async ({ page }) => {
   });
 });
 
-for (const [width, initialStage] of [[1366, "preview"], [390, "preview"], [1366, "feedback"], [390, "legacy"]] as const) test(`contract guide uses ${initialStage} at ${width}px without submitting`, async ({ page }) => {
+for (const [width, initialStage] of [[1366, "preview"], [390, "preview"], [1366, "feedback"], [390, "legacy"]] as const) test(`contract guide uses ${initialStage} at ${width}px without submitting`, async ({ page }, testInfo) => {
   await page.setViewportSize({ width, height: width === 390 ? 844 : 768 });
   const writes: string[] = [];
   const action = { action_instance_id: "visit-contract", action_kind: "household_visit", status: "active", target_ids: ["npc_yuan_guilan"], topic: "安置协商", transcript: [] };
@@ -61,7 +61,7 @@ for (const [width, initialStage] of [[1366, "preview"], [390, "preview"], [1366,
       const rect = await card.boundingBox();
       expect(rect!.x).toBeGreaterThanOrEqual(0);
       expect(rect!.x + rect!.width).toBeLessThanOrEqual(width + 1);
-      if (index === 0) await page.screenshot({ path: `E:/严肃游戏/output/contract-guide-${width}-${title}.png` });
+      if (index === 0) await page.screenshot({ path: testInfo.outputPath(`contract-guide-${width}-${title}.png`) });
       await card.getByRole('button', { name: index === count - 1 ? '讲解完成，自主操作' : '下一步', exact: true }).click();
     }
     await expect(card).toHaveCount(0);

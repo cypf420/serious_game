@@ -133,6 +133,9 @@ STORY_AUTHORITY_CONTRACT = (
 class FileScriptPackageLoader:
     PORTABLE_CONTENT_HASH_VERSION = "text-eol-v1"
     _TEXT_EOL_V1_HASH_BY_PACKAGE = {
+        # User-approved feedback 15: one D15 bridge sentence; exact EOL equivalence.
+        ("published", "pkg_gameplay_v3", "sha256:c4795211286ca05dafd97e91b0f4ff513f2b78e536dfc5d9f0a0454063d6932a"):
+            "sha256:5114f297d78abe6489ff303a572dfaac5a34f1d3dcf56b9b29ac17fc20c03402",
         # Fixed-story edition: accept only its exact LF/CRLF-equivalent bytes.
         ("published", "pkg_gameplay_v3", "sha256:3a11e3bda869a800d3d1b1066096fa30509ff5d245af40235ee0f7af7d31ad22"):
             "sha256:dececfeba55f4d58878b8e725f63a0a3b75b3797600a398e5559963f2c68873d",

@@ -821,7 +821,19 @@ export function contractBatchTabs(
     .filter(item => String(item.batch_id || "") === batchId)
     .map(item => String(item.contract_id || "") === currentId
       ? { ...item, ...currentContract }
-      : item);
+      : item)
+    .sort((left, right) => String(left.household_id || "").localeCompare(
+      String(right.household_id || ""), "zh-CN", { numeric: true },
+    ));
+}
+
+export function firstMeetingHint(state: PlayerRecord, commands: PlayerRecord): string | null {
+  const required = (commands.required_opportunity || state.required_opportunity) as PlayerRecord | undefined;
+  const story = state.story as PlayerRecord | undefined;
+  if (Number(story?.day) !== 2 || required?.opportunity_id !== "opp_d02_wu_xiuying_first_talk"
+    || required.available === false || required.completed === true || required.satisfied === true
+    || ["completed", "resolved", "done", "expired", "unavailable"].includes(String(required.status || ""))) return null;
+  return "请寻找吴秀英进行谈话，了解村庄关系与真实顾虑。";
 }
 
 export function createActivityLatch(setActive: (active: boolean) => void) {

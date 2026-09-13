@@ -1,9 +1,9 @@
 {
   "package_id": "pkg_gameplay_v3",
   "title": "浊流之上",
-  "package_version": "3.5.17-fixed-story-continuity",
+  "package_version": "3.5.18-feedback15-approved-copy",
   "source_version": "最终剧本_20260908_连贯性统修",
-  "content_hash": "sha256:3a11e3bda869a800d3d1b1066096fa30509ff5d245af40235ee0f7af7d31ad22",
+  "content_hash": "sha256:c4795211286ca05dafd97e91b0f4ff513f2b78e536dfc5d9f0a0454063d6932a",
   "status": "published",
   "gameplay_schema_version": 4,
   "script_schema_version": 2,

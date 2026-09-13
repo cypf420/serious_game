@@ -297,9 +297,16 @@ class GameplayGovernanceService:
     ) -> dict:
         session, package = self._load(account_id, session_id)
         contract = self._contract(session, contract_id)
+        from serious_game_backend.application.compensation_breakdown import compensation_breakdown
+        public = self._public_contract(contract, include_text=True, session=session, package=package)
+        public["compensation_breakdown"] = compensation_breakdown(
+            package, self._household(package, contract.household_id), contract,
+            reward=session.game_state.story_day <= 75,
+            base_total=public["suggested_base_cash_amount"],
+        )
         return {
             "state_version": session.state_version,
-            "contract": self._public_contract(contract, include_text=True, session=session, package=package),
+            "contract": public,
         }
 
     def dispose_npc_demand(
