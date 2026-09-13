@@ -9,6 +9,7 @@ from serious_game_backend.application.contract_context import own_saved_contract
 from serious_game_backend.application.contract_requirements import contract_next_steps
 from serious_game_backend.application.luo_evidence import luo_copy_context, record_luo_copy_inquiry
 from serious_game_backend.application.reference_documents import meeting_display_title
+from serious_game_backend.application.evidence_guidance import source_opportunity
 from serious_game_backend.application.contract_workflow import (
     TEMPLATE_AUTHOR, scheme_values, render_contract, selected_housing,
     negotiation_records, prior_personal_conversations, shared_conversations,
@@ -734,6 +735,7 @@ class GameplayGovernanceService:
         )
         fact_boundary = None
         if opportunity is not None:
+            opportunity = source_opportunity(opportunity, session)
             normalized_text = "".join(text.split()).casefold()
             repeat_count = sum(
                 item.get("speaker_type") == "player"
@@ -1146,6 +1148,7 @@ class GameplayGovernanceService:
             None,
         )
         if opportunity is not None:
+            opportunity = source_opportunity(opportunity, session)
             player_turns = sum(
                 item.get("speaker_type") == "player" for item in action.transcript
             )
@@ -1157,7 +1160,8 @@ class GameplayGovernanceService:
                 and item.get("disclosure_id")
             }
             completed = (
-                player_turns >= opportunity.minimum_turns
+                opportunity.complete_on_player_exit
+                and player_turns >= opportunity.minimum_turns
                 and opportunity.required_disclosure_ids.issubset(disclosed)
             )
             if completed:
@@ -4445,6 +4449,8 @@ class GameplayGovernanceService:
             ),
             None,
         )
+        if opportunity is not None:
+            opportunity = source_opportunity(opportunity, session)
         if opportunity is None or not NPCRelationshipService._base_opportunity_available(
             opportunity, session
         ):

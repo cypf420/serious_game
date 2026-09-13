@@ -71,3 +71,57 @@ def test_normal_original_read_then_luo_followup_through_real_api():
         assert after.game_state == session.game_state
     finally:
         client.close()
+
+def test_governance_luo_exit_read_and_reenter_keeps_compensation_context():
+    helper = fixtures.StoryReviewRound1Tests()
+    runtime, client, sid, headers = helper.build_api('integrated-luo-reenter')
+    try:
+        session = helper.reset_to_day(runtime, sid, headers, 32)
+        session.pending_decision = None
+        runtime.sessions.save(session, expected_version=session.state_version)
+        base = f'/api/game/session/{sid}'
+        def stored():
+            return runtime.sessions.get_owned(sid, headers['X-Account-ID'])
+        def start():
+            opportunities = client.get(base+'/opportunities', headers=headers).json()['opportunities']
+            opportunity = next(o for o in opportunities if o['opportunity_id']=='opp_31_luo_jian_contact')
+            assert '补偿明细' in opportunity['opening_narrative']
+            descriptor = opportunity['canonical_action_descriptor']
+            assert '补偿明细' in descriptor['canonical_topic']
+            response = client.post(base+'/governance/actions', headers=headers, json={
+                'state_version':stored().state_version, 'opportunity_id':opportunity['opportunity_id'],
+                'action_kind':descriptor['action_id'], 'variant_id':descriptor['variant_id'],
+                'location_id':descriptor['preselected_location_id'],
+                'target_ids':descriptor['preselected_npc_ids'], 'topic':descriptor['canonical_topic']})
+            assert response.status_code == 201, response.text
+            return response.json()['action']['action_instance_id']
+        gateway = runtime.gameplay_governance._npc_turns._gateway
+        run = gateway.run_turn
+        contexts = []
+        def reply(context):
+            contexts.append(context)
+            return replace(run(context), input_relevance='relevant', conversation_state='continue')
+        first = start()
+        with patch.object(gateway,'run_turn',side_effect=reply):
+            response = client.post(base+f'/governance/actions/{first}/turn', headers=headers,
+                json={'state_version':stored().state_version,'player_text':'为什么留着箱子？'})
+        assert response.status_code == 200, response.text
+        finished = client.post(base+f'/governance/actions/{first}/finish', headers=headers,
+                              json={'state_version':stored().state_version})
+        assert finished.status_code == 200, finished.text
+        assert stored().completed_conversations[-1].completion_status == 'incomplete'
+        read = client.post(base+'/governance/actions', headers=headers, json={
+            'state_version':stored().state_version,'action_kind':'inspect_archives',
+            'variant_id':'consult_county_archives','archive_ids':[ORIGINAL_ARCHIVE_ID]})
+        assert read.status_code == 201, read.text
+        second = start()
+        with patch.object(gateway,'run_turn',side_effect=reply):
+            response = client.post(base+f'/governance/actions/{second}/turn', headers=headers,
+                json={'state_version':stored().state_version,'player_text':'箱子里的复印件还留着吗？'})
+        assert response.status_code == 200, response.text
+        assert '罗健留底' in stored().flags
+        assert contexts[-1].visible_world_context['compensation_evidence']['confirm_copy_this_turn']
+        assert all(set(c.allowed_fact_ids) <= {'fact_false_signing'} for c in contexts)
+        assert all('补偿明细' in c.conversation_goal for c in contexts)
+    finally:
+        client.close()

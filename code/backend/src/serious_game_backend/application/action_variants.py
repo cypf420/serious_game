@@ -374,6 +374,8 @@ def canonical_opportunity_descriptor(
     opportunity: InteractionOpportunity,
 ) -> dict | None:
     """Return the one authoritative governance route for a people opportunity."""
+    from serious_game_backend.application.evidence_guidance import source_opportunity
+    opportunity = source_opportunity(opportunity, session)
     expected_action = {
         "home_visit": "household_visit",
         "field_visit": "household_visit",
