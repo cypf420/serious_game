@@ -6,7 +6,7 @@ const packageData: unknown = JSON.parse(await readFile(resolve("../../backend/co
 function strings(value: unknown): string[] {
   return typeof value === "string" ? [value] : value && typeof value === "object" ? Object.values(value).flatMap(strings) : [];
 }
-const qa = resolve("../../../../output/punctuation-20260909/qa");
+const qa = resolve(process.env.PUNCTUATION_QA_DIR || "../../../../output/punctuation-20260909/qa");
 
 for (const day of [9, 48, 52]) for (const width of [1440, 390]) test(`day-${day} punctuation in story, history and reloaded save at ${width}`, async ({ page }) => {
   const phrases = day === 9 ? /晚上老赵约你了吧|冶炼厂那点老皇历/
@@ -14,7 +14,12 @@ for (const day of [9, 48, 52]) for (const width of [1440, 390]) test(`day-${day}
     : /只有这六户|这辈子没替人做过主/;
   const source = strings(packageData).filter(text => phrases.test(text));
   expect(source).toHaveLength(day === 48 ? 3 : 2);
-  const expected = source.map(text => text.replaceAll("「", "“").replaceAll("」", "”"));
+  // Day 9 has named dialogue followed by narrator prose in each source block.
+  // The existing reader presents these as separate turns without losing either.
+  const expectedBlocks = source.map(text => text.replaceAll("「", "“").replaceAll("」", "”")
+    .replaceAll("老皇历", "老黄历").split("\n"));
+  const expected = expectedBlocks.flat();
+  if (day === 9) expect(expectedBlocks.map(block => block.length)).toEqual([2, 2]);
   // Reproduce the old backend's persisted extra full stop, not just raw copy.
   const saved = source.map(text => /[。！？…][」”]$/.test(text) ? `${text}。` : text);
   await page.setViewportSize({ width, height: width === 390 ? 844 : 900 });
@@ -61,8 +66,13 @@ for (const day of [9, 48, 52]) for (const width of [1440, 390]) test(`day-${day}
   await page.getByRole("button", { name: "进入游戏", exact: true }).click();
   await page.getByRole("button", { name: /查看已有进度/ }).click();
   await page.locator(".saved-session-list button").click();
-  await expect(paragraph).toHaveText(expected.at(-1)!);
-  await expect(paragraph).not.toContainText(/[「」『』]|[。！？…]”\s*。/);
+  // Saves persist the source block; display-only dialogue sub-position restarts.
+  const restoredBlock = expectedBlocks.at(-1)!;
+  for (let index = 0; index < restoredBlock.length; index++) {
+    await expect(paragraph).toHaveText(restoredBlock[index]);
+    await expect(paragraph).not.toContainText(/[「」『』]|[。！？…]”\s*。/);
+    if (index + 1 < restoredBlock.length) await page.getByRole("button", { name: "下一段", exact: true }).click();
+  }
   await page.getByRole("button", { name: "剧情回看", exact: true }).click();
   for (const line of expected) await expect(history).toContainText(line);
   expect(writes.filter(path => path !== "/api/game/session")).toEqual([]);

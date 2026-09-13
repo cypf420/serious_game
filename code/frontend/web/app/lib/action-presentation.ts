@@ -2,6 +2,7 @@ type Action = Record<string, unknown> | null | undefined;
 
 // Presentation follows the concrete variant; action_id only selects the API protocol.
 const variants: Record<string, { title: string; noun: string; participants: string; topic: string; prompt: string; start: string; finish: string; result: string }> = {
+  contract_negotiation: { title: "签约协商", noun: "协商", participants: "住户或代表", topic: "本次协商重点", prompt: "了解本户诉求，核对已保存合同与尚待办理事项", start: "开始协商", finish: "结束协商", result: "签约协商记录" },
   field_visit: { title: "现场走访", noun: "走访", participants: "走访对象", topic: "本次走访重点", prompt: "了解现场情况、对象诉求与需要核实的问题", start: "开始走访", finish: "结束走访", result: "走访记录" },
   interview_cadre: { title: "干部约谈", noun: "约谈", participants: "约谈干部", topic: "本次约谈重点", prompt: "核实职责、工作进展、现有材料与程序风险", start: "开始约谈", finish: "结束约谈", result: "约谈记录" },
   interview_enterprise: { title: "企业约谈", noun: "约谈", participants: "企业对象", topic: "企业约谈重点", prompt: "核实项目履约、资金安排与环境责任", start: "开始约谈", finish: "结束约谈", result: "企业约谈记录" },

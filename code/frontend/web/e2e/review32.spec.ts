@@ -5,7 +5,7 @@ for(const width of [1366,1920,390]) test(`relationship reasons after completed e
  await page.setViewportSize({width,height:width===1920?1080:width===390?844:768});
  await page.addInitScript(()=>{localStorage.setItem('qingjiang-sandbox-account','review32');localStorage.setItem('qingjiang:tutorial:v1:review32',JSON.stringify({version:1,auto:false,chapters:{}}));});
  await page.route('**/api/backend/**',async route=>{
-  const path=new URL(route.request().url()).pathname;let body:any={};
+  const path=new URL(route.request().url()).pathname;let body:unknown={};
   if(path.endsWith('/health/ready'))body={authentication_required:false,model_consent_required:false};
   else if(path.endsWith('/api/ai/config'))body={active:true,mode:'personal',model:'fixture',endpoint:'https://fixture.invalid/v1'};
   else if(path.endsWith('/api/game/session'))body={session_id:'review32'};

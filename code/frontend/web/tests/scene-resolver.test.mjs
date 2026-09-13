@@ -70,6 +70,25 @@ test("uses a neutral scene when the current record has no scene binding", () => 
   assert.equal(resolveSceneForView({ line: { storyDay: 1 }, currentStoryDay: 1 }).id, "N00");
 });
 
+test("free work days cannot inherit the rain-night beat, including restored daily cards", () => {
+  for (const day of [39, 40]) {
+    const base = { currentStoryDay: day, beatId: `beat_d${day}_m2` };
+    assert.equal(resolveSceneForView(base).title, "县长办公室");
+    for (const kind of ["day_intro", "morning_card"]) {
+      assert.equal(resolveSceneForView({ ...base, line: { kind, storyDay: day, sceneId: "C03_S03", beatId: base.beatId } }).id, "N00");
+    }
+    assert.equal(resolveSceneForView({ ...base, pendingSceneId: "C06_S10" }).id, "C06_S10");
+  }
+});
+
+test("D38 morning, petition and pending decision preserve their verified locations", () => {
+  assert.equal(resolveSceneForView({ decisionId: "dp3_06", pendingSceneId: "C03_S03" }).id, "C04_S02");
+  assert.equal(resolveSceneForView({ line: { blockId: "d38_hint", sceneId: "C03_S03" } }).id, "C01_S02");
+  for (const blockId of ["d38_petition", "d38_setup"]) {
+    assert.equal(resolveSceneForView({ line: { blockId, sceneId: "C03_S03" } }).id, "C04_S02");
+  }
+});
+
 test("covers 50 story scenes and all 24 real main endings", async () => {
   assert.equal(STORY_SCENES.length, 50);
   assert.equal(ENDING_SCENES.length, 24);

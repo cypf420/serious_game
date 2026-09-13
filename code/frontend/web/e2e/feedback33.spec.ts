@@ -12,7 +12,7 @@ for (const width of [1366,1920,390]) {
     const person={npc_id:'npc_liu_san',name:'刘三',contact_state:'known',discovery_state:'encountered'};
     await page.route('**/api/backend/**',async route=>{
       const path=new URL(route.request().url()).pathname;
-      let body:any={};
+      let body:unknown={};
       if(path.endsWith('/health/ready'))body={authentication_required:false,model_consent_required:false};
       else if(path.endsWith('/api/ai/config'))body={active:true,mode:'personal',model:'fixture',endpoint:'https://fixture.invalid/v1'};
       else if(path.endsWith('/api/game/session'))body={session_id:'feedback33'};
@@ -51,7 +51,7 @@ for(const width of [1366,1920,390]) for(const [day,block,speaker] of [[20,'d20_a
     let writes=0;
     await page.route('**/api/backend/**',async route=>{
       const path=new URL(route.request().url()).pathname;
-      let body:any={};
+      let body:unknown={};
       if(path.endsWith('/health/ready'))body={authentication_required:false,model_consent_required:false};
       else if(path.endsWith('/api/ai/config'))body={active:true,mode:'personal',model:'fixture',endpoint:'https://fixture.invalid/v1'};
       else if(path.endsWith('/api/game/session'))body={session_id:'portrait33'};
@@ -93,7 +93,7 @@ for(const width of [1366,1920,390]) for(const mode of ['contract','units','resto
   const breakdown={source:'受控费率明细',rows:[{label:'合法住宅',quantity:100,unit:'平方米',rate:0.1,amount:10}],rounding_adjustment:0,suggested_base_total:10,saved_base_amount:25,saved_transition_amount:2,saved_total:27,transition_population:2,transition_rate:0.03};
   let writes=0;
   await page.route('**/api/backend/**',async route=>{
-   const path=new URL(route.request().url()).pathname;let body:any={};
+   const path=new URL(route.request().url()).pathname;let body:unknown={};
    if(path.endsWith('/health/ready'))body={authentication_required:false,model_consent_required:false};
    else if(path.endsWith('/api/ai/config'))body={active:true,mode:'personal',model:'fixture',endpoint:'https://fixture.invalid/v1'};
    else if(path.endsWith('/api/game/session'))body={session_id:'extra33'};

@@ -14,7 +14,7 @@ export function contractTutorial(stage: ContractTutorialStage): TutorialDefiniti
     preview: { title: "核对并提交合同", focus: "submit", steps: [
       step("preview", "核对合同正文", "正文由已保存的方案生成。合同仅能应用会议形成且符合条件的红头文件，普通档案或对话引用不能替代。调整请使用“修改方案”。"),
       step("deduction", "确认签署后扣除", "这里列出当前方案签署时扣除的现金、住房和服务名额。预览不会扣除资源。"),
-      step("submit", "自主提交签约", "提交后按本户实际条件办理。满足条件即签署并结算；尚未满足时不扣款。是否提交由你决定，教程不会替你操作。"),
+      step("submit", "自主提交签约", "每次有效提交扣1点精力，接受与拒签均计费，关联对话免费；成功才扣合同款和资源。修改后新提交重新计费；重复请求、校验失败和技术失败不计费。"),
     ] },
     feedback: { title: "阅读签约答复", focus: "feedback", steps: [
       step("feedback", "了解当前顾虑", "先读本户对当前方案的回应，可继续会谈了解情况。调整方案或实际事项变化后再提交；重复说几句话不等于条件已经满足。"),
@@ -27,6 +27,6 @@ export function contractTutorial(stage: ContractTutorialStage): TutorialDefiniti
     ] },
   };
   const chapter = chapters[stage];
-  return { id: `scene:contract:${stage}`, revision: 4, title: chapter.title, steps: chapter.steps,
+  return { id: `scene:contract:${stage}`, revision: 5, title: chapter.title, steps: chapter.steps,
     finishLabel: "讲解完成，自主操作", finishFocusTarget: `[data-tutorial-id="contract-${chapter.focus}"]` };
 }

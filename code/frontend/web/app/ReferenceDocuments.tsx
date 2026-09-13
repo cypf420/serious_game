@@ -1,15 +1,17 @@
 "use client";
 import { resolveCharacter } from "./lib/characters";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export type ReferenceDocument = { id: string; title: string; category: string; status: string; body: string; version?: number | string; can_reference: boolean; reference_unavailable_reason?: string; story_day?: number; source_kind?: string; related_npc_ids?: string[] };
-const categories: Record<string, string> = { archive: "调查与证据", meeting: "会议与听证", document: "正式公文" };
+const categories: Record<string, string> = { archive: "调查与证据", meeting: "会议与听证", document: "正式公文", housing_plan: "房源配置说明" };
 const statuses: Record<string, string> = { discussion: "讨论中", resolved: "已形成结论", published: "已公布", pending_countersign: "待会签", aborted: "已中止", completed: "已完成", active: "进行中", cancelled: "已中止", draft: "草案", issued: "已签发", signed: "已签发", read: "已查阅", passed: "已通过", rejected: "未通过", approved: "已批准", pending_review: "待审查" };
 export function referenceStatus(doc: ReferenceDocument) { return statuses[doc.status] || doc.status; }
 export function ReferenceInput({ value, onChange, documents, selected, onSelected, disabled, placeholder, error }: { value: string; onChange: (value: string) => void; documents: ReferenceDocument[]; selected: string[]; onSelected: (ids: string[]) => void; disabled: boolean; placeholder: string; error?: string }) {
   const input = useRef<HTMLTextAreaElement>(null);
   const [query, setQuery] = useState<{ start: number; end: number; text: string } | null>(null);
   const [active, setActive] = useState(0);
+  const candidates = useRef<HTMLDivElement>(null);
+  useEffect(() => { candidates.current?.querySelector('[aria-selected="true"]')?.scrollIntoView({ block: "nearest" }); }, [active, query?.text]);
   const choices = documents.filter(doc => !selected.includes(doc.id) && doc.title.toLocaleLowerCase().includes((query?.text || "").toLocaleLowerCase())).slice(0, 12);
   function inspect(text: string, caret: number) {
     const match = /@([^@\s]*)$/.exec(text.slice(0, caret));
@@ -29,7 +31,7 @@ export function ReferenceInput({ value, onChange, documents, selected, onSelecte
       if (["ArrowDown", "ArrowUp"].includes(event.key)) { event.preventDefault(); setActive(index => Math.max(0, Math.min(choices.length - 1, index + (event.key === "ArrowDown" ? 1 : -1)))); }
       if (event.key === "Enter" && choices[active]) { event.preventDefault(); choose(choices[active]); }
     }} aria-controls="reference-candidates" />
-    {query && <div className="reference-candidates" id="reference-candidates" role="listbox" aria-label="选择引用档案">{selected.length >= 8 ? <p>每次最多引用8份档案，请先移除一份。</p> : choices.length ? choices.map((doc, index) => <button type="button" role="option" aria-selected={index === active} key={doc.id} disabled={disabled || !doc.can_reference} onClick={() => choose(doc)}><b>{doc.title}</b><small>{doc.can_reference ? referenceStatus(doc) : doc.reference_unavailable_reason || "当前对话不能引用此文件"}</small></button>) : <p>{error || "没有匹配的可引用档案。未读材料需先从行动中查阅。"}</p>}</div>}
+    {query && <div ref={candidates} className="reference-candidates" id="reference-candidates" role="listbox" aria-label="选择引用档案">{selected.length >= 8 ? <p>每次最多引用8份档案，请先移除一份。</p> : choices.length ? choices.map((doc, index) => <button type="button" role="option" aria-selected={index === active} key={doc.id} disabled={disabled || !doc.can_reference} onClick={() => choose(doc)}><b>{doc.title}</b><small>{doc.story_day != null ? `第 ${doc.story_day} 日 · ` : ""}{doc.can_reference ? referenceStatus(doc) : doc.reference_unavailable_reason || "当前对话不能引用此文件"}{doc.version != null ? ` · 版本 ${doc.version}` : ""}</small></button>) : <p>{error || "没有匹配的可引用档案。未读材料需先从行动中查阅。"}</p>}</div>}
   </div>;
 }
 export function ReferenceLibrary({ documents, loading, error, onRetry, onReference }: { documents: ReferenceDocument[]; loading: boolean; error: string; onRetry: () => void; onReference?: (id: string) => void }) {

@@ -869,7 +869,7 @@ test("keeps the visible conversation loop and removes the old terminal surface",
   // Manual snapshot controls were removed at the player's request.
   assert.match(source, /refresh\(0, id, true, true, kind === "load" \? "latest" : "start"\)/);
   assert.match(source, /decisionReady && pending/);
-  assert.match(source, /disabled=\{busy \|\| \(narrative\.currentIndex >= playerLines\.length - 1 && !commands\.can_continue_story\)\}>下一段/);
+  assert.match(source, /disabled=\{busy \|\| \(!hasMoreSegments && narrative\.currentIndex >= playerLines\.length - 1 && !commands\.can_continue_story\)\}>下一段/);
   assert.match(source, /api\.write\(sessionId, "\/story\/continue", "POST"/);
   assert.match(source, /visibleHistoryLines\.map/);
   assert.match(source, />自定义会议主题</);

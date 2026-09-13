@@ -11,7 +11,7 @@ const personChoices = [{ target_id: "npc_sun_qiang", label: "孙强" }, { target
 const locationChoices = [{ location_id: "county", label: "县政府" }, { location_id: "village", label: "柳林村" }];
 const variantIds = Object.keys(ACTION_COPY);
 const families = () => ["household_visit", "cadre_interview", "leadership_meeting", "inspect_archives"].map((action_id, familyIndex) => ({
-  action_id, name: ["走访", "约谈", "会议", "查档"][familyIndex], variants: variantIds.filter((_, index) => [0, 1, 1, 1, 2, 2, 2, 3, 3][index] === familyIndex).map(variant_id => ({
+  action_id, name: ["走访", "约谈", "会议", "查档"][familyIndex], variants: variantIds.filter((_, index) => [0, 1, 1, 1, 2, 2, 2, 3, 3, 0][index] === familyIndex).map(variant_id => ({
     variant_id, name: ACTION_COPY[variant_id].title, available: true, description: `${ACTION_COPY[variant_id].title}办理说明`,
     action_point_cost: 2, direct_budget_cost: 3, resource_costs: [{ label: "车辆", amount: 1, unit: "台" }],
     location_choices: locationChoices, target_choices: action_id === "inspect_archives" ? [{ target_id: "archive-unread" }] : personChoices,

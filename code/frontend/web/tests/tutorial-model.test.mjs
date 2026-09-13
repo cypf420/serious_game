@@ -3,7 +3,7 @@ import test from "node:test";
 import { ACTION_COPY, BASIC_TUTORIAL, QUICK_START, actionTour, actionTutorial, formTutorial, sceneTutorial } from "../app/tutorial/definitions.ts";
 import { emptyProgress, loadProgress, markChapter, saveProgress, shouldAutoShow } from "../app/tutorial/progress.ts";
 
-const variantIds = ["field_visit", "interview_cadre", "interview_enterprise", "contact_media", "convene_leadership_meeting", "public_hearing", "clan_leader_campaign", "consult_county_archives", "collect_blood_lead_report"];
+const variantIds = ["field_visit", "interview_cadre", "interview_enterprise", "contact_media", "convene_leadership_meeting", "public_hearing", "clan_leader_campaign", "consult_county_archives", "collect_blood_lead_report", "contract_negotiation"];
 const fakeStorage = () => {
   const values = new Map();
   return { values, getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value) };
@@ -20,9 +20,9 @@ test("basic guide starts with an introduction before seven destinations", () => 
   assert.equal(QUICK_START.length, 3);
 });
 
-test("all nine action variants have distinct purpose, usage, and result guidance", () => {
+test("all ten action variants have distinct purpose, usage, and result guidance", () => {
   assert.deepEqual(Object.keys(ACTION_COPY), variantIds);
-  assert.equal(new Set(Object.values(ACTION_COPY).map(copy => copy.purpose)).size, 9);
+  assert.equal(new Set(Object.values(ACTION_COPY).map(copy => copy.purpose)).size, 10);
   for (const variant_id of variantIds) {
     const chapter = actionTutorial({ variant_id, available: true, cost_action_points: 3 });
     assert.equal(chapter.id, `action:${variant_id}`);

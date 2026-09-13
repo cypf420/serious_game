@@ -12,7 +12,7 @@ const personChoices = [{ target_id: "npc_sun_qiang", label: "孙强" }, { target
 const locationChoices = [{ location_id: "county", label: "县政府" }, { location_id: "village", label: "柳林村" }];
 const variantIds = Object.keys(ACTION_COPY);
 const families = () => ["household_visit", "cadre_interview", "leadership_meeting", "inspect_archives"].map((action_id, familyIndex) => ({
-  action_id, name: ["走访", "约谈", "会议", "查档"][familyIndex], variants: variantIds.filter((_, index) => [0, 1, 1, 1, 2, 2, 2, 3, 3][index] === familyIndex).map(variant_id => ({
+  action_id, name: ["走访", "约谈", "会议", "查档"][familyIndex], variants: variantIds.filter((_, index) => [0, 1, 1, 1, 2, 2, 2, 3, 3, 0][index] === familyIndex).map(variant_id => ({
     variant_id, name: ACTION_COPY[variant_id].title, available: true, description: `${ACTION_COPY[variant_id].title}办理说明`,
     action_point_cost: 2, direct_budget_cost: 3, resource_costs: [{ label: "车辆", amount: 1, unit: "台" }],
     location_choices: locationChoices, target_choices: action_id === "inspect_archives" ? [{ target_id: "archive-unread" }] : personChoices,
@@ -95,7 +95,7 @@ async function expectCardInViewport(page: Page) {
 }
 async function actionsPage(page: Page) {
   await target(page, "nav-actions").click();
-  await expect(page.locator(".canonical-actions [data-variant-id]")).toHaveCount(9);
+  await expect(page.locator(".canonical-actions [data-variant-id]")).toHaveCount(variantIds.length);
 }
 async function guideForm(page: Page, variant: string) {
   await page.locator(`.canonical-actions [data-variant-id="${variant}"]`).getByRole("button", { name: governanceActionButtonLabel({ action_id: families().find(family => family.variants.some(item => item.variant_id === variant))?.action_id, variant_id: variant }) }).click();
@@ -184,7 +184,7 @@ for (const readOnly of [false, true]) test(`loaded ${readOnly ? "read-only" : "p
   expect(result.errors).toEqual([]);
 });
 
-test("all nine actual action cards have individual help and current cost details", async ({ page }) => {
+test("all ten actual action cards have individual help and current cost details", async ({ page }) => {
   await page.setViewportSize({ width: 1920, height: 1080 });
   const result = await fixture(page, { auto: false });
   await enter(page); await actionsPage(page);
@@ -230,13 +230,13 @@ test("action intro card stays removed while individual guides remain available",
   await enter(page);
   await page.getByRole("complementary", { name: "赴任指南邀请" }).getByRole("button", { name: "稍后再看" }).click();
   await target(page, "nav-actions").click();
-  await expect(page.locator(".canonical-actions [data-variant-id]")).toHaveCount(8);
+  await expect(page.locator(".canonical-actions [data-variant-id]")).toHaveCount(variantIds.length - 1);
   await expect(page.locator(".tutorial-action-intro")).toHaveCount(0);
   result.revealNewAction();
   await target(page, "nav-scene").click(); await target(page, "nav-actions").click();
-  await expect(page.locator(".canonical-actions [data-variant-id]")).toHaveCount(9);
+  await expect(page.locator(".canonical-actions [data-variant-id]")).toHaveCount(variantIds.length);
   await expect(page.locator(".tutorial-action-intro")).toHaveCount(0);
-  await expect(page.getByRole("button", { name: "了解此行动", exact: true })).toHaveCount(9);
+  await expect(page.getByRole("button", { name: "了解此行动", exact: true })).toHaveCount(variantIds.length);
   expect(gameplayWrites(result)).toEqual([]);
   expect(result.errors).toEqual([]);
 });

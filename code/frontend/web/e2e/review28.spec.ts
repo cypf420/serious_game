@@ -4,7 +4,7 @@ for(const width of [1366,1920,390]) test(`HE02 followup text bounds ${width}`,as
  await page.addInitScript(()=>{localStorage.setItem('qingjiang-sandbox-account','review28');localStorage.setItem('qingjiang:tutorial:v1:review28',JSON.stringify({version:1,auto:false,chapters:{}}));});
  const contract={contract_id:'c28',batch_id:'b28',household_id:'HE-02',signatory_npc_id:'npc_he_tiezhu',signatory_name:'何铁柱',status:'draft',current_version:1,contract_text:'合同正文保持。',can_review:true,conversation_available:true,term_sheet:{cash_amount:30}};
  await page.route('**/api/backend/**',async route=>{
-  const path=new URL(route.request().url()).pathname;let body:any={};
+  const path=new URL(route.request().url()).pathname;let body:unknown={};
   if(path.endsWith('/health/ready'))body={authentication_required:false,model_consent_required:false};
   else if(path.endsWith('/api/ai/config'))body={active:true,mode:'personal',model:'fixture',endpoint:'https://fixture.invalid/v1'};
   else if(path.endsWith('/api/game/session'))body={session_id:'review28'};

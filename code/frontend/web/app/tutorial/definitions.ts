@@ -15,15 +15,15 @@ export const QUICK_START = [
 ];
 
 export const BASIC_TUTORIAL: TutorialDefinition = {
-  id: "basic", revision: 5, title: "认识工作台",
+  id: "basic", revision: 6, title: "认识工作台",
   steps: [
     { id: "play-at-your-pace", title: "行动、剧情与存档", body: "自由行动与剧情决策相对独立。行动开放时，可以先自由行动再推进剧情，也可以完成剧情决策后再自由行动；必须当场处理的决定，请按现场提示完成。游戏进度会随每次行动与决定自动保存，无需手动保存。", target: target("today") },
     { id: "today", title: "今日案头", body: "这里汇总今日目标与现场情况。结合当前叙事和必须处理的事项，安排今天的工作。", target: target("today") },
-    { id: "metrics", title: "日期、阶段与精力", body: "日期、阶段和各项指标反映当前局面。精力决定今天还能安排多少工作；以当前显示的消耗为准。", detail: "资源余额可用于兑换通晓币。通晓币不用于人物会谈或本局行动消耗，将用于后续“百晓生”网站兑换；开放时间、兑换范围和具体规则以百晓生网站公告为准。", target: target("metrics") },
+    { id: "metrics", title: "日期、阶段与精力", body: "日期、阶段和各项指标反映当前局面。精力决定今天还能安排多少工作；以当前显示的消耗为准。", detail: "财政余额兑换通晓币目前尚未开放，当前没有兑换入口，比例和数量限制尚未公布。通晓币不用于人物会谈或本局行动消耗，后续“百晓生”网站用途与规则以公告为准。", target: target("metrics") },
     { id: "narrative-controls", title: "阅读与推进", body: "使用这里的阅读控制查看叙事。读完当前剧情并处理必须完成的事项后，才能结束今日；出现现场决定时先完成选择。", target: target("narrative-controls") },
     { id: "nav-actions", title: "行动：安排工作", body: "这里按办理方式列出当前公开的行动。每张卡片会说明用途、精力消耗和不可用原因；选择要办理的行动后，核对对象与条件，再由你确认发起。", target: target("nav-actions") },
     { id: "nav-opportunities", title: "人物：了解与会谈", body: "这里列出已公开的人物与当前会谈入口。先了解人物状态与说明，再选择当前可以进入的会谈。", target: target("nav-opportunities") },
-    { id: "advance-signing", title: "主动推进签约", body: "推进签约是独立于剧情阅读和决策的自由行动，剧情推进不会自动完成签约。最终实际签约数直接影响结局，但不是唯一判定因素。", detail: "可以向代表询问其所代表的各户需求，例如向吴秀英询问本批次其他住户的情况。代表始终以本人身份交流，不扮演其他住户，也不能代签。会谈后准备逐户合同，每户接受并签署后才计入进度并结算本户资源。打开入口不会直接签约或扣除资源，会谈消耗以当前提示为准。", target: target("advance-signing") },
+    { id: "advance-signing", title: "主动推进签约", body: "推进签约是独立于剧情阅读和决策的自由行动，剧情推进不会自动完成签约。最终实际签约数直接影响结局，但不是唯一判定因素。", detail: "可以向代表询问其所代表的各户需求，例如向吴秀英询问本批次其他住户的情况。代表始终以本人身份交流，不扮演其他住户，也不能代签。会谈后准备逐户合同，每户接受并签署后才计入进度并结算本户资源。打开入口不会直接签约或扣除资源。关联签约的对话不另扣精力；每次有效提交签约消耗 1 点，接受和拒签均计费。独立现场行动的消耗以当前提示为准。", target: target("advance-signing") },
     { id: "nav-desk", title: "卷宗与线索", body: "卷宗页查看任务与政策；线索页整理事实与调查途径。治理页的档案统一查看已取得材料、会议听证记录和公文。", detail: "对话中输入 @ 选择允许引用的档案，核对名称与状态后随发言发送。NPC 会收到所选材料的正文、版本和状态。引用不会替你查档或完成行动。听证通知表示已安排，形成的听证记录才说明实际办理结果。合同仍只能应用会议形成且符合条件的红头文件。", target: target("nav-desk") },
   ],
 };
@@ -40,6 +40,7 @@ export const ACTION_COPY: Record<string, ActionCopy> = {
   clan_leader_campaign: { title: "宗族议事", purpose: "就当前议题组织宗族相关人物讨论。", when: "该方式已开放，且需要听取相关人物意见时。", how: "选择当前允许的参与者，确定议题，核对方案后发起议事。", result: "形成宗族议事记录和后续事项。" },
   consult_county_archives: { title: "查阅县级档案", purpose: "阅读当前可调阅档案，核对事实与材料依据。", when: "需要补足书面依据或核实线索时。", how: "从当前未读档案中选择一份，核对首次查阅消耗后自行开始查阅。", result: "登记调阅并展示档案；新增事实和用途可在线索页回看，已读档案可在治理页免费重读。" },
   collect_blood_lead_report: { title: "调取血铅材料", purpose: "调阅符合当前授权条件的医院材料。", when: "该方式已开放，且需要核实相关书面材料时。", how: "查看当前允许调取的档案，选择一份并核对消耗后自行查阅。", result: "取得并登记符合授权条件的医院材料。" },
+  contract_negotiation: { title: "签约协商", purpose: "与住户或代表核对诉求和已保存的本户合同。", when: "需要准备、调整逐户合同或澄清拒签理由时。", how: "核对住户或代表后开始协商；对话免费，实际提交签约时按提示扣精力。", result: "形成协商记录；签约仍需保存合同并单独提交，不会获得实地看房等现场核查结果。" },
 };
 
 function costDetail(item: TutorialRecord): string {

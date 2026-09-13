@@ -55,9 +55,10 @@ test("people cards show one compact metric projection and only confirmed relatio
     readFile(shellPath, "utf8"),
     readFile(new URL("../app/lib/player-ui.ts", import.meta.url), "utf8"),
   ]);
-  assert.doesNotMatch(shell, /relationship-reasons/);
   const peoplePanel = shell.slice(shell.indexOf("function OpportunityPanel("), shell.indexOf("function ReviewPanel("));
-  assert.doesNotMatch(peoplePanel, /relationship-reasons|关系待核实/);
+  assert.doesNotMatch(peoplePanel, /关系待核实/);
+  assert.match(peoplePanel, /近期关系变化依据/);
+  assert.match(peoplePanel, /person\.recent_change_reasons/);
   assert.match(playerUi, /visibility !== "confirmed"/);
 });
 

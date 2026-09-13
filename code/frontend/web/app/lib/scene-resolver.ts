@@ -528,7 +528,7 @@ export type SceneResolveInput = {
 };
 
 export type SceneViewInput = {
-  line?: SceneResolveInput & { storyDay?: unknown };
+  line?: SceneResolveInput & { storyDay?: unknown; kind?: unknown };
   lines?: readonly (SceneResolveInput & { storyDay?: unknown })[];
   currentIndex: number;
   itemCount: number;
@@ -705,9 +705,14 @@ export function resolveScene(input: SceneResolveInput = {}): ResolvedScene {
 // no opening block must not be masked by yesterday's final feed item.
 export function resolveSceneForView(input: SceneViewInput): ResolvedScene {
   const pendingSceneId = id(input.pendingSceneId);
+  // Historical D38 decision records retain the obsolete rain-night scene id.
+  if (id(input.decisionId) === "dp3_06" && pendingSceneId === "C03_S03") return resolveScene({ sceneId: "C04_S02" });
   if (pendingSceneId) return resolveScene({ sceneId: pendingSceneId });
   const mainEndingId = id(input.mainEndingId);
   if (mainEndingId && !input.line) return resolveScene({ mainEndingId });
+  // Daily work cards are not shots from the beat that preceded the free day.
+  // Explicit activity/pending scenes above still take precedence.
+  if (input.line && ["day_intro", "morning_card"].includes(String(input.line.kind))) return resolveScene({});
   if (input.line) return resolveScene(input.line);
-  return resolveScene({ beatId: input.beatId });
+  return resolveScene({ decisionId: input.decisionId });
 }

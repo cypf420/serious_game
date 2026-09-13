@@ -24,8 +24,8 @@ for (const width of [1433, 1081, 390]) {
     const person = { npc_id: "npc_zhou_dashan", name: "周大山", discovery_state: "encountered", contact_state: "known" };
     const preparation = { available: true, reason: null, household_count: 6 };
     const descriptor = {
-      npc_id: person.npc_id, npc_name: person.name, variant_id: "field_visit", action_id: "household_visit", name: "现场走访",
-      cost_action_points: 1, resource_cost_mode: "none", resource_costs: [], available: true,
+      npc_id: person.npc_id, npc_name: person.name, variant_id: "contract_negotiation", action_id: "household_visit", name: "签约协商",
+      cost_action_points: 0, resource_cost_mode: "none", resource_costs: [], available: true,
       legal_location_ids: ["loc_liulin_village"], location_choices: [{ location_id: "loc_liulin_village", label: "入村走访" }],
       target_kind: "household_representative", target_choices: [{ target_id: person.npc_id, label: person.name }],
       participant_rules: { minimum: 1, maximum: 1 }, preselected_npc_ids: [person.npc_id], contract_preparation: preparation,
@@ -44,16 +44,16 @@ for (const width of [1433, 1081, 390]) {
       else if (endpoint === "/api/game/session" && method === "POST") body = { session_id: state.session_id };
       else if (endpoint.endsWith("/view")) body = { state, commands: { can_act: !active, can_end_day: !active },
         feed: { items: [{ id: "day10", story_day: 10, text: "第十日，你站在镇政府院子里。", block_id: "d10_source_opening", scene_id: "C01_S12" }], cursor: 1 } };
-      else if (endpoint.endsWith("/opportunities")) body = { people: [person], person_actions: [descriptor], opportunities: [], relationship_edges: [] };
+      else if (endpoint.endsWith("/opportunities")) body = { people: [person], person_actions: [{ ...descriptor, variant_id: "field_visit", name: "现场走访", cost_action_points: 1 }, descriptor], opportunities: [], relationship_edges: [] };
       else if (endpoint.endsWith("/governance")) body = { governance_actions: active ? [action] : [], meetings: [],
         contracts: [], contract_batches: [], active_contract_preparation: active ? preparation : null };
       else if (endpoint.endsWith("/governance/actions") && method === "POST") {
         writes.push(endpoint);
         expect(route.request().postDataJSON().target_ids).toEqual([person.npc_id]);
-        expect(route.request().postDataJSON().variant_id).toBe("field_visit");
+        expect(route.request().postDataJSON().variant_id).toBe("contract_negotiation");
         active = true;
         state.state_version++;
-        state.ledger.action_points.remaining = 7;
+        state.ledger.action_points.remaining = 8;
         body = { action, state_version: state.state_version };
       } else if (endpoint.endsWith("/prepare-contracts")) {
         writes.push(endpoint);
@@ -386,7 +386,7 @@ for (const mode of ["governance", "conversation", "group"]) for (const width of 
     if (endpoint === "/health/ready") body = { authentication_required: false, model_consent_required: false };
     else if (endpoint === "/api/ai/config") body = { active: true, mode: "personal", model: "fixture", endpoint: "https://fixture.invalid/v1" };
     else if (endpoint === "/api/game/session") body = { session_id: state.session_id };
-    else if (endpoint.endsWith("/view")) body = { state, commands: { can_end_day: true, can_act: true }, feed: { items: [{ id: "opening-34", kind: "night", story_day: 34, text: "昨夜仍有情况需要说明。" }, { id: "opening-35", story_day: 35, text: "今天继续核对各户诉求。" }], cursor: 2 } };
+    else if (endpoint.endsWith("/view")) body = { state, commands: { can_end_day: true, can_act: true }, feed: { items: [{ id: "opening-34", kind: "night", story_day: 34, text: "昨夜仍有情况需要说明。" }, { id: "opening-35-first", story_day: 35, text: "今天的材料需要先核对。" }, { id: "opening-35", story_day: 35, text: "今天继续核对各户诉求。" }], cursor: 2 } };
     else if (endpoint.endsWith("/reference-documents")) body = { documents: docs };
     else if (endpoint.endsWith("/governance")) body = { governance_actions: active && mode === "governance" ? [{ action_instance_id: "visit-tan", action_kind: "household_visit", status: "active", story_day: 35, target_ids: ["npc_tan_laoliu"], topic: "核对旧案处理", transcript: [] }] : [], meetings: [], archives: [], contracts: [], documents: [] };
     else if (endpoint.endsWith("/turn/stream") || endpoint.endsWith("/action/stream")) {
@@ -400,7 +400,7 @@ for (const mode of ["governance", "conversation", "group"]) for (const width of 
   await page.getByRole("button", { name: "进入游戏", exact: true }).click();
   await page.getByRole("button", { name: /开始新游戏/ }).click();
   await expect(page.getByRole("button", { name: "结束今日", exact: true })).toHaveCount(0);
-  await expect(page.locator(".story-head")).toContainText("第 34 日");
+  await expect(page.locator(".story-head")).toContainText("第 35 日");
   await page.getByRole("button", { name: "下一段", exact: true }).click();
   await expect(page.getByRole("button", { name: "结束今日", exact: true })).toHaveCount(2);
   await page.getByRole("button", { name: "上一段", exact: true }).click();
