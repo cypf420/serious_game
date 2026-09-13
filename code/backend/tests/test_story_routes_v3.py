@@ -427,7 +427,7 @@ class StoryRoutesV3Tests(unittest.TestCase):
             self.assertEqual(200, live_state.status_code, live_state.text)
             if int(
                 live_state.json()["ledger"]["action_points"]["remaining"]
-            ) < 2:
+            ) < (2 if representative == "npc_lao_juetou" else 1):
                 return result
             catalog_response = client.get(
                 f"/api/game/session/{session_id}/actions", headers=headers
@@ -443,6 +443,10 @@ class StoryRoutesV3Tests(unittest.TestCase):
                     choice["target_id"] for choice in item.get("target_choices", [])
                 }
             ), None)
+            if representative != "npc_lao_juetou":
+                variant = next((item for item in household_action["variants"]
+                    if item["variant_id"] == "contract_negotiation"
+                    and representative in {choice["target_id"] for choice in item.get("target_choices", [])}), variant)
             if variant is None or not variant.get("available", True):
                 continue
             started = client.post(
@@ -540,6 +544,16 @@ class StoryRoutesV3Tests(unittest.TestCase):
                     self.assertEqual(200, viewing.status_code, viewing.text)
                     draft_body = {**draft_body,
                         "state_version": viewing.json()["state_version"]}
+                live = client.get(f"/api/game/session/{session_id}", headers=headers)
+                self.assertEqual(200, live.status_code, live.text)
+                if int(live.json()["ledger"]["action_points"]["remaining"]) < int(
+                    draft_body["contract"].get("review_cost_action_points", 1)
+                ):
+                    # Preserve the saved draft and resume on a later day. New
+                    # signing attempts now have an explicit authoritative fee.
+                    state_version = draft_body["state_version"]
+                    all_resolved = False
+                    break
                 reviewed = self.review_contract_for_route(
                     client,
                     session_id,
