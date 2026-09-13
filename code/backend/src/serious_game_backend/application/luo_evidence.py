@@ -4,10 +4,17 @@ import re
 
 LUO_COPY_ID = "archive_luo_compensation_copy"
 COPY_INQUIRY_WORDS = ("箱子", "留底", "复印件", "底稿", "副本")
+COMPENSATION_MATERIAL_WORDS = ("补偿", "两个标准", "两种标准", "三个手印", "签约台账")
+OTHER_MATERIAL_WORDS = ("血铅", "化验", "传真", "环评", "环境", "污染", "水样", "检测", "监测",
+                        "儿童", "名册", "普查", "图纸", "体检", "病历", "医疗", "发票", "借条")
 
 
 def is_copy_inquiry(player_text):
     text = player_text or ""
+    # These documents have their own sources. A mixed/ambiguous request must not
+    # silently satisfy the separate compensation-original/copy evidence chain.
+    if any(word in text for word in OTHER_MATERIAL_WORDS):
+        return False
     if not any(word in text for word in COPY_INQUIRY_WORDS):
         return False
     # Cancelling, postponing or forbidding an inquiry remains a non-inquiry even
@@ -26,10 +33,46 @@ def is_copy_inquiry(player_text):
     return bool(re.fullmatch(r"(?:请问|我想问)?(?:你)?(?:为什么|为何).{0,4}(?:留着|留存|保留|保存).{0,5}箱子[？?吗呢。]*", text.strip()))
 
 
+def _previous_player_text(session):
+    """Resolve a reference only inside one current Luo conversation, never history."""
+    conversations = []
+    ordinary = session.active_conversation
+    if (ordinary is not None and ordinary.npc_id == "npc_luo_jian"
+            and ordinary.story_day == session.game_state.story_day):
+        conversations.append(ordinary)
+    conversations.extend(action for action in session.governance_actions.values()
+        if action.status == "active" and action.story_day == session.game_state.story_day
+        and "npc_luo_jian" in action.target_ids)
+    if len(conversations) != 1:
+        return ""
+    return next((item.get("text", "") for item in reversed(conversations[0].transcript)
+                 if item.get("speaker", item.get("speaker_type")) == "player"), "")
+
+
+def _is_compensation_topic(session, player_text):
+    text = player_text or ""
+    if any(word in text for word in OTHER_MATERIAL_WORDS):
+        return False
+    if any(word in text for word in COMPENSATION_MATERIAL_WORDS):
+        return True
+    if not is_copy_inquiry(text):
+        return False
+    previous = _previous_player_text(session)
+    if any(word in previous for word in OTHER_MATERIAL_WORDS):
+        return False
+    if any(word in previous for word in COMPENSATION_MATERIAL_WORDS):
+        return True
+    # The early source scene itself establishes compensation as the box's topic.
+    # From D42 the same opportunity is a fax discussion; bare "copy" is ambiguous.
+    return 32 <= session.game_state.story_day < 42
+
+
 def luo_copy_context(session, npc_id, player_text):
-    if npc_id != "npc_luo_jian" or session.package_id != "pkg_gameplay_v3":
+    if (npc_id != "npc_luo_jian" or session.package_id != "pkg_gameplay_v3"
+            or not _is_compensation_topic(session, player_text)):
         return {}
-    previous_inquiry = any(log.get("type") == "luo_material_inquiry" for log in session.logs)
+    previous_inquiry = any(log.get("type") == "luo_material_inquiry"
+        and log.get("material_id") == "compensation_detail" for log in session.logs)
     concrete = is_copy_inquiry(player_text)
     can_confirm = (32 <= session.game_state.story_day <= 45 and "见过原件" in session.flags
                    and previous_inquiry and concrete)
@@ -47,7 +90,10 @@ def record_luo_copy_inquiry(session, npc_id, player_text, event_id):
     if any(log.get("type") == "luo_material_inquiry" and log.get("event_id") == event_id for log in session.logs):
         return False
     context = luo_copy_context(session, npc_id, player_text)
+    if not context:
+        return False
     session.logs.append({"type": "luo_material_inquiry", "event_id": event_id,
+                         "material_id": "compensation_detail",
                          "story_day": session.game_state.story_day, "visible_to_player": False})
     if not context.get("confirm_copy_this_turn") or "罗健留底" in session.flags:
         return False

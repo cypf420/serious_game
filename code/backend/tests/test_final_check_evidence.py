@@ -96,7 +96,7 @@ def test_original_read_and_luo_copy_are_separate_atomic_evidence_events():
         assert '罗健留底' not in session.flags
         for text in ('不用找副本', '我不问留底', '我知道你有复印件', '请不要找复印件好吗？'):
             assert not record_luo_copy_inquiry(session, 'npc_luo_jian', text, 'negative-'+text)
-            assert not luo_copy_context(session, 'npc_luo_jian', text)['confirm_copy_this_turn']
+            assert not luo_copy_context(session, 'npc_luo_jian', text).get('confirm_copy_this_turn')
         assert luo_copy_context(session, 'npc_luo_jian', '箱子里的复印件还留着吗？')['confirm_copy_this_turn']
         assert record_luo_copy_inquiry(session, 'npc_luo_jian', '箱子里的复印件还留着吗？', 'inquiry-2')
         assert '罗健留底' in session.flags
