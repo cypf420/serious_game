@@ -5004,12 +5004,31 @@ class GameplayGovernanceService:
                 for review in item.review_history if review.get("legacy_credit_action_id")}
         current_policy = {e.get("action_instance_id") for e in session.logs
                           if e.get("type") == "governance_action_fee_policy"}
-        return next((action.action_instance_id for action in session.governance_actions.values()
-                     if action.status == "active" and action.action_kind == "household_visit"
-                     and related.intersection(action.target_ids)
-                     and action.cost_status == "committed" and action.cost_action_points > 0
-                     and action.cost_committed_at
-                     and action.action_instance_id not in used | current_policy), None)
+        for action in session.governance_actions.values():
+            if not (action.status == "active" and action.action_kind == "household_visit"
+                    and related.intersection(action.target_ids)
+                    and action.cost_status == "committed" and action.cost_action_points > 0
+                    and action.cost_committed_at
+                    and action.action_instance_id not in used | current_policy):
+                continue
+            # Pre-upgrade reviews did not store a credit-action link. A review
+            # in this representative's scope on/after the visit day may already
+            # have used its paid conversation. Same-day/undated history cannot
+            # prove an unused fee, so never recycle it for a revised proposal.
+            prior_attempt = False
+            for item in session.household_contracts.values():
+                item_batch = session.contract_batches.get(item.batch_id)
+                item_people = {item.signatory_npc_id,
+                               item_batch.representative_npc_id if item_batch else None} - {None}
+                if not item_people.intersection(action.target_ids):
+                    continue
+                if any(type(review.get("story_day")) is not int
+                       or review["story_day"] >= action.story_day for review in item.review_history):
+                    prior_attempt = True
+                    break
+            if not prior_attempt:
+                return action.action_instance_id
+        return None
 
     def _public_contract(
         self, value: HouseholdContract, *, include_text: bool = False,

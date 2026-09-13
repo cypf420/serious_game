@@ -188,6 +188,59 @@ def test_unchanged_old_review_is_reused_without_retroactive_cost(game):
     assert game.session() == before
 
 
+def test_completed_preupgrade_refusal_cannot_credit_a_revised_proposal(game):
+    game.draft(missing_grave=True); game.review()
+    session = game.session(); contract = session.household_contracts[game.cid]
+    session.logs = [e for e in session.logs if e.get("type") not in {"governance_action_fee_policy", "contract_attempt_cost"}]
+    action = session.governance_actions[game.action_id]
+    action.cost_status = "committed"; action.cost_action_points = 1
+    action.cost_committed_at = "2026-09-12T09:00:00+08:00"
+    review = contract.review_history[-1]
+    for key in ("cost_policy", "cost_action_points", "legacy_credit_action_id", "remaining_conditions"):
+        review.pop(key, None)
+    package = game.runtime.packages.get(session.package_id)
+    review["review_fingerprint"] = game.runtime.gameplay_governance._contract_review_fingerprint(session, package, contract, legacy=True)
+    session.game_state = replace(session.game_state, action_points=0)
+    game.save(session)
+    changed = save_terms(game, cash_amount=game.cash + 1)
+    assert changed.status_code == 200
+    assert changed.json()["contract"]["review_cost_action_points"] == 1
+    assert changed.json()["contract"]["can_review"] is False
+    before = game.session()
+    with patch.object(game.runtime.gameplay_governance._gateway, "run_governance_task") as model:
+        game.review(409)
+    assert not model.called
+    assert game.session() == before
+    points(game, 1)
+    game.review()
+    assert game.session().game_state.action_points == 0
+    assert game.session().household_contracts[game.cid].review_history[-1]["cost_action_points"] == 1
+
+
+@pytest.mark.parametrize("history_day,allow_credit", [(9, True), (10, False), (11, False), (None, False)])
+def test_legacy_representative_fee_cannot_be_recycled_across_households(game, history_day, allow_credit):
+    game.draft(missing_grave=True)
+    session = game.session(); current = session.household_contracts[game.cid]
+    other = next(c for c in session.household_contracts.values() if c.contract_id != game.cid)
+    old_review = {"version": 1, "decision": "explain", "reason": "旧方案未通过"}
+    if history_day is not None:
+        old_review["story_day"] = history_day
+    other.review_history.append(old_review)
+    session.logs = [e for e in session.logs if e.get("type") != "governance_action_fee_policy"]
+    action = session.governance_actions[game.action_id]
+    action.cost_status = "committed"; action.cost_action_points = 1
+    action.cost_committed_at = "2026-09-12T09:00:00+08:00"
+    session.game_state = replace(session.game_state, action_points=0)
+    game.save(session); before = game.session()
+    result = game.review(200 if allow_credit else 409)
+    if allow_credit:
+        latest = game.session().household_contracts[current.contract_id].review_history[-1]
+        assert latest["legacy_credit_action_id"] == action.action_instance_id
+        assert latest["cost_action_points"] == 0
+    else:
+        assert game.session() == before
+
+
 def test_two_yuan_households_keep_versions_feedback_and_current_materials_separate(game):
     session = game.session()
     session.game_state = replace(session.game_state, story_day=60)
