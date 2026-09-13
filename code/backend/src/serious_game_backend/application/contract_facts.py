@@ -108,6 +108,7 @@ def conduct_household_viewing(session, package, action, *, household_id: str,
     if (household is None or npc_accepted is not True
             or session.governance_actions.get(action.action_instance_id) is not action
             or action.action_kind != "household_visit" or action.status != "active"
+            or action.variant_id == "contract_negotiation"
             or tuple(action.target_ids) != (household.representative_npc,)
             or household.is_shadow_household):
         return None

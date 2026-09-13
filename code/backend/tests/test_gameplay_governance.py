@@ -1962,6 +1962,10 @@ class GameplayGovernanceTests(unittest.TestCase):
                 contract["batch_id"]
             ].representative_npc_id
             action_id = f"contract-work-{contract['contract_id']}"
+            # This test proves inventory/API coverage, not same-day play.
+            # Give each household its own energy fixture now that submissions
+            # are charged; dedicated attempt tests cover depletion and retry.
+            current.game_state = replace(current.game_state, action_points=8)
             current.governance_actions[action_id] = GovernanceActionRecord(
                 action_instance_id=action_id,
                 action_kind="household_visit",
@@ -2091,7 +2095,7 @@ class GameplayGovernanceTests(unittest.TestCase):
             json={"state_version": original_version, **term_sheet},
         )
         self.assertEqual(409, terms_response.status_code, terms_response.text)
-        self.assertIn("公开签约奖励", terms_response.text)
+        self.assertIn("按期签约奖励已截止", terms_response.text)
         unchanged = self.runtime.sessions.get_owned(
             self.session_id, "acct_gameplay_governance"
         )

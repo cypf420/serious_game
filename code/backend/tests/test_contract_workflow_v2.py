@@ -113,7 +113,9 @@ def test_explanation_then_current_visit_turn_can_resubmit_same_version(game):
         s.governance_actions[game.action_id].transcript.append({'speaker_type': 'player', 'text': '我们先一起核实搬迁安排。'})
         game.save(s)
         second = game.review()
-    assert len(seen) == 2
+    # Conversation alone does not alter authoritative signing eligibility or
+    # constitute another paid attempt under the final-check acceptance rules.
+    assert len(seen) == 1
     assert first['contract']['current_version'] == second['contract']['current_version']
     assert second['contract']['review_version'] == second['contract']['current_version']
     assert first['contract']['review_reason'] == second['contract']['review_reason']

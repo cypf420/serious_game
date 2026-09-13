@@ -69,10 +69,23 @@ def participant_rules(action_id: str) -> dict[str, int]:
 
 
 def configured_variants(package: ScriptPackage) -> tuple[dict, ...]:
-    return tuple(
+    variants = tuple(
         dict(item)
         for item in (package.governance_config or {}).get("action_variants", ())
     )
+    # Old saves lock their original package. Add the explicit signing route
+    # without rewriting that package or changing the paid field-visit route.
+    source = next((v for v in variants if v.get("variant_id") == "field_visit"
+                   and v.get("action_id") == "household_visit"), None)
+    if source is not None and not any(v.get("variant_id") == "contract_negotiation" for v in variants):
+        variants += ({**source, "variant_id": "contract_negotiation",
+                      "legacy_action_id": "contract_negotiation", "name": "签约协商",
+                      "description": "讨论、保存和预览合同不扣精力；每次有效提交签约消耗1点，接受或拒签均计费。",
+                      "visible_result": "形成签约协商记录；实地看房请另行进入现场走访。",
+                      "action_point_costs": {tier: 0 for tier in source["action_point_costs"]},
+                      "location_labels": {},
+                      "hard_outcomes": [{"kind": "follow_up", "id": "governance_action_record"}]},)
+    return variants
 
 
 def variant_availability(
@@ -236,6 +249,7 @@ def public_variant(
         "name": variant["name"],
         "description": variant.get("description", variant["visible_result"]),
         "cost_action_points": int(variant["action_point_costs"][tier]),
+        "cost_mode": "on_contract_submit" if variant["variant_id"] == "contract_negotiation" else "action",
         "resource_cost_mode": variant["resource_cost_mode"],
         "resource_costs": list(variant["resource_costs"]),
         "visible_result": variant["visible_result"],

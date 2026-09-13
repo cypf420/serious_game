@@ -5,6 +5,8 @@ from serious_game_backend.application.character_facts import household_knowledge
 
 from serious_game_backend.application.contract_accounting import (ACCOUNTING_VERSION, CONSUMED_STATUSES, migrate_contract_accounting)
 from serious_game_backend.application.contract_facts import (FACT_KEYS, resolve_contract_facts, record_contract_signatory_contact, conduct_household_viewing)
+from serious_game_backend.application.contract_context import own_saved_contracts
+from serious_game_backend.application.contract_requirements import contract_next_steps
 from serious_game_backend.application.contract_workflow import (
     TEMPLATE_AUTHOR, scheme_values, render_contract, selected_housing,
     negotiation_records, prior_personal_conversations, shared_conversations,
@@ -516,6 +518,9 @@ class GameplayGovernanceService:
                 f"governance:{action_kind}", cost
             )
         session.governance_actions[action_instance_id] = action
+        session.logs.append({"type": "governance_action_fee_policy", "policy": "submit_v1",
+                             "action_instance_id": action_instance_id,
+                             "story_day": session.game_state.story_day})
         result: dict = {
             "action": asdict(action),
             "cost_action_points": cost,
@@ -853,17 +858,7 @@ class GameplayGovernanceService:
                         "own_negotiation_history": [
                             {"day": a.story_day, "transcript": a.transcript, "observed_results": a.hard_outcomes}
                             for a in session.governance_actions.values() if npc_id in a.target_ids],
-                        "own_contracts": [
-                            {"household_id": c.household_id, "status": c.status, "terms": c.term_sheet,
-                             "current_version": c.current_version,
-                             "contract_text": self._current_contract_text(c) if c.versions else "",
-                             "selected_housing": selected_housing(package, c.term_sheet or {}),
-                             "reviews": public_review_history(c),
-                             "scope": "本人的合同" if c.signatory_npc_id == npc_id else "代表转述的本批次合同；须由各户本人决定签署"}
-                            for c in session.household_contracts.values()
-                            if c.signatory_npc_id == npc_id or (
-                                c.batch_id in session.contract_batches
-                                and session.contract_batches[c.batch_id].representative_npc_id == npc_id)],
+                        "own_contracts": own_saved_contracts(session, package, npc_id),
                     },
                     player_reference_materials={
                         "referenced_documents": references,
@@ -911,6 +906,9 @@ class GameplayGovernanceService:
                 for dimension, reason in visible_reasons:
                     session.logs.append({
                         "type": "relationship_change",
+                        "event_id": action.action_instance_id,
+                        "action_instance_id": action.action_instance_id,
+                        "topic": action.topic,
                         "story_day": session.game_state.story_day,
                         "npc_id": npc_id,
                         "dimension": dimension,
@@ -999,6 +997,7 @@ class GameplayGovernanceService:
 
     def _maybe_conduct_household_viewing(self, session, package, action, text) -> None:
         if (action.action_kind != "household_visit" or len(action.target_ids) != 1
+                or action.variant_id == "contract_negotiation"
                 or not any(word in text for word in ("现在去看", "一起去看", "带你去看", "带您去看", "现场看房"))
                 or any(word in text for word in ("不去", "不用", "不必", "已经", "之前", "明天", "下次"))):
             return
@@ -2118,10 +2117,17 @@ class GameplayGovernanceService:
         self._check_contract_resources(session, package, contract)
         record_contract_signatory_contact(session, package, contract)
         fingerprint = self._contract_review_fingerprint(session, package, contract)
-        if contract.review_history and contract.review_history[-1].get("review_fingerprint") == fingerprint:
+        if self._contract_review_unchanged(session, package, contract):
             return {"state_version": session.state_version,
                     "contract": self._public_contract(contract, include_text=True, session=session, package=package),
                     "visible_state": self._projector.project(session, package)}
+        credit_action = self._legacy_contract_cost_credit(session, contract)
+        attempt_cost = 0 if credit_action else 1
+        if session.game_state.action_points < attempt_cost:
+            raise InsufficientActionPointsError(
+                "本次有效提交签约需要1点精力；签约协商不收费。",
+                details={"required": attempt_cost, "remaining": session.game_state.action_points},
+            )
         missing_conditions = self._missing_hard_conditions(
             session, package, contract
         )
@@ -2161,6 +2167,10 @@ class GameplayGovernanceService:
             "model_id": result.model_id,
             "counteroffer": dict(contract.counteroffer),
             "review_fingerprint": fingerprint,
+            "remaining_conditions": list(missing_conditions),
+            "cost_action_points": attempt_cost,
+            "cost_policy": "submit_v1",
+            "legacy_credit_action_id": credit_action,
         })
         if decision == "accept":
             contract.reserved_until_day = None
@@ -2172,6 +2182,27 @@ class GameplayGovernanceService:
                 reason=f"review_{decision}",
             )
             contract.reserved_until_day = None
+        session.game_state = session.game_state.spend_action_points("contract_submit", attempt_cost)
+        session.logs.append({"type": "contract_attempt_cost", "contract_id": contract.contract_id,
+                             "household_id": contract.household_id, "version": contract.current_version,
+                             "story_day": session.game_state.story_day, "decision": decision,
+                             "cost_action_points": attempt_cost, "legacy_credit_action_id": credit_action})
+        # A legacy discussion may still have its deferred first-turn fee.
+        # Once its first attempt is paid here, do not charge that old fee later.
+        batch = session.contract_batches.get(contract.batch_id)
+        related = {contract.signatory_npc_id, batch.representative_npc_id if batch else None} - {None}
+        current_policy = {e.get("action_instance_id") for e in session.logs
+                          if e.get("type") == "governance_action_fee_policy"}
+        for action in session.governance_actions.values():
+            if (action.status == "active" and action.action_kind == "household_visit"
+                    and related.intersection(action.target_ids) and action.cost_status == "pending"
+                    and action.action_instance_id not in current_policy):
+                action.cost_action_points = 0
+                action.cost_status = "committed"
+                action.cost_committed_at = governance_now_iso()
+                session.logs.append({"type": "legacy_conversation_fee_superseded",
+                    "action_instance_id": action.action_instance_id, "contract_id": contract.contract_id,
+                    "story_day": session.game_state.story_day})
         contract.updated_at = governance_now_iso()
         self._commit(session, state_version)
         return {
@@ -4900,11 +4931,17 @@ class GameplayGovernanceService:
             "status": value.status,
         }
 
-    def _contract_review_fingerprint(self, session, package, contract) -> str:
+    def _contract_review_fingerprint(self, session, package, contract, *, legacy=False) -> str:
         # Hash relevant inputs, not review output, state_version or unrelated
         # activity. Opening a blank visit cannot reroll an answer.
         facts = resolve_contract_facts(session, package, contract)
         facts.pop("authorization_confirmed", None)
+        if not legacy:
+            return self._hash({"review_policy": "scheme-and-verified-conditions-v1",
+                               "version": contract.current_version,
+                               "scheme": scheme_values(contract.term_sheet or {}),
+                               "facts": facts,
+                               "conditions": self._missing_hard_conditions(session, package, contract)})
         records = [{k: v for k, v in record.items() if k != "action_id"}
                    for record in negotiation_records(session, package, contract)
                    if record["transcript"] or record["observed_results"]]
@@ -4922,6 +4959,32 @@ class GameplayGovernanceService:
             "relationship": NPCRelationshipService.relationship_context(session, contract.signatory_npc_id)
                             if contract.signatory_npc_id else {},
         })
+
+    def _contract_review_unchanged(self, session, package, contract) -> bool:
+        if not contract.review_history:
+            return False
+        previous = contract.review_history[-1]
+        fingerprint = previous.get("review_fingerprint")
+        if fingerprint == self._contract_review_fingerprint(session, package, contract):
+            return True
+        # Preserve an unchanged pre-upgrade result without retroactive charges.
+        return (not previous.get("cost_policy") and fingerprint is not None
+                and fingerprint == self._contract_review_fingerprint(session, package, contract, legacy=True))
+
+    @staticmethod
+    def _legacy_contract_cost_credit(session, contract) -> str | None:
+        batch = session.contract_batches.get(contract.batch_id)
+        related = {contract.signatory_npc_id, batch.representative_npc_id if batch else None} - {None}
+        used = {review.get("legacy_credit_action_id") for item in session.household_contracts.values()
+                for review in item.review_history if review.get("legacy_credit_action_id")}
+        current_policy = {e.get("action_instance_id") for e in session.logs
+                          if e.get("type") == "governance_action_fee_policy"}
+        return next((action.action_instance_id for action in session.governance_actions.values()
+                     if action.status == "active" and action.action_kind == "household_visit"
+                     and related.intersection(action.target_ids)
+                     and action.cost_status == "committed" and action.cost_action_points > 0
+                     and action.cost_committed_at
+                     and action.action_instance_id not in used | current_policy), None)
 
     def _public_contract(
         self, value: HouseholdContract, *, include_text: bool = False,
@@ -4980,6 +5043,25 @@ class GameplayGovernanceService:
             can_review=False, conversation_available=False, review_blocked_reason="请在相关签约人或代表的入户会谈中办理。",
         )
         if session is not None and package is not None:
+            repeated = bool(value.term_sheet and self._contract_review_unchanged(session, package, value))
+            credit = self._legacy_contract_cost_credit(session, value)
+            result["review_cost_action_points"] = 0 if value.status == "signed" or repeated or credit else 1
+            result["review_cost_hint"] = (
+                "已完成的本次提交不重复扣费。" if value.status == "signed" or repeated else
+                "旧存档关联会谈已扣精力，本次提交抵扣1点；修改后再次有效提交另计1点。" if credit else
+                "有效提交消耗1点精力，接受或拒签均计费；签约协商、预览、重复请求与技术失败不扣费。"
+            )
+            batch = session.contract_batches.get(value.batch_id)
+            related = {value.signatory_npc_id, batch.representative_npc_id if batch else None} - {None}
+            actor = next((npc for action in session.governance_actions.values()
+                          if action.status == "active" and action.action_kind == "household_visit"
+                          for npc in action.target_ids if npc in related), None)
+            result["conversation_npc_id"] = actor
+            result["conversation_npc_name"] = next((p.name for p in package.npc_profiles if p.npc_id == actor), None)
+            result["remaining_conditions"] = (self._missing_hard_conditions(session, package, value)
+                                               if value.term_sheet and value.status != "signed" else [])
+            result["next_steps"] = contract_next_steps(result["remaining_conditions"],
+                self._household(package, value.household_id).representative_npc)
             result["suggested_base_cash_amount"] = self._standard_cash(
                 package, self._household(package, value.household_id), months=0,
                 reward=session.game_state.story_day <= 75,
@@ -5002,8 +5084,10 @@ class GameplayGovernanceService:
                     reason = "请先保存方案并预览合同。"
                 elif legacy:
                     reason = "请先核对旧正文并保存方案。"
-                elif value.review_history and value.review_history[-1].get("review_fingerprint") == self._contract_review_fingerprint(session, package, value):
-                    reason = "方案与协商内容尚未变化，请先继续协商或修改方案。"
+                elif repeated:
+                    reason = "方案与已核实条件尚未变化，本次结果已保留；请修改方案或补齐实际材料。"
+                elif session.game_state.action_points < result["review_cost_action_points"]:
+                    reason = "本次有效提交签约需要1点精力。"
                 result["review_blocked_reason"] = reason
                 result["can_review"] = not reason
         if include_text and value.versions:

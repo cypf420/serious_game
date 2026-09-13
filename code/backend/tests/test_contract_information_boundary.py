@@ -27,7 +27,7 @@ def test_review_keeps_full_household_history_but_not_other_private_visits():
     seen = []
     def review(context):
         seen.append(context)
-        return SimpleNamespace(data={"decision": "explain", "reason": "我想再聊聊。", "counteroffer": {}})
+        return SimpleNamespace(model_id="test-ai", data={"decision": "explain", "reason": "我想再聊聊。", "counteroffer": {}})
     with patch.object(fixture.runtime.gameplay_governance._gateway, 'run_governance_task', side_effect=review):
         result = fixture.review()
     ctx = seen[0]
@@ -39,7 +39,7 @@ def test_review_keeps_full_household_history_but_not_other_private_visits():
     assert '大家听到的公开发言' in json.dumps(asdict(ctx), ensure_ascii=False)
     assert 'authorization_confirmed' not in ctx.payload['term_sheet']
     assert 'authorization_confirmed' in ctx.actor_context['verified_household_facts']
-    assert 'missing_hard_conditions' in ctx.payload  # server/private selection only
+    assert 'remaining_concern' in ctx.payload  # current authoritative concern
     assert 'missing_hard_conditions' not in json.dumps(result, ensure_ascii=False)
     assert len(fixture.session().household_contracts[fixture.cid].review_history) == 13
 

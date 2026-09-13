@@ -23,13 +23,19 @@ def own_saved_contracts(session, package, npc_id: str) -> list[dict]:
         if version is None:
             continue
         result.append({
+            "contract_id": contract.contract_id,
             "household_id": contract.household_id,
+            "signatory_name": contract.signatory_name,
+            "conversation_npc_id": npc_id,
             "status": contract.status,
             "terms": contract.term_sheet,
             "current_version": version.version,
             "contract_text": version.text,
             "selected_housing": selected_housing(package, contract.term_sheet or {}),
             "reviews": public_review_history(contract),
+            "current_review": next((review for review in reversed(public_review_history(contract))
+                                    if review.get("version") == version.version), None),
+            "history_note": "历史答复仅适用于其记录版本；以当前方案及已核实材料为准。",
             "scope": "本人的合同" if own else "代表转述的本批次合同；须由各户本人决定签署",
         })
     return deepcopy(result)
