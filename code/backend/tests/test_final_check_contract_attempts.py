@@ -40,6 +40,30 @@ def test_valid_submit_costs_one_for_success_or_refusal(game, missing):
         assert after.game_state.budget_remaining == before.game_state.budget_remaining - game.cash
 
 
+def test_contract_expression_is_scoped_to_authoritative_name_and_supplied_housing(game):
+    game.draft(missing_grave=True)
+    service = game.runtime.gameplay_governance
+    original = service._gateway.run_governance_task
+    seen = []
+    def capture(context):
+        seen.append(context)
+        return original(context)
+    with patch.object(service._gateway, "run_governance_task", side_effect=capture):
+        game.review()
+    payload = seen[0].payload
+    assert payload["authoritative_signatory_name"] == game.session().household_contracts[game.cid].signatory_name
+    assert payload["current_housing"]["attributes"]["accessible"] is False
+    assert "没有电梯" in " ".join(payload["expression_constraints"])
+    assert "错名不能覆盖权威姓名" in " ".join(payload["expression_constraints"])
+    # The real gateway serializes these server-owned facts in its expression
+    # context, rather than silently dropping the new payload fields.
+    from serious_game_backend.infrastructure.llm.openai_compatible import OpenAICompatibleRoleLLMGateway
+    actual_model_context = OpenAICompatibleRoleLLMGateway._character_context(seen[0])
+    assert "expression_constraints" in actual_model_context
+    assert payload["authoritative_signatory_name"] in actual_model_context
+    assert payload["confirmed_decision"] == "explain"
+
+
 def test_zero_energy_cannot_submit_new_attempt_or_call_model(game):
     game.draft(); points(game, 0)
     before = game.session()

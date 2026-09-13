@@ -2152,6 +2152,14 @@ class GameplayGovernanceService:
             payload={"contract_id": contract.contract_id, "term_sheet": contract.term_sheet,
                      "allowed_decisions": [decision], "confirmed_decision": decision,
                      "remaining_concern": missing_conditions[:1],
+                     "authoritative_signatory_name": contract.signatory_name,
+                     "current_housing": selected_housing(package, contract.term_sheet),
+                     "expression_constraints": [
+                         "称谓和签约人姓名以本户权威底账为准；玩家称呼或历史答复的错名不能覆盖权威姓名。",
+                         "房源事实只采用current_housing明确给出的名称和属性。accessible=false只表示当前方案未配置无障碍条件，不能推断为没有电梯。",
+                         "未明确提供的电梯有无、具体楼层、竣工验收等事实不得编造；只就当前已知的上下楼或无障碍顾虑表达。",
+                         "已解决的条件不能再次索要；不得从上述表达约束新增签约门槛。",
+                     ],
                      "contract_text": current_version.text},
         ))
         reason = str(result.data.get("reason") or "").strip()
