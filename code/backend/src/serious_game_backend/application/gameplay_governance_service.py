@@ -7,6 +7,8 @@ from serious_game_backend.application.contract_accounting import (ACCOUNTING_VER
 from serious_game_backend.application.contract_facts import (FACT_KEYS, resolve_contract_facts, record_contract_signatory_contact, conduct_household_viewing)
 from serious_game_backend.application.contract_context import own_saved_contracts
 from serious_game_backend.application.contract_requirements import contract_next_steps
+from serious_game_backend.application.luo_evidence import luo_copy_context, record_luo_copy_inquiry
+from serious_game_backend.application.reference_documents import meeting_display_title
 from serious_game_backend.application.contract_workflow import (
     TEMPLATE_AUTHOR, scheme_values, render_contract, selected_housing,
     negotiation_records, prior_personal_conversations, shared_conversations,
@@ -50,6 +52,7 @@ from serious_game_backend.application.action_variants import (
     participant_rules,
 )
 from serious_game_backend.application.archive_investigation_service import (
+    apply_original_archive_read,
     archive_definition,
     eligible_definitions,
     first_read_cost,
@@ -545,6 +548,7 @@ class GameplayGovernanceService:
                 )
                 if session.game_state.story_day not in archive.read_at_days:
                     archive.read_at_days.append(session.game_state.story_day)
+                apply_original_archive_read(session, archive_id)
                 if definition is not None:
                     strategic_uses.extend(definition.strategic_uses)
                     for fact_id in definition.result_fact_ids:
@@ -850,6 +854,7 @@ class GameplayGovernanceService:
                     ),
                     conversation_goal=action.topic,
                     visible_world_context={
+                        "compensation_evidence": luo_copy_context(session, npc_id, text),
                         "hearing_facts": hearing_facts(session, npc_id),
                         "households": household_knowledge(package, npc_id),
                         "story_day": session.game_state.story_day,
@@ -883,6 +888,10 @@ class GameplayGovernanceService:
                 })
                 continue
             committed_turns.append((npc_id, turn))
+            record_luo_copy_inquiry(
+                session, npc_id, text,
+                f"{action.action_instance_id}:turn:{len(action.transcript)}:{npc_id}",
+            )
             if npc_state.attitude_score is not None:
                 session.npc_states[npc_id] = replace(
                     npc_state,
@@ -4648,6 +4657,8 @@ class GameplayGovernanceService:
             archive_definition(package, value.archive_id)
             if package is not None else None
         )
+        if session is not None and value.source_type == "meeting" and value.source_id in session.meetings:
+            result["title"] = meeting_display_title(session, session.meetings[value.source_id])
         if definition is not None and session is not None:
             result.update({
                 "first_read_cost_action_points": first_read_cost(session, package),
