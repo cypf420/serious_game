@@ -11,6 +11,7 @@ from serious_game_backend.application.player_text_policy import player_visible_s
 from serious_game_backend.application.ending_service import EndingService
 from serious_game_backend.application.story_prose import DAY62_OPENING, project_saved_prose, restore_prose
 from serious_game_backend.application.story_prose_round_two import restore_round_two, secretary_fallback
+from serious_game_backend.application.evidence_guidance import custody_reason, option_next_steps
 
 
 PERMIT_ALREADY_ISSUED_TEXT = (
@@ -21,6 +22,10 @@ PERMIT_ALREADY_ISSUED_TEXT = (
 REPEATED_MONEY_OPTION_TEXTS = {
     1: "见他没有还价，你把补偿数又往上提了一次。",
     2: "你把补偿数提到第三次，要求他当场给个答复。",
+}
+REPEATED_MONEY_CONSEQUENCES = {
+    1: "你再次提高补偿数，周奎元仍没有还价。他摇了摇头，提醒你上一次已经说过：钱的账与祖坟的事不能并作一笔。香案前安静下来，你们仍未谈妥迁坟和祭祀的安排。",
+    2: "补偿数提到了第三次，周奎元把话停在这里。他没有接受，也没有还价，祖坟和祭祀的顾虑仍未得到回答。这一轮谈钱到此结束，钱不能替代那几件事。",
 }
 
 # The original arrival-night paragraph crosses midnight. Keep the immutable
@@ -67,8 +72,9 @@ class StoryFlowService:
                 option.option_id,
                 StoryFlowService._visible_option_text(decision, option, session, pending.context),
                 available=available,
-                unavailable_reason=None if available else StoryFlowService._option_unavailable_reason(option, session.known_fact_ids),
+                unavailable_reason=None if available else StoryFlowService._option_unavailable_reason(option, session.known_fact_ids, session=session),
                 unlock_requirements=option.unlock_requirements,
+                next_steps=() if available else option_next_steps(option, session, package),
             ))
         return replace(
             pending, options=tuple(options),
@@ -139,7 +145,10 @@ class StoryFlowService:
             story_day=session.game_state.story_day,
             kind="consequence",
             text=self.session_public_text(
-                decision.visible_consequence(option, session.flags, session.known_fact_ids), session
+                REPEATED_MONEY_CONSEQUENCES.get(int(pending.context.get("talk_money_count", 0)),
+                    decision.visible_consequence(option, session.flags, session.known_fact_ids))
+                if decision_id == "dp4_04" and option_id == "b"
+                else decision.visible_consequence(option, session.flags, session.known_fact_ids), session
             ),
             beat_id=session.story_beat_id,
             decision_id=decision_id,
@@ -227,11 +236,17 @@ class StoryFlowService:
         restore_package = session.package_id == "pkg_gameplay_v3"
         has_day62_visit = any(item.block_id == "d62_restored_visit_1" for item in session.narrative_feed)
         seen_content_ids: set[str] = set()
+        money_consequences = 0
         for item in session.narrative_feed:
             if item.content_instance_id is not None:
                 if item.content_instance_id in seen_content_ids:
                     continue
                 seen_content_ids.add(item.content_instance_id)
+            if (item.decision_id == "dp4_04" and item.kind == "consequence"
+                    and (item.content_instance_id or "").endswith(":b")):
+                if money_consequences in REPEATED_MONEY_CONSEQUENCES:
+                    item = replace(item, text=REPEATED_MONEY_CONSEQUENCES[money_consequences])
+                money_consequences += 1
             if item.cursor > after:
                 if (item.kind == "day_intro" and item.content_instance_id == f"day:{item.story_day}:intro"
                         and item.story_day in decision_days
@@ -509,10 +524,11 @@ class StoryFlowService:
                         None
                         if availability[item.option_id]
                         else StoryFlowService._option_unavailable_reason(
-                            item, session.known_fact_ids
+                            item, session.known_fact_ids, session=session
                         )
                     ),
                     unlock_requirements=item.unlock_requirements,
+                    next_steps=() if availability[item.option_id] else option_next_steps(item, session, package),
                 )
                 for item in decision.options
             ),
@@ -529,7 +545,11 @@ class StoryFlowService:
         })
 
     @staticmethod
-    def _option_unavailable_reason(option, known_fact_ids: set[str]) -> str:
+    def _option_unavailable_reason(option, known_fact_ids: set[str], *, session=None) -> str:
+        if session is not None:
+            specific = custody_reason(option, session)
+            if specific:
+                return specific
         fact_locked = (
             not option.required_fact_ids.issubset(known_fact_ids)
             or (

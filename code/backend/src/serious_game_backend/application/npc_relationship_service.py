@@ -3,6 +3,7 @@ from __future__ import annotations
 from serious_game_backend.domain.enums import AvailabilityMode
 from serious_game_backend.domain.game_session import GameSession
 from serious_game_backend.domain.script_package import ScriptPackage
+from serious_game_backend.application.evidence_guidance import source_opportunity
 
 
 TRUST_BANDS = (
@@ -181,6 +182,7 @@ class NPCRelationshipService:
 
     @staticmethod
     def _base_opportunity_available(opportunity, session: GameSession) -> bool:
+        opportunity = source_opportunity(opportunity, session)
         if opportunity.availability_mode is AvailabilityMode.CLOSED:
             return False
         day = session.game_state.story_day
@@ -291,15 +293,24 @@ class NPCRelationshipService:
     def recent_visible_change_reasons(
         session: GameSession, npc_id: str
     ) -> tuple[str, ...]:
-        reasons = [
-            str(item["reason"])
-            for item in reversed(session.logs)
-            if item.get("type") == "relationship_change"
-            and item.get("npc_id") == npc_id
-            and item.get("visible_to_player", False)
-            and str(item.get("reason", "")).strip()
-        ]
-        return tuple(dict.fromkeys(reasons))[:3]
+        events = {}
+        for item in session.logs:
+            if (item.get("type") != "relationship_change" or item.get("npc_id") != npc_id
+                    or not item.get("visible_to_player", False) or not str(item.get("reason", "")).strip()):
+                continue
+            identity = item.get("event_id") or item.get("action_instance_id") or item.get("conversation_id")
+            # Legacy logs cannot recover absent event IDs; deduplicate only same-day,
+            # same-reason copies, and never merge identical text across different days.
+            key = (item.get("story_day"), identity or ("legacy", item["reason"]))
+            event = events.setdefault(key, [])
+            if item["reason"] not in event:
+                event.append(item["reason"])
+        numbered = []
+        rounds = {}
+        for (day, _identity), reasons in events.items():
+            rounds[day] = rounds.get(day, 0) + 1
+            numbered.append(f"第{day}日·第{rounds[day]}次记录：" + "；".join(reasons))
+        return tuple(reversed(numbered[-3:]))
 
     @staticmethod
     def public_relationship_reasons(
@@ -423,7 +434,8 @@ class NPCRelationshipService:
                 ),
                 **context,
                 "relationship_reasons": reasons,
-                "recent_change_reasons": list(reasons.values())[:3],
+                "recent_change_reasons": list(NPCRelationshipService.recent_visible_change_reasons(session, npc_id))
+                    or list(dict.fromkeys(reasons.values()))[:3],
             })
         return values
 

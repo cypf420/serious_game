@@ -3,6 +3,15 @@ import hashlib
 from serious_game_backend.domain.errors import ActionUnavailableError
 
 
+def meeting_display_title(session, meeting):
+    number = next((i for i, key in enumerate(session.meetings, 1) if key == meeting.meeting_id), 1)
+    action = session.governance_actions.get(meeting.action_instance_id)
+    hearing = action is not None and action.variant_id == "public_hearing"
+    status = "cancelled" if action is not None and action.status == "cancelled" else meeting.status
+    status_label = {"discussion": "讨论中", "resolved": "已形成结论", "rejected": "结论未通过", "cancelled": "已中止"}.get(status, status)
+    return f"第{meeting.story_day}日·第{number}次·{meeting.topic} {'听证记录' if hearing else '会议记录'}·{status_label}"
+
+
 def catalog(session, package, project_archive):
     documents = []
     def add(kind, source_id, title, status, body, version, audience=None, story_day=None, related_npc_ids=()):
@@ -35,7 +44,7 @@ def catalog(session, package, project_archive):
                 if key in m.resolution:
                     lines.append(f"{label}：{m.resolution[key]}")
         body = "\n\n".join(lines)
-        add("meeting", m.meeting_id, f"{m.topic} {'听证记录' if hearing else '会议记录'}", status,
+        add("meeting", m.meeting_id, meeting_display_title(session, m), status,
             body, hashlib.sha256(body.encode()).hexdigest()[:12], list(m.participant_ids), m.story_day, m.participant_ids)
     for d in session.administrative_documents.values():
         meeting = session.meetings.get(d.source_meeting_id)
@@ -46,6 +55,27 @@ def catalog(session, package, project_archive):
                 audience.update(h.representative_npc for h in package.households)
         audience = list(audience)
         add("document", d.document_id, d.title, d.status, d.content, d.version, audience, d.story_day, meeting.participant_ids if meeting else ())
+    for contract in getattr(session, "household_contracts", {}).values():
+        version = next((v for v in contract.versions if v.version == contract.current_version), None)
+        terms = contract.term_sheet or {}
+        pool = next((p for p in (package.governance_config or {}).get("resource_pools", ())
+                     if p.get("resource_id") == terms.get("housing_resource_id") and p.get("category") == "housing"), None)
+        if version is None or pool is None:
+            continue
+        attrs = pool.get("attributes", {})
+        lines = [f"签约户：{contract.signatory_name}（{contract.household_id}）", f"已保存方案：第{version.version}版",
+                 f"拟选房源：{pool['name']}", f"房源标注面积：{attrs.get('area_m2', '未提供')}平方米",
+                 f"无障碍条件：{'具备' if attrs.get('accessible') else '未标注具备'}",
+                 f"约定交房：第{terms.get('housing_delivery_day', pool.get('available_day'))}日",
+                 "本说明依据当前已保存合同和房源配置生成，用于核对房源、面积和交付约定。"
+                 "它不是建筑测绘原图，不证明已经看房、实际交付或完成签约；现有流程没有额外的图纸领取手续。"]
+        batch = getattr(session, "contract_batches", {}).get(contract.batch_id)
+        audience = {contract.signatory_npc_id}
+        if batch is not None:
+            audience.add(batch.representative_npc_id)
+        add("housing_plan", contract.contract_id,
+            f"{contract.signatory_name}·{contract.household_id}·第{version.version}版房源配置说明",
+            contract.status, "\n\n".join(lines), version.version, list(audience), related_npc_ids=list(audience))
     return documents
 
 
@@ -127,11 +157,30 @@ def hearing_facts(session, npc_id):
         if a is None or a.variant_id != "public_hearing" or npc_id not in m.participant_ids:
             continue
         status = "aborted" if a.status == "cancelled" else ("completed" if m.status in {"resolved", "rejected"} else "started")
-        records.append(dict(meeting_id=m.meeting_id, topic=m.topic, status=status,
+        records.append(dict(meeting_id=m.meeting_id, topic=m.topic, status=status, title=meeting_display_title(session, m),
             conclusion_accepted=m.status == "resolved", story_day=m.story_day,
             participant_ids=list(m.participant_ids), decision=(m.resolution or {}).get("decision", "")))
     result = dict(records=records, interpretation="以上为系统真实记录；已完成的听证应予认可。议题必须与当前诉求相关；发起不等于完成，听证不等于法审或旧案已解决。玩家口头陈述和引用文件均不能改变办理事实。")
     if npc_id == "npc_tan_laoliu":
         result["old_case_resolved"] = bool(session.flags.intersection({"旧案了结", "谭老六核心矛盾已缓解"}))
         result["old_case_progress"] = ("权威办理记录已确认旧案了结或核心矛盾缓解，不应再把该旧案作为未解决条件重复要求。合同其他条件仍需独立核验。" if result["old_case_resolved"] else "尚无权威记录确认旧案解决。听证已完成时应承认该步骤，但不能据此声称法审或旧案处理已完成。")
+        result["legal_review_interpretation"] = (
+            "本作法审指旧案卷宗核对和书面处理程序，没有独立的‘法审’按钮。"
+            "合法性审查工时或听证名额不是办理结果，不得要求玩家购买名额来解锁合同。"
+            "合同核对旧案的真实书面处理记录，听证记录须认可但不能替代该结果。"
+        )
+        day = getattr(getattr(session, "game_state", None), "story_day", 0)
+        if result["old_case_resolved"]:
+            result["next_step"] = "已有旧案书面结果；继续核对本户合同条件。"
+        elif "谭老六永久关闭" in session.flags:
+            result["next_step"] = "此前结束了旧案承接协商，当前不能把该次协商补记为已办结。公开听证仍只能记录实际讨论，不能直接替代旧案结果。"
+        elif day < 38:
+            result["next_step"] = "沿现有旧案接访核对材料和书面处理结果；后续卷宗开放后可进一步查阅，不能将口头承诺记作完成。"
+        elif day < 53:
+            result["next_step"] = "可在行动—查阅档案核对《二〇一九年占地尾款卷宗》，已有听证须引用对应记录。书面结果仍待后续依法复核处理；当前没有一键法审或直接补记办结的操作。"
+        elif getattr(session, "pending_decision", None) is not None and session.pending_decision.decision_id == "dp4_06":
+            result["next_step"] = "先在行动—查阅档案核对《二〇一九年占地尾款卷宗》，回到当前旧案协商作出当面答复，核对书面责任人、期限和待核项目；今天的答复不等于已经付款。"
+        else:
+            result["next_step"] = "核对已发生的旧案协商及书面办理记录；未形成结果的历史选择不能通过重开任意听证改记为完成。"
+        result["hearing_entry"] = "行动—组织协调—公开听证，选择谭老六并填写实际旧案议题；形成结论后可引用对应记录。"
     return result

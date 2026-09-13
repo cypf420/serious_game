@@ -3,6 +3,7 @@ from serious_game_backend.application.story_prose_round_two import secretary_opp
 
 from serious_game_backend.application.character_facts import household_knowledge
 from serious_game_backend.application.reference_documents import hearing_facts, resolve_references
+from serious_game_backend.application.luo_evidence import luo_copy_context, record_luo_copy_inquiry
 from serious_game_backend.application.contract_context import own_saved_contracts
 
 from dataclasses import replace
@@ -658,6 +659,7 @@ class ActionService:
                     "own_contracts": own_saved_contracts(session, package, profile.npc_id),
                     "households": household_knowledge(package, profile.npc_id),
                     "hearing_progress": hearing_facts(session, profile.npc_id),
+                    "compensation_evidence": luo_copy_context(session, profile.npc_id, command.player_text),
                     "player_identity": "李致远，云溪县县长",
                     "story_day": session.game_state.story_day,
                     "story_title": beat.title if beat is not None else "",
@@ -907,11 +909,16 @@ class ActionService:
                         "type": "relationship_change",
                         "story_day": session.game_state.story_day,
                         "npc_id": draft["npc_id"],
+                        "event_id": conversation.conversation_id,
+                        "conversation_id": conversation.conversation_id,
+                        "topic": public_topic,
                         "dimension": dimension,
                         "reason": reason,
                         "visible_to_player": True,
                     })
                 log["type"] = "conversation_turn"
+                record_luo_copy_inquiry(session, draft["npc_id"], draft["player_text"],
+                    f"{conversation.conversation_id}:turn:{conversation.turn_count}")
                 log["npc_id"] = draft["npc_id"]
                 log["conversation_id"] = conversation.conversation_id
                 privacy = draft.get("privacy")

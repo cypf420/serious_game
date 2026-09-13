@@ -5,6 +5,7 @@ from serious_game_backend.domain.game_session import GameSession
 from serious_game_backend.domain.interaction_opportunity import InteractionOpportunity
 from serious_game_backend.domain.script_package import ScriptPackage
 from serious_game_backend.domain.enums import AvailabilityMode
+from serious_game_backend.application.evidence_guidance import source_opportunity
 from serious_game_backend.application.npc_relationship_service import (
     NPCRelationshipService,
 )
@@ -17,7 +18,7 @@ class InteractionOpportunityService:
         NPCRelationshipService.synchronize(session, package)
         return [
             item
-            for item in package.interaction_opportunities
+            for item in (source_opportunity(o, session) for o in package.interaction_opportunities)
             if self._is_available(
                 item,
                 session,
@@ -34,7 +35,7 @@ class InteractionOpportunityService:
         opportunity = next(
             (
                 item
-                for item in package.interaction_opportunities
+                for item in (source_opportunity(o, session) for o in package.interaction_opportunities)
                 if item.opportunity_id == opportunity_id
             ),
             None,

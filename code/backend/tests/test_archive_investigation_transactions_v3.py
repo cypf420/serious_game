@@ -9,6 +9,7 @@ from fastapi.testclient import TestClient
 from serious_game_backend.api.app import create_app
 from tests.test_doubles import build_test_container as build_container
 from serious_game_backend.config import Settings
+from serious_game_backend.application.archive_investigation_service import investigation_definitions
 
 
 BACKEND_ROOT = Path(__file__).resolve().parents[1]
@@ -211,8 +212,8 @@ class TestArchiveInvestigationTransactionsV3:
         package = self.runtime.packages.get("pkg_gameplay_v3")
         assert package is not None
 
-        for definition in package.archive_investigations:
-            self._set_day(max(2, definition.unlock_day), action_points=11)
+        for definition in investigation_definitions(package):
+            self._set_day(max(2, definition.unlock_day), action_points=8)
             response = self._inspect([definition.archive_id])
             assert response.status_code == 201, (
                 definition.archive_id,
