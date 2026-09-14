@@ -1,0 +1,54 @@
+{
+  "evidence_root": "E:\\严肃游戏\\output\\final-check-20260913",
+  "code_commit": "e6acd19",
+  "files": [
+    {
+      "path": "final-gate-run.log",
+      "sha256": "7babab8a1c2716323a74cc555f6288343904d55af6a10b5736caaf26aade7f39"
+    },
+    {
+      "path": "final-web-gates.log",
+      "sha256": "3739082b2b88175a01ca670d77b34128cf40b4cf9165474ce1a92a9a6e759660"
+    },
+    {
+      "path": "final-terminal.log",
+      "sha256": "c214475e6906d5aecaef2d96ae86db31977bb9db05fcd305400a9901f9cda9bd"
+    },
+    {
+      "path": "final-route-comparison.json",
+      "sha256": "15c50c878f5ad6b59a0c23ef418f5ca186f533d1da09d0aa3a349bac5b43c4f0"
+    },
+    {
+      "path": "route-review/baseline-final-comparison.json",
+      "sha256": "b3c716af3ea84fa86c3ec56bb0d813cf9e4dfb082caa9fa0d7ce8fc235311671"
+    },
+    {
+      "path": "gitnexus-final-code.json",
+      "sha256": "9b5dc781d3d163f6f9d3461b7495f46ae815d57a9608dad215d379aa052925d7"
+    },
+    {
+      "path": "protected-content-final.json",
+      "sha256": "f39acdad908eb2208b0fa07aae8f5f34bba31c58e894c371079868257b0cf20d"
+    },
+    {
+      "path": "ui-fix-real/results.json",
+      "sha256": "b7ff1aa4dbddfa0e4141aa1e6feb01ea3aa33e06db112aab10a282ced8d69a5c"
+    },
+    {
+      "path": "review-story/独立剧情复核.md",
+      "sha256": "aa508c3c70b0dfc30e5cd7f15eeb84a45b4ad520cd6de575f3dba2faa91cf706"
+    },
+    {
+      "path": "review-logic/独立逻辑复核.md",
+      "sha256": "879a69b02b212d7903987113e67dbc5750bf76adc7361aaa4da796f31baf2116"
+    },
+    {
+      "path": "review-ui/独立体验复核记录汇总.md",
+      "sha256": "9c2687ab4f9e7a9ef9e15c13ee2070f2bd386f34d4acee8a4a0ae0b086a30aa2"
+    },
+    {
+      "path": "route-review/最终路线诊断.md",
+      "sha256": "bb5e6021b75a0b637f5df9c08630b3904321ba3b35e68dc5bcb6169b50861cc0"
+    }
+  ]
+}
