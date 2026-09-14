@@ -163,6 +163,12 @@ def hearing_facts(session, npc_id):
             conclusion_accepted=m.status == "resolved", story_day=m.story_day,
             participant_ids=list(m.participant_ids), decision=(m.resolution or {}).get("decision", "")))
     result = dict(records=records, interpretation="以上为系统真实记录；已完成的听证应予认可。议题必须与当前诉求相关；发起不等于完成，听证不等于法审或旧案已解决。玩家口头陈述和引用文件均不能改变办理事实。")
+    if not records:
+        result["interpretation"] = (
+            "当前没有本人物参与的听证办理记录，不能声称‘听证会已经开过’或‘听证已完成’。"
+            "玩家询问是否需要听证不等于已办理，人物背景和程序诉求也不证明本局发生过听证。"
+            "听证与旧案卷宗核对、书面处理结果是不同事项，未记录的办理状态只能说明尚未核实。"
+        )
     if npc_id == "npc_tan_laoliu":
         result["old_case_resolved"] = bool(session.flags.intersection({"旧案了结", "谭老六核心矛盾已缓解"}))
         result["old_case_progress"] = ("权威办理记录已确认旧案了结或核心矛盾缓解，不应再把该旧案作为未解决条件重复要求。合同其他条件仍需独立核验。" if result["old_case_resolved"] else "尚无权威记录确认旧案解决。听证已完成时应承认该步骤，但不能据此声称法审或旧案处理已完成。")
