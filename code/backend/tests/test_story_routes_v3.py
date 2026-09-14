@@ -515,6 +515,14 @@ class StoryRoutesV3Tests(unittest.TestCase):
                     break
                 household_id = contract["household_id"]
                 self.assertIn(household_id, contract_terms)
+                # A date tick is not a new player proposal. Keep the saved
+                # version when the authoritative blockers have not changed;
+                # otherwise these fixed-order retries consume the signing AP
+                # intended for households that can actually proceed today.
+                # LAO's real viewing remains a normal action below.
+                if not self.route_contract_needs_attempt(contract):
+                    all_resolved = False
+                    continue
                 terms = dict(contract_terms[household_id])
                 terms["payment_day"] = story_day
                 for field in ("move_out_day", "housing_delivery_day"):
@@ -595,6 +603,24 @@ class StoryRoutesV3Tests(unittest.TestCase):
             if all_resolved:
                 processed_representatives.add(representative)
         return result
+
+    @staticmethod
+    def route_contract_needs_attempt(contract: dict) -> bool:
+        if not contract.get("term_sheet") or not contract.get("review_history"):
+            return True
+        current_version = contract.get("current_version")
+        reviews = [review for review in contract["review_history"]
+                   if review.get("version") == current_version]
+        if not reviews:
+            return True
+        missing = contract.get("remaining_conditions", [])
+        # A real viewing may remove LAO's blocker during this action. It must
+        # never be replaced by a client-side assertion or a skipped contract.
+        if contract.get("household_id") == "LAO-01":
+            return True
+        if missing and missing == reviews[-1].get("remaining_conditions"):
+            return False
+        return bool(contract.get("can_review", True))
 
     def drain_required_group_conversation(
         self, client, session_id, headers, result: dict, key: str
