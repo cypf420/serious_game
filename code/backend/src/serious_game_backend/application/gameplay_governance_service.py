@@ -7,6 +7,7 @@ from serious_game_backend.application.contract_accounting import (ACCOUNTING_VER
 from serious_game_backend.application.contract_facts import (FACT_KEYS, resolve_contract_facts, record_contract_signatory_contact, conduct_household_viewing)
 from serious_game_backend.application.contract_context import own_saved_contracts
 from serious_game_backend.application.npc_context_visibility import stage_role_setting, stage_unresolved_demands
+from serious_game_backend.application import contract_requirements
 from serious_game_backend.application.contract_requirements import contract_next_steps
 from serious_game_backend.application.luo_evidence import luo_copy_context, record_luo_copy_inquiry
 from serious_game_backend.application.reference_documents import meeting_display_title
@@ -3605,86 +3606,7 @@ class GameplayGovernanceService:
         package: ScriptPackage,
         contract: HouseholdContract,
     ) -> list[str]:
-        assert contract.term_sheet is not None
-        household = self._household(package, contract.household_id)
-        terms = contract.term_sheet
-        facts = resolve_contract_facts(session, package, contract)
-        allocations = set(terms["service_allocations"])
-        missing = []
-        gate = (package.governance_config or {}).get("contract_batch_gate_flags", {}).get(household.representative_npc)
-        if gate and gate not in session.flags:
-            missing.append("本户对整体签约安排仍有顾虑")
-        housing_id = terms.get("housing_resource_id")
-        if not housing_id and (household.resettlement_preference.startswith("resettlement_house")
-                               or "low_floor" in household.resettlement_preference):
-            missing.append("本户尚未接受不安排实物房源的方案")
-        pool = next((p for p in (package.governance_config or {}).get("resource_pools", [])
-                     if p["resource_id"] == housing_id), None)
-        if (pool and "low_floor" in household.resettlement_preference
-                and not pool.get("attributes", {}).get("accessible")):
-            missing.append("本户对房源上下楼条件仍有顾虑")
-        if (
-            household.grave_or_shrine_profile
-            not in {"none", "clan_follower", "clan_accounting"}
-            and "grave_relocation_service" not in allocations
-        ):
-            missing.append("迁坟事务资源未落实")
-        if household.medical_tags and not allocations.intersection({
-            "lead_recheck_slot",
-            "child_assessment_slot",
-            "emergency_referral_slot",
-        }):
-            missing.append("医疗复检或评估资源未落实")
-        if household.household_id == "HE-02":
-            if "lead_recheck_slot" not in allocations:
-                missing.append("血铅复查资源未落实")
-            if not allocations.intersection({"stable_job_slot", "training_slot"}):
-                missing.append("就业转介资源未落实")
-            if not all((terms.get("followup_plan") or {}).get(key) for key in (
-                "medical_provider", "recheck_interval_days", "employment_receiver", "medical_fee_arrangement"
-            )):
-                missing.append("医疗随访与就业转介附件未落实")
-        if (
-            "school_continuity" in household.employment_startup_tags
-            and "school_transition_seat" not in allocations
-        ):
-            missing.append("就学衔接资源未落实")
-        if (
-            household.ownership_status == "migrant_authorization_needed"
-            and not facts["authorization_confirmed"]
-        ):
-            missing.append("外出户本人授权尚未核验")
-        if (
-            household.ownership_status == "ledger_sensitive"
-            and not facts["ledger_disclosed"]
-        ):
-            missing.append("逐项测算账目尚未公开")
-        if (
-            household.ownership_status in {
-                "old_road_case_pending", "old_materials_sensitive",
-            }
-            and not facts["old_case_resolved"]
-        ):
-            missing.append("历史旧案尚未形成书面处理结果")
-        if (
-            household.ownership_status == "prior_extra_payment_risk"
-            and not facts["prior_payment_verified"]
-        ):
-            missing.append("既往额外付款尚未核验")
-        if (
-            household.resettlement_preference
-            == "resettlement_house_must_see_real_unit"
-            and not facts["real_unit_viewed"]
-        ):
-            missing.append("签约人尚未查看可交付实房")
-        if (
-            household.signing_lock_flag
-            and household.signing_lock_flag not in session.flags
-        ):
-            missing.append(
-                "本户核心矛盾尚未解决"
-            )
-        return missing
+        return contract_requirements.missing_contract_conditions(session, package, contract)
 
     def _validate_contract_text(
         self,
