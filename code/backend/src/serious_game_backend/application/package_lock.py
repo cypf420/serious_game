@@ -17,6 +17,17 @@ _TAN_DEMAND_COPY_COMPATIBILITY = (
 )
 
 
+# Only the two approved accessible housing capacities changed from the copy update.
+_HOUSING_CAPACITY_COMPATIBILITY = {
+    ("pkg_gameplay_v3", "3.5.18-feedback15-approved-copy", prior,
+     "sha256:0b1e4d97998dcadf5687b8116d41896c63c68e0df82d969e844ab72e69e290a0")
+    for prior in (
+        "sha256:c4795211286ca05dafd97e91b0f4ff513f2b78e536dfc5d9f0a0454063d6932a",
+        "sha256:17614221c51fcca8a8b5b4716533367cae6f6812d41ea57d845095896edb3a43",
+    )
+}
+
+
 def locked_package_access(
     packages: ScriptPackageRepository,
     session: GameSession,
@@ -28,7 +39,10 @@ def locked_package_access(
         and (package.content_hash == session.package_content_hash
              or (session.package_id, session.package_version,
                  session.package_content_hash, package.content_hash)
-             == _TAN_DEMAND_COPY_COMPATIBILITY)
+             == _TAN_DEMAND_COPY_COMPATIBILITY
+             or (session.package_id, session.package_version,
+                 session.package_content_hash, package.content_hash)
+             in _HOUSING_CAPACITY_COMPATIBILITY)
     )
     if not content_available:
         return package, {

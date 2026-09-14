@@ -19,7 +19,7 @@ export const BASIC_TUTORIAL: TutorialDefinition = {
   steps: [
     { id: "play-at-your-pace", title: "行动、剧情与存档", body: "自由行动与剧情决策相对独立。行动开放时，可以先自由行动再推进剧情，也可以完成剧情决策后再自由行动；必须当场处理的决定，请按现场提示完成。游戏进度会随每次行动与决定自动保存，无需手动保存。", target: target("today") },
     { id: "today", title: "今日案头", body: "这里汇总今日目标与现场情况。结合当前叙事和必须处理的事项，安排今天的工作。", target: target("today") },
-    { id: "metrics", title: "日期、阶段与精力", body: "日期、阶段和各项指标反映当前局面。精力决定今天还能安排多少工作；以当前显示的消耗为准。", detail: "财政余额兑换通晓币目前尚未开放，当前没有兑换入口，比例和数量限制尚未公布。通晓币不用于人物会谈或本局行动消耗，后续“百晓生”网站用途与规则以公告为准。", target: target("metrics") },
+    { id: "metrics", title: "日期、阶段与精力", body: "日期、阶段和各项指标反映当前局面。精力决定今天还能安排多少工作；以当前显示的消耗为准。剩余的财政余额能兑换百晓智能“通晓币”，详情xxx", target: target("metrics") },
     { id: "narrative-controls", title: "阅读与推进", body: "使用这里的阅读控制查看叙事。读完当前剧情并处理必须完成的事项后，才能结束今日；出现现场决定时先完成选择。", target: target("narrative-controls") },
     { id: "nav-actions", title: "行动：安排工作", body: "这里按办理方式列出当前公开的行动。每张卡片会说明用途、精力消耗和不可用原因；选择要办理的行动后，核对对象与条件，再由你确认发起。", target: target("nav-actions") },
     { id: "nav-opportunities", title: "人物：了解与会谈", body: "这里列出已公开的人物与当前会谈入口。先了解人物状态与说明，再选择当前可以进入的会谈。", target: target("nav-opportunities") },

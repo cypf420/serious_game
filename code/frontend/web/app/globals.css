@@ -93,7 +93,7 @@ button:disabled { cursor: not-allowed; opacity: 1; border-style: dashed; }
 .rail button.active b { color: #eddbb3; }
 
 .workspace { min-width: 0; min-height: 0; padding: 14px 16px 12px; overflow: hidden; display: grid; grid-template-rows: auto minmax(0,1fr); gap: 12px; }
-.metric-strip { display: grid; grid-template-columns: repeat(5, minmax(120px, 1fr)); border: 1px solid #6b5839; background: #2a231a; box-shadow: 0 7px 20px rgba(0,0,0,.2); }
+.metric-strip { display: grid; grid-template-columns: repeat(4, minmax(120px, 1fr)); border: 1px solid #6b5839; background: #2a231a; box-shadow: 0 7px 20px rgba(0,0,0,.2); }
 .metric-strip > div { min-width: 0; padding: 10px 15px; border-right: 1px solid rgba(219,193,139,.16); display: grid; grid-template-columns: 1fr auto; align-items: end; }
 .metric-strip > div:last-child { border-right: 0; }
 .metric-strip small { grid-column: 1 / -1; color: #9b927f; font-size: 10px; letter-spacing: .12em; }
@@ -1291,4 +1291,31 @@ footer { grid-column: 1 / -1; display: flex; align-items: center; justify-conten
   }
   .story-scroll > .leadership-meeting-scene > :is(header, .scene-participants, .scene-opening) { flex: none; }
   .story-scroll > .leadership-meeting-scene > .scene-transcript { flex: 1; min-height: 0; max-height: none; }
+}
+
+/* Eight indicators with a dedicated signing entry spanning the two rows. */
+.metric-strip.metric-strip {
+  display: grid; grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-rows: repeat(2, auto);
+}
+.metric-strip.metric-strip > div { min-width: 0; column-gap: 8px; }
+.metric-strip.metric-strip > div:nth-child(-n+4) { border-bottom: 1px solid rgba(219,193,139,.25); }
+.metric-strip.metric-strip > div:nth-child(n+5) { grid-row: 2; }
+.metric-strip > .metric-signing {
+  grid-column: 5; grid-row: 1 / span 2; align-self: stretch;
+  display: flex; align-items: center; justify-content: center;
+  min-width: 0; margin: 0; padding: 16px 8px; border: 0;
+  border-left: 1px solid #6b5839; border-radius: 0;
+  background: transparent; color: #ecd7a4; font-size: 18px;
+  font-family: "STSong", "SimSun", serif; font-weight: 600;
+}
+.metric-strip > .metric-signing:hover:not(:disabled) { background: rgba(219,193,139,.10); }
+.metric-strip > .metric-signing:focus-visible { outline: 2px solid #ecd7a4; outline-offset: -4px; }
+@media (max-width: 780px) {
+  .metric-strip.metric-strip { grid-template-columns: repeat(4, minmax(0, 1fr)); overflow: visible; }
+  .metric-strip.metric-strip > div { display: grid; grid-template-columns: minmax(0, 1fr); padding: 8px 5px; min-width: 0; }
+  .metric-strip.metric-strip small { font-size: 11px; letter-spacing: 0; }
+  .metric-strip.metric-strip strong { font-size: 17px; }
+  .metric-strip.metric-strip em { font-size: 10px; white-space: normal; }
+  .metric-strip > .metric-signing { grid-column: 1 / -1; grid-row: 3; padding: 12px; border-left: 0; border-top: 1px solid #6b5839; }
 }

@@ -1,4 +1,5 @@
 {
+  "housing_total_capacity": 39,
   "schema_version": 1,
   "contract_signing_authoritative": true,
   "contract_batch_gate_flags": {
@@ -133,9 +134,9 @@
   },
   "resource_pools": [
     {"resource_id": "housing_d1_80", "name": "D1现房80㎡", "category": "housing", "capacity": 4, "available_day": 1, "attributes": {"area_m2": 80, "accessible": false}},
-    {"resource_id": "housing_d1_100_accessible", "name": "D1现房100㎡低楼层无障碍", "category": "housing", "capacity": 2, "available_day": 1, "attributes": {"area_m2": 100, "accessible": true}},
+    {"resource_id": "housing_d1_100_accessible", "name": "D1现房100㎡低楼层无障碍", "category": "housing", "capacity": 3, "available_day": 1, "attributes": {"area_m2": 100, "accessible": true}},
     {"resource_id": "housing_d1_100", "name": "D1现房100㎡", "category": "housing", "capacity": 4, "available_day": 1, "attributes": {"area_m2": 100, "accessible": false}},
-    {"resource_id": "housing_d1_120_accessible", "name": "D1现房120㎡低楼层无障碍", "category": "housing", "capacity": 1, "available_day": 1, "attributes": {"area_m2": 120, "accessible": true}},
+    {"resource_id": "housing_d1_120_accessible", "name": "D1现房120㎡低楼层无障碍", "category": "housing", "capacity": 3, "available_day": 1, "attributes": {"area_m2": 120, "accessible": true}},
     {"resource_id": "housing_d1_120", "name": "D1现房120㎡", "category": "housing", "capacity": 7, "available_day": 1, "attributes": {"area_m2": 120, "accessible": false}},
     {"resource_id": "housing_d1_140", "name": "D1现房140㎡", "category": "housing", "capacity": 2, "available_day": 1, "attributes": {"area_m2": 140, "accessible": false}},
     {"resource_id": "housing_d30_80", "name": "D30二期80㎡", "category": "housing", "capacity": 2, "available_day": 30, "attributes": {"area_m2": 80, "accessible": false}},

@@ -1031,7 +1031,6 @@ export default function GameShell() {
   const budget = displayValue(get(ledger, "budget.available", get(ledger, "budget.remaining", "待定")));
   const publicTrust = displayValue(get(indicators, "public_trust.label", get(indicators, "public_trust", "未判定")), "未判定");
   const socialStability = displayValue(get(indicators, "social_stability.label", get(indicators, "social_stability", "未判定")), "未判定");
-  const politicalCredit = displayValue(get(indicators, "political_credit.label", get(indicators, "political_credit", "未判定")), "未判定");
   const mediaPressure = displayValue(get(indicators, "media_pressure.label", get(indicators, "media_pressure", "未判定")), "未判定");
   const cadreDiscontent = displayValue(get(indicators, "cadre_discontent.label", get(indicators, "cadre_discontent", "未判定")), "未判定");
   const readingCommands = { ...commands, can_end_day: Boolean(commands.can_end_day) && !commands.can_continue_story && !hasMoreSegments && narrativeReadingComplete(narrative) };
@@ -1121,12 +1120,12 @@ export default function GameShell() {
         <div><small>当前日期</small><strong>第 {displayValue(story.day)} 日</strong><em>余 {Math.max(0, 90 - Number(story.day || 0))} 日</em></div>
         <div><small>今日精力</small><strong>{actionPoints}</strong><em>/ {dailyCap} 点</em></div>
         <div><small>财政余额</small><strong>{budget}</strong><em>万元</em></div>
-        <div><small>签约进度 <button data-tutorial-id="advance-signing" className="stat-link" disabled={busy} onClick={() => void loadPanel("opportunities", true)}>推进签约</button></small><strong>{signed}</strong><em>/ {total} 户</em></div>
-        <div><small>群众信任</small><strong>{publicTrust}</strong><em>当前态势</em></div>
+        <div><small>签约进度</small><strong>{signed}</strong><em>/ {total} 户</em></div>
         <div><small>社会稳定</small><strong>{socialStability}</strong><em>当前态势</em></div>
-        <div><small>政治信用</small><strong>{politicalCredit}</strong><em>当前态势</em></div>
         <div><small>舆论压力</small><strong>{mediaPressure}</strong><em>当前态势</em></div>
-        <div><small>班子不满</small><strong>{cadreDiscontent}</strong><em>当前态势</em></div>
+        <div><small>班子情绪</small><strong>{cadreDiscontent}</strong><em>当前态势</em></div>
+        <div><small>群众信任</small><strong>{publicTrust}</strong><em>当前态势</em></div>
+        <button data-tutorial-id="advance-signing" className="metric-signing" disabled={busy} onClick={() => void loadPanel("opportunities", true)}>推进签约</button>
       </div>
 
       <div className="main-grid">
@@ -1135,7 +1134,7 @@ export default function GameShell() {
           <div className="story-head"><div><small>县长手记 · 第 {displayValue(primaryScene === "narrative" ? currentLine?.storyDay || story.day : story.day, "待定")} 日</small><h2>{sessionId ? currentScene.title : "一纸调令，九十天限期"}</h2></div></div>
           <div data-tutorial-id={tutorialContext.scene === "morning" ? "morning" : undefined} className="story-scroll" ref={storyScrollRef} aria-live="polite" data-scene-match={currentScene.matchedBy}>
             {notice && !(activeConversation || (activeGovernanceAction && !activeMeeting)) && <div className="notice" role="status"><b>案头提醒</b><span>{notice}</span></div>}
-            {!sessionId && <div className="welcome-block"><span className="eyebrow">云溪县 · 柳林村搬迁专班</span><h2>你有九十天，处理一场正在失控的搬迁。</h2><p>三十六户人家、八千万元预算，还有一条没人愿意说透的旧账。你的每次会谈、批示、承诺和沉默，都会留下痕迹。</p><p className="currency-notice" role="note">财政余额兑换通晓币的功能目前尚未开放，当前没有兑换入口，比例和数量限制也尚未公布。通晓币不用于人物会谈或本局行动消耗；后续“百晓生”网站用途及兑换规则以公告为准。</p><div className="welcome-credits"><small>开发：杨钞越　剧情：吉瑞新　美术：章钊林　指导：蒋俊彦、高翔</small></div><div className="welcome-action"><button onClick={openGameEntry} disabled={busy}>{authRequired && !account ? "登录后赴任" : "接下调令，前往云溪"}</button></div></div>}
+            {!sessionId && <div className="welcome-block"><span className="eyebrow">云溪县 · 柳林村搬迁专班</span><h2>你有九十天，处理一场正在失控的搬迁。</h2><p>三十六户人家、八千万元预算，还有一条没人愿意说透的旧账。你的每次会谈、批示、承诺和沉默，都会留下痕迹。</p><p className="currency-notice" role="note">剩余的财政余额能兑换百晓智能“通晓币”，详情xxx</p><div className="welcome-credits"><small>开发：杨钞越　剧情：吉瑞新　美术：章钊林　指导：蒋俊彦、高翔</small></div><div className="welcome-action"><button onClick={openGameEntry} disabled={busy}>{authRequired && !account ? "登录后赴任" : "接下调令，前往云溪"}</button></div></div>}
             {(primaryScene === "narrative" || primaryScene === "conversation") && <section className={activeConversation ? "gal-stage conversation-mode" : decisionReady ? "gal-stage decision-mode" : "gal-stage"} data-primary-scene={primaryScene} data-testid={state.active_conversation ? "active-conversation-character" : undefined}>
               {stageSpeaker && <div className="gal-portrait" aria-label={`${stageSpeaker}立绘`}><CharacterPortrait character={stageCharacter} fallbackName={stageSpeaker} priority /></div>}
               <div className={stageSpeaker ? "gal-dialogue has-speaker" : "gal-dialogue narration"}>

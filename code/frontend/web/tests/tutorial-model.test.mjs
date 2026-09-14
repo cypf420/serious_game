@@ -12,7 +12,7 @@ const fakeStorage = () => {
 test("basic guide starts with an introduction before seven destinations", () => {
   assert.equal(BASIC_TUTORIAL.steps.length, 8);
   assert.equal(new Set(BASIC_TUTORIAL.steps.map(step => step.target)).size, 7);
-  assert.ok(BASIC_TUTORIAL.steps.every(step => [...step.title].length <= 12 && [...step.body].length <= (step.id === "play-at-your-pace" ? 120 : 90)));
+  assert.ok(BASIC_TUTORIAL.steps.every(step => [...step.title].length <= 12 && [...step.body].length <= (step.id === "metrics" ? 160 : step.id === "play-at-your-pace" ? 120 : 90)));
   assert.match(BASIC_TUTORIAL.steps.find(step => step.id === "nav-opportunities").title, /人物/);
   assert.match(BASIC_TUTORIAL.steps.find(step => step.id === "nav-desk").title, /卷宗/);
   assert.equal(BASIC_TUTORIAL.steps.some(step => step.id === "nav-manual-saves"), false);

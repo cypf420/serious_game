@@ -52,11 +52,10 @@ def render_state(state: dict) -> list[str]:
         names = {
             "public_trust": "公众信任",
             "social_stability": "社会稳定",
-            "political_credit": "政治信用",
             "media_pressure": "舆情压力",
-            "cadre_discontent": "干部情绪",
+            "cadre_discontent": "班子情绪",
         }
-        values = [f"{names.get(key, key)}：{value}" for key, value in indicators.items()]
+        values = [f"{names.get(key, key)}：{value}" for key, value in indicators.items() if key != "political_credit"]
         lines.append("｜".join(values))
     if state.get("status") != "active":
         lines.append("本局已经结束。")

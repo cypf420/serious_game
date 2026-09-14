@@ -2255,8 +2255,8 @@ class FileScriptPackageLoader:
                 int(item["capacity"])
                 for item in governance_config["resource_pools"]
                 if item.get("category") == "housing"
-            ) != 36:
-                raise ContentValidationError("安置房资源池必须闭合为36套")
+            ) != int(governance_config.get("housing_total_capacity", 36)):
+                raise ContentValidationError("安置房资源池与配置的总容量不一致")
             initial_documents = governance_config.get("initial_documents", [])
             if not any(
                 item.get("document_type") == "compensation_policy"

@@ -15,7 +15,6 @@ from serious_game_backend.application.progress_broadcast_policy import (
 VISIBLE_INDICATORS = (
     "public_trust",
     "social_stability",
-    "political_credit",
     "media_pressure",
     "cadre_discontent",
 )
