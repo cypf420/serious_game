@@ -8,6 +8,7 @@ import tempfile
 import unittest
 
 from fastapi.testclient import TestClient
+from tests.story_reading import read_available_story
 
 from serious_game_backend.api.app import create_app
 from tests.test_doubles import build_test_container as build_container
@@ -692,6 +693,8 @@ class GameplayV3PlayerRegressionTests(unittest.TestCase):
 
         finished = self._complete_wu_governance_visit()
 
+        read_available_story(self.client, self.session_id, self.headers, "v3-wu-finished")
+
         latest_view = None
         for action_points in (8, 7, 0):
             with self.subTest(
@@ -855,6 +858,7 @@ class GameplayV3PlayerRegressionTests(unittest.TestCase):
         self,
     ) -> None:
         completed = self._complete_wu_governance_visit()
+        completed = read_available_story(self.client, self.session_id, self.headers, "v3-wu-save")
         completed_view = self.client.get(
             f"/api/game/session/{self.session_id}/view", headers=self.headers
         ).json()
@@ -1524,7 +1528,8 @@ class ActionUnificationV3PackageLifecycleTests(unittest.TestCase):
         )
         self.assertEqual(200, view.status_code, view.text)
         self.assertEqual(
-            {"can_choose": False, "can_act": False, "can_end_day": False, "can_talk": False},
+            {"can_choose": False, "can_act": False, "can_end_day": False, "can_talk": False,
+             "can_continue_story": False, "remaining_story_items": 2},
             view.json()["commands"],
         )
 

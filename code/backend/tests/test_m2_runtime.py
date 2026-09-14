@@ -6,6 +6,7 @@ import unittest
 from fastapi.testclient import TestClient
 
 from serious_game_backend.api.app import create_app
+from tests.story_reading import read_available_story
 from tests.test_doubles import build_test_container as build_container
 from serious_game_backend.config import Settings
 from serious_game_backend.infrastructure.script_packages.file_loader import (
@@ -49,9 +50,12 @@ class M2RuntimeTests(unittest.TestCase):
         return response.json()
 
     def end_day(self, version: int, key: str) -> dict:
+        current = self.client.get(f"/api/game/session/{self.session_id}/view", headers=self.headers).json()
+        self.assertEqual(version, current["state"]["state_version"])
+        read = read_available_story(self.client, self.session_id, self.headers, key)
         response = self.client.post(
             f"/api/game/session/{self.session_id}/end-day",
-            json={"client_action_id": key, "state_version": version},
+            json={"client_action_id": key, "state_version": read["state_version"]},
             headers=self.headers,
         )
         self.assertEqual(200, response.status_code, response.text)

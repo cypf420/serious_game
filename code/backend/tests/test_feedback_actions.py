@@ -72,8 +72,11 @@ class FeedbackActionTests(unittest.TestCase):
                 v = next(v for v in variants if v["variant_id"] == p["variant_id"])
                 for key in ("cost_action_points", "available", "unavailable_reason", "legal_location_ids"):
                     self.assertEqual(v[key], p[key], key)
-                if points == 0:
+                if points == 0 and p["cost_action_points"] > 0:
                     self.assertFalse(p["available"])
+                if p["variant_id"] == "contract_negotiation":
+                    self.assertEqual(0, p["cost_action_points"])
+                    self.assertTrue(p["available"])
         self.assertNotIn("npc_wang_fang", {p["npc_id"] for p in people})
 
     def test_explicit_contract_preparation_is_idempotent_and_does_not_sign_or_spend(self):

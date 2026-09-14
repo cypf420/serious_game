@@ -326,7 +326,7 @@ class PlayRound5PolicyTests(unittest.TestCase):
             ))
         for text in texts:
             self.assertIsNone(re.search(r"[，。；：！？]{2,}", text), text)
-            self.assertRegex(text, r"[。！？…]$", text)
+            self.assertRegex(text, r"[。！？…][」』”’）】]*$", text)
 
     def test_d30_d40_d50_zero_progress_is_always_reported_behind_reference(self) -> None:
         package = build_container(Settings(

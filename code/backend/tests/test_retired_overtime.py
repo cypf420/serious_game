@@ -43,7 +43,7 @@ def test_old_client_cannot_request_overtime():
     service = object.__new__(ActionService)
     state = GameState(action_points=0)
     session = SimpleNamespace(active_group_conversation=None, game_state=state)
-    command = SimpleNamespace(input_mode=ActionInputMode.OVERTIME, parameters={"points": 3})
+    command = SimpleNamespace(input_mode=ActionInputMode.OVERTIME, parameters={"points": 3}, reference_ids=())
     with pytest.raises(ActionUnavailableError, match="加班机制已取消"):
         service._build_draft(session, SimpleNamespace(), command)
     assert session.game_state is state

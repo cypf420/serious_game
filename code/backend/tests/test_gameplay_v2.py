@@ -8,6 +8,7 @@ from threading import Event, Lock, Thread
 import unittest
 
 from fastapi.testclient import TestClient
+from tests.story_reading import read_available_story
 
 from serious_game_backend.api.app import create_app
 from serious_game_backend.api.schemas import ActionRequest
@@ -179,6 +180,7 @@ class GameplayV2Tests(unittest.TestCase):
 
     def reach_d2_open(self) -> dict:
         self.resolve_d1()
+        self.state = read_available_story(self.client, self.session_id, self.headers, "v2-d1")["visible_state"]
         response = self.client.post(
             f"/api/game/session/{self.session_id}/end-day",
             json={
@@ -795,6 +797,7 @@ class GameplayV2Tests(unittest.TestCase):
 
     def test_night_dialogues_keeps_scripted_night_and_morning_brief(self) -> None:
         self.resolve_d1()
+        self.state = read_available_story(self.client, self.session_id, self.headers, "v2-night-d1")["visible_state"]
         response = self.client.post(
             f"/api/game/session/{self.session_id}/end-day",
             json={
@@ -1225,6 +1228,9 @@ class GameplayV2Tests(unittest.TestCase):
             ScriptedEffectService(ScriptedDeltaResolver()),
             night_llm=InvalidNightGateway(),
         )
+
+        read_available_story(self.client, self.session_id, self.headers, "v2-night-d29")
+        session = self.container.sessions.get_owned(self.session_id, "acct_gameplay_v2")
 
         before_game_state = session.game_state
         before_flags = set(session.flags)

@@ -39,7 +39,7 @@ BACKEND_ROOT = Path(__file__).resolve().parents[1]
 
 
 def tiny_protocol_response(prompt: str) -> dict:
-    if "你只负责把已经确认的业务选择写成自然语言" in prompt:
+    if "你只负责把已经确认的业务选择写成自然语言" in prompt or '只返回 JSON：{"text":"人物发言"}' in prompt:
         return {"text": "已按确认事项形成简短、明确的公开表述。"}
     matched = re.search(r"合法候选：(\[.*?\])\n选择数量：最少(\d+)，最多", prompt, re.S)
     if not matched:

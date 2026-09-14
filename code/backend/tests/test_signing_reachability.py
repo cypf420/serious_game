@@ -23,8 +23,12 @@ def test_wu03_can_sign_using_only_available_scheme_fields(game):
     assert game.session().game_state.budget_remaining == before
     response = save_terms(game, service_allocations={'lead_recheck_slot': 1, 'school_transition_seat': 1})
     assert response.status_code == 200, response.text
-    with patch.object(game.runtime.gameplay_governance._gateway, 'run_governance_task', side_effect=AssertionError('no extra model veto')):
+    gateway = game.runtime.gameplay_governance._gateway
+    with patch.object(gateway, 'run_governance_task', wraps=gateway.run_governance_task) as expression:
         result = game.review()['contract']
+    expression.assert_called_once()
+    assert expression.call_args.args[0].payload['remaining_concern'] == []
+    assert expression.call_args.args[0].payload['confirmed_decision'] == 'accept'
     assert result['status'] == 'signed'
     assert game.session().game_state.budget_remaining == before - game.cash
     game.review()
