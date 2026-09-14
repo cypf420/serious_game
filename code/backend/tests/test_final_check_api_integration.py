@@ -60,6 +60,8 @@ def test_normal_original_read_then_luo_followup_through_real_api():
             assert ('罗健留底' in session.flags) == (n==2)
         assert LUO_COPY_ID in session.archive_records
         assert contexts[-1].visible_world_context['compensation_evidence']['confirm_copy_this_turn']
+        assert all(not c.unresolved_demands for c in contexts)
+        assert all(not any(word in c.role_setting for word in ('监测', '血铅', '患儿')) for c in contexts)
         assert len([l for l in session.logs if l.get('type')=='luo_material_inquiry']) == 2
         retry = client.post(base+f'/governance/actions/{aid}/turn', headers=headers,
                     json={'state_version':before_version,'player_text':'箱子里的复印件还留着吗？'})
@@ -123,5 +125,7 @@ def test_governance_luo_exit_read_and_reenter_keeps_compensation_context():
         assert contexts[-1].visible_world_context['compensation_evidence']['confirm_copy_this_turn']
         assert all(set(c.allowed_fact_ids) <= {'fact_false_signing'} for c in contexts)
         assert all('补偿明细' in c.conversation_goal for c in contexts)
+        assert all(not c.unresolved_demands for c in contexts)
+        assert all(not any(word in c.role_setting for word in ('监测', '血铅', '患儿')) for c in contexts)
     finally:
         client.close()
