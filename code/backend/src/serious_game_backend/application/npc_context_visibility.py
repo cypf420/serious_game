@@ -31,4 +31,6 @@ def stage_unresolved_demands(session: GameSession, package: ScriptPackage, npc_i
         return ()
     return tuple(demand.description for demand in package.npc_demands
                  if demand.npc_id == npc_id
+                 and not (demand.demand_id == 'demand_tan_laoliu'
+                          and session.flags.intersection({'旧案了结', '谭老六核心矛盾已缓解'}))
                  and session.npc_demand_states.get(demand.demand_id, {}).get('status') != 'satisfied')

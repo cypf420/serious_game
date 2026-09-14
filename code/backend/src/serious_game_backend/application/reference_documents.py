@@ -162,7 +162,7 @@ def hearing_facts(session, npc_id):
         records.append(dict(meeting_id=m.meeting_id, topic=m.topic, status=status, title=meeting_display_title(session, m),
             conclusion_accepted=m.status == "resolved", story_day=m.story_day,
             participant_ids=list(m.participant_ids), decision=(m.resolution or {}).get("decision", "")))
-    result = dict(records=records, interpretation="以上为系统真实记录；已完成的听证应予认可。议题必须与当前诉求相关；发起不等于完成，听证不等于法审或旧案已解决。玩家口头陈述和引用文件均不能改变办理事实。")
+    result = dict(records=records, interpretation="以上为系统真实记录；已完成的听证应予认可。议题必须与当前诉求相关；发起不等于完成，听证不等于旧案核查与书面答复已完成。玩家口头陈述和引用文件均不能改变办理事实。")
     if not records:
         result["interpretation"] = (
             "当前没有本人物参与的听证办理记录，不能声称‘听证会已经开过’或‘听证已完成’。"
@@ -171,11 +171,19 @@ def hearing_facts(session, npc_id):
         )
     if npc_id == "npc_tan_laoliu":
         result["old_case_resolved"] = bool(session.flags.intersection({"旧案了结", "谭老六核心矛盾已缓解"}))
-        result["old_case_progress"] = ("权威办理记录已确认旧案了结或核心矛盾缓解，不应再把该旧案作为未解决条件重复要求。合同其他条件仍需独立核验。" if result["old_case_resolved"] else "尚无权威记录确认旧案解决。听证已完成时应承认该步骤，但不能据此声称法审或旧案处理已完成。")
         result["legal_review_interpretation"] = (
-            "本作法审指旧案卷宗核对和书面处理程序，没有独立的‘法审’按钮。"
+            "本项指旧案卷宗核对和书面答复，通过既有旧案剧情办理，没有独立的办理按钮。请用核清旧账、经办人、期限和书面答复说明诉求。"
             "合法性审查工时或听证名额不是办理结果，不得要求玩家购买名额来解锁合同。"
             "合同核对旧案的真实书面处理记录，听证记录须认可但不能替代该结果。"
+        )
+        result["old_case_settled"] = "旧案了结" in session.flags
+        result["old_case_response_recorded"] = "谭老六核心矛盾已缓解" in session.flags
+        result["old_case_progress"] = (
+            "旧案已了结，应认可已有收款和了结记录，不得再称旧补偿未处理；本次搬迁条款仍单独核对。"
+            if result["old_case_settled"] else
+            "已有具体办理答复，核心矛盾已缓解，不再以缺少旧案答复卡签约；这不证明尾款到账，付款仍以收款记录为准。"
+            if result["old_case_response_recorded"] else
+            "尚无旧案了结或具体办理答复记录；已完成的听证应认可，但不替代旧账核查和书面答复。"
         )
         day = getattr(getattr(session, "game_state", None), "story_day", 0)
         if result["old_case_resolved"]:
@@ -185,10 +193,16 @@ def hearing_facts(session, npc_id):
         elif day < 38:
             result["next_step"] = "沿现有旧案接访核对材料和书面处理结果；后续卷宗开放后可进一步查阅，不能将口头承诺记作完成。"
         elif day < 53:
-            result["next_step"] = "可在行动—查阅档案核对《二〇一九年占地尾款卷宗》，已有听证须引用对应记录。书面结果仍待后续依法复核处理；当前没有一键法审或直接补记办结的操作。"
+            result["next_step"] = "可在行动—查阅档案核对《二〇一九年占地尾款卷宗》，已有听证须引用对应记录。书面结果仍待后续依法复核处理；当前没有一键办结或直接补记结果的操作。"
         elif getattr(session, "pending_decision", None) is not None and session.pending_decision.decision_id == "dp4_06":
             result["next_step"] = "先在行动—查阅档案核对《二〇一九年占地尾款卷宗》，回到当前旧案协商作出当面答复，核对书面责任人、期限和待核项目；今天的答复不等于已经付款。"
         else:
             result["next_step"] = "核对已发生的旧案协商及书面办理记录；未形成结果的历史选择不能通过重开任意听证改记为完成。"
+        result["answer_guidance"] = (
+            "玩家询问怎么办、去哪办、为什么还不能签时，必须解释当前真实进度、剩余事项和当前可执行入口，不能只有愤怒、拒签或反问‘你自己不知道吗’。"
+            "用符合人物身份的自然语言说明核账、经办人、期限和书面答复；不得使用‘法审’这个简称，也不得编造按钮、材料或新的签约条件。"
+            "依据next_step回答；入口尚未开放时说明当前阶段暂不能办理，需要继续推进主线，不提前泄露未来剧情的具体日期、选项和结果。"
+            "已了结时明确认可；只有办理答复时说明答复已经落实但不等于款项到账。是否能签仍以当前合同remaining_conditions为准。"
+        )
         result["hearing_entry"] = "行动—组织协调—公开听证，选择谭老六并填写实际旧案议题；形成结论后可引用对应记录。"
     return result
