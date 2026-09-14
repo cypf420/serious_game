@@ -154,7 +154,7 @@ class M2RuntimeTests(unittest.TestCase):
         document = review.json()
         self.assertEqual(89, len(document["night_timeline"]))
         self.assertTrue(all(
-            1 <= len(item.get("morning_card", [])) <= 3
+            0 <= len(item.get("morning_card", [])) <= 3
             for item in document["night_timeline"]
         ))
         event_ids = {item["event_id"] for item in document["visible_events"]}

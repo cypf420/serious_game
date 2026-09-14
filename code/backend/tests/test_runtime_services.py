@@ -57,6 +57,7 @@ from serious_game_backend.infrastructure.repositories.sqlite import (
     SqliteRuntimeStore,
 )
 from tests.test_doubles import DeterministicRoleLLMGateway
+from tests.story_reading import read_service_story
 from serious_game_backend.infrastructure.script_packages.file_loader import FileScriptPackageLoader
 
 
@@ -404,14 +405,16 @@ class RuntimeServiceTests(unittest.TestCase):
 
         current = self.sessions.get_owned(self.session.session_id, "acct_a")
         current.game_state = replace(current.game_state, story_day=58, days_left=33)
+        current.story_beat_id = None
         current.pending_decision = None
         current.pending_decision_queue.clear()
         self.sessions.save(current, expected_version=2)
+        ready = read_service_story(self.end_days, self.sessions, self.packages, "acct_a", self.session.session_id, "inspection-d58")
         environmental = self.end_days.end_day(
             account_id="acct_a",
             session_id=self.session.session_id,
             client_action_id="end-day-0058",
-            state_version=2,
+            state_version=ready.state_version,
         )
         self.assertEqual(
             ["EV4-04", "event_d59_environmental_reception_arrival"],
@@ -461,11 +464,13 @@ class RuntimeServiceTests(unittest.TestCase):
         self.assertGreaterEqual(internal.game_state.cadre_discontent, 38)
         self.assertLessEqual(internal.game_state.cadre_discontent, 42)
 
+        ready = read_service_story(self.end_days, self.sessions, self.packages, "acct_a", self.session.session_id, "m1-d1")
+        version_shift = ready.state_version - 2
         day_two = self.end_days.end_day(
             account_id="acct_a",
             session_id=self.session.session_id,
             client_action_id="d1-end-day-1",
-            state_version=2,
+            state_version=2 + version_shift,
         )
         self.assertEqual(2, day_two["visible_state"]["story"]["day"])
         self.assertEqual(
@@ -476,7 +481,7 @@ class RuntimeServiceTests(unittest.TestCase):
         taskforce = ActionCommand(
             input_mode=ActionInputMode.DECISION,
             client_action_id="d2-taskforce-decision-1",
-            state_version=3,
+            state_version=3 + version_shift,
             decision_id="dp1_01_taskforce_faction_map",
             option_id="c_public_rules_covert_check",
         )
@@ -485,7 +490,7 @@ class RuntimeServiceTests(unittest.TestCase):
             session_id=self.session.session_id,
             command=taskforce,
         )
-        self.assertEqual(4, taskforce_result["state_version"])
+        self.assertEqual(4 + version_shift, taskforce_result["state_version"])
         current = self.sessions.get_owned(self.session.session_id, "acct_a")
         self.assertIn("flag_clan_map", current.flags)
         opportunities = self.opportunities.list_available(
@@ -501,13 +506,13 @@ class RuntimeServiceTests(unittest.TestCase):
                 account_id="acct_a",
                 session_id=self.session.session_id,
                 client_action_id="d2-premature-end-1",
-                state_version=4,
+                state_version=4 + version_shift,
             )
 
         wu_start = ActionCommand(
             input_mode=ActionInputMode.CONVERSATION_START,
             client_action_id="d2-wu-start-1",
-            state_version=4,
+            state_version=4 + version_shift,
             opportunity_id="opp_d02_wu_xiuying_first_talk",
             target_npc_id="npc_wu_xiuying",
         )
@@ -523,7 +528,7 @@ class RuntimeServiceTests(unittest.TestCase):
         wu_turn = ActionCommand(
             input_mode=ActionInputMode.FREE_TEXT,
             client_action_id="d2-wu-turn-1",
-            state_version=5,
+            state_version=5 + version_shift,
             conversation_id=conversation_id,
             opportunity_id="opp_d02_wu_xiuying_first_talk",
             target_npc_id="npc_wu_xiuying",
@@ -534,7 +539,7 @@ class RuntimeServiceTests(unittest.TestCase):
             session_id=self.session.session_id,
             command=wu_turn,
         )
-        self.assertEqual(6, wu_result["state_version"])
+        self.assertEqual(6 + version_shift, wu_result["state_version"])
         self.assertEqual(7, wu_result["visible_state"]["ledger"]["action_points"]["remaining"])
         self.assertIn("谁的话在谁面前好使", wu_result["npc_reply"]["text"])
         current = self.sessions.get_owned(self.session.session_id, "acct_a")
@@ -549,14 +554,14 @@ class RuntimeServiceTests(unittest.TestCase):
             command=ActionCommand(
                 input_mode=ActionInputMode.FREE_TEXT,
                 client_action_id="d2-wu-turn-2",
-                state_version=6,
+                state_version=6 + version_shift,
                 conversation_id=conversation_id,
                 opportunity_id="opp_d02_wu_xiuying_first_talk",
                 target_npc_id="npc_wu_xiuying",
                 player_text="您再说说，村里人最怕什么。",
             ),
         )
-        self.assertEqual(7, second_turn["state_version"])
+        self.assertEqual(7 + version_shift, second_turn["state_version"])
         self.assertEqual(7, second_turn["visible_state"]["ledger"]["action_points"]["remaining"])
 
         closed = self.actions.execute(
@@ -565,7 +570,7 @@ class RuntimeServiceTests(unittest.TestCase):
             command=ActionCommand(
                 input_mode=ActionInputMode.CONVERSATION_END,
                 client_action_id="d2-wu-close-1",
-                state_version=7,
+                state_version=7 + version_shift,
                 conversation_id=conversation_id,
             ),
         )
@@ -576,11 +581,12 @@ class RuntimeServiceTests(unittest.TestCase):
             current.known_fact_ids,
         )
 
+        ready = read_service_story(self.end_days, self.sessions, self.packages, "acct_a", self.session.session_id, "m1-d2")
         day_three = self.end_days.end_day(
             account_id="acct_a",
             session_id=self.session.session_id,
             client_action_id="d2-end-day-1",
-            state_version=closed["state_version"],
+            state_version=ready.state_version,
         )
         self.assertEqual(3, day_three["visible_state"]["story"]["day"])
         internal = self.sessions.get_owned(self.session.session_id, "acct_a")

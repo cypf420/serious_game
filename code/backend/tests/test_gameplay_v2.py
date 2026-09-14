@@ -815,7 +815,9 @@ class GameplayV2Tests(unittest.TestCase):
         self.assertEqual(200, night_response.status_code, night_response.text)
         nights = night_response.json()["nights"]
         self.assertEqual(1, len(nights))
-        self.assertTrue(nights[0]["morning_brief"])
+        # D1 has scripted night prose already read through story/continue.
+        # With no public NPC exchange, the morning card must not repeat it.
+        self.assertEqual([], nights[0]["morning_brief"])
         self.assertLessEqual(len(nights[0]["morning_brief"]), 3)
         self.assertEqual({"story_day", "morning_brief"}, set(nights[0]))
         self.assertNotIn("agent_exchanges", nights[0])

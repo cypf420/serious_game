@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from tests.story_reading import read_service_story
+
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
@@ -622,9 +624,10 @@ class SqlitePersistenceTests(unittest.TestCase):
                 )
 
             first = choose(1, "m2-r-d1", "ev1_01_reception_bag", "a_reject_on_site")
+            ready = read_service_story(runtime.end_days, runtime.sessions, runtime.packages, "acct_m2_restart", session.session_id, "sqlite-d2")
             d2 = runtime.end_days.end_day(
                 account_id="acct_m2_restart", session_id=session.session_id,
-                client_action_id="m2-r-end1", state_version=first["state_version"],
+                client_action_id="m2-r-end1", state_version=ready.state_version,
             )
             taskforce = choose(
                 d2["state_version"], "m2-r-d2", "dp1_01_taskforce_faction_map",
@@ -665,16 +668,18 @@ class SqlitePersistenceTests(unittest.TestCase):
                     conversation_id=conversation_id,
                 ),
             )
+            ready = read_service_story(runtime.end_days, runtime.sessions, runtime.packages, "acct_m2_restart", session.session_id, "sqlite-d3")
             d3 = runtime.end_days.end_day(
                 account_id="acct_m2_restart", session_id=session.session_id,
-                client_action_id="m2-r-end2", state_version=closed["state_version"],
+                client_action_id="m2-r-end2", state_version=ready.state_version,
             )
             resolved = choose(
                 d3["state_version"], "m2-r-dp102", "dp1_02", "a"
             )
+            ready = read_service_story(runtime.end_days, runtime.sessions, runtime.packages, "acct_m2_restart", session.session_id, "sqlite-d5")
             d5 = runtime.end_days.end_day(
                 account_id="acct_m2_restart", session_id=session.session_id,
-                client_action_id="m2-r-end3", state_version=resolved["state_version"],
+                client_action_id="m2-r-end3", state_version=ready.state_version,
             )
             self.assertEqual(
                 "dp1_03",
