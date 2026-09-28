@@ -8,6 +8,8 @@ import { firstMeetingHint } from "./lib/player-ui";
 import { ReferenceInput, ReferenceLibrary, ReferenceAttachments, type ReferenceDocument } from "./ReferenceDocuments";
 import Image from "next/image";
 import { EndingExperience } from "./ending/EndingExperience";
+import { BackgroundMusic, MusicToggle } from "./audio/BackgroundMusic";
+import { selectMusicScene } from "./audio/music-scene";
 import { PagedReading } from "./reading/PagedReading";
 import { actionPresentation, meetingAction, participantCountLabel } from "./lib/action-presentation";
 import { TutorialProvider, TutorialButton, ActionTutorialButton } from "./tutorial/TutorialProvider";
@@ -178,6 +180,7 @@ function ProgressBroadcast({ broadcast, onReplay }: { broadcast: Dict; onReplay:
     </div>
     <ul>{values(broadcast.signals).map((item, index) => <li key={index}>{playerText(item)}</li>)}</ul>
     <button type="button" className="broadcast-replay" onClick={onReplay}>重播督办提示音</button>
+    <MusicToggle />
   </div>;
 }
 const isPlayerFacingLine = (line: Line) => {
@@ -259,6 +262,7 @@ export default function GameShell() {
   const [contractTutorialState, setContractTutorialState] = useState<{ id: string; stage: import("./tutorial/types").ContractTutorialStage } | null>(null);
   const contractDirty = useRef(false);
   const [progressBroadcastOpen, setProgressBroadcastOpen] = useState(false);
+  const [endingVisible, setEndingVisible] = useState(false);
   const [confirmRequest, setConfirmRequest] = useState<ConfirmRequest | null>(null);
   const [conversationInput, setConversationInput] = useState("");
   const [referenceDocuments, setReferenceDocuments] = useState<ReferenceDocument[]>([]);
@@ -1024,6 +1028,13 @@ export default function GameShell() {
   const story = state.story || {}; const ledger = state.ledger || {}; const indicators = state.indicators || {};
   const pending = state.pending_decision || null; const options = arr(pending?.options);
   const currentEnding = state.session_id === sessionId ? state.ending_result || state.ending || null : null;
+  const musicScene = selectMusicScene({
+    hasSession: Boolean(sessionId),
+    nightConversationOpen: Boolean(state.active_group_conversation || activeGovernanceAction?.followup_plan_id || activeGovernanceAction?.source === "night_followup"),
+    broadcastOpen: progressBroadcastOpen && Boolean(state.progress_broadcast),
+    endingOpen: endingVisible,
+    endingId: String(currentEnding?.main_ending_id || ""),
+  });
   const signed = displayValue(currentEnding?.signed_households ?? get(ledger, "relocation.signed", get(ledger, "signed_households.signed", typeof ledger.signed_households === "number" ? ledger.signed_households : "待核实")), "待核实");
   const total = displayValue(currentEnding?.total_households ?? get(ledger, "relocation.total", get(ledger, "signed_households.total", 36)), 36);
   const actionPoints = displayValue(get(state, "action_points.remaining", get(ledger, "action_points.remaining", "待定")));
@@ -1096,12 +1107,13 @@ export default function GameShell() {
       : readingCommands.can_end_day ? "end-day" : null,
   };
 
-  return <TutorialProvider key={`${api.accountId}:${sessionId}:${tutorialGeneration}`} context={tutorialContext} onNavigate={name => loadPanel(name as PanelName)}><main className="app-shell">
+  return <BackgroundMusic scene={musicScene}><TutorialProvider key={`${api.accountId}:${sessionId}:${tutorialGeneration}`} context={tutorialContext} onNavigate={name => loadPanel(name as PanelName)}><main className="app-shell">
     <header className="topbar">
       <div className="brand"><span className="seal">清</span><div><h1>浊流之上</h1><p>县域治理情境模拟</p></div></div>
       <div className="top-status">
+        <MusicToggle />
         <TutorialButton />
-        {sessionId && <EndingExperience ending={currentEnding} accountId={api.accountId} sessionId={sessionId} blocked={tutorialContext.blocked || Boolean(contractOpen || archiveReadingOpen || governanceRecordOpen || formOpen)} onReview={() => { void loadPanel("review"); }} />}
+        {sessionId && <EndingExperience ending={currentEnding} accountId={api.accountId} sessionId={sessionId} blocked={tutorialContext.blocked || Boolean(contractOpen || archiveReadingOpen || governanceRecordOpen || formOpen)} onVisibilityChange={setEndingVisible} onReview={() => { void loadPanel("review"); }} />}
         <span className={connected ? "online" : "offline"}><i />{connected ? "游戏已就绪" : "正在连接"}</span>
         {progressBroadcast && <button className="broadcast-reopen" onClick={() => { setProgressBroadcastOpen(true); void playProgressCue(progressBroadcastTone); }}>第 {progressBroadcast.story_day} 日督办</button>}
         <button onClick={openGameEntry} disabled={busy}>{sessionId ? `第 ${story.day || 1} 日 · 游戏进度` : authRequired && !account ? "登录" : "进入游戏"}</button>
@@ -1213,7 +1225,7 @@ export default function GameShell() {
     {progressBroadcastOpen && progressBroadcast && <Modal title={playerText(progressBroadcast.title, "云溪县十日督办播报")} className="progress-broadcast-modal" onClose={() => setProgressBroadcastOpen(false)}><ProgressBroadcast broadcast={progressBroadcast} onReplay={() => void playProgressCue(progressBroadcastTone)} /></Modal>}
     {consentOpen && <Modal title="角色模型与数据授权" onClose={consentGranted ? () => setConsentOpen(false) : undefined}><ConsentPanel info={consentInfo} aiSummary={aiView.summary} granted={consentGranted} busy={busy} error={consentError} onSign={signModelConsent} onWithdraw={confirmWithdrawModelConsent} /></Modal>}
     {confirmRequest && <Modal title={confirmRequest.title} onClose={() => { if (!busy) setConfirmRequest(null); }}><div className="confirm-panel"><p>{confirmRequest.message}</p><div><button disabled={busy} onClick={() => setConfirmRequest(null)}>返回</button><button className={confirmRequest.danger ? "danger" : "primary"} disabled={busy} onClick={() => { const action = confirmRequest.action; setConfirmRequest(null); void action(); }}>{confirmRequest.confirmLabel}</button></div></div></Modal>}
-  </main></TutorialProvider>;
+  </main></TutorialProvider></BackgroundMusic>;
 }
 
 function characterPublicIntroduction(character: Character) {

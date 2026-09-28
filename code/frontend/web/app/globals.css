@@ -71,6 +71,7 @@ button:disabled { cursor: not-allowed; opacity: 1; border-style: dashed; }
 .top-status button:hover { border-color: var(--gold); background: #382e21; }
 .top-status .avatar { width: 40px; padding: 0; border-radius: 50%; font-family: serif; }
 .top-status .broadcast-reopen { border-color: #9f6a43; background: #4a2b22; color: #f0cf9d; }
+.scene-music-short { display: none; }
 
 .rail {
   grid-row: 2;
@@ -1063,6 +1064,7 @@ footer { grid-column: 1 / -1; display: flex; align-items: center; justify-conten
   .topbar { height: 68px; padding: 0 12px; position: sticky; top: 0; }
   .brand h1 { font-size: 18px; }.brand p { display: none; }.brand .seal { width: 36px; height: 36px; font-size: 20px; }
   .top-status > span { display: none; }.top-status > button:not(.avatar) { padding: 7px 9px; font-size: 11px; }
+  .scene-music-full { display: none; }.scene-music-short { display: inline; }
   .rail { position: sticky; top: 68px; z-index: 9; height: 64px; flex-direction: row; overflow-x: auto; overflow-y: hidden; padding: 4px 6px; border-right: 0; border-bottom: 1px solid var(--line-dark); scrollbar-width: none; }
   .rail::-webkit-scrollbar, .metric-strip::-webkit-scrollbar { display: none; }
   .rail button { min-width: 66px; min-height: 54px; padding: 8px 5px; }.rail button b { margin: 0; font-size: 13px; }.rail button.active::before { left: 7px; right: 7px; top: auto; bottom: -4px; width: auto; height: 3px; }

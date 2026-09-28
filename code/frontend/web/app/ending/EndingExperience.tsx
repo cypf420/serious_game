@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { PagedReading } from "../reading/PagedReading";
+import { MusicToggle } from "../audio/BackgroundMusic";
 import "./ending.css";
 
 type EndingExperienceProps = {
@@ -11,6 +12,7 @@ type EndingExperienceProps = {
   sessionId: string;
   blocked: boolean;
   onReview: () => void;
+  onVisibilityChange?: (visible: boolean) => void;
 };
 type ReadingState = { dismissed: boolean; offset: number };
 const memory = new Map<string, ReadingState>();
@@ -61,7 +63,7 @@ export function EndingExperience(props: EndingExperienceProps) {
   return <EndingInstance key={identity} {...props} ending={props.ending} persistenceKey={`serious-game:ending:v1:${identity}`} />;
 }
 
-function EndingInstance({ ending, blocked, onReview, persistenceKey }: EndingExperienceProps & { ending: Record<string, unknown>; persistenceKey: string }) {
+function EndingInstance({ ending, blocked, onReview, onVisibilityChange, persistenceKey }: EndingExperienceProps & { ending: Record<string, unknown>; persistenceKey: string }) {
   const [ready, setReady] = useState(false);
   const [open, setOpen] = useState(false);
   const [initialOffset, setInitialOffset] = useState(0);
@@ -94,6 +96,10 @@ function EndingInstance({ ending, blocked, onReview, persistenceKey }: EndingExp
   }, [persistenceKey]);
 
   const visible = ready && open && !blocked;
+  useEffect(() => {
+    onVisibilityChange?.(visible);
+    return () => onVisibilityChange?.(false);
+  }, [onVisibilityChange, visible]);
   useEffect(() => {
     if (!visible) return;
     const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -137,6 +143,7 @@ function EndingInstance({ ending, blocked, onReview, persistenceKey }: EndingExp
           </header>
           <div className="ending-reading"><PagedReading text={text || "结局内容正在准备中。"} initialOffset={initialOffset} onOffsetChange={rememberOffset} /></div>
           <footer className="ending-actions">
+            <MusicToggle />
             <button type="button" onClick={close}>关闭结局</button>
             <button type="button" className="ending-review" onClick={() => { close(); onReview(); }}>查看复盘</button>
           </footer>
