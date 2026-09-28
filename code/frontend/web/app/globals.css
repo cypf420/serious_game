@@ -71,6 +71,7 @@ button:disabled { cursor: not-allowed; opacity: 1; border-style: dashed; }
 .top-status button:hover { border-color: var(--gold); background: #382e21; }
 .top-status .avatar { width: 40px; padding: 0; border-radius: 50%; font-family: serif; }
 .top-status .broadcast-reopen { border-color: #9f6a43; background: #4a2b22; color: #f0cf9d; }
+.scene-music-toggle { flex-shrink: 0; white-space: nowrap; }
 .scene-music-short { display: none; }
 
 .rail {
@@ -114,7 +115,8 @@ button:disabled { cursor: not-allowed; opacity: 1; border-style: dashed; }
 .broadcast-progress span { border: 1px solid rgba(91,68,39,.2); background: rgba(255,255,255,.2); padding: 10px; color: #775f43; font-size: 10px; text-align: center; }
 .broadcast-progress b { display: block; margin-top: 3px; color: #593e26; font: 600 20px "STSong", serif; }
 .progress-broadcast ul { margin: 0 0 14px; padding-left: 20px; color: #6c5540; font-size: 11px; line-height: 1.75; }
-.broadcast-replay { min-height: 38px; border: 1px solid #806443; background: #3d3123; color: #efd9ac; padding: 8px 14px; cursor: pointer; }
+.progress-broadcast .scene-music-toggle { margin-left: 10px; }
+.broadcast-replay, .progress-broadcast .scene-music-toggle { min-height: 38px; border: 1px solid #806443; background: #3d3123; color: #efd9ac; padding: 8px 14px; cursor: pointer; }
 @media (max-width: 560px) { .broadcast-progress { grid-template-columns: 1fr; } }
 
 .main-grid { min-height: 0; display: grid; grid-template-columns: minmax(520px, 1.7fr) minmax(340px, .72fr); gap: 12px; }
@@ -1061,11 +1063,13 @@ footer { grid-column: 1 / -1; display: flex; align-items: center; justify-conten
   body { overflow: auto; }
   button { min-height: 44px; }
   .app-shell { display: block; height: auto; min-height: 100vh; overflow: visible; }
-  .topbar { height: 68px; padding: 0 12px; position: sticky; top: 0; }
+  .topbar { height: 112px; padding: 8px 12px; position: sticky; top: 0; flex-direction: column; align-items: stretch; justify-content: center; gap: 6px; }
+  .topbar .brand { flex-shrink: 0; }.topbar .brand h1 { white-space: nowrap; }
+  .top-status { min-width: 0; gap: 6px; overflow-x: auto; overflow-y: hidden; scrollbar-width: thin; }.top-status > button { flex-shrink: 0; white-space: nowrap; }
   .brand h1 { font-size: 18px; }.brand p { display: none; }.brand .seal { width: 36px; height: 36px; font-size: 20px; }
   .top-status > span { display: none; }.top-status > button:not(.avatar) { padding: 7px 9px; font-size: 11px; }
   .scene-music-full { display: none; }.scene-music-short { display: inline; }
-  .rail { position: sticky; top: 68px; z-index: 9; height: 64px; flex-direction: row; overflow-x: auto; overflow-y: hidden; padding: 4px 6px; border-right: 0; border-bottom: 1px solid var(--line-dark); scrollbar-width: none; }
+  .rail { position: sticky; top: 112px; z-index: 9; height: 64px; flex-direction: row; overflow-x: auto; overflow-y: hidden; padding: 4px 6px; border-right: 0; border-bottom: 1px solid var(--line-dark); scrollbar-width: none; }
   .rail::-webkit-scrollbar, .metric-strip::-webkit-scrollbar { display: none; }
   .rail button { min-width: 66px; min-height: 54px; padding: 8px 5px; }.rail button b { margin: 0; font-size: 13px; }.rail button.active::before { left: 7px; right: 7px; top: auto; bottom: -4px; width: auto; height: 3px; }
   .workspace { display: block; overflow: visible; padding: 9px; }
