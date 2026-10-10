@@ -1,0 +1,141 @@
+{
+  "schema_version": 2,
+  "fixed_events": [
+    {
+      "event_id": "EV1-01",
+      "story_day": 1,
+      "title": "廉政试炼·接风袋",
+      "visible_summary": "接风宴上的手提袋必须当场处置。",
+      "trigger_type": "fixed"
+    },
+    {
+      "event_id": "EV1-02",
+      "story_day": 8,
+      "title": "渡口堵路",
+      "visible_summary": "渡口堵路风险进入处置窗口。",
+      "trigger_type": "conditional",
+      "required_any_flags": [
+        "强势立威",
+        "开口子许诺"
+      ]
+    },
+    {
+      "event_id": "EV1-03",
+      "story_day": 10,
+      "title": "深夜求救",
+      "visible_summary": "第十日夜里的求救抵达专班。",
+      "trigger_type": "conditional",
+      "forbidden_event_ids": [
+        "EV1-02"
+      ]
+    },
+    {
+      "event_id": "EV2-01",
+      "story_day": 26,
+      "title": "县政府门口的来访者",
+      "visible_summary": "第26日突发危机自动触发。",
+      "trigger_type": "fixed"
+    },
+    {
+      "event_id": "EV3-01",
+      "story_day": 42,
+      "title": "第四十二日夜间事件",
+      "visible_summary": "第42日夜间固定事件触发。",
+      "trigger_type": "fixed"
+    },
+    {
+      "event_id": "event_d31_municipal_inspection_arrival",
+      "story_day": 31,
+      "title": "市委巡察组进驻",
+      "visible_summary": "市委巡察组由张立带队进驻云溪。",
+      "trigger_type": "fixed"
+    },
+    {
+      "event_id": "event_d45_municipal_inspection_departure",
+      "story_day": 45,
+      "title": "市委巡察组撤离",
+      "visible_summary": "市委巡察组按期撤离云溪。",
+      "trigger_type": "fixed"
+    },
+    {
+      "event_id": "EV4-01",
+      "story_day": 55,
+      "title": "县医院门前",
+      "visible_summary": "第55日县医院现场突发事件触发。",
+      "trigger_type": "fixed"
+    },
+    {
+      "event_id": "EV4-02",
+      "story_day": 57,
+      "title": "深夜谈话",
+      "visible_summary": "第57日夜间突发事件触发。",
+      "trigger_type": "fixed"
+    },
+    {
+      "event_id": "EV4-03",
+      "story_day": 58,
+      "title": "围堰漫了",
+      "visible_summary": "第58日夜围堰突发事件触发。",
+      "trigger_type": "fixed"
+    },
+    {
+      "event_id": "EV4-04",
+      "story_day": 59,
+      "title": "先遣先到",
+      "visible_summary": "第59日清晨迎检先遣已经到场。",
+      "trigger_type": "fixed"
+    },
+    {
+      "event_id": "event_d59_environmental_reception_arrival",
+      "story_day": 59,
+      "title": "环保迎检组进驻",
+      "visible_summary": "顾克明带领环保迎检组进驻。",
+      "trigger_type": "fixed"
+    },
+    {
+      "event_id": "EV5-01",
+      "story_day": 65,
+      "title": "祖坟冲突",
+      "visible_summary": "祖坟被冒犯后的突发事件进入处置。",
+      "trigger_type": "conditional",
+      "required_flags": [
+        "祖坟被冒犯"
+      ]
+    },
+    {
+      "event_id": "EV5-02",
+      "story_day": 72,
+      "title": "门板上的复印件",
+      "visible_summary": "第72日开场突发事件自动触发。",
+      "trigger_type": "fixed"
+    },
+    {
+      "event_id": "EV5-03",
+      "story_day": 75,
+      "title": "赵建国夜访",
+      "visible_summary": "第75日夜间突发事件无条件触发。",
+      "trigger_type": "fixed"
+    },
+    {
+      "event_id": "EV6-01",
+      "story_day": 79,
+      "title": "患儿家属现场",
+      "visible_summary": "第79日患儿家属现场事件触发。",
+      "trigger_type": "fixed"
+    },
+    {
+      "event_id": "EV6-02",
+      "story_day": 82,
+      "title": "二次舆情",
+      "visible_summary": "第82日二次舆情事件触发。",
+      "trigger_type": "fixed"
+    },
+    {
+      "event_id": "event_d90_final_acceptance",
+      "story_day": 90,
+      "title": "最终验收",
+      "visible_summary": "张立以验收主检身份返回，最终验收开始。",
+      "trigger_type": "fixed"
+    }
+  ]
+}

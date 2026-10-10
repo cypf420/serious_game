@@ -1,0 +1,41 @@
+.env
+__pycache__/
+.pytest_cache/
+*.py[cod]
+.DS_Store
+
+# Local runtime data
+data/
+
+# Installed dependencies, build products and private local configuration
+node_modules/
+.venv/
+venv/
+dist/
+.next/
+.wrangler/
+.dev.vars
+.env.*
+!.env.example
+*.tsbuildinfo
+*.db
+*.db-shm
+*.db-wal
+*.sqlite*
+*.log
+
+# Local development/acceptance material is outside this runtime branch
+.gitnexus*/
+.playwright-cli/
+.claude/
+AGENTS.md
+CLAUDE.md
+output/
+outputs/
+docs/
+tests/
+e2e/
+examples/
+test-results/
+playwright-report/
+code/frontend/photo/

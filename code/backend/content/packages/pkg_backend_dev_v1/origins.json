@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "origins": [
+    {
+      "origin_id": "technical",
+      "title": "技术派",
+      "description": "经济学博士，从省级研究机构下派，擅长数据、模型与政策测算。"
+    },
+    {
+      "origin_id": "grassroots",
+      "title": "基层派",
+      "description": "从乡镇一级逐步成长，熟悉农村事务，但在云溪没有旧关系网。"
+    },
+    {
+      "origin_id": "integrity",
+      "title": "清流派",
+      "description": "有纪检系统经历，作风清白，也使本地关系网提前提高戒备。"
+    },
+    {
+      "origin_id": "parachute",
+      "title": "空降派",
+      "description": "由上级直接下派攻坚，命令和背景压得住场面，却仍要自己争取人心。"
+    },
+    {
+      "origin_id": "young",
+      "title": "少壮派",
+      "description": "年轻、升得快、有闯劲，同时承受老同志审视和不能失败的压力。"
+    }
+  ]
+}

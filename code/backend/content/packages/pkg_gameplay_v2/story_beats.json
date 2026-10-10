@@ -1,0 +1,3361 @@
+{
+  "schema_version": 2,
+  "beats": [
+    {
+      "beat_id": "beat_d01_arrival_and_reception",
+      "story_day": 1,
+      "chapter": 1,
+      "day_mode": "playable",
+      "title": "第一日·到任与接风",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d01_opening",
+          "kind": "narration",
+          "text": "你叫李致远，到云溪的头一天，鞋底踩进一汪没干透的泥。县穷，江旧，村子静得不像话。九十天，三十户，你手里只有一本账和一张生面孔。这一脚已经踩下去了，你总得知道底下是硬地还是烂泥。",
+          "scene_id": "C01_S01",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d01_arrival_geography",
+          "kind": "narration",
+          "text": "云溪县地处清江中游，是个七山二水一分田的穷县。清江从县城西边绕过去，在渡口镇拐了个弯，冲出一片窄窄的河谷平地。柳林村就卧在这片平地上。村口那道清江渡口，是全村通往外头的唯一一条路。宏达化工看中的，正是柳林村贴着江边的那五百米。地是好地，人是难缠的人。",
+          "scene_id": "C01_S01",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d01_arrival_economy",
+          "kind": "narration",
+          "text": "云溪穷，穷得县里发工资都得掰着指头过日子。一年到头，财政那本账靠上头的转移支付兜着底，自己能挣的进项少得可怜。宏达化工一年缴的那笔税，几乎顶得上全县工业税收的半壁江山。从市里到县里，一圈人都盯着这个项目，盼着它落地，盼着它扩产。你还没进云溪的门，就掂得出这份分量。搬迁这件事，说到底不是一村人搬不搬家的事，是这个穷县攥着一根救命稻草，敢不敢、能不能把它攥牢的事。上头派你来，看中的正是这个。可越是这样的差事，底下的水就越浑。一桩人人都盼着成的事，往往也是人人都想从里头捞一把的事。这个道理不用谁教。",
+          "scene_id": "C01_S01",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d01_arrival_drive",
+          "kind": "narration",
+          "text": "你是坐着一辆旧越野车进的柳林村。车出县城，沿着清江往下游颠了一个多钟头，柏油路变成了砂石路，砂石路又变成了两道被农用车碾出来的土辙。江水在右手边不紧不慢地淌，水色是那种说不清的灰绿。转过最后一道弯，宏达化工那几座锈红色的旧厂房撞进眼里，紧挨着江。烟囱早不冒烟了，可那片地界上空，总像是压着一层散不尽的东西。再往前，柳林村到了。土坯房、青瓦房、半新的水泥楼，高高低低卧在坡上坡下。村道上有老人蹲在墙根晒太阳，有孩子追着一条黄狗跑。见了生车，都不动声色地把目光递过来，又不动声色地收回去。你摇下车窗，一股混着柴烟、猪圈和江腥气的味道涌了进来。这就是往后九十天要日日打交道的地方，也是这顶乌纱帽头一回要真刀真枪去挣的地方。",
+          "scene_id": "C01_S01",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d01_arrival_factory",
+          "kind": "narration",
+          "text": "那片锈红色的旧厂房，你进村时特意多看了两眼。厂子早停了工，高大的烟囱像一截插在江边的枯骨。墙面上的漆皮一块块翻卷、剥落，露出底下暗红的锈。厂区那道铁门锁着，门楣上宏达化工四个字的招牌，一角已经耷拉下来，在江风里一荡一荡。奇怪的是，越靠近厂子，车里那几个本地随行的人话越少，连司机都下意识地把车窗摇上了半扇。你起初没在意，后来才慢慢品出味来。柳林村的人提起这座厂子，眼神都是躲闪的。晒太阳的老人、追狗的孩子，谁的目光都不肯往江对岸那片锈红上多停一瞬。那好似不是一座废弃的工厂，倒像一桩全村人心照不宣、却谁也不肯先开口的旧事。江水从厂脚下淌过，水色灰绿，说不清是本来就这个颜色，还是被什么染过。那点压在厂区上空散不尽的东西，究竟是你的错觉，还是这方水土真藏着说不得的隐情，你这头一天还看不真切。",
+          "scene_id": "C01_S01",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d01_arrival_stop",
+          "kind": "narration",
+          "text": "车在村委会门口停下。你推门下车，脚一沾地，踩进的是一汪没干透的泥。你没急着抬脚，站在原地把这个村子从头到脚看了一遍。土坯房的墙根爬着青苔，晾衣绳上挂着褪色的旧衣裳，一头老黄牛拴在歪脖子树下，慢条斯理地嚼着草。看着是安生日子的模样，可你在这份安生里闻出了一丝不对劲。太静了。生人进了村，该有的那点好奇、那点议论、那点凑上来的热络，一样都没有。村口小卖部的门帘掀开一条缝，一双眼睛在里头睃了你一眼，又缩了回去。你后来才慢慢咂摸明白，这份静不是没人在意，是这村子里的人早学会了把心思藏在门板后头。柳林村不欢迎生人，也不为难生人。它只是不动声色地等着看这个生人能待多久，能翻出多大的浪。",
+          "scene_id": "C01_S01",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d01_arrival_structure",
+          "kind": "narration",
+          "text": "柳林村是一姓独大的村子。三十六户里，姓周的十一户抱成一团，住在村子中心的高地上，村里的集体事、分配事、红白事，话语权大半攥在周氏手里；村支书周大山又是周氏这一辈的族长，官身族身合在一人身上。姓刘、姓吴、姓杨的散姓被挤在村边和河湾下游，散户、困难户、外来户夹在中间，声音传不到台面上。这层结构，你上任头几天还看不真切，只觉得这村子静得反常，静得像一锅没烧开却在冒暗泡的水。",
+          "scene_id": "C01_S01",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d01_briefing_office",
+          "kind": "narration",
+          "text": "县政府办公楼三层最东头那间是你的办公室。门开着。一个三十出头的男人站在窗边，手里捧着一摞卷宗，见你进来，先把卷宗放下，才伸出手。",
+          "scene_id": "C01_S02",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d01_briefing_greeting",
+          "kind": "dialogue",
+          "speaker": "郑向东",
+          "text": "李县长，我是郑向东，县政府办公室的，组织上安排我给您做秘书。您的行李我让人送到宿舍了。",
+          "scene_id": "C01_S02",
+          "presentation_phase": "npc"
+        },
+        {
+          "block_id": "d01_briefing_files",
+          "kind": "narration",
+          "text": "他说话不快，一句是一句。你在办公桌后坐下，他把那摞卷宗推到你手边，第一份是柳林村的搬迁台账，第二份是宏达化工的项目批文，第三份是县财政今年的收支简表。",
+          "scene_id": "C01_S02",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d01_briefing_intro",
+          "kind": "dialogue",
+          "speaker": "郑向东",
+          "text": "有几句话我先跟您交个底。今天是您到任第一天，往后一共九十天，这是清江搬迁专班定死的期限。三十六户，签满三十户算达标。今天签约户数是零。",
+          "scene_id": "C01_S02",
+          "presentation_phase": "npc"
+        },
+        {
+          "block_id": "d01_briefing_pause",
+          "kind": "narration",
+          "text": "他顿了一下，翻开第一份卷宗。",
+          "scene_id": "C01_S02",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d01_briefing_dossier_1",
+          "kind": "narration",
+          "text": "第一份是上级交办的卷宗。省里的“化工入园”文件、市里的“百日攻坚”方案、还有市委动员会上那句“稳得住，拆得动，别出乱子”，一层层压下来，最后落成县长案头一张九十天的倒计时表。卷宗末尾夹着一张便条，是前任留下的工作交接，字迹潦草，只写了“柳林村的事，多问周大山，少碰老账”。这句“少碰老账”，是三条暗线共同的入口。",
+          "scene_id": "C01_S02",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d01_briefing_dossier_2",
+          "kind": "narration",
+          "text": "第二份是财政与项目的卷宗。八千万专项预算的来源与去向、宏达化工六千万的补偿底线、化工厂两亿元的年税测算，账目清楚。可翻到搬迁款拨付记录那一页，前期已经有一笔两百万的“工作经费”走了账，经手人是常务副县长赵建国，用途栏写着四个字“前期协调”。这一页，是贪腐线的第一个扣子。",
+          "scene_id": "C01_S02",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d01_briefing_dossier_3",
+          "kind": "narration",
+          "text": "第三份是村庄社会的卷宗。三十六户人家的花名册，标着谁家几口人、几亩地、房子几进几间。有心人能从住址的远近里看出门道：姓周的十一户，抱成一团住在村子中心；姓刘、姓吴、姓杨的散户，被挤在村子边上和河湾的下游。花名册边上有派出所的批注，何铁柱一户被单独圈了红笔，注明“退伍军人，情绪激烈，其孙常年就医”。孙子为什么常年就医，卷宗没写，这是隐瞒线的第一个扣子。",
+          "scene_id": "C01_S02",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d01_briefing_dossier_4",
+          "kind": "narration",
+          "text": "第四份是企业与后台的卷宗。宏达化工是中裕集团这家央企控股的项目公司，派驻的法人代表叫钱伟，履历光鲜，人脉通到省里。卷宗附了一份宏达与县里往来的会谈纪要，其中一次是钱伟单独约见赵建国，纪要记着“就补偿方案交换意见”，没有别人在场，也没有下文。钱伟和赵建国之间这条线，把贪腐线和企业后台拴在了一起。",
+          "scene_id": "C01_S02",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d01_briefing_dossier_5",
+          "kind": "narration",
+          "text": "第五份是前任与旧案的卷宗，也是最薄的一份。上世纪九十年代那家云溪县冶炼厂的关停档案，几张泛黄的纸，写着破产清算、厂址封存。最后一页是一份新的环评报告的封面，落款是为宏达化工项目出具的，结论一栏赫然写着“场地环境质量满足建设要求”。旧冶炼厂就在柳林村上游两公里，新环评却对上游的涉铅遗留只字未提。这份薄薄的卷宗，是隐瞒线最深的一个扣子，也是全局最危险的一颗雷。",
+          "scene_id": "C01_S02",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d01_briefing_policy",
+          "kind": "narration",
+          "text": "再往里一层，是规矩与人情的冲突。政府推的是一套标准化的补偿方案，按面积、按人口、按政策一刀切，讲的是白纸黑字。村里认的却是另一套：谁家和村支书沾亲，谁家是几十年前迁来的外姓，谁家在早年间分地分房时吃过亏，这些血缘、地缘、旧账，才是村民签不签、什么时候签的真正尺子。官方的方案越标准，越显得不近人情；村里的旧账越缠，越推不动那支笔。",
+          "scene_id": "C01_S02",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d01_briefing_actions",
+          "kind": "dialogue",
+          "speaker": "郑向东",
+          "text": "您每天能自己动用的精力有限，县里的老规矩是一天八件事，办完就得歇。开会、接见、下村、调档，都算在这八件里。什么事要花几个点，我事先都会给您报清楚。做决定本身不花点，那是您自己的事。",
+          "scene_id": "C01_S02",
+          "presentation_phase": "npc"
+        },
+        {
+          "block_id": "d01_briefing_ledger",
+          "kind": "narration",
+          "text": "你翻开台账，纸页有些年头，边角起了毛。",
+          "scene_id": "C01_S02",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d01_briefing_role",
+          "kind": "dialogue",
+          "speaker": "郑向东",
+          "text": "我这个位置，只管三件事。每天早上给您一份简报，说清昨天到今天发生了什么，这个不花点。您要是想把手上的线索理一理，跟我说一声，我拿半天工夫替您从头到尾捋一遍，这个要花一个点。您要是哪天觉得没路了，我会提一句，但也就一句。",
+          "scene_id": "C01_S02",
+          "presentation_phase": "npc"
+        },
+        {
+          "block_id": "d01_briefing_look",
+          "kind": "narration",
+          "text": "你抬头看他。",
+          "scene_id": "C01_S02",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d01_briefing_boundary",
+          "kind": "dialogue",
+          "speaker": "郑向东",
+          "text": "我不是万事通，李县长。柳林村的水底下有什么，我知道的不比您多。我只能保证一条，我说出来的，都是我核过的。至于该往哪边走，我不替您拿主意。",
+          "scene_id": "C01_S02",
+          "presentation_phase": "npc"
+        },
+        {
+          "block_id": "d01_reception_scene",
+          "kind": "narration",
+          "text": "到任第一天傍晚，钱伟就在县城最好的那家酒楼摆下了接风宴。作陪的有常务副县长赵建国，有渡口镇党委书记孙强。席面不铺张，话却句句熨帖。",
+          "scene_id": "C01_S03",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d01_reception_toast_intro",
+          "kind": "narration",
+          "text": "钱伟给你斟满第一杯，笑得周到。",
+          "scene_id": "C01_S03",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d01_reception_toast",
+          "kind": "dialogue",
+          "speaker": "钱伟",
+          "text": "李县长年轻有为，这云溪的经济，往后可就指着您盘活了。来，我先敬您一杯，往后还请县长多多关照宏达。",
+          "scene_id": "C01_S03",
+          "presentation_phase": "npc"
+        },
+        {
+          "block_id": "d01_reception_turn",
+          "kind": "narration",
+          "text": "酒过三巡，他话锋一转，不动声色地把那张牌亮了出来。",
+          "scene_id": "C01_S03",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d01_reception_qian_position",
+          "kind": "dialogue",
+          "speaker": "钱伟",
+          "text": "不瞒县长说，宏达一年给云溪缴的税是个什么分量，您比我清楚。这搬迁的事，咱得稳妥，别为了几户人家伤了县里的元气。",
+          "scene_id": "C01_S03",
+          "presentation_phase": "npc"
+        },
+        {
+          "block_id": "d01_reception_zhao_intro",
+          "kind": "narration",
+          "text": "赵建国在一旁不多话，偶尔点一句。他是本地的老资格，说话滴水不漏，绵里带着针。",
+          "scene_id": "C01_S03",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d01_reception_zhao_position",
+          "kind": "dialogue",
+          "speaker": "赵建国",
+          "text": "老同志的心思，都是为您好，为咱们云溪好。李县长刚来，柳林村那潭水深，有些事急不得。",
+          "scene_id": "C01_S03",
+          "presentation_phase": "npc"
+        },
+        {
+          "block_id": "d01_reception_sun_intro",
+          "kind": "narration",
+          "text": "孙强则圆滑得多，端着酒杯打太极。",
+          "scene_id": "C01_S03",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d01_reception_sun_position",
+          "kind": "dialogue",
+          "speaker": "孙强",
+          "text": "县长放心，镇里全力配合。不过柳林村的事，上一任领导都是放手让下面办，村里的规矩，还得周大山那些人认账才行。",
+          "scene_id": "C01_S03",
+          "presentation_phase": "npc"
+        },
+        {
+          "block_id": "d01_reception_pressure",
+          "kind": "narration",
+          "text": "一桌人，三种腔调。钱伟话最多，赵建国话最少，孙强的话最圆。三个人你一句我一句，把稳妥两个字翻来覆去地垫在你耳边。菜是本地的河鲜山货，一道接一道地上，清江的鱼、后山的菌子、腊得透亮的火腿，摆了满满一桌。酒是温过的本地米酒，喝下去暖到胃里。你端着杯子，一一应了。整整一晚上，柳林村这三个字只出现过两次，一次从赵建国嘴里出来，一次从孙强嘴里出来，两次跟着的都是同一句话，急不得。签约这两个字，谁也没提。九十天这个日子，谁也没提。",
+          "scene_id": "C01_S03",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d01_reception_bag",
+          "kind": "narration",
+          "text": "散席时，钱伟叫人拎来一个不起眼的手提袋，塞到你手边，压低声音。",
+          "scene_id": "C01_S03",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d01_qian_offer",
+          "kind": "dialogue",
+          "speaker": "钱伟",
+          "text": "一点云溪的土特产，给县长和嫂夫人尝个鲜，不成敬意。您可千万别跟我客气，咱们往后是要长期打交道的。",
+          "scene_id": "C01_S03",
+          "presentation_phase": "npc"
+        },
+        {
+          "block_id": "d01_bag_detail",
+          "kind": "narration",
+          "text": "袋子不重。你捏了一下，隔着布摸得出里头几个方方正正的硬盒。同桌的人都还在，赵建国正低头看手机，孙强端着杯子跟服务员说话，谁也没往这边看，谁也不像是没看见。",
+          "scene_id": "C01_S03",
+          "presentation_phase": "scene"
+        }
+      ],
+      "opening_decision_id": "ev1_01_reception_bag",
+      "night_blocks": [
+        {
+          "block_id": "d01_night_qian_departure",
+          "kind": "night",
+          "text": "钱伟走到门口回过头，说了一句来日方长。",
+          "scene_id": "C01_S03",
+          "presentation_phase": "night"
+        },
+        {
+          "block_id": "d01_night",
+          "kind": "night",
+          "text": "那一夜，你住进镇政府腾出来的临时宿舍。屋子不大，一床一桌一椅，墙皮有些剥落，窗外就是清江，水声一整夜没停。天蒙蒙亮时你起身，就着窗口那点鱼肚白，把随身带来的柳林村卷宗翻了一遍。三十六户，九十天，三十个签约名额。名册末页是一张手绘的村舍分布图，画得潦草，房子挨着房子，中间空出一片，标着祠堂两个字。你合上卷宗时，天已经白了。",
+          "scene_id": "C01_S01",
+          "presentation_phase": "night"
+        }
+      ],
+      "decision_ids": [],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d02_party_secretary",
+      "story_day": 2,
+      "chapter": 1,
+      "day_mode": "playable",
+      "title": "第二日·县委小楼",
+      "allow_actions": true,
+      "allow_end_day": true,
+      "end_day_requires_flags": [
+        "flag_wu_first_talk_completed"
+      ],
+      "opening_blocks": [
+        {
+          "block_id": "d02_morning_call",
+          "kind": "morning",
+          "text": "第二天上午九点，郑向东进来说，蒋书记那边叫你过去一趟。",
+          "scene_id": "C01_S04",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d02_morning_office",
+          "kind": "morning",
+          "text": "县委小楼在马路对面，比政府楼旧，楼道里的水磨石地面磨得发亮。蒋崇岳的办公室在二楼，门虚掩着。他今年五十二岁，在云溪待了七年，先当县长后当书记。桌上没有茶，只有一摞文件和一副老花镜。他没让你坐，自己先站起来，走到墙上那张云溪县地图前。",
+          "scene_id": "C01_S04",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d02_jiang_open",
+          "kind": "dialogue",
+          "speaker": "蒋崇岳",
+          "text": "致远，坐。我不绕弯子，就三句话。",
+          "scene_id": "C01_S04",
+          "presentation_phase": "npc"
+        },
+        {
+          "block_id": "d02_jiang_first",
+          "kind": "dialogue",
+          "speaker": "蒋崇岳",
+          "text": "第一句，柳林村这个搬迁必须成。宏达那个项目是市里挂了号的，年底要看进度。九十天，三十户，这个数不是我定的，是市里定的。你完不成，我在市里没法交代，你自己也没法交代。",
+          "scene_id": "C01_S04",
+          "presentation_phase": "npc"
+        },
+        {
+          "block_id": "d02_jiang_second",
+          "kind": "dialogue",
+          "speaker": "蒋崇岳",
+          "text": "第二句，稳定不能出问题。柳林村有三百多口人，闹一次就够我们喝一壶。上访、堵路、上电视，出一样，前面的事全白干。搬迁要快，但不能出乱子。这两条，我知道有点矛盾，可摆在你面前的就是这个局面。",
+          "scene_id": "C01_S04",
+          "presentation_phase": "npc"
+        },
+        {
+          "block_id": "d02_jiang_third",
+          "kind": "dialogue",
+          "speaker": "蒋崇岳",
+          "text": "第三句，班子要团结。建国同志在云溪二十多年了，是我一手提上来的，他懂这里的水土。你刚来，很多事情要靠他。有意见可以提，可以到我这里来提，但不要在下面拆台。",
+          "scene_id": "C01_S04",
+          "presentation_phase": "npc"
+        },
+        {
+          "block_id": "d02_jiang_account",
+          "kind": "dialogue",
+          "speaker": "蒋崇岳",
+          "text": "致远，我在云溪七年，最怕的不是有人不干事，是有人不算账。你要动谁、动什么，先把账算清楚了再来找我。",
+          "scene_id": "C01_S04",
+          "presentation_phase": "npc"
+        },
+        {
+          "block_id": "d02_taskforce_intro",
+          "kind": "narration",
+          "text": "到任第二天，你要办的第一件正事，是把搬迁专班的架子搭起来，同时摸清柳林村这张看不见的派系图。专班怎么建，人从哪里来，直接决定了你往后十五天是借力还是使不上力。",
+          "scene_id": "C01_S06",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d02_taskforce_context",
+          "kind": "narration",
+          "text": "摆在你面前的信息是清楚的。赵建国在云溪经营多年，手底下一套现成的班底，熟门熟路，可这套人马的根扎在本地那张关系网里。孙强所在的渡口镇是柳林村的直接上级，镇里的干部对村情最熟，也最容易跟周大山那边穿一条裤子。柳林村里周氏独大，姓周的十一户抱成一团住在村中心，姓刘、姓吴、姓杨的散姓散居村边和河湾下游。周大山是周氏族长，官身族身合在一人身上，祖坟、祠堂、集体分红都攥在周氏这一支手里。",
+          "scene_id": "C01_S06",
+          "presentation_phase": "scene"
+        }
+      ],
+      "opening_decision_id": "dp1_01_taskforce_faction_map",
+      "night_blocks": [
+        {
+          "block_id": "d02_stage_summary",
+          "kind": "night",
+          "text": "派系图有了骨架，队伍搭起了架子，接风那道坎也趟了过去。头三天，你算是在云溪站住了脚跟，虽说站得还不太稳。真正的硬仗还没开打。补偿的盘子怎么分、三十六户的心气怎么顺、那座锈迹斑斑的旧厂房底下究竟埋着什么，这些个问号都还在前头的日子里等着你。",
+          "scene_id": "C01_S06",
+          "presentation_phase": "night"
+        },
+        {
+          "block_id": "d02_notebook_summary",
+          "kind": "night",
+          "text": "这三天，你没睡过一个囫囵觉。白天在村里、在专班、在镇政府三头跑，晚上回到那间墙皮剥落的临时宿舍，还要把当天的所见所闻一条一条在本子上理清楚。你有个习惯，凡遇上一个人，就在名字底下记几句，这人说话时眼神往哪儿飘，哪句话是真心，哪句话是场面。三天下来，本子上密密麻麻记了小半册。钱伟、赵建国、孙强、周大山、吴秀英，一个个名字底下各自拖着一串你还没参透的问号。你越理越觉出一件事。柳林村这盘棋，明面上是征迁，暗地里每个人都攥着一本只有自己看得懂的账。而你手里那本账，是全村最薄的一本。要在九十天里把它一页页填厚、填实，头一件要紧的，是分得清谁的话能信、谁的话只能听一半。",
+          "scene_id": "C01_S06",
+          "presentation_phase": "night"
+        }
+      ],
+      "decision_ids": [],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d03_faction_map_closure",
+      "story_day": 3,
+      "chapter": 1,
+      "day_mode": "playable",
+      "title": "第三日·派系图成形",
+      "allow_actions": true,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d03_compensation_storm",
+          "kind": "morning",
+          "text": "第三天的太阳照常升起，江雾散开，柳林村的补偿口径第一个炸了锅。",
+          "scene_id": "C01_S05",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d03_faction_map_formed",
+          "kind": "narration",
+          "text": "派系图有了骨架，队伍搭起了架子，接风那道坎也趟了过去。头三天，你算是在云溪站住了脚跟，虽说站得还不太稳。真正的硬仗还没开打。补偿的盘子怎么分、三十六户的心气怎么顺、那座锈迹斑斑的旧厂房底下究竟埋着什么，这些个问号都还在前头的日子里等着你。",
+          "scene_id": "C01_S06",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "decision_ids": [
+        "dp1_02"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d04_m2",
+      "story_day": 4,
+      "chapter": 1,
+      "day_mode": "free_action",
+      "title": "第4日·自由行动",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d05_m2",
+      "story_day": 5,
+      "chapter": 1,
+      "day_mode": "simulated",
+      "title": "第五日下午，你按走访计划爬上坡，去了袁桂兰家。三间旧瓦房，屋里光线暗得很",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d05_source_opening",
+          "kind": "narration",
+          "text": "第五日下午，你按走访计划爬上坡，去了袁桂兰家。三间旧瓦房，屋里光线暗得很，墙角堆着一摞治病的药盒。袁桂兰四十出头，面容憔悴，男人常年卧病瘫在床上，一个孩子体弱多病，三天两头往县医院跑。她起初怯生生的，不敢多话。被问到搬迁，她攥着衣角低声开了口。",
+          "scene_id": "C01_S07",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp1_03"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d06_m2",
+      "story_day": 6,
+      "chapter": 1,
+      "day_mode": "simulated",
+      "title": "从坡上下来，天色已经暗了。袁桂兰那句离那个厂子远点，娃兴许能好些，你一路",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d06_source_opening",
+          "kind": "narration",
+          "text": "从坡上下来，天色已经暗了。袁桂兰那句离那个厂子远点，娃兴许能好些，你一路上听见过好几回。第六日，专班的台账迟迟凑不齐。几处补偿争议卡在半道。向镇里要的逐户底册报上来总是残的。不是缺了这户的宅基地面积，就是漏了那户的人口登记。",
+          "scene_id": "C01_S07",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d07_m2",
+      "story_day": 7,
+      "chapter": 1,
+      "day_mode": "simulated",
+      "title": "你把那几页残缺的底册摊在桌上，一页一页比对。缺的地方看着零散。凡是涉及临",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d07_source_opening",
+          "kind": "narration",
+          "text": "你把那几页残缺的底册摊在桌上，一页一页比对。缺的地方看着零散。凡是涉及临江那几户好地段的，凡是沾着补偿分配关节的，数字总是恰好漏了那么一栏。别处的登记倒还齐整。你把这几页翻了三遍，灯一直亮到后半夜。孙强那句急不得还在耳朵里。周大山拍着胸脯揽下的打个招呼也在。第七日的专班调度会到了，孙强把台账的事挑明在了台面上。",
+          "scene_id": "C01_S06",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp1_04"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d08_m2",
+      "story_day": 8,
+      "chapter": 1,
+      "day_mode": "simulated",
+      "title": "调度会散了，孙强那记软钉子的余味还在。第八日，你没急着下村，把自己关在办",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d08_source_opening",
+          "kind": "narration",
+          "text": "调度会散了，孙强那记软钉子的余味还在。第八日，你没急着下村，把自己关在办公室里，对着一沓走访记录和台账残页，理了大半天的头绪。孙强的拖延、周大山攥着的分配经手权、袁桂兰那句欲言又止的厂子，几条线在纸上越理越清，也越理越沉。你隐约摸到了一个轮廓。柳林村这盘棋，明面上是征迁难，暗地里是有一张织了许多年的网，正不动声色地把每一个想认真办事的人都往里头缠。而这张网的中心绕不开一个人，常务副县长赵建国。此人在云溪经营了二十年，根须扎得比谁都深。跟这个人的第一次正面交手迟早要来。它来得比谁料想的都快。当晚，赵建国的电话就打到了你办公室，语气热络得很，说第二天想请你喝杯茶，两个人好好聊一聊。",
+          "scene_id": "C01_S08",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d09_m2",
+      "story_day": 9,
+      "chapter": 1,
+      "day_mode": "simulated",
+      "title": "第九日午后，你在县政府老楼的楼梯口撞见蒋崇岳。他刚从市里开完会回来，手里",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d09_source_opening",
+          "kind": "narration",
+          "text": "第九日午后，你在县政府老楼的楼梯口撞见蒋崇岳。他刚从市里开完会回来，手里还捏着一沓材料，脚步没停。",
+          "scene_id": "C01_S08",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d09_transition_context",
+          "kind": "narration",
+          "text": "围绕“识局第五步：与赵建国的第一个回合”，到场各方已经把事实和分歧摆在明面上。有人催你先保住眼前进度，有人要求先把程序与材料核清。时间不因争论停下，你需要先读完现有材料，再从这些互相牵制的主张中选定一条能承担责任的处置路径。",
+          "scene_id": "C01_S08",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp1_05"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d10_m2",
+      "story_day": 10,
+      "chapter": 1,
+      "day_mode": "simulated",
+      "title": "第十日，你一个人在镇政府的院子里站了很久。天擦黑了，江对岸宏达那片旧厂房",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d10_source_opening",
+          "kind": "narration",
+          "text": "第十日，你一个人在镇政府的院子里站了很久。天擦黑了，江对岸宏达那片旧厂房只剩一个黑黢黢的轮廓。几盏零星的灯在锈红色的墙面上投出昏黄的光。赵建国说环评早翻篇了。袁桂兰说离那个厂子远点。两句话你都听见了。",
+          "scene_id": "C01_S10",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [
+        {
+          "block_id": "d10_source_night",
+          "kind": "night",
+          "text": "第十日深夜，坡上传来急促的敲门声。袁桂兰抱着高烧抽搐的孩子，跌跌撞撞跑来找专班求救。孩子脸色青紫，镇卫生院夜里没有值班的儿科医生，最近的县医院还有四十里山路。袁桂兰哭得话都说不囫囵。",
+          "scene_id": "C01_S10",
+          "presentation_phase": "night"
+        }
+      ],
+      "night_effects": {},
+      "decision_ids": [],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d11_m2",
+      "story_day": 11,
+      "chapter": 1,
+      "day_mode": "simulated",
+      "title": "第十一日，专班决定摆开首轮签约的摊子。渡口镇政府腾出一间屋子，墙上挂起横",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d11_source_opening",
+          "kind": "narration",
+          "text": "第十一日，专班决定摆开首轮签约的摊子。渡口镇政府腾出一间屋子，墙上挂起横幅，桌上摆好协议文本和红印泥。前几日的走访、许诺、博弈，到这一刻要见真章。到底有没有人肯第一个按下手印。那张红印泥搁在桌子正中，红得刺眼。柳林村的人都懂一个理儿，祖上传下来的地契、房契，按了手印就是泼出去的水，收不回来了。头一个按下去的人，等于替全村人趟了这道河的深浅。于是谁都想签，谁又都不肯头一个签，一屋子人的目光都在往别人身上推。周大山在门口张罗，嗓门敞亮。",
+          "scene_id": "C01_S09",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp1_06"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d12_m2",
+      "story_day": 12,
+      "chapter": 1,
+      "day_mode": "simulated",
+      "title": "第十二日夜里，专班的干事拿着首轮签约的几份协议来找你补签字。你翻着翻着，",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d12_source_opening",
+          "kind": "narration",
+          "text": "第十二日夜里，专班的干事拿着首轮签约的几份协议来找你补签字。你翻着翻着，手指停在其中一户上。这户的宅基地权属栏填得含糊，签字人不是户主本人，是户主的堂弟，落款日期还比公示期满提前了两天。干事在旁边小声说，老周说了这家情况特殊、户主常年在外，先把手印按了、手续回头补齐，镇里一直都是这么办的。笔尖悬在那一栏上。一笔下去，报上去的进度就多一行。这一笔，也可能是日后翻船的第一道裂缝。",
+          "scene_id": "C01_S09",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp1_07"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d13_m2",
+      "story_day": 13,
+      "chapter": 1,
+      "day_mode": "simulated",
+      "title": "程序这道红线上的取舍一落定，首轮试水便算收了尾。签约栏里的数字或增或平，",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d13_source_opening",
+          "kind": "narration",
+          "text": "程序这道红线上的取舍一落定，首轮试水便算收了尾。签约栏里的数字或增或平，真正的硬仗都还在后头。三十六户里最难啃的那几块骨头，一块都没动。第十三日一早，你把专班召到一处，在桌上铺开柳林村那张花名册，密密麻麻的户名底下各自拖着各自的脾性和算盘。接下来这几天先啃谁、后啃谁，这个先后本身就是一步棋。",
+          "scene_id": "C01_S09",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp1_08"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d14_m2",
+      "story_day": 14,
+      "chapter": 1,
+      "day_mode": "simulated",
+      "title": "第十四日·入户攻坚",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d14_route",
+          "kind": "narration",
+          "text": "第十四日天刚亮，专班按昨天排定的顺序分成四路。你先走进最该先敲开的那扇门，再沿着坡道一户户往下谈。堂屋里摆的是补偿表，灶间里说的是养老、上学和以后靠什么过日子。纸上的同一套标准，落到每户人家身上都变成了不同的难处。",
+          "scene_id": "C01_S09",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d14_field",
+          "kind": "narration",
+          "text": "午后雨停了，村道上全是泥。有人听完把门关得更紧，也有人第一次把协议留下。你没有催着按手印，只让专班把每户没有说出口的顾虑写在名册旁边。到了晚上，红手印添了几个，真正难啃的周氏族亲和临江攀比户仍旧没有松口。",
+          "scene_id": "C01_S09",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d14_close",
+          "kind": "narration",
+          "text": "你把当天的记录摊在宿舍桌上，逐条核对承诺。先后次序已经产生影响：谁先被认真听见，谁就更愿意替专班说一句话；谁觉得自己被排在后面，谁的门槛就又高了一寸。",
+          "scene_id": "C01_S11",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [
+        {
+          "block_id": "d14_source_night",
+          "kind": "night",
+          "text": "第十四日夜里你回宿舍睡下了。柳林村的这一夜，你不在场。",
+          "scene_id": "C01_S11",
+          "presentation_phase": "night"
+        }
+      ],
+      "night_effects": {},
+      "decision_ids": [],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d15_m2",
+      "story_day": 15,
+      "chapter": 1,
+      "day_mode": "simulated",
+      "title": "第十五日·夜里的口信",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d15_close",
+          "kind": "narration",
+          "text": "第十五日傍晚，第一章的集中攻坚暂告一段落。签约册上有了新的红手印，但三十六户里最难的几块骨头仍旧没动。专班的人收起表格时，没人敢把这点进展当成胜利。",
+          "scene_id": "C01_S11",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d15_ma_intro",
+          "kind": "narration",
+          "text": "村口小卖部的马长顺借着递烟凑到你身边，先看了一眼路口，才压低嗓门。",
+          "scene_id": "C01_S11",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d15_ma_words",
+          "kind": "dialogue",
+          "text": "李县长，周家这两夜都有人进出。来的不只村里人，还有一辆县城牌照的车。我不敢认，也不敢问。您要真想知道，今晚得拿个主意。",
+          "speaker": "马长顺",
+          "scene_id": "C01_S11",
+          "presentation_phase": "npc"
+        },
+        {
+          "block_id": "d15_choice_setup",
+          "kind": "narration",
+          "text": "夜色已经落在柳林村的屋脊上。现在去惊动他们、暗中摸清往来，还是先把肯递话的人护住，会把下一章的路带向不同方向。",
+          "scene_id": "C01_S11",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [
+        {
+          "block_id": "d15_source_night",
+          "kind": "night",
+          "text": "这十五天，你也算摸清了一件事。在云溪，办事和办成事，是两码子事。补偿标准可以一夜之间定下，可三十六户的心气，得一天一天去焐。专班的架子两天能搭起来，可这支队伍到底听不听你的心跳，得在一桩桩具体的差事里见真章。你还摸清了自己手里那点本钱有多薄。政治资本是个数，可真到了要人替你挡刀的时候，能不能兑现，全看前头这些天，你在人心那本账上到底是存了钱，还是欠了债。马长顺那句夜里递来的话、吴秀英那面还没完全立起来的旗、袁桂兰按不按得下的那个手印，桩桩件件，都是你这半个月一笔一笔攒下的家底。这家底厚不厚，第十五日的夜里，就要见分晓了。",
+          "scene_id": "C01_S11",
+          "presentation_phase": "night"
+        }
+      ],
+      "night_effects": {},
+      "decision_ids": [
+        "dp1_09"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d16_m2",
+      "story_day": 16,
+      "chapter": 2,
+      "day_mode": "playable",
+      "title": "第十六日·雨夜后的三张发票",
+      "allow_actions": true,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d16_rain",
+          "kind": "narration",
+          "text": "第十六日清晨六点四十，雨下了一整夜。你站在县政府办公楼三层的窗前，看见院子里的冬青被水泡得发亮。值班室的灯还亮着，台阶上积着一层薄水，映出楼里第一盏亮起来的灯。那盏灯在你的办公室。",
+          "scene_id": "C02_S01",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d16_invoice",
+          "kind": "narration",
+          "text": "昨夜财政局送来搬迁工程支出明细。你翻到第三页，看见三张连着号的发票：同一天开出，抬头是三家公司，金额合计八十七万元。你把尾号抄在便笺上，压在台历底下。",
+          "scene_id": "C02_S01",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d16_calendar",
+          "kind": "narration",
+          "text": "台历上，第30天被红笔划了一道线。期限已经走掉六分之一。走廊里传来郑向东很轻的脚步声，新一章先从这三张纸开始。",
+          "scene_id": "C02_S01",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d17_m2",
+      "story_day": 17,
+      "chapter": 2,
+      "day_mode": "simulated",
+      "title": "第十七日·四十一张原始凭证",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d17_feng_arrival",
+          "kind": "narration",
+          "text": "第十七日上午九点，县财政局长冯敬之抱着一只牛皮纸档案袋进来。他把袋子解开，把四十一张原始凭证逐张摆在你桌上。",
+          "scene_id": "C02_S01",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d17_feng_words",
+          "kind": "dialogue",
+          "text": "李县长，您昨天要的搬迁工程支出原始凭证全在这里，我一张都没抽。",
+          "speaker": "冯敬之",
+          "scene_id": "C02_S01",
+          "presentation_phase": "npc"
+        },
+        {
+          "block_id": "d17_evidence",
+          "kind": "narration",
+          "text": "你抽出尾号三三七、三三八、三三九的三张发票。它们开票日期相同，注册地址是同一间门面房，法人各不相同，经办人却像是同一支笔。付款批复栏里签着赵建国的名字。",
+          "scene_id": "C02_S01",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d17_tension",
+          "kind": "narration",
+          "text": "你问正常流程能不能让三家公司挤在同一间门面房。冯敬之的手一直搭在档案袋绳扣上，只说自己管钱，不管公司。门关上后，三张纸仍并排躺在桌面，查、摸、压下还是当面对质，必须由你决定。",
+          "scene_id": "C02_S01",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp2_01"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d18_m2",
+      "story_day": 18,
+      "chapter": 2,
+      "day_mode": "simulated",
+      "title": "第十八日·茶叶盒底下的卡",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d18_qian_arrival",
+          "kind": "narration",
+          "text": "第十八日下午四点，宏达化工法人代表钱伟坐在你办公室的沙发上。他自己带了茶叶，说是明前的，不值钱，只是认个门。",
+          "scene_id": "C02_S01",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d18_qian_offer",
+          "kind": "dialogue",
+          "text": "柳林村三十六户里，有二十几户在宏达做过工，或者家里有人在厂里做过工。您想让这个村按时搬，绕不开我。",
+          "speaker": "钱伟",
+          "scene_id": "C02_S01",
+          "presentation_phase": "npc"
+        },
+        {
+          "block_id": "d18_box",
+          "kind": "narration",
+          "text": "他说完起身离开。茶叶盒还在桌上。你掀开盖子，茶叶下面压着一张没有署名的银行卡，旁边的便条写着卡里三十万，密码是你的生日。门已经关上，走廊里没有脚步声。",
+          "scene_id": "C02_S01",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d18_choice_setup",
+          "kind": "narration",
+          "text": "当面追回、暂存套话、收下，还是不留重话地退回，每一种处置都会留下不同的关系和证据。",
+          "scene_id": "C02_S01",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp2_02"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d19_m2",
+      "story_day": 19,
+      "chapter": 2,
+      "day_mode": "free_action",
+      "title": "第19日·自由行动",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d20_m2",
+      "story_day": 20,
+      "chapter": 2,
+      "day_mode": "simulated",
+      "title": "第二十日·废弃粮站",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d20_note",
+          "kind": "narration",
+          "text": "第二十日傍晚，郑向东把一张折成小方块的纸条放在你桌上。柳林村会计刘三托人写了地点和时间：废弃粮站，天黑以后。他只肯见你一个人。",
+          "scene_id": "C02_S03",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d20_arrival",
+          "kind": "narration",
+          "text": "粮站在村东头，八十年代的老仓房塌了半边。你把车停在两百米外，摸黑走过去。刘三蹲在门槛里侧，火机打了三次才点着烟，车灯从土路扫过时，他整个人贴到了墙根。",
+          "scene_id": "C02_S03",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d20_liu_account",
+          "kind": "dialogue",
+          "text": "村里的账我做了十六年。青苗补偿、土地流转、搬迁预付款，三本账都是我的字。周支书问过我三回，县里最近查没查账，我一回都没敢答。",
+          "speaker": "刘三",
+          "scene_id": "C02_S03",
+          "presentation_phase": "npc"
+        },
+        {
+          "block_id": "d20_liu_demand",
+          "kind": "dialogue",
+          "text": "我娘七十八了，脑梗躺在床上；我儿子今年高三。您要是能护住他们，我就有话跟您说。护不住，今天就当没见过我。",
+          "speaker": "刘三",
+          "scene_id": "C02_S03",
+          "presentation_phase": "npc"
+        },
+        {
+          "block_id": "d20_choice_setup",
+          "kind": "narration",
+          "text": "烟头在黑暗里明灭。给出保障、只谈风险、诉诸良心还是先退一步，决定了他会不会把账本背后的话交出来。",
+          "scene_id": "C02_S03",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp2_03"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d21_m2",
+      "story_day": 21,
+      "chapter": 2,
+      "day_mode": "free_action",
+      "title": "第21日·自由行动",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d22_m2",
+      "story_day": 22,
+      "chapter": 2,
+      "day_mode": "simulated",
+      "title": "第二十二日·三年不变的数据",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d22_shi_arrival",
+          "kind": "narration",
+          "text": "第二十二日上午，县环保站职工石文斌抱着一只文件夹站在你办公室门口。他说是来送柳林村清江段的三份环境影响评价报告。",
+          "scene_id": "C02_S04",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d22_reports",
+          "kind": "narration",
+          "text": "你把前年、去年、今年的附表并排摊开。铅、镉、砷三项监测数值一模一样，不是接近，而是连小数点后两位都完全相同；三份报告的落款却来自三家不同的检测机构。",
+          "scene_id": "C02_S04",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d22_shi_words",
+          "kind": "dialogue",
+          "text": "清江上游十二公里有一座冶炼厂。数据不动，指标就不动；指标不动，谁都不用报。",
+          "speaker": "石文斌",
+          "scene_id": "C02_S04",
+          "presentation_phase": "npc"
+        },
+        {
+          "block_id": "d22_health_sheet",
+          "kind": "narration",
+          "text": "他从文件夹夹层抽出一张县医院儿童体检汇总表复印件，几处血铅数字被红笔圈着。正式行文复核、秘密取样、暂时压下，还是拿报告去与钱伟谈，这条线必须选择一种走法。",
+          "scene_id": "C02_S04",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp2_04"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d23_m2",
+      "story_day": 23,
+      "chapter": 2,
+      "day_mode": "free_action",
+      "title": "第23日·自由行动",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d24_m2",
+      "story_day": 24,
+      "chapter": 2,
+      "day_mode": "simulated",
+      "title": "第二十四日·旧名册",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d24_school",
+          "kind": "narration",
+          "text": "第二十四日，你到柳林村废弃村小后面的平房拜访吴秀英。教室窗户钉着木板，她在这里教了三十年书，退休六年。她没有先谈搬迁，而是从里屋抱出一个铁皮盒。",
+          "scene_id": "C02_S05",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d24_roster",
+          "kind": "narration",
+          "text": "盒里是一册旧学生名册。她用红笔圈出的，是这些年查出血铅偏高的孩子；有的圈深，有的圈浅，铺满一页。二〇一九年以前，一个红圈都没有。",
+          "scene_id": "C02_S05",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d24_wu_words",
+          "kind": "dialogue",
+          "text": "周支书让我把本子交出去，我没交。我只想知道，您是来把村搬走的，还是来把村里的病查清楚。只搬人不查病，这本子给了您也是白给。",
+          "speaker": "吴秀英",
+          "scene_id": "C02_S05",
+          "presentation_phase": "npc"
+        },
+        {
+          "block_id": "d24_response",
+          "kind": "narration",
+          "text": "你没有许诺一个无法保证的结果，只把下一步准备怎么查、怎么保护材料说清楚。她听完收起名册，没有说信，也没有说不信。院门重新打开时，这场谈话的分量只能从她往后的行动里看。",
+          "scene_id": "C02_S05",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d25_m2",
+      "story_day": 25,
+      "chapter": 2,
+      "day_mode": "simulated",
+      "title": "第二十五日·三十六户怎么攻",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d25_meeting",
+          "kind": "narration",
+          "text": "第二十五日，签约工作组例会开在渡口镇政府。孙强把台账推到你面前：松口的九户还没有正式按下一个手印，九十天的期限已经过去将近三分之一。",
+          "scene_id": "C02_S05",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d25_miao",
+          "kind": "narration",
+          "text": "第一个点头的苗喜旺曾得到高于标准二十万元的口头承诺。如今这二十万成了全村的一根刺，谁来谈都先问别人拿了多少。周大山和周氏族亲仍一动不动，理由是祖坟和祠堂。",
+          "scene_id": "C02_S05",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d25_sun_words",
+          "kind": "dialogue",
+          "text": "整体抬价、一户一策、先把规矩立起来，还是树一个样板户，今天得定一条主路。再摇摆下去，工作组不知道该拿什么口径进门。",
+          "speaker": "孙强",
+          "scene_id": "C02_S05",
+          "presentation_phase": "npc"
+        },
+        {
+          "block_id": "d25_choice_setup",
+          "kind": "narration",
+          "text": "会议室里坐着七八个人，所有人都在等你开口。效率、公平、程序和示范四种办法各有代价，没有哪一条会立刻带来三十个手印。",
+          "scene_id": "C02_S05",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp2_05"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d26_m2",
+      "story_day": 26,
+      "chapter": 2,
+      "day_mode": "simulated",
+      "title": "第二十六日·台阶与站队",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d26_tan_scene",
+          "kind": "narration",
+          "text": "第二十六日上午十点，谭老六穿着洗得发白的旧军装外套，坐在县政府门口台阶上。他把塑料布包着的旧材料逐张铺开：二〇一九年修路占了他家四亩坡地，同一条路两边的补偿价差了一倍，这笔账多年没有说法。",
+          "scene_id": "C02_S06",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d26_camera",
+          "kind": "narration",
+          "text": "台阶下围了三四十个人，有人在拍视频。记者陈默站在人群外侧举着相机。孙强跑上楼，说保安队正在楼下等一句处置的话。",
+          "scene_id": "C02_S06",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d26_tan_words",
+          "kind": "dialogue",
+          "text": "我不闹事，就坐在这儿。你们哪天把四亩地的账算清楚，我哪天走。",
+          "speaker": "谭老六",
+          "scene_id": "C02_S06",
+          "presentation_phase": "npc"
+        },
+        {
+          "block_id": "d26_first_choice_setup",
+          "kind": "narration",
+          "text": "强行带离、下楼听完、暂不理会，还是当场调卷宗把旧账算清，镜头和围观者都在等你的动作。",
+          "scene_id": "C02_S06",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp2_06"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d27_m2",
+      "story_day": 27,
+      "chapter": 2,
+      "day_mode": "simulated",
+      "title": "第二十七日上午，一份要往市里报的搬迁进度文件摆到了你的案头。",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d27_source_opening",
+          "kind": "narration",
+          "text": "第二十七日上午，一份要往市里报的搬迁进度文件摆到了你的案头。",
+          "scene_id": "C02_S07",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d27_transition_context",
+          "kind": "narration",
+          "text": "围绕“红头文件”，到场各方已经把事实和分歧摆在明面上。有人催你先保住眼前进度，有人要求先把程序与材料核清。时间不因争论停下，你需要先读完现有材料，再从这些互相牵制的主张中选定一条能承担责任的处置路径。",
+          "scene_id": "C02_S07",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp2_07"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d28_m2",
+      "story_day": 28,
+      "chapter": 2,
+      "day_mode": "simulated",
+      "title": "第二十八日傍晚，你从渡口镇回县里。车过粮站的时候，路边站着一个人。",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d28_source_opening",
+          "kind": "narration",
+          "text": "第二十八日傍晚，你从渡口镇回县里。车过粮站的时候，路边站着一个人。",
+          "scene_id": "C02_S08",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d28_transition_context",
+          "kind": "narration",
+          "text": "围绕“四条战线”，到场各方已经把事实和分歧摆在明面上。有人催你先保住眼前进度，有人要求先把程序与材料核清。时间不因争论停下，你需要先读完现有材料，再从这些互相牵制的主张中选定一条能承担责任的处置路径。",
+          "scene_id": "C02_S08",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp2_08",
+        "dp2_09"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d29_m2",
+      "story_day": 29,
+      "chapter": 2,
+      "day_mode": "simulated",
+      "title": "第二十九日上午，冯敬之抱着一个文件夹进来。他把文件夹摊开，摊在你桌上。",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d29_source_opening",
+          "kind": "narration",
+          "text": "第二十九日上午，冯敬之抱着一个文件夹进来。他把文件夹摊开，摊在你桌上。",
+          "scene_id": "C02_S08",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d29_transition_context",
+          "kind": "narration",
+          "text": "围绕“一百五十万”，到场各方已经把事实和分歧摆在明面上。有人催你先保住眼前进度，有人要求先把程序与材料核清。时间不因争论停下，你需要先读完现有材料，再从这些互相牵制的主张中选定一条能承担责任的处置路径。",
+          "scene_id": "C02_S08",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [
+        {
+          "block_id": "d29_teahouse",
+          "kind": "night",
+          "text": "县城茶楼昨晚有人订了包间，订到子夜。",
+          "forbidden_flags": [
+            "与钱伟撕破脸"
+          ],
+          "scene_id": "C02_S08",
+          "presentation_phase": "night"
+        },
+        {
+          "block_id": "d29_comparison",
+          "kind": "night",
+          "text": "柳林村昨夜有人挨家串门，说的还是苗喜旺那笔钱。",
+          "required_flags": [
+            "砸钱普涨"
+          ],
+          "scene_id": "C02_S08",
+          "presentation_phase": "night"
+        },
+        {
+          "block_id": "d29_hospital",
+          "kind": "night",
+          "text": "县医院昨天下午来了个外地口音的人，问哪个科室能查血里的铅。",
+          "scene_id": "C02_S08",
+          "presentation_phase": "night"
+        }
+      ],
+      "night_effects": {},
+      "decision_ids": [
+        "dp2_10"
+      ],
+      "night_conditional_effects": [
+        {
+          "required_flags": [
+            "砸钱普涨"
+          ],
+          "effects": {
+            "metric_deltas": {
+              "social_stability": [
+                -5,
+                -2
+              ]
+            },
+            "ledger_deltas": {},
+            "open_flags": [
+              "攀比已成风"
+            ],
+            "close_flags": []
+          }
+        }
+      ]
+    },
+    {
+      "beat_id": "beat_d30_m2",
+      "story_day": 30,
+      "chapter": 2,
+      "day_mode": "simulated",
+      "title": "第三十日夜里，你把这半个月的东西一样一样摊在桌上。",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d30_source_opening",
+          "kind": "narration",
+          "text": "第三十日夜里，你把这半个月的东西一样一样摊在桌上。",
+          "scene_id": "C02_S08",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d31_m2",
+      "story_day": 31,
+      "chapter": 3,
+      "day_mode": "playable",
+      "title": "第三十一日·巡察组进城",
+      "allow_actions": true,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d31_fog",
+          "kind": "narration",
+          "text": "第31天早晨六点四十，江上的雾比昨天更厚。市委巡察组从今天起进驻云溪半个月，查账、查信访、查干部。县里接下来每一步，都摊在放大镜下面。",
+          "scene_id": "C03_S01",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d31_arrival",
+          "kind": "narration",
+          "text": "上午，张立带着巡察组进了县政府。他没有先听汇报，而是让人把搬迁台账、信访卷宗和干部名单分别装箱。第一次见面该说到什么程度，会决定这半个月双方怎样相处。",
+          "scene_id": "C03_S01",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp3_01"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d32_m2",
+      "story_day": 32,
+      "chapter": 3,
+      "day_mode": "simulated",
+      "title": "第三十二日·两版台账",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d32_ledger",
+          "kind": "narration",
+          "text": "下午三点，巡察组的查账人员坐进会议室。桌上是办公室送来的补偿台账，你手里的另一张表却与它有两处对不上：补偿标准前后不一，几个手印压着别人的名字。",
+          "scene_id": "C03_S02",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d32_question",
+          "kind": "narration",
+          "text": "查账员抬起头，问县里怎样解释。赵建国坐在你对面，把茶杯放下，正要替你开口。你只有半秒钟决定，是把两版材料并排摆出、请求自查时间、先用口径搪塞，还是把话交给他。",
+          "scene_id": "C03_S02",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp3_02"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d33_m2",
+      "story_day": 33,
+      "chapter": 3,
+      "day_mode": "free_action",
+      "title": "第33日·自由行动",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d34_m2",
+      "story_day": 34,
+      "chapter": 3,
+      "day_mode": "simulated",
+      "title": "第三十四日·班子甩锅",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d34_meeting",
+          "kind": "narration",
+          "text": "第34天县长办公会，赵建国把搬迁进度慢归到渡口镇，把补偿标准差异归到政策变化，又强调柳林村一直由你亲自抓。他合上笔记本，孙强坐在末位，手指绞着一支笔。",
+          "scene_id": "C03_S02",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d34_zhao_words",
+          "kind": "dialogue",
+          "text": "李县长，我一直是配合的态度。镇里的工作不到位，政策口径又有调整，责任总要说清楚。",
+          "speaker": "赵建国",
+          "scene_id": "C03_S02",
+          "presentation_phase": "npc"
+        },
+        {
+          "block_id": "d34_room",
+          "kind": "narration",
+          "text": "会议室里十一个人，十一双眼睛都在等你回应。眼前不仅是一次甩锅，也牵着下一份向巡察组报送的真实口径。",
+          "scene_id": "C03_S02",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp3_03",
+        "dp3_04"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d35_m2",
+      "story_day": 35,
+      "chapter": 3,
+      "day_mode": "free_action",
+      "title": "第35日·自由行动",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d36_m2",
+      "story_day": 36,
+      "chapter": 3,
+      "day_mode": "simulated",
+      "title": "第三十六日·雨夜敲门",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d36_knock",
+          "kind": "narration",
+          "text": "第36天夜里十点二十，县政府后院宿舍响起敲门声。钱伟站在门外，肩上带着雨，脚边放着一只保温桶。他说宏达停一天，五百四十个工人背后的家庭就多一天压力。",
+          "scene_id": "C03_S03",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d36_qian_terms",
+          "kind": "dialogue",
+          "text": "宏达可以补柳林村的补偿缺口，一分钱不进个人口袋。我要的只有一句话：排口的事按程序走，程序走多久，不是您的事。",
+          "speaker": "钱伟",
+          "scene_id": "C03_S03",
+          "presentation_phase": "npc"
+        },
+        {
+          "block_id": "d36_setup",
+          "kind": "narration",
+          "text": "他说完没有进门，只问这碗汤你要不要。企业就业、财政缺口和污染取证被捆在同一个条件里，接受、拒绝、留话还是当面拆穿，都要由你回应。",
+          "scene_id": "C03_S03",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp3_05"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d37_m2",
+      "story_day": 37,
+      "chapter": 3,
+      "day_mode": "free_action",
+      "title": "第37日·自由行动",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d38_m2",
+      "story_day": 38,
+      "chapter": 3,
+      "day_mode": "simulated",
+      "title": "第三十八日·状纸与门槛",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d38_hint",
+          "kind": "narration",
+          "text": "第38天早晨，郑向东把一杯茶放在你桌上。他提醒你，想推动公开处理，必须先让县委书记看见不处理的风险比处理更大；空讲道德和人情都过不了那道门。",
+          "scene_id": "C03_S03",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d38_petition",
+          "kind": "narration",
+          "text": "上午，你离开县政府去渡口镇时，谭老六在台阶下拦住你，把一叠多年信访材料举到胸前。旧占地补偿、白条和此前没有兑现的说法都夹在里面。",
+          "scene_id": "C03_S03",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d38_setup",
+          "kind": "narration",
+          "text": "车在门口等，巡察组也在查信访。接下这份状子、限定范围、转交下级还是避开，会决定旧案是被重新打开，还是成为下一轮压力。",
+          "scene_id": "C03_S03",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp3_06"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d39_m2",
+      "story_day": 39,
+      "chapter": 3,
+      "day_mode": "free_action",
+      "title": "第39日·自由行动",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d40_m2",
+      "story_day": 40,
+      "chapter": 3,
+      "day_mode": "free_action",
+      "title": "第40日·自由行动",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d41_m2",
+      "story_day": 41,
+      "chapter": 3,
+      "day_mode": "simulated",
+      "title": "第四十一日·四桩事排先后",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d41_four_files",
+          "kind": "narration",
+          "text": "第41天早晨，四份材料并排放在桌上：给巡察组的书面说明、柳林村签约安排、清江排口取证通知、谭老六旧案卷宗。四件事都声称不能再等。",
+          "scene_id": "C03_S04",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d41_clock",
+          "kind": "narration",
+          "text": "人手、车辆和你本人只有一套。排在前面的事能得到完整处置，排在后面的可能错过窗口。你必须给四桩事排出明确先后，不能把任何一项写成“同时推进”。",
+          "scene_id": "C03_S04",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp3_07"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d42_m2",
+      "story_day": 42,
+      "chapter": 3,
+      "day_mode": "simulated",
+      "title": "第四十二日",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d42_he_tiezhu_known",
+          "kind": "narration",
+          "text": "第四十二日下午，罗健带来一张县医院化验单。柳林村何铁柱七岁的孙子血铅二百八十七微克每升，远高于干预线。何铁柱本人还没有露面，但这个名字和这个家庭第一次进入了你的案头。",
+          "scene_id": "C03_S04",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d43_m2",
+      "story_day": 43,
+      "chapter": 3,
+      "day_mode": "simulated",
+      "title": "第四十三日·个别谈话前夜",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d43_notice",
+          "kind": "narration",
+          "text": "第43天，巡察组贴出通知：次日起对全县副科以上干部逐个谈话。名单二十六人，你排在第二个。不到一小时，财政局、环保站和赵建国先后用三种态度来探你的口风。",
+          "scene_id": "C03_S05",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d43_tea",
+          "kind": "narration",
+          "text": "晚上八点，赵建国把两包茶叶放在桌角，只说云溪这个班子二十年没有散过，有些话说出去容易、收回来难。茶叶不值钱，留下、退回或登记上交，性质却完全不同。",
+          "scene_id": "C03_S05",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d43_pressure",
+          "kind": "narration",
+          "text": "与此同时，血铅患儿的消息已经外泄，次日处置必须重新选择。明早走进谈话室前，你要先把材料、口径和自己的边界理清。",
+          "scene_id": "C03_S05",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "ev3_01_followup",
+        "dp3_tea_disposition",
+        "dp3_08"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d44_m2",
+      "story_day": 44,
+      "chapter": 3,
+      "day_mode": "simulated",
+      "title": "第四十四日·谈话与下乡",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d44_wait",
+          "kind": "narration",
+          "text": "第44天早晨八点，你在县委二楼走廊等候个别谈话。二十几个干部靠墙站着，没人说话。郑向东提醒你，屋里说的每一个字，外面的人很快都会知道；他们真正判断的是，跟着你走是否安全。",
+          "scene_id": "C03_S05",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d44_room",
+          "kind": "narration",
+          "text": "屋里三个人，张立坐在正中，两边各一名记录员，录音笔红灯亮着。下午，巡察组又没有通知县里，直接去了柳林村，把两种补偿标准当着村民的面问了出来。",
+          "scene_id": "C03_S06",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d44_statement",
+          "kind": "narration",
+          "text": "晚上回到办公室，赵建国已经拟好一份给巡察组的情况说明。先据实解释、承认问题并限期核查，还是采用班子准备好的统一口径，这张纸必须由你定稿。",
+          "scene_id": "C03_S06",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp3_09"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d45_m2",
+      "story_day": 45,
+      "chapter": 3,
+      "day_mode": "playable",
+      "title": "第四十五日·最后定向",
+      "allow_actions": true,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d45_calls",
+          "kind": "narration",
+          "text": "第45天早晨，赵建国来电话问你昨夜去了哪里；钱伟发来短信，说厂里五百多号人等着开工；蒋崇岳把你叫到县委，只告诉你张立下午就走。",
+          "scene_id": "C03_S06",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d45_jiang",
+          "kind": "dialogue",
+          "text": "他这半个月看见的每一样东西，都是我们让他看见的，或者是我们没拦住的。最后这点时间，你准备做什么？",
+          "speaker": "蒋崇岳",
+          "scene_id": "C03_S06",
+          "presentation_phase": "npc"
+        },
+        {
+          "block_id": "d45_setup",
+          "kind": "narration",
+          "text": "巡察组撤离前只剩一个窗口。把材料一次交清、全力压向签约、先堵住口径，还是不再追加动作，会决定第三章如何交账。",
+          "scene_id": "C03_S06",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp3_10"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d46_m2",
+      "story_day": 46,
+      "chapter": 4,
+      "day_mode": "playable",
+      "title": "第四十六日·一百零七份单子",
+      "allow_actions": true,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d46_bag",
+          "kind": "narration",
+          "text": "第46天上午，疾控中心工作人员抱着一只用棉线绕了三圈的牛皮纸袋来到办公室，坚持当面交到你手里。袋里是柳林村及周边三个自然村一百零七名儿童的血铅初检结果。",
+          "scene_id": "C04_S01",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d46_summary",
+          "kind": "narration",
+          "text": "汇总表显示，四十一名儿童超过干预参考线，十一名处在更高风险区间；最高的一张属于何铁柱七岁的孙子。检测单底部写着：建议尽快查明暴露源并启动干预。",
+          "scene_id": "C04_S01",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d46_handoff",
+          "kind": "narration",
+          "text": "工作人员站在门边等回话。这沓单子先交给谁、原始名册留在哪里，既关系到救治和复核，也关系到材料会不会在程序里消失。",
+          "scene_id": "C04_S01",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [
+        {
+          "block_id": "d46_public",
+          "kind": "night",
+          "text": "卫生院门口昨夜贴出了一张纸，天亮前被人围住。",
+          "required_flags": [
+            "普查结果公开"
+          ],
+          "scene_id": "C04_S01",
+          "presentation_phase": "night"
+        },
+        {
+          "block_id": "d46_internal",
+          "kind": "night",
+          "text": "卫生院的灯昨夜亮到很晚，有护士在楼道里坐着没走。",
+          "required_flags": [
+            "普查结果内报"
+          ],
+          "scene_id": "C04_S01",
+          "presentation_phase": "night"
+        },
+        {
+          "block_id": "d46_locked",
+          "kind": "night",
+          "text": "有一只柜子昨夜锁上了，钥匙在你身上。",
+          "required_flags": [
+            "普查结果压卷"
+          ],
+          "scene_id": "C04_S01",
+          "presentation_phase": "night"
+        },
+        {
+          "block_id": "d46_city",
+          "kind": "night",
+          "text": "有一辆车昨夜出了县界，走的是往市里的路。",
+          "required_flags": [
+            "普查结果直送巡察组"
+          ],
+          "scene_id": "C04_S01",
+          "presentation_phase": "night"
+        },
+        {
+          "block_id": "d46_village",
+          "kind": "night",
+          "text": "村口小卖部昨夜聚了人，散得很迟。",
+          "required_flags": [
+            "掌握血铅"
+          ],
+          "scene_id": "C04_S01",
+          "presentation_phase": "night"
+        },
+        {
+          "block_id": "d46_office",
+          "kind": "night",
+          "text": "天亮了，办公楼的走廊比往常静。",
+          "required_flags": [
+            "巡察警觉"
+          ],
+          "scene_id": "C04_S01",
+          "presentation_phase": "night"
+        }
+      ],
+      "night_effects": {},
+      "decision_ids": [
+        "dp4_01",
+        "dp4_roster_disposition"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d47_m2",
+      "story_day": 47,
+      "chapter": 4,
+      "day_mode": "free_action",
+      "title": "第47日·自由行动",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d48_m2",
+      "story_day": 48,
+      "chapter": 4,
+      "day_mode": "simulated",
+      "title": "第四十八日，县政府传达室来电话，说门口有个人从早上七点就坐在台阶上，不闹",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d48_source_opening",
+          "kind": "narration",
+          "text": "第四十八日，县政府传达室来电话，说门口有个人从早上七点就坐在台阶上，不闹，也不走，说要等县长。",
+          "scene_id": "C04_S02",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d48_transition_context",
+          "kind": "narration",
+          "text": "围绕“（二）通报的先后”，到场各方已经把事实和分歧摆在明面上。有人催你先保住眼前进度，有人要求先把程序与材料核清。时间不因争论停下，你需要先读完现有材料，再从这些互相牵制的主张中选定一条能承担责任的处置路径。",
+          "scene_id": "C04_S02",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [
+        {
+          "block_id": "d48_family",
+          "kind": "night",
+          "text": "有几个受检的家长昨夜到村委会门口坐了一阵。",
+          "required_flags": [
+            "先告村民"
+          ],
+          "scene_id": "C04_S02",
+          "presentation_phase": "night"
+        },
+        {
+          "block_id": "d48_factory",
+          "kind": "night",
+          "text": "宏达化工的门卫昨夜换了班，厂区的灯一直没关。",
+          "required_flags": [
+            "先告企业"
+          ],
+          "scene_id": "C04_S02",
+          "presentation_phase": "night"
+        },
+        {
+          "block_id": "d48_sent",
+          "kind": "night",
+          "text": "有一份材料昨夜走了机要，往市里去。",
+          "required_flags": [
+            "巡察组前置"
+          ],
+          "scene_id": "C04_S02",
+          "presentation_phase": "night"
+        },
+        {
+          "block_id": "d48_held",
+          "kind": "night",
+          "text": "有一份材料昨夜还压在你桌上。",
+          "required_flags": [
+            "巡察组后置"
+          ],
+          "scene_id": "C04_S02",
+          "presentation_phase": "night"
+        },
+        {
+          "block_id": "d48_ledger",
+          "kind": "night",
+          "text": "有人昨夜把一本旧簿子翻到很晚。",
+          "required_flags": [
+            "台账已对"
+          ],
+          "scene_id": "C04_S02",
+          "presentation_phase": "night"
+        },
+        {
+          "block_id": "d48_dark",
+          "kind": "night",
+          "text": "周家老屋昨夜没有点灯。",
+          "required_flags": [
+            "周家算账派拒谈"
+          ],
+          "scene_id": "C04_S02",
+          "presentation_phase": "night"
+        }
+      ],
+      "night_effects": {},
+      "decision_ids": [
+        "dp4_02"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d49_m2",
+      "story_day": 49,
+      "chapter": 4,
+      "day_mode": "simulated",
+      "title": "第四十九日下午三点，赵建国先进的门。他是常务副县长，进门不敲，手里端着自",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d49_source_opening",
+          "kind": "narration",
+          "text": "第四十九日下午三点，赵建国先进的门。他是常务副县长，进门不敲，手里端着自己的茶杯。",
+          "scene_id": "C04_S03",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d49_transition_context",
+          "kind": "narration",
+          "text": "围绕“（二）棱”，到场各方已经把事实和分歧摆在明面上。有人催你先保住眼前进度，有人要求先把程序与材料核清。时间不因争论停下，你需要先读完现有材料，再从这些互相牵制的主张中选定一条能承担责任的处置路径。",
+          "scene_id": "C04_S03",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp4_03"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d50_m2",
+      "story_day": 50,
+      "chapter": 4,
+      "day_mode": "free_action",
+      "title": "第50日·自由行动",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d51_m2",
+      "story_day": 51,
+      "chapter": 4,
+      "day_mode": "simulated",
+      "title": "第五十一日·祠堂里的周奎元",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d51_zhou_kuiyuan_intro",
+          "kind": "narration",
+          "text": "第五十一日，你为周家剩下的五户再次来到祠堂。周大山把你领进正堂，对坐在香案旁的老人叫了一声“奎元叔”。这是周奎元第一次出现在你面前：他管着族里的礼仪和祖坟事务，要谈的不是补偿数字，而是人搬走以后香火、坟地和周家身份怎样延续。",
+          "scene_id": "C04_S04",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d51_transition_context",
+          "kind": "narration",
+          "text": "围绕“（二）祠堂里的第二堵墙”，到场各方已经把事实和分歧摆在明面上。有人催你先保住眼前进度，有人要求先把程序与材料核清。时间不因争论停下，你需要先读完现有材料，再从这些互相牵制的主张中选定一条能承担责任的处置路径。",
+          "scene_id": "C04_S04",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp4_04"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d52_m2",
+      "story_day": 52,
+      "chapter": 4,
+      "day_mode": "simulated",
+      "title": "第五十二日天没大亮，郑向东就把简报送了进来。他站在办公桌前念，声音压得很",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d52_source_opening",
+          "kind": "narration",
+          "text": "第五十二日天没大亮，郑向东就把简报送了进来。他站在办公桌前念，声音压得很平。柳林村昨夜没出事。周家祠堂的灯亮到后半夜才灭。周大山天不亮出了村口，坐头班班车进的城，此刻人就在县政府传达室的长条椅上坐着。郑向东把简报合上，说老人不肯上楼，说要等你下去叫他。",
+          "scene_id": "C04_S04",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp4_05"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d53_m2",
+      "story_day": 53,
+      "chapter": 4,
+      "day_mode": "simulated",
+      "title": "第五十三日的简报里有一条不长的话。县信访办昨天下午退了一件事，退件的理由",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d53_source_opening",
+          "kind": "narration",
+          "text": "第五十三日的简报里有一条不长的话。县信访办昨天下午退了一件事，退件的理由写着不属受理范围。递件人叫谭老六，柳林村人。",
+          "scene_id": "C04_S04",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d53_transition_context",
+          "kind": "narration",
+          "text": "围绕“（二）压不住的六天”，到场各方已经把事实和分歧摆在明面上。有人催你先保住眼前进度，有人要求先把程序与材料核清。时间不因争论停下，你需要先读完现有材料，再从这些互相牵制的主张中选定一条能承担责任的处置路径。",
+          "scene_id": "C04_S04",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp4_06"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d54_m2",
+      "story_day": 54,
+      "chapter": 4,
+      "day_mode": "simulated",
+      "title": "第五十四日·吴秀英引见杨波",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d54_yang_bo_intro",
+          "kind": "narration",
+          "text": "第五十四日，吴秀英把返乡青年杨波带到安置方案公示栏前。杨波一头连着村里，一头连着外面的网络舆论场。他没有先问补偿多少钱，而是指着创业扶持、孩子入学和网络配套三栏，问这些承诺敢不敢让全村逐项核验。经吴秀英引见，你第一次有了正式联系他的渠道。",
+          "scene_id": "C04_S04",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d55_m2",
+      "story_day": 55,
+      "chapter": 4,
+      "day_mode": "simulated",
+      "title": "第五十五日上午九点十分，县医院打来电话。门诊楼前的队伍排出了大门，一直排",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d55_source_opening",
+          "kind": "narration",
+          "text": "第五十五日上午九点十分，县医院打来电话。门诊楼前的队伍排出了大门，一直排到马路牙子上，交警已经去了两个人。",
+          "scene_id": "C04_S05",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d56_m2",
+      "story_day": 56,
+      "chapter": 4,
+      "day_mode": "simulated",
+      "title": "第五十六日·何铁柱上楼",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d56_he_tiezhu_intro",
+          "kind": "narration",
+          "text": "第五十六日，何铁柱自己上了县政府的楼。他把孙子血铅二百八十七的检测单拍在你桌上，又用一张年轻时的军装照压住纸角。他没有喊，只问三年前那次体检为什么没人告诉他。从这一刻起，何铁柱不再只是化验单上的受害家庭，而是可以当面回应、也会当面追责的人。",
+          "scene_id": "C04_S05",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp4_07"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d57_m2",
+      "story_day": 57,
+      "chapter": 4,
+      "day_mode": "simulated",
+      "title": "第五十七日夜里十一点四十，你住的那栋楼下停了一辆车。车灯灭了很久，人才下",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d57_source_opening",
+          "kind": "narration",
+          "text": "第五十七日夜里十一点四十，你住的那栋楼下停了一辆车。车灯灭了很久，人才下来。",
+          "scene_id": "C04_S06",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d57_transition_context",
+          "kind": "narration",
+          "text": "围绕“（一）一个七岁的孩子”，到场各方已经把事实和分歧摆在明面上。有人催你先保住眼前进度，有人要求先把程序与材料核清。时间不因争论停下，你需要先读完现有材料，再从这些互相牵制的主张中选定一条能承担责任的处置路径。",
+          "scene_id": "C04_S06",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [
+        {
+          "block_id": "d57_zhao_visit",
+          "kind": "night",
+          "text": "第五十七日夜里十一点四十，你住的那栋楼下停了一辆车。车灯灭了很久，人才下来。",
+          "scene_id": "C04_S06",
+          "presentation_phase": "night"
+        }
+      ],
+      "night_effects": {},
+      "decision_ids": [
+        "dp4_08"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d58_m2",
+      "story_day": 58,
+      "chapter": 4,
+      "day_mode": "simulated",
+      "title": "第五十八日，天阴着没开。你六点二十进办公室，郑向东已经把简报压在桌角。他",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d58_source_opening",
+          "kind": "narration",
+          "text": "第五十八日，天阴着没开。你六点二十进办公室，郑向东已经把简报压在桌角。他递完简报没有走，站在门边说了一件不在简报里的事。柳林村的会计刘三昨天夜里没有回家。他老婆四点钟打电话到镇政府，说人不见了，床底下那只上了锁的铁盒也不见了。",
+          "scene_id": "C04_S06",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d58_transition_context",
+          "kind": "narration",
+          "text": "围绕“（三）【DP4-09】用途栏那四个字”，到场各方已经把事实和分歧摆在明面上。有人催你先保住眼前进度，有人要求先把程序与材料核清。时间不因争论停下，你需要先读完现有材料，再从这些互相牵制的主张中选定一条能承担责任的处置路径。",
+          "scene_id": "C04_S06",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [
+        {
+          "block_id": "d58_dam",
+          "kind": "night",
+          "text": "夜里十一点四十，环保站的值班电话打进来。",
+          "scene_id": "C04_S06",
+          "presentation_phase": "night"
+        }
+      ],
+      "night_effects": {},
+      "decision_ids": [
+        "dp4_09"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d59_m2",
+      "story_day": 59,
+      "chapter": 4,
+      "day_mode": "playable",
+      "title": "第五十九日·市生态环境局迎检组进驻",
+      "allow_actions": true,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d59_source_opening",
+          "kind": "narration",
+          "text": "第五十九日上午，市生态环境局迎检组的车准时驶进云溪。组长顾克明下车后没有先听汇报，只让人把验收清单、现场采样安排和整改闭环材料摆到同一张桌上。从这一刻起，他正式进入你的工作关系：只认现场、数据和能够复核的记录。",
+          "scene_id": "C04_S07",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d59_transition_context",
+          "kind": "narration",
+          "text": "围绕“（二）【DP4-10】怎么见人”，到场各方已经把事实和分歧摆在明面上。有人催你先保住眼前进度，有人要求先把程序与材料核清。时间不因争论停下，你需要先读完现有材料，再从这些互相牵制的主张中选定一条能承担责任的处置路径。",
+          "scene_id": "C04_S07",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp4_10"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d60_m2",
+      "story_day": 60,
+      "chapter": 4,
+      "day_mode": "playable",
+      "title": "第六十日下午，座谈摆在县委的小会议室。检查组坐一边，县里坐一边，中间一张",
+      "allow_actions": true,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d60_source_opening",
+          "kind": "narration",
+          "text": "第六十日下午，座谈摆在县委的小会议室。检查组坐一边，县里坐一边，中间一张铺了绿呢的长桌。上午的材料看完了，下午过话。",
+          "scene_id": "C04_S07",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d60_transition_context",
+          "kind": "narration",
+          "text": "围绕“（三）【DP4-11】座谈桌上那句话”，到场各方已经把事实和分歧摆在明面上。有人催你先保住眼前进度，有人要求先把程序与材料核清。时间不因争论停下，你需要先读完现有材料，再从这些互相牵制的主张中选定一条能承担责任的处置路径。",
+          "scene_id": "C04_S07",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [
+        {
+          "block_id": "d60_source_night",
+          "kind": "night",
+          "text": "迎检那一天是怎么过来的，你心里有数。车队走了，横幅撤了，柳林村的路面还留着新压的碾痕。第六十日的夜里下过一场雨，把那些碾痕洗成一道一道的浅沟。",
+          "scene_id": "C04_S07",
+          "presentation_phase": "night"
+        }
+      ],
+      "night_effects": {},
+      "decision_ids": [
+        "dp4_11"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d61_m2",
+      "story_day": 61,
+      "chapter": 5,
+      "day_mode": "playable",
+      "title": "第六十一日的早上，你到得比谁都早。办公室的窗子朝北，能看见县政府大院里那",
+      "allow_actions": true,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d61_source_opening",
+          "kind": "narration",
+          "text": "第六十一日的早上，你到得比谁都早。办公室的窗子朝北，能看见县政府大院里那棵老槐。树底下停着一辆挂外地牌的车，是市里留在云溪的联络员的车。他们没走干净。",
+          "scene_id": "C05_S01",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d61_transition_context",
+          "kind": "narration",
+          "text": "围绕“迎检之后”，到场各方已经把事实和分歧摆在明面上。有人催你先保住眼前进度，有人要求先把程序与材料核清。时间不因争论停下，你需要先读完现有材料，再从这些互相牵制的主张中选定一条能承担责任的处置路径。",
+          "scene_id": "C05_S01",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp5_01"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d62_m2",
+      "story_day": 62,
+      "chapter": 5,
+      "day_mode": "free_action",
+      "title": "第62日·自由行动",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d63_m2",
+      "story_day": 63,
+      "chapter": 5,
+      "day_mode": "simulated",
+      "title": "第六十三日的傍晚，你又去了祠堂。这一回你没带郑向东。",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d63_source_opening",
+          "kind": "narration",
+          "text": "第六十三日的傍晚，你又去了祠堂。这一回你没带郑向东。",
+          "scene_id": "C05_S02",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d63_transition_context",
+          "kind": "narration",
+          "text": "围绕“祖坟的规矩”，到场各方已经把事实和分歧摆在明面上。有人催你先保住眼前进度，有人要求先把程序与材料核清。时间不因争论停下，你需要先读完现有材料，再从这些互相牵制的主张中选定一条能承担责任的处置路径。",
+          "scene_id": "C05_S02",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp5_02"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d64_m2",
+      "story_day": 64,
+      "chapter": 5,
+      "day_mode": "simulated",
+      "title": "第六十四日·起灵",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d64_source_opening",
+          "kind": "narration",
+          "text": "第六十四日，天没亮就起了雾。柳林村后山只剩一个轮廓。夜里祠堂那边亮过灯，村里有人在打听你会不会亲自上山；周满仓一大早去了乡信用社，没说办什么。",
+          "scene_id": "C05_S03",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d64_transition_context",
+          "kind": "narration",
+          "text": "围绕“三·三 决策点”，到场各方已经把事实和分歧摆在明面上。有人催你先保住眼前进度，有人要求先把程序与材料核清。时间不因争论停下，你需要先读完现有材料，再从这些互相牵制的主张中选定一条能承担责任的处置路径。",
+          "scene_id": "C05_S03",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp5_03"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d65_m2",
+      "story_day": 65,
+      "chapter": 5,
+      "day_mode": "free_action",
+      "title": "第65日·自由行动",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d66_m2",
+      "story_day": 66,
+      "chapter": 5,
+      "day_mode": "simulated",
+      "title": "起灵定在第六十六日。",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d66_source_opening",
+          "kind": "narration",
+          "text": "起灵定在第六十六日。",
+          "scene_id": "C05_S03",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d67_m2",
+      "story_day": 67,
+      "chapter": 5,
+      "day_mode": "simulated",
+      "title": "本幕跨第六十七日至第六十九日。剩余天数由 24 递减至 21。",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d67_source_opening",
+          "kind": "narration",
+          "text": "本幕跨第六十七日至第六十九日。剩余天数由 24 递减至 21。",
+          "scene_id": "C05_S04",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d67_transition_context",
+          "kind": "narration",
+          "text": "围绕“四·二 顺序”，到场各方已经把事实和分歧摆在明面上。有人催你先保住眼前进度，有人要求先把程序与材料核清。时间不因争论停下，你需要先读完现有材料，再从这些互相牵制的主张中选定一条能承担责任的处置路径。",
+          "scene_id": "C05_S04",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp5_04"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d68_m2",
+      "story_day": 68,
+      "chapter": 5,
+      "day_mode": "simulated",
+      "title": "第六十八日·账本第二环",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d68_zhou_arrival",
+          "kind": "narration",
+          "text": "第68日下午，周满仓来到村委会，把牛皮纸包着的旧账本放在长桌上，两只手压在封面上，没有打开。他知道你想让他签字，也知道你带来了村账和检测材料。",
+          "scene_id": "C05_S04",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d68_second_step",
+          "kind": "narration",
+          "text": "前一次见面只让两本账摆到了一起。现在他要看的，是你能不能按事实的顺序继续往下谈：先核原始材料，再谈补偿与签约。任何颠倒都会让这扇刚打开的门重新关上。",
+          "scene_id": "C05_S04",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp5_05"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d69_m2",
+      "story_day": 69,
+      "chapter": 5,
+      "day_mode": "simulated",
+      "title": "第六十九日·账本留下",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d69_source_opening",
+          "kind": "narration",
+          "text": "第六十九日傍晚，周满仓带着两户人家的户主到了村委会。他把那本牛皮纸包着的本子留在长桌上，只说了一句：你要是哪天不想查了，就把它烧了。",
+          "scene_id": "C05_S04",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d70_m2",
+      "story_day": 70,
+      "chapter": 5,
+      "day_mode": "simulated",
+      "title": "第七十日·闭门",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d70_source_opening",
+          "kind": "narration",
+          "text": "第七十日早上七点半，郑向东把晨间卡放在你桌上。宁家昨夜灯亮到很晚，老伴把腌菜坛子搬进了里屋。有人说宁家在收东西，也有人说宁家在藏东西。",
+          "scene_id": "C05_S05",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d71_m2",
+      "story_day": 71,
+      "chapter": 5,
+      "day_mode": "simulated",
+      "title": "本幕跨第七十日至第七十一日。剩余天数由 21 递减至 19。",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d71_source_opening",
+          "kind": "narration",
+          "text": "本幕跨第七十日至第七十一日。剩余天数由 21 递减至 19。",
+          "scene_id": "C05_S05",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d71_transition_context",
+          "kind": "narration",
+          "text": "围绕“五·二 第七十一日 · 那张表”，到场各方已经把事实和分歧摆在明面上。有人催你先保住眼前进度，有人要求先把程序与材料核清。时间不因争论停下，你需要先读完现有材料，再从这些互相牵制的主张中选定一条能承担责任的处置路径。",
+          "scene_id": "C05_S05",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp5_06"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d72_m2",
+      "story_day": 72,
+      "chapter": 5,
+      "day_mode": "simulated",
+      "title": "本幕跨第七十二日至第七十三日。剩余天数由 19 递减至 17。",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d72_source_opening",
+          "kind": "narration",
+          "text": "本幕跨第七十二日至第七十三日。剩余天数由 19 递减至 17。",
+          "scene_id": "C05_S06",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d73_m2",
+      "story_day": 73,
+      "chapter": 5,
+      "day_mode": "simulated",
+      "title": "本幕跨第七十二日至第七十三日。剩余天数由 19 递减至 17。",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d73_source_opening",
+          "kind": "narration",
+          "text": "本幕跨第七十二日至第七十三日。剩余天数由 19 递减至 17。",
+          "scene_id": "C05_S06",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d73_transition_context",
+          "kind": "narration",
+          "text": "围绕“六·二 第七十三日 · 那道坎”，到场各方已经把事实和分歧摆在明面上。有人催你先保住眼前进度，有人要求先把程序与材料核清。时间不因争论停下，你需要先读完现有材料，再从这些互相牵制的主张中选定一条能承担责任的处置路径。",
+          "scene_id": "C05_S06",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [
+        {
+          "block_id": "d73_source_night",
+          "kind": "night",
+          "text": "第七十三日夜里，郑向东把那张只剩三个名字的单子放在你桌上。",
+          "scene_id": "C05_S06",
+          "presentation_phase": "night"
+        }
+      ],
+      "night_effects": {},
+      "decision_ids": [
+        "dp5_07"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d74_m2",
+      "story_day": 74,
+      "chapter": 5,
+      "day_mode": "simulated",
+      "title": "第七十四日·补账",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d74_source_opening",
+          "kind": "narration",
+          "text": "第七十四日早上七点四十，你再次去见何铁柱。自第五十六日他带着孙子的检测单上楼后，你们已经当面谈过一次；这回地点换到县医院家属楼，三楼走廊尽头，他守在儿科病房门口，等你把此前答应核实的治疗和补偿问题补成一笔实账。",
+          "scene_id": "C05_S07",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d74_transition_context",
+          "kind": "narration",
+          "text": "围绕“场景二·把话说死”，到场各方已经把事实和分歧摆在明面上。有人催你先保住眼前进度，有人要求先把程序与材料核清。时间不因争论停下，你需要先读完现有材料，再从这些互相牵制的主张中选定一条能承担责任的处置路径。",
+          "scene_id": "C05_S07",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp5_08",
+        "dp5_09"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d75_m2",
+      "story_day": 75,
+      "chapter": 5,
+      "day_mode": "simulated",
+      "title": "第七十五日 · 首批进度名册冻结",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d75_source_opening",
+          "kind": "narration",
+          "text": "「第七十五日夜间结算后，首批进度名册和提前签约奖励资格一起冻结。第七十六日至第八十九日只收此前登记的未决事项，按真实日期完成确认；第九十日只验收，不再新增户数。」",
+          "scene_id": "C05_S07",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d75_transition_context",
+          "kind": "narration",
+          "text": "围绕“场景二·你怎么开口”，到场各方已经把事实和分歧摆在明面上。有人催你先保住眼前进度，有人要求先把程序与材料核清。时间不因争论停下，你需要先读完现有材料，再从这些互相牵制的主张中选定一条能承担责任的处置路径。",
+          "scene_id": "C05_S07",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [
+        {
+          "block_id": "d75_phone",
+          "kind": "night",
+          "text": "晚上九点十分,你办公室的座机响了。",
+          "scene_id": "C05_S07",
+          "presentation_phase": "night"
+        }
+      ],
+      "night_effects": {},
+      "decision_ids": [
+        "dp5_10",
+        "dp5_11",
+        "dp5_12"
+      ],
+      "night_conditional_effects": [
+        {
+          "required_flags": [
+            "马长顺待自然触发"
+          ],
+          "forbidden_flags": [
+            "马长顺核心矛盾已缓解",
+            "进度榜已上墙"
+          ],
+          "minimum_ledger_values": {
+            "signed_households": 3
+          },
+          "effects": {
+            "metric_deltas": {},
+            "ledger_deltas": {
+              "signed_households": [
+                3,
+                3
+              ]
+            },
+            "open_flags": [
+              "马长顺核心矛盾已缓解"
+            ],
+            "close_flags": [
+              "马长顺待自然触发"
+            ]
+          }
+        },
+        {
+          "required_flags": [
+            "马长顺待自然触发",
+            "进度榜已上墙"
+          ],
+          "forbidden_flags": [
+            "马长顺核心矛盾已缓解"
+          ],
+          "minimum_ledger_values": {
+            "signed_households": 1
+          },
+          "effects": {
+            "metric_deltas": {},
+            "ledger_deltas": {
+              "signed_households": [
+                3,
+                3
+              ]
+            },
+            "open_flags": [
+              "马长顺核心矛盾已缓解"
+            ],
+            "close_flags": [
+              "马长顺待自然触发"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "beat_id": "beat_d76_m2",
+      "story_day": 76,
+      "chapter": 6,
+      "day_mode": "playable",
+      "title": "第七十六日·验收期",
+      "allow_actions": true,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d76_source_opening",
+          "kind": "narration",
+          "text": "招待所三楼的灯亮到后半夜，几个部门在对同一本账。柳林村口贴出一张没有落款的纸，天亮前被人揭走了。市里的车已经过了县界。",
+          "scene_id": "C06_S01",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d76_transition_context",
+          "kind": "narration",
+          "text": "围绕“第七十六日”，到场各方已经把事实和分歧摆在明面上。有人催你先保住眼前进度，有人要求先把程序与材料核清。时间不因争论停下，你需要先读完现有材料，再从这些互相牵制的主张中选定一条能承担责任的处置路径。",
+          "scene_id": "C06_S01",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp6_01"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d77_m2",
+      "story_day": 77,
+      "chapter": 6,
+      "day_mode": "simulated",
+      "title": "第七十七日·老倔头来看真房",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d77_source_opening",
+          "kind": "narration",
+          "text": "第七十七日，老倔头没有坐工作组的车，自己骑了一个多小时来到安置小区。他把自行车靠在铁门上，站在毛坯楼前，只说要看的不是照片，是房。此前他只是未决名册上那个不开门的人；从亲眼核验安置房开始，他才真正愿意让你把话说下去。",
+          "scene_id": "C06_S01",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d77_transition_context",
+          "kind": "narration",
+          "text": "围绕“第七十七日”，到场各方已经把事实和分歧摆在明面上。有人催你先保住眼前进度，有人要求先把程序与材料核清。时间不因争论停下，你需要先读完现有材料，再从这些互相牵制的主张中选定一条能承担责任的处置路径。",
+          "scene_id": "C06_S01",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp6_02"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d78_m2",
+      "story_day": 78,
+      "chapter": 6,
+      "day_mode": "simulated",
+      "title": "贺兴邦四十八岁，分管卫健，只在第六章出场，出场即是最重的那一锤——柳林村",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d78_source_opening",
+          "kind": "narration",
+          "text": "贺兴邦四十八岁，分管卫健，只在第六章出场，出场即是最重的那一锤——柳林村连着周边三个自然村，四个村孩子的化验数据，全攥在他手里。他不是这条暗线的始作俑者，可他在这条线上站了六七年，这六七年他一次也没有把数据往上递。第六章第七十八日，他把这份名册带进了你的办公室。",
+          "scene_id": "C06_S02",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp6_03"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d79_m2",
+      "story_day": 79,
+      "chapter": 6,
+      "day_mode": "simulated",
+      "title": "第七十九日·验收台阶",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d79_crowd",
+          "kind": "narration",
+          "text": "第79日，安置验收组刚进场，村委会台阶下已经挤满家属。有人举着体检单，有人问安置房钥匙，还有人只想知道孩子下一次复查由谁负责。纸面验收与眼前的人群在同一时间撞到一起。",
+          "scene_id": "C06_S02",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d79_choice",
+          "kind": "narration",
+          "text": "你站在台阶上，验收组在身后催流程，家属在下面等答复。先走进人群逐条听完、把人请进会议室后继续验收，还是强行清出通道，会决定这一天先承认谁的现实。",
+          "scene_id": "C06_S02",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d80_m2",
+      "story_day": 80,
+      "chapter": 6,
+      "day_mode": "simulated",
+      "title": "第八十日·铁盒凭证",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d80_receipt",
+          "kind": "narration",
+          "text": "第80日，铁盒里夹着的一张原始凭证终于与财政账上的缺口对上。经办、批复和资金去向都指向赵建国曾经经手的那笔款，材料已经不是传言，而是一份可以被移交、质证或掩埋的原件。",
+          "scene_id": "C06_S02",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d80_zhao",
+          "kind": "narration",
+          "text": "赵建国坐在你对面，没有先否认。他只问你，验收还剩几天，云溪这个班子现在经不经得起再倒一个人。说完，他把解释和另一份东西一起推到桌边。",
+          "scene_id": "C06_S02",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d80_choice",
+          "kind": "narration",
+          "text": "当众摊开、要求补回、暂时封存、接受交换，还是把原件交给巡察组，眼前已经没有不留下记录的选择。",
+          "scene_id": "C06_S02",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp6_04"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d81_m2",
+      "story_day": 81,
+      "chapter": 6,
+      "day_mode": "simulated",
+      "title": "交接：第八十一日开场，剩余天数为 10。",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d81_source_opening",
+          "kind": "narration",
+          "text": "交接：第八十一日开场，剩余天数为 10。",
+          "scene_id": "C06_S02",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d81_transition_context",
+          "kind": "narration",
+          "text": "围绕“【自主行动窗口】第八十一日上午”，到场各方已经把事实和分歧摆在明面上。有人催你先保住眼前进度，有人要求先把程序与材料核清。时间不因争论停下，你需要先读完现有材料，再从这些互相牵制的主张中选定一条能承担责任的处置路径。",
+          "scene_id": "C06_S02",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp6_05"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d82_m2",
+      "story_day": 82,
+      "chapter": 6,
+      "day_mode": "simulated",
+      "title": "第八十二日 · 第二波",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d82_source_opening",
+          "kind": "narration",
+          "text": "第八十二日 · 第二波",
+          "scene_id": "C06_S03",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d83_m2",
+      "story_day": 83,
+      "chapter": 6,
+      "day_mode": "simulated",
+      "title": "第八十三日·记者的稿子",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d83_draft",
+          "kind": "narration",
+          "text": "第83日，陈默把尚未发表的稿子带到县政府。标题写着清江边的孩子，正文里有血铅、搬迁、环评和几名家属的口述，但关键数字仍空着，等你决定是否提供原始名册。",
+          "scene_id": "C06_S04",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d83_chen",
+          "kind": "dialogue",
+          "text": "我不是来让您审稿的。我只确认两件事：数字有没有依据，县里准备不准备把整改承诺写到纸上。今天没有答复，稿子也会照发。",
+          "speaker": "陈默",
+          "scene_id": "C06_S04",
+          "presentation_phase": "npc"
+        },
+        {
+          "block_id": "d83_choice",
+          "kind": "narration",
+          "text": "交出名册、只给公开承诺、请求上级压稿、保持沉默，或把口径交给县委，每一种做法都会决定报道写下什么，也决定谁来承担公开之后的责任。",
+          "scene_id": "C06_S04",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp6_06"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d84_m2",
+      "story_day": 84,
+      "chapter": 6,
+      "day_mode": "simulated",
+      "title": "第八十四日·整改清单与邓守本",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d84_source_opening",
+          "kind": "narration",
+          "text": "第八十四日上午，巡察整改反馈函送到县政府。若你把安置房交付和医疗兜底排在首位，清单会同时落实独居老人搬运、晚年照护和本人见证签署，邓守本才会被请到现场逐项确认。此前他只是未决名册上的最后一户；只有这些安排真正落地，才形成与他继续谈祖屋和安置的正当入口。",
+          "scene_id": "C06_S05",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp6_07"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d85_m2",
+      "story_day": 85,
+      "chapter": 6,
+      "day_mode": "simulated",
+      "title": "第八十五日·责任名单",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d85_list",
+          "kind": "narration",
+          "text": "第85日，十一项整改任务已经逐项落到纸上，最后还剩一份责任名单。名单上有四个人，分别牵着财务、环保、搬迁程序和旧案处置；删掉任何一个，链条都会断一截。",
+          "scene_id": "C06_S05",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d85_room",
+          "kind": "narration",
+          "text": "班子里有人主张原样上报，让纪检按材料处理；也有人主张先把人留在岗位上办完整改，再逐人追责。两种路径都声称是为了把事情办成，区别在于责任何时公开、由谁裁定。",
+          "scene_id": "C06_S05",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d85_choice",
+          "kind": "narration",
+          "text": "名单就在签字页下面。原样上报或内部约谈，不再是对未来风险的预告，而是你对前八十四日全部材料的正式定性。",
+          "scene_id": "C06_S05",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp6_08"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d86_m2",
+      "story_day": 86,
+      "chapter": 6,
+      "day_mode": "simulated",
+      "title": "第八十六日·搬迁后的空村",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d86_empty",
+          "kind": "narration",
+          "text": "第86日清晨，你独自走进搬迁后的柳林村。门板已经卸走，墙上还留着灶烟的黑印，村道上只有风吹塑料布的声音。曾经围着补偿表争执的人家，如今散在安置点、医院和亲戚家。",
+          "scene_id": "C06_S06",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d86_receipts",
+          "kind": "narration",
+          "text": "何铁柱托人送来一张复查回执，周奎元也让人捎来祠堂迁移后的祭告单。它们没有替任何争议盖棺定论，只证明那些在台账里被写成“已处置”的事，仍在真实生活里继续。",
+          "scene_id": "C06_S06",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d86_pause",
+          "kind": "narration",
+          "text": "你在空村里走了一圈，把最后几扇没有落锁的门逐一合上。常委会和最终验收就在前面，这一天留给你回看已经做成的事，以及仍没有补上的缺口。",
+          "scene_id": "C06_S06",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [
+        {
+          "block_id": "d86_he_receipt",
+          "kind": "night",
+          "text": "何铁柱把那张二百八十七的化验单压在门房窗台上，转身前按下了手印。",
+          "required_flags": [
+            "血铅补实"
+          ],
+          "required_any_flags": [
+            "何铁柱已冷",
+            "何铁柱肯再谈",
+            "空头承诺已出口"
+          ],
+          "forbidden_flags": [
+            "何铁柱核心矛盾已缓解"
+          ],
+          "scene_id": "C06_S06",
+          "presentation_phase": "night"
+        },
+        {
+          "block_id": "d86_zhou_approval",
+          "kind": "night",
+          "text": "周大山把盖着红章的批文折好收进上衣口袋，族里当晚开了会。",
+          "required_flags": [
+            "周大山肯等"
+          ],
+          "forbidden_flags": [
+            "周大山核心矛盾已缓解",
+            "祖坟被冒犯"
+          ],
+          "scene_id": "C06_S06",
+          "presentation_phase": "night"
+        }
+      ],
+      "night_effects": {},
+      "decision_ids": [],
+      "night_conditional_effects": [
+        {
+          "required_flags": [
+            "血铅补实"
+          ],
+          "required_any_flags": [
+            "何铁柱已冷",
+            "何铁柱肯再谈",
+            "空头承诺已出口"
+          ],
+          "forbidden_flags": [
+            "何铁柱核心矛盾已缓解"
+          ],
+          "effects": {
+            "metric_deltas": {
+              "public_trust": [
+                5,
+                10
+              ]
+            },
+            "ledger_deltas": {
+              "signed_households": [
+                4,
+                4
+              ]
+            },
+            "open_flags": [
+              "何铁柱核心矛盾已缓解"
+            ],
+            "close_flags": []
+          }
+        },
+        {
+          "required_flags": [
+            "周大山预付条件已核验",
+            "周大山肯等"
+          ],
+          "forbidden_flags": [
+            "周大山核心矛盾已缓解",
+            "祖坟被冒犯"
+          ],
+          "effects": {
+            "metric_deltas": {
+              "political_credit": [
+                -7,
+                -4
+              ],
+              "cadre_discontent": [
+                8,
+                12
+              ]
+            },
+            "ledger_deltas": {
+              "signed_households": [
+                4,
+                4
+              ]
+            },
+            "open_flags": [
+              "周大山核心矛盾已缓解",
+              "周大山补账已核验",
+              "祠堂地块批文已签发"
+            ],
+            "close_flags": [
+              "祠堂地块只有口头承诺"
+            ]
+          }
+        },
+        {
+          "required_flags": [
+            "周大山肯等"
+          ],
+          "forbidden_flags": [
+            "周大山预付条件已核验",
+            "周大山核心矛盾已缓解",
+            "祖坟被冒犯"
+          ],
+          "effects": {
+            "metric_deltas": {
+              "political_credit": [
+                -7,
+                -4
+              ],
+              "cadre_discontent": [
+                8,
+                12
+              ]
+            },
+            "ledger_deltas": {
+              "signed_households": [
+                6,
+                6
+              ]
+            },
+            "open_flags": [
+              "周大山核心矛盾已缓解",
+              "周大山补账已核验",
+              "祠堂地块批文已签发"
+            ],
+            "close_flags": [
+              "祠堂地块只有口头承诺"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "beat_id": "beat_d87_m2",
+      "story_day": 87,
+      "chapter": 6,
+      "day_mode": "simulated",
+      "title": "第八十七日 · 会前的那道门",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d87_source_opening",
+          "kind": "narration",
+          "text": "第八十七日 · 会前的那道门",
+          "scene_id": "C06_S07",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d87_transition_context",
+          "kind": "narration",
+          "text": "围绕“第八十七日 · 会前的那道门”，到场各方已经把事实和分歧摆在明面上。有人催你先保住眼前进度，有人要求先把程序与材料核清。时间不因争论停下，你需要先读完现有材料，再从这些互相牵制的主张中选定一条能承担责任的处置路径。",
+          "scene_id": "C06_S07",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp6_09"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d88_m2",
+      "story_day": 88,
+      "chapter": 6,
+      "day_mode": "simulated",
+      "title": "第八十八日 · 卷宗",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d88_source_opening",
+          "kind": "narration",
+          "text": "第八十八日 · 卷宗",
+          "scene_id": "C06_S07",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d89_m2",
+      "story_day": 89,
+      "chapter": 6,
+      "day_mode": "simulated",
+      "title": "第八十九日·常委会",
+      "allow_actions": false,
+      "allow_end_day": true,
+      "opening_blocks": [
+        {
+          "block_id": "d89_source_opening",
+          "kind": "narration",
+          "text": "九点整，蒋崇岳敲了敲桌面。前两项议题走得很快，到第三项，屋里的声音沉了下去。他念出柳林村的名字，然后请你先讲。",
+          "scene_id": "C06_S08",
+          "presentation_phase": "scene"
+        },
+        {
+          "block_id": "d89_transition_context",
+          "kind": "narration",
+          "text": "围绕“第八十九日 · 常委会”，到场各方已经把事实和分歧摆在明面上。有人催你先保住眼前进度，有人要求先把程序与材料核清。时间不因争论停下，你需要先读完现有材料，再从这些互相牵制的主张中选定一条能承担责任的处置路径。",
+          "scene_id": "C06_S08",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [
+        "dp6_10"
+      ],
+      "night_conditional_effects": []
+    },
+    {
+      "beat_id": "beat_d90_m2",
+      "story_day": 90,
+      "chapter": 6,
+      "day_mode": "ending",
+      "title": "第九十日 · 只读验收",
+      "allow_actions": false,
+      "allow_end_day": false,
+      "opening_blocks": [
+        {
+          "block_id": "d90_source_opening",
+          "kind": "narration",
+          "text": "第九十天早上七点，县里的大礼堂就坐满了。",
+          "scene_id": "C06_S09",
+          "presentation_phase": "scene"
+        }
+      ],
+      "night_blocks": [],
+      "night_effects": {},
+      "decision_ids": [],
+      "night_conditional_effects": []
+    }
+  ]
+}

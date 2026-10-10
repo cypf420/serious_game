@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "mission": {
+    "title": "清江搬迁专班任务书",
+    "summary": "你是云溪县县长李致远，兼县委副书记、清江搬迁专班指挥长。需要在期限、财政、稳定和程序约束下推进柳林村整村搬迁，同时自行判断是否追查水面下的旧账与污染线索。",
+    "hard_constraints": [
+      {"key": "deadline", "label": "期限", "value": "90天", "detail": "D90到期强制验收，届时按真实状态结算。"},
+      {"key": "households", "label": "搬迁总盘", "value": "36户", "detail": "全村总户数固定，不得改写。"},
+      {"key": "target", "label": "达标线", "value": "30户", "detail": "验收读取真实签约户数，不以口头承诺或注水台账替代。"},
+      {"key": "core_zone", "label": "用地要求", "value": "清江边500米核心控制区", "detail": "搬迁为宏达化工入园腾出核心用地。"},
+      {"key": "budget", "label": "财政授权", "value": "基础授权8000万元", "detail": "前期协调费200万元已支出并列疑点挂账，D1可安排7800万元；县级不得无来源追加。"},
+      {"key": "integrity", "label": "廉政底线", "value": "任何时候都不能拿程序和清白换进度", "detail": "无依据加价、私下交易、造假和违法强制都会留下可追查的责任。"}
+    ]
+  },
+  "dossiers": [
+    {
+      "dossier_id": "superior_assignment",
+      "title": "第一卷·上级交办",
+      "summary": "省里化工入园文件、市里百日攻坚方案和市委动员要求，最终压成县长案头的90天倒计时。",
+      "known_points": ["工作口径是稳得住、拆得动、别出乱子。", "前任交接便条写着：柳林村的事，多问周大山，少碰老账。"],
+      "source_line": 81
+    },
+    {
+      "dossier_id": "finance_project",
+      "title": "第二卷·财政与项目",
+      "summary": "搬迁基础授权总额8000万元，前期协调费200万元已经支出并列为疑点挂账；宏达化工承诺承担6000万元并分期到账，县级计划承担其余2000万元；项目投产后的年税收测算为2亿元。",
+      "known_points": ["预算封顶，不得追加。", "已有200万元以前期协调名义走账，经手人为常务副县长赵建国，用途尚待核实。"],
+      "source_line": 83
+    },
+    {
+      "dossier_id": "village_society",
+      "title": "第三卷·村庄社会",
+      "summary": "36户花名册显示，周姓11户集中住在村中心，刘、吴、杨等散姓多在村边和河湾下游。",
+      "known_points": ["户情底册包含人口、土地、房屋等补偿核算基础。", "何铁柱一户被批注为退伍军人、情绪激烈，其孙常年就医；病因未写。"],
+      "source_line": 85
+    },
+    {
+      "dossier_id": "enterprise_backing",
+      "title": "第四卷·企业与后台",
+      "summary": "宏达化工由央企中裕集团控股，法人代表钱伟的人脉通到省里。",
+      "known_points": ["钱伟曾单独约见赵建国。", "会谈纪要仅记载就补偿方案交换意见，没有其他人在场，也没有后续记录。"],
+      "source_line": 87
+    },
+    {
+      "dossier_id": "predecessor_old_case",
+      "title": "第五卷·前任与旧案",
+      "summary": "柳林村上游约2公里处曾有一座上世纪九十年代关停的冶炼厂，新环评却认定场地环境质量满足建设要求。",
+      "known_points": ["旧档案只写破产清算和厂址封存。", "新环评对上游涉铅遗留只字未提，是否存在问题仍需调查取证。"],
+      "source_line": 89
+    }
+  ],
+  "compensation_policy": {
+    "title": "云溪县柳林村整体搬迁补偿安置方案",
+    "status": "云政发〔游戏年度〕1号已签发并向全村36户公示",
+    "funding": [
+      {"label": "基础授权总额", "value": "8000万元；D1可安排余额7800万元"},
+      {"label": "宏达化工资金承诺", "value": "6000万元，分期到账并单列来源"},
+      {"label": "县财政承担上限", "value": "2000万元"}
+    ],
+    "principles": [
+      "统一方案以依法登记的房屋、土地、人口和政策性项目为核算基础。",
+      "同类条件执行同一公开口径；差异必须有事实依据、审批记录并可公示复核。",
+      "正式签约必须完成权属核验和法定程序；口头承诺不计入真实签约。",
+      "政策测算、预算承诺、正式签约和实际支付分层记账；同一费用不得重复扣减。",
+      "困难户可叠加法定低保、医疗、就业或临时救助，不得用暗箱加价替代兜底。",
+      "迁坟不仅涉及补偿，还需处理择地、择日、起灵和祭祀延续。"
+    ],
+    "covered_items": [
+      "合法房屋及附属物补偿", "宅基地与承包地等土地权益处置", "搬家、过渡与停产停业损失",
+      "安置住房或货币化安置", "按人口及家庭结构适用的政策项目", "坟墓迁移与必要仪式安排",
+      "困难家庭的低保、医疗、就业和临时救助衔接"
+    ],
+    "authority_boundaries": [
+      "县长可以组织复核、公开听证、依法审批和统筹县级资源，但县级不能无来源追加基础授权。依法批准的上级专项拨款、追回款或责任企业追加赔偿可形成有来源调整。",
+      "任何个别加价、安置房调配或专项兜底都必须记录依据、资金来源和审批链。",
+      "强制征收、司法处置和清场只能在法定条件与程序完备后启动。"
+    ],
+    "unresolved_numeric_fields": [],
+    "numeric_guardrail": "补偿单价、搬迁费、过渡费、签约奖励与资源容量以已归档的云政发〔游戏年度〕1号及其结构化资源台账为准；调整必须经班子会议、会签、签发和公示后生效。"
+  },
+  "authorities": [
+    {"resource_id": "finance", "name": "县财政与专项预算", "description": "统筹基础授权、核验拨付记录、登记承诺与安排合规支出。", "limitation": "不得无来源追加；有来源调整必须保留审批与到账记录。"},
+    {"resource_id": "taskforce", "name": "清江搬迁专班", "description": "调度县级部门、渡口镇和基层干部开展摸底、协商、签约与安置。", "limitation": "队伍忠诚和执行质量取决于人选及既往决策。"},
+    {"resource_id": "natural_resources_housing", "name": "自然资源与住建部门", "description": "核验权属、房地面积、征收程序和安置房条件。", "limitation": "不能绕过权属核验、公示和法定程序。"},
+    {"resource_id": "environment", "name": "生态环境力量", "description": "调阅环评、组织监测、封存样本并联系第三方检测。", "limitation": "结论需证据链支持，内部人员可能承受压力。"},
+    {"resource_id": "public_security_justice", "name": "公安与司法资源", "description": "维持秩序、固定证据并依法处置违法行为。", "limitation": "不可用于压制正常诉求；强制措施必须满足法定条件。"},
+    {"resource_id": "petition_civil_affairs_health", "name": "信访、民政与卫生资源", "description": "受理申诉，为困难户衔接救助、医疗和公共卫生支持。", "limitation": "专项资格与额度须按正式政策审核。"},
+    {"resource_id": "archives_audit", "name": "档案、财政监督与审计线索", "description": "调取旧档、凭证和拨付链，交叉核验前期账目。", "limitation": "调查会消耗时间，也可能触发相关方反制。"},
+    {"resource_id": "party_government", "name": "县委县政府组织权", "description": "召开班子会、约谈干部、成立专班、启动合规问责并向市里汇报。", "limitation": "政治支持并非无限，使用方式会影响班子关系。"},
+    {"resource_id": "secretary", "name": "秘书郑向东", "description": "整理日程、人物、材料和已掌握线索，帮助形成案头摘要。", "limitation": "只能汇总已知信息，不能替玩家取得尚未掌握的证据。"}
+  ],
+  "tool_categories": [
+    {"name": "群众工作", "description": "通过走访、谈心、听证和关键人物带动争取理解。"},
+    {"name": "补偿与安置", "description": "在预算与程序内调整方案、安置和困难兜底。"},
+    {"name": "组织手段", "description": "运用县长的会议、用人、约谈、问责和上级沟通权限。"},
+    {"name": "调查手段", "description": "取得账目、档案、检测、口供和外部监督材料并交叉印证。"},
+    {"name": "强制手段", "description": "在法定条件满足时采取征收、司法或现场处置；风险与成本最高。"},
+    {"name": "秘书", "description": "整理玩家已经掌握的信息，不生成新事实。"}
+  ],
+  "tool_guidance": {
+    "home_visit": {"description": "进入一户人家的具体生活场景，了解家庭诉求并自由交谈。", "availability_note": "需当前剧情开放可走访对象。"},
+    "heart_to_heart": {"description": "在已有接触基础上进行更深入、较私密的沟通。", "availability_note": "通常需要先建立接触或出现合适契机。"},
+    "relay_via_opinion_leader": {"description": "请有公信力的村民转达政策与态度，影响其关系网。", "availability_note": "需取得意见领袖的配合。"},
+    "party_member_demonstration": {"description": "争取党员户依法依规先行示范，带动观望户。", "availability_note": "需找到合适党员户并具备公开示范条件。"},
+    "public_hearing": {"description": "把争议、算法和程序放到公开场合说明并听取意见。", "availability_note": "需具备可公开的方案和组织条件。"},
+    "raise_overall_compensation": {"description": "在总预算内整体上调补偿口径，减少普遍落差。", "availability_note": "具体幅度须待补偿参数确定，并受8000万元总盘约束。"},
+    "differentiated_compensation": {"description": "依据房地、人口、困难或损失差异进行有据可查的分类处置。", "availability_note": "必须有客观依据和审批记录，不能看人下菜。"},
+    "allocate_better_housing": {"description": "在安置房资源中调整户型、区位或配套安排。", "availability_note": "安置房清单和差价规则尚待正式参数补全。"},
+    "employment_support": {"description": "为受搬迁或项目影响的家庭衔接就业、培训或创业扶持。", "availability_note": "需符合正式项目条件并落实承办部门。"},
+    "welfare_medical_safety_net": {"description": "为困难家庭衔接低保、医疗和临时救助，解决搬迁之外的基本风险。", "availability_note": "需审核资格；具体额度待正式政策补全。"},
+    "convene_leadership_meeting": {"description": "把重大分歧提交县级班子讨论，形成组织决策和责任链。", "availability_note": "适用于跨部门或高风险事项。"},
+    "establish_relocation_taskforce": {"description": "抽调人员建立专班，明确摸底、谈判、签约、安置和监督分工。", "availability_note": "开局阶段即可组织，但人选会影响执行。"},
+    "interview_cadre": {"description": "就拖延、隐瞒、执行偏差或利益冲突正式约谈相关干部。", "availability_note": "需有具体对象和问题线索。"},
+    "initiate_accountability": {"description": "在证据与程序支持下启动纪律、行政或组织问责。", "availability_note": "需形成足够事实依据，不能以怀疑代替证据。"},
+    "inspect_village_accounts": {"description": "核对村账、拨付、领取和经办链条，寻找账实差异。", "availability_note": "需取得账册入口或依法调取。"},
+    "consult_county_archives": {"description": "调阅县级项目、环保、财政、土地及前任工作档案。", "availability_note": "需明确调阅方向；部分材料可能缺失。"},
+    "third_party_water_test": {"description": "依程序取样、封存并送独立机构检测，形成可复核结果。", "availability_note": "需找到合适取样点并保证证据链。"},
+    "collect_blood_lead_report": {"description": "经当事人同意收集既有体检单或推动合规健康筛查。", "availability_note": "涉及敏感健康信息，需先发现风险并保护隐私。"},
+    "private_testimony": {"description": "在安全环境中取得知情人的陈述，并与其他材料相互印证。", "availability_note": "需建立信任和具体知情人入口。"},
+    "contact_reporter": {"description": "与记者沟通事实、程序或公开材料，也可能扩大舆情风险。", "availability_note": "需出现媒体接触渠道。"},
+    "liaise_zhang_li": {"description": "在市委巡察组进驻后就职责范围内的问题正式对接。", "availability_note": "需等D31巡察组进驻或取得合法联系入口。"},
+    "cross_validate_clues": {"description": "让两项以上已掌握材料相互校验，区分传闻、线索与证据。", "availability_note": "至少需要可相互印证的材料。"},
+    "lawful_expropriation": {"description": "在补偿、程序和救济渠道完备后依法推进征收。", "availability_note": "必须满足法定前置条件。"},
+    "judicial_process": {"description": "把具体争议提交法定司法或执行程序处理。", "availability_note": "需有明确争议、法律依据和完整程序。"},
+    "isolate_troublemaker": {"description": "仅针对具体违法行为依法采取必要的秩序措施。", "availability_note": "不能因反对搬迁或正常表达诉求而使用。"},
+    "forced_clearance": {"description": "在全部法定程序完备且存在执行依据时组织现场清场。", "availability_note": "高风险末端手段，条件不足时不可用。"},
+    "zheng_clue_summary": {"description": "请郑向东按人物、时间和证据强度整理现有线索。", "availability_note": "随时可汇总，但不会凭空增加事实。"},
+    "meet_party_secretary": {"description": "就重大路线、人事或政治风险与县委书记沟通。", "availability_note": "每日最多一次，效果取决于议题与既有关系。"},
+    "communicate_to_city": {"description": "向市级领导或部门递交正式情况与资源请求。", "availability_note": "每日最多一次，需承担上级关注带来的约束。"},
+    "field_visit": {"description": "用半日时间下乡进村，现场查看环境、设施和群众情况。", "availability_note": "每日最多一次，占用半日行程。"},
+    "clan_leader_campaign": {"description": "围绕宗祠、祖坟、家族利益和程序保障与族长集中协商。", "availability_note": "需取得宗族核心人物的接触入口。"}
+  }
+}

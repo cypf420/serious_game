@@ -1,0 +1,225 @@
+{
+  "schema_version": 1,
+  "npc_social_roles": {
+    "npc_zhang_li": ["cadre"],
+    "npc_zhao_jianguo": ["cadre"],
+    "npc_liu_san": ["crowd"],
+    "npc_shi_wenbin": ["cadre"],
+    "npc_zhou_dashan": ["crowd", "cadre"],
+    "npc_zhou_kuiyuan": ["crowd"],
+    "npc_zhou_mancang": ["crowd"],
+    "npc_wu_xiuying": ["crowd"],
+    "npc_he_tiezhu": ["crowd"],
+    "npc_tan_laoliu": ["crowd"],
+    "npc_ma_changshun": ["crowd"],
+    "npc_ning_dehai": ["crowd"],
+    "npc_yuan_guilan": ["crowd"],
+    "npc_yang_bo": ["crowd"],
+    "npc_lao_juetou": ["crowd"],
+    "npc_miao_xiwang": ["crowd"],
+    "npc_deng_shouben": ["crowd"],
+    "npc_jiang_chongyue": ["cadre"],
+    "npc_zheng_xiangdong": ["cadre"],
+    "npc_sun_qiang": ["cadre"],
+    "npc_feng_jingzhi": ["cadre"],
+    "npc_he_xingbang": ["cadre"],
+    "npc_ke_qinian": ["cadre"],
+    "npc_gu_keming": ["cadre"],
+    "npc_cui_guanglin": ["cadre"]
+  },
+  "origin_npc_attitude_modifiers": {},
+  "trust_rules": {
+    "base": 40,
+    "common_villager_ids": ["npc_zhou_dashan","npc_zhou_kuiyuan","npc_zhou_mancang","npc_wu_xiuying","npc_he_tiezhu","npc_tan_laoliu","npc_ma_changshun","npc_ning_dehai","npc_yuan_guilan","npc_yang_bo","npc_lao_juetou","npc_miao_xiwang","npc_deng_shouben"],
+    "common_flag_effects": {
+      "血铅补实":15,"环评揭穿":15,"掌握血铅":5,"困难户帮扶":10,"额外补偿":5,"一碗水端平":10,"立规在先":10,"进度榜已上墙":5,
+      "差异化口子已开":-5,"掩盖真相":-15,"环评被掩盖":-15,"压制媒体":-5,"强制施压":-15,"虚假签约":-30,"暴力驱逐":-30
+    },
+    "aliases": {
+      "陈默结盟":"记者结盟","flag_reporter_alliance":"记者结盟",
+      "flag_blood_lead_remediated":"血铅补实","flag_eia_exposed":"环评揭穿","flag_blood_lead_known":"掌握血铅",
+      "flag_vulnerable_household_helped":"困难户帮扶","flag_extra_compensation":"额外补偿","flag_eia_concealed":"环评被掩盖",
+      "flag_media_suppressed":"压制媒体","flag_coercion":"强制施压","flag_false_signing":"虚假签约","flag_violent_eviction":"暴力驱逐",
+      "flag_wu_alliance":"吴秀英同盟","flag_wu_disappointed":"秀英寒心","flag_accounts_exposed":"账目揭发",
+      "flag_qian_secret_deal":"钱伟密约","flag_bribe_accepted":"收受贿赂","flag_two_million_smoothed":"两百万抹平",
+      "flag_two_million_case_filed":"两百万已移交立案","flag_sacrifice_zhao":"牺牲赵建国",
+      "孙强倒戈":"孙强交底","持有":"持有环评原件"
+    },
+    "npc_flag_effects": {
+      "npc_zhou_dashan":{"周大山归心":30,"周大山未反水":10,"周大山预付条件已核验":10,"周大山核心矛盾已缓解":10,"宗族对立":-30,"祖坟被冒犯":"lock"},
+      "npc_zhou_kuiyuan":{"祖坟迁定":30,"祠堂议事已开":15,"周奎元肯谈":15,"迁坟旧例在手":10,"祖坟症结已明":10,"周家祖坟事由已知":5,"周奎元核心矛盾已缓解":10,"掘坟已致歉":5,"祖坟线挂起":-5,"祖坟派攻坚难度上调":-10,"加价被拒":-15,"绕开族亲":-15,"迁坟简办遭拒":-15,"祖坟线弃管":-15,"掘坟结怨":"lock"},
+      "npc_zhou_mancang":{"明账服人":30,"账目揭发":15,"周满仓核心矛盾已缓解":10,"台账见光":10},
+      "npc_wu_xiuying":{"吴秀英同盟":30,"吴秀英核心矛盾已缓解":10,"秀英寒心":-30},
+      "npc_he_tiezhu":{"治疗兜底承诺":30,"何铁柱肯再谈":15,"何铁柱欠你一个人情":15,"何铁柱核心矛盾已缓解":10,"人情已兑现":-5,"何铁柱已冷":-30},
+      "npc_tan_laoliu":{"接访安抚谭老六":15,"闭门接访":15,"持有谭老六旧档":5,"谭老六核心矛盾已缓解":10,"程序打发":-15,"谭老六转镇处理":-15,"强力维稳":-30,"谭老六永久关闭":"lock"},
+      "npc_ma_changshun":{"补偿口径已澄清":15,"账本已合":15,"马长顺待自然触发":5,"私许口头承诺":5,"马长顺核心矛盾已缓解":10,"口径遭封":-15},
+      "npc_ning_dehai":{"党员样板已立":15,"党员档案在手":10,"样板已下乡":10,"宁德海已接触":5,"宁德海核心矛盾已缓解":10,"宁德海缩壳":-15,"宁德海被冒犯":-30,"拿儿子说事":-30,"宁德海线已锁死":"lock"},
+      "npc_yuan_guilan":{"复查费县垫":15,"袁桂兰核心矛盾已缓解":10},
+      "npc_yang_bo":{"杨波核心矛盾已缓解":10},
+      "npc_deng_shouben":{"邓守本核心矛盾已缓解":10},
+      "npc_zhao_jianguo":{"赵建国欠你一次":15,"以那一页换配合":10,"两百万被压卷底":15,"赵建国翻供":-15,"账目揭发":-30,"牺牲赵建国":"lock","赵建国转全面敌对":"lock"},
+      "npc_qian_wei":{"收受贿赂":30,"钱伟密约":30,"两百万抹平":15,"钱伟握有你的把柄":10,"把柄悬空":-10,"已立项审计":-15,"宏达行贿在录":-30,"两百万已移交立案":-30},
+      "npc_liu_san":{"刘三反水":30,"刘三当面交盒":30,"刘三已保":15,"刘三动摇":15,"白条线已启动":10,"铁盒不请自来":10,"铁盒封存":-15},
+      "npc_chen_mo":{"记者结盟":30,"陈默结盟":30,"名册原件已交":15,"舆情公开":15,"陈默的手机视频":10,"舆情冷处理":-10,"压制媒体":-30,"陈默转敌对":"lock"},
+      "npc_shi_wenbin":{"环评揭穿":30,"环评存疑·私存水样":15,"石文斌的优盘":15,"水样封存":10,"错过水样":-5,"环评被掩盖":-30}
+    },
+    "crowd_effects": [
+      {"threshold_percent":50,"npc_ids":["npc_yang_bo"],"delta":15}
+    ],
+    "explicit_freeze_after_day":{"npc_zhang_li":45},
+    "explicit_flag_effects":{"npc_zhang_li":{
+      "自查落空":[-15,-10]
+    }},
+    "explicit_decision_effects":{"npc_zhang_li":{
+      "dp3_01:a":[10,15],
+      "dp3_01:b":[-5,-3],
+      "dp3_01:c":[5,8],
+      "dp3_01:d":[3,6],
+      "dp3_02:a":[12,18],
+      "dp3_02:b":[-12,-8],
+      "dp3_02:c":[3,6],
+      "dp3_02:d":[-15,-10],
+      "dp3_03:a":[5,8],
+      "dp3_04:b":[20,28],
+      "dp3_04:d":[3,5],
+      "dp3_07:a_b_c_d":[8,12],
+      "dp3_07:a_b_d_c":[8,12],
+      "dp3_07:a_c_b_d":[8,12],
+      "dp3_07:a_c_d_b":[8,12],
+      "dp3_07:a_d_b_c":[8,12],
+      "dp3_07:a_d_c_b":[8,12],
+      "dp3_07:b_a_c_d":[3,5],
+      "dp3_07:b_a_d_c":[3,5],
+      "dp3_07:c_a_b_d":[3,5],
+      "dp3_07:c_a_d_b":[3,5],
+      "dp3_07:d_a_b_c":[3,5],
+      "dp3_07:d_a_c_b":[3,5],
+      "dp3_07:b_c_a_d":[-8,-5],
+      "dp3_07:b_d_a_c":[-8,-5],
+      "dp3_07:c_b_a_d":[-8,-5],
+      "dp3_07:c_d_a_b":[-8,-5],
+      "dp3_07:d_b_a_c":[-8,-5],
+      "dp3_07:d_c_a_b":[-8,-5],
+      "dp3_07:b_c_d_a":[-18,-12],
+      "dp3_07:b_d_c_a":[-18,-12],
+      "dp3_07:c_b_d_a":[-18,-12],
+      "dp3_07:c_d_b_a":[-18,-12],
+      "dp3_07:d_b_c_a":[-18,-12],
+      "dp3_07:d_c_b_a":[-18,-12],
+      "ev3_01:c":[5,8],
+      "ev3_01_followup:c":[5,8],
+      "dp3_tea_disposition:c":[3,5],
+      "dp3_08:a":{"required_flag":"孙强交底","when_present":[15,22],"otherwise":[3,5]},
+      "dp3_08:b":{"required_flag":"持有环评原件","when_present":[12,18],"otherwise":[5,8]},
+      "dp3_08:c":[8,12],
+      "dp3_08:d":[-12,-8],
+      "dp3_09:a":[4,8],
+      "dp3_10:a":[20,30],
+      "dp3_10:b":[-15,-10],
+      "dp3_10:c":[-18,-12],
+      "dp3_10:d":[-22,-15]
+    }}
+  },
+  "npc_relationships": [
+    {"source_npc_id":"npc_liu_san","target_npc_id":"npc_zhou_dashan","attitude_delta":-5,"anxiety_delta":5},
+    {"source_npc_id":"npc_qian_wei","target_npc_id":"npc_zhao_jianguo","attitude_delta":-5,"anxiety_delta":5},
+    {"source_npc_id":"npc_chen_mo","target_npc_id":"npc_wu_xiuying","attitude_delta":5,"anxiety_delta":0},
+    {"source_npc_id":"npc_sun_qiang","target_npc_id":"npc_zhao_jianguo","attitude_delta":-5,"anxiety_delta":5}
+  ],
+  "night_agent_scenes": [
+    {
+      "scene_id": "night_d29_qian_zhao_private_room",
+      "story_day": 29,
+      "selection_mode": "autonomous",
+      "candidate_ids": [
+        "npc_qian_wei",
+        "npc_zhao_jianguo",
+        "npc_sun_qiang",
+        "npc_liu_san"
+      ],
+      "max_contacts_per_npc": 2,
+      "rounds": 2,
+      "scene_goal": "县里的调查正在逼近。判断彼此是否仍可信，并决定今晚之后如何保护自己。",
+      "public_direction_summary": "与近期调查有关的人员进行了试探性接触，主要在评估风险、合作边界和彼此立场。",
+      "private_contexts": {
+        "npc_qian_wei": "你掌握资源和关系，但担心赵建国在压力下留下口供。你首先保护自己，也可能牺牲赵建国。",
+        "npc_zhao_jianguo": "你经手过关键材料，既怕被推出去顶罪，也怕主动翻脸后失去保护。你需要判断钱伟是否还会保你。",
+        "npc_sun_qiang": "你熟悉镇村执行链条，也察觉调查可能牵连基层经手人。除非风险逼近，否则不必主动联系任何人。",
+        "npc_liu_san": "你握有部分原始凭证，也担心夜间联系暴露自己。只有确有交换材料或求助的必要时才联系人。"
+      },
+      "model_ids": {},
+      "action_ids": [
+        "night_unify_story",
+        "night_move_originals",
+        "night_cut_off_counterpart",
+        "night_hold_position"
+      ]
+    }
+  ],
+  "night_agent_actions": [
+    {
+      "action_id": "night_unify_story",
+      "name": "统一口径",
+      "description": "双方继续合作，约定一致说法并互相掩护；只有两人都选择才成立。",
+      "public_direction_summary": "部分相关人员尝试协调对外说法，调查中的相互掩护迹象有所增强。",
+      "resolution": "consensus",
+      "actor_ids": ["npc_qian_wei", "npc_zhao_jianguo"],
+      "forbidden_flags": ["与钱伟撕破脸"],
+      "allowed_target_ids": ["npc_qian_wei", "npc_zhao_jianguo"],
+      "effects": {
+        "metric_deltas": {"corruption_evidence": [3, 8]},
+        "open_flags": ["攻守同盟已成"],
+        "close_flags": ["钱赵生隙"]
+      },
+      "npc_deltas": {
+        "npc_qian_wei": {"attitude": 3, "anxiety": -3},
+        "npc_zhao_jianguo": {"attitude": 3, "anxiety": -3}
+      }
+    },
+    {
+      "action_id": "night_move_originals",
+      "name": "转移原件",
+      "description": "赵建国趁夜转移可能被调查取得的原件，以降低直接证据强度。",
+      "public_direction_summary": "有人可能调整了关键材料的保管方式，后续核查难度有所上升。",
+      "resolution": "unilateral",
+      "actor_ids": ["npc_zhao_jianguo"],
+      "required_any_flags": ["已立项审计", "秘密摸底"],
+      "allowed_target_ids": [],
+      "effects": {
+        "metric_deltas": {"corruption_evidence": [-8, -3]},
+        "open_flags": ["原件缺失"]
+      },
+      "npc_deltas": {
+        "npc_zhao_jianguo": {"attitude": 0, "anxiety": 8}
+      }
+    },
+    {
+      "action_id": "night_cut_off_counterpart",
+      "name": "切割对方",
+      "description": "停止互相掩护，并为必要时向调查者提供对方线索做准备。",
+      "public_direction_summary": "原有合作关系出现裂痕，相关人员开始相互防备。",
+      "resolution": "unilateral",
+      "required_flags": ["与钱伟撕破脸"],
+      "allowed_target_ids": ["npc_qian_wei", "npc_zhao_jianguo"],
+      "effects": {
+        "metric_deltas": {"corruption_evidence": [0, 3]},
+        "open_flags": ["钱赵生隙"],
+        "close_flags": ["攻守同盟已成"]
+      },
+      "npc_deltas": {
+        "npc_qian_wei": {"attitude": -5, "anxiety": 5},
+        "npc_zhao_jianguo": {"attitude": -5, "anxiety": 5}
+      }
+    },
+    {
+      "action_id": "night_hold_position",
+      "name": "暂不行动",
+      "description": "不达成共同安排，也不立刻采取高风险动作，保留下一夜改变立场的空间。",
+      "public_direction_summary": "相关人员进行了有限接触，但没有形成明确的共同安排。",
+      "resolution": "unilateral",
+      "allowed_target_ids": [],
+      "effects": {},
+      "npc_deltas": {}
+    }
+  ]
+}

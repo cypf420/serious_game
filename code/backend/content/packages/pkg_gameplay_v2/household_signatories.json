@@ -1,0 +1,213 @@
+{
+  "schema_version": 1,
+  "purpose": "23个关联户的合同专用签约人。仅用于逐户审阅、反报价和签署，不进入完整NPC主线或常驻关系网。",
+  "signatories": [
+    {
+      "household_id": "ZDS-02",
+      "name": "周有福",
+      "initial_position": "有条件接受",
+      "core_concern": "安置房能否按期交付，周氏家庭是否执行同一补偿口径",
+      "acceptance_condition": "合同写明安置房源、交付日期，并按公示标准核算人口和面积",
+      "refusal_trigger": "要求先签空白条款，或同层家庭出现未说明的待遇差异",
+      "counteroffer_focus": "交房期限和逾期责任"
+    },
+    {
+      "household_id": "ZDS-03",
+      "name": "周来顺",
+      "initial_position": "观望",
+      "core_concern": "住宅、宅基地和附属物是否逐项测量清楚",
+      "acceptance_condition": "测量确认单与合同计算表一致，且可以现场复核",
+      "refusal_trigger": "以户群总数替代本户测量，或遗漏附属物",
+      "counteroffer_focus": "补测、复核和差额补偿程序"
+    },
+    {
+      "household_id": "ZDS-04",
+      "name": "周国安",
+      "initial_position": "观望",
+      "core_concern": "搬迁后基本生活和养殖附属设施如何处置",
+      "acceptance_condition": "老井、猪圈等附属物完成清点，安置交接时间明确",
+      "refusal_trigger": "未清点便要求腾房，或交房与搬离时间脱节",
+      "counteroffer_focus": "附属物补偿和搬迁过渡期"
+    },
+    {
+      "household_id": "ZDS-05",
+      "name": "周保田",
+      "initial_position": "有条件接受",
+      "core_concern": "四名实际居住成员能否平稳完成搬迁",
+      "acceptance_condition": "安置人口、付款节点和腾房日期在合同中逐项写明",
+      "refusal_trigger": "人口认定被削减，或付款安排只有口头承诺",
+      "counteroffer_focus": "付款比例和搬迁衔接"
+    },
+    {
+      "household_id": "ZDS-06",
+      "name": "周庆余",
+      "initial_position": "观望",
+      "core_concern": "果树和承包地收益是否被遗漏",
+      "acceptance_condition": "果树完成清点，承包地处置依据和补偿项目可以核对",
+      "refusal_trigger": "只计算住宅，不处理已经登记的土地和附属物",
+      "counteroffer_focus": "果树清点与土地补偿明细"
+    },
+    {
+      "household_id": "ZKY-02",
+      "name": "周守礼",
+      "initial_position": "倾向拒绝",
+      "core_concern": "家族坟墓迁移地点、时序和礼俗能否落实",
+      "acceptance_condition": "迁坟方案已经批准，合同引用具体地点、日期和费用承担",
+      "refusal_trigger": "只谈住宅补偿，不提供可执行的迁坟安排",
+      "counteroffer_focus": "迁坟地点、期限和仪式费用"
+    },
+    {
+      "household_id": "ZKY-03",
+      "name": "周承祖",
+      "initial_position": "倾向拒绝",
+      "core_concern": "迁坟不得仓促，家属必须参与确认",
+      "acceptance_condition": "家属现场确认程序、迁移顺序和后续祭扫安排写入合同附件",
+      "refusal_trigger": "行政命令替代家属确认，或要求先腾房后处理祖坟",
+      "counteroffer_focus": "家属确认权和迁移先后顺序"
+    },
+    {
+      "household_id": "ZMC-02",
+      "name": "周成业",
+      "initial_position": "观望",
+      "core_concern": "本户算法能否与全村公开口径逐项对上",
+      "acceptance_condition": "提供逐项测算表、政策依据和异议复核入口",
+      "refusal_trigger": "出现无法解释的单户差价，或拒绝提供计算过程",
+      "counteroffer_focus": "面积认定、计算依据和复核期限"
+    },
+    {
+      "household_id": "WU-02",
+      "name": "刘玉芬",
+      "initial_position": "有条件接受",
+      "core_concern": "孩子转学后能否连续入学，安置房是否按期可住",
+      "acceptance_condition": "合同附件列明接收学校、办理责任人和最迟入学时间",
+      "refusal_trigger": "只承诺协调入学，却没有学校、期限和责任部门",
+      "counteroffer_focus": "就学保障和逾期临时安排"
+    },
+    {
+      "household_id": "WU-03",
+      "name": "吴国平",
+      "initial_position": "倾向拒绝",
+      "core_concern": "儿童血铅复查、治疗费用和转学必须同时有保障",
+      "acceptance_condition": "医疗复查资源和就学安排均已落实，并写明费用承担方",
+      "refusal_trigger": "以一次性现金替代持续医疗随访，或要求放弃追责权利",
+      "counteroffer_focus": "复查周期、医疗费用和就学衔接"
+    },
+    {
+      "household_id": "WU-04",
+      "name": "杨春梅",
+      "initial_position": "有条件接受",
+      "core_concern": "低收入家庭能否承担过渡期生活和搬迁成本",
+      "acceptance_condition": "低收入援助、过渡安置和搬迁费用有明确金额与发放时间",
+      "refusal_trigger": "补偿到账前要求先搬，或取消现有救助资格",
+      "counteroffer_focus": "过渡补助和付款前置比例"
+    },
+    {
+      "household_id": "WU-05",
+      "name": "陈有才",
+      "initial_position": "观望",
+      "core_concern": "孩子上学与家庭搬迁时间不能相互冲突",
+      "acceptance_condition": "允许按学期安排搬迁，接收学校和交通方案已经确认",
+      "refusal_trigger": "在学期中强制腾房，且没有临时通学安排",
+      "counteroffer_focus": "腾房日期和通学保障"
+    },
+    {
+      "household_id": "WU-06",
+      "name": "何桂香",
+      "initial_position": "观望",
+      "core_concern": "普通家庭是否真正按照同一标准公平处理",
+      "acceptance_condition": "本户测算、安置房源和付款顺序均可与公示规则核对",
+      "refusal_trigger": "发现关系户插队、暗补或同条件不同价",
+      "counteroffer_focus": "公开排序和同类家庭一致性"
+    },
+    {
+      "household_id": "HE-02",
+      "name": "何建军",
+      "initial_position": "倾向拒绝",
+      "core_concern": "儿童血铅随访和家庭劳动力转移能否持续",
+      "acceptance_condition": "复查机构、周期、费用和就业转介均形成可执行附件",
+      "refusal_trigger": "医疗仅作一次性补偿，或就业安排没有接收单位",
+      "counteroffer_focus": "持续医疗保障和就业转介"
+    },
+    {
+      "household_id": "HE-03",
+      "name": "何秀兰",
+      "initial_position": "倾向拒绝",
+      "core_concern": "搬迁不能中断孩子治疗，也不能让家庭收入突然归零",
+      "acceptance_condition": "医疗随访不中断，并提供明确的就业或过渡收入方案",
+      "refusal_trigger": "腾房日期早于医疗和就业资源落实日期",
+      "counteroffer_focus": "履约先后顺序和过渡收入"
+    },
+    {
+      "household_id": "HE-04",
+      "name": "何春生",
+      "initial_position": "有条件接受",
+      "core_concern": "低收入家庭的搬家费用和后续生计",
+      "acceptance_condition": "搬迁补助、过渡安置和劳动力转介有明确兑现时间",
+      "refusal_trigger": "先搬后补，或只提供无法核验的就业口头承诺",
+      "counteroffer_focus": "搬迁补助和就业落实期限"
+    },
+    {
+      "household_id": "TAN-02",
+      "name": "谭福生",
+      "initial_position": "倾向拒绝",
+      "core_concern": "历史材料和既有争议必须先给出正式处理结论",
+      "acceptance_condition": "旧案材料完成核验，处理决定和本次补偿边界书面明确",
+      "refusal_trigger": "要求以签约换取撤回历史主张，或拒绝登记旧材料",
+      "counteroffer_focus": "旧案处理期限和权利保留条款"
+    },
+    {
+      "household_id": "TAN-03",
+      "name": "谭贵平",
+      "initial_position": "倾向拒绝",
+      "core_concern": "政府是否承认并处理历史程序瑕疵",
+      "acceptance_condition": "书面说明旧案与本次合同的关系，并保留依法申诉权",
+      "refusal_trigger": "合同夹带放弃信访、诉讼或追责权利的概括条款",
+      "counteroffer_focus": "权利保留和争议解决机制"
+    },
+    {
+      "household_id": "MA-02",
+      "name": "马德旺",
+      "initial_position": "观望",
+      "core_concern": "同等面积家庭最终能拿到多少、何时拿到",
+      "acceptance_condition": "本户测算可以和已公示同类户对照，付款期限明确",
+      "refusal_trigger": "同类家庭待遇差异无法解释，或提前签约奖励口径变化",
+      "counteroffer_focus": "同类比较和付款节点"
+    },
+    {
+      "household_id": "MA-03",
+      "name": "马秋生",
+      "initial_position": "观望",
+      "core_concern": "果树、猪圈等附属物是否会在赶进度时被漏算",
+      "acceptance_condition": "附属物清点单由本户确认，并作为合同附件",
+      "refusal_trigger": "先按平均数签约、以后再补测，或拒绝书面确认差额",
+      "counteroffer_focus": "附属物补测和差额支付"
+    },
+    {
+      "household_id": "NING-02",
+      "name": "宁国梁",
+      "initial_position": "有条件接受",
+      "core_concern": "签约程序、文件效力和履约顺序必须合规",
+      "acceptance_condition": "出示有效政策文件，合同经过必要审批且送达程序完整",
+      "refusal_trigger": "倒签日期、代签、空白签字或未经审批的额外承诺",
+      "counteroffer_focus": "审批依据、授权手续和违约责任"
+    },
+    {
+      "household_id": "YANG-02",
+      "name": "杨志勇",
+      "initial_position": "观望",
+      "core_concern": "本人常年在外，授权方式和货币安置选择必须可远程核验",
+      "acceptance_condition": "完成本人身份与授权核验，可在货币和实物安置组合中明确选择",
+      "refusal_trigger": "由亲属代签却没有合法授权，或替本人预选安置方式",
+      "counteroffer_focus": "远程签署、授权期限和安置组合"
+    },
+    {
+      "household_id": "YUAN-02",
+      "name": "袁腊梅",
+      "initial_position": "有条件接受",
+      "core_concern": "医疗压力和低楼层安置需求能否真正落实",
+      "acceptance_condition": "锁定可用的低楼层房源，并明确医疗救助与搬迁协助",
+      "refusal_trigger": "只有优先考虑等模糊表述，或房源尚不存在便要求签署",
+      "counteroffer_focus": "具体房源、医疗救助和搬迁协助"
+    }
+  ]
+}

@@ -1,0 +1,389 @@
+{
+  "schema_version": 1,
+  "source_file": "最终剧本.md",
+  "source_sha256": "sha256:8a1a5fad0221ec922846dcefbcc4e2c026181fe21c95e8b440a34849fc1464e1",
+  "decisions": [
+    {
+      "content_id": "DP1-01",
+      "chapter": 1,
+      "source_line": 2530
+    },
+    {
+      "content_id": "DP1-02",
+      "chapter": 1,
+      "source_line": 2617
+    },
+    {
+      "content_id": "DP1-03",
+      "chapter": 1,
+      "source_line": 2699
+    },
+    {
+      "content_id": "DP1-04",
+      "chapter": 1,
+      "source_line": 2774
+    },
+    {
+      "content_id": "DP1-05",
+      "chapter": 1,
+      "source_line": 2852
+    },
+    {
+      "content_id": "DP1-06",
+      "chapter": 1,
+      "source_line": 2932
+    },
+    {
+      "content_id": "DP1-07",
+      "chapter": 1,
+      "source_line": 3012
+    },
+    {
+      "content_id": "DP1-08",
+      "chapter": 1,
+      "source_line": 3063
+    },
+    {
+      "content_id": "DP1-09",
+      "chapter": 1,
+      "source_line": 3117
+    },
+    {
+      "content_id": "DP2-01",
+      "chapter": 2,
+      "source_line": 3545
+    },
+    {
+      "content_id": "DP2-02",
+      "chapter": 2,
+      "source_line": 3614
+    },
+    {
+      "content_id": "DP2-03",
+      "chapter": 2,
+      "source_line": 3687
+    },
+    {
+      "content_id": "DP2-04",
+      "chapter": 2,
+      "source_line": 3754
+    },
+    {
+      "content_id": "DP2-05",
+      "chapter": 2,
+      "source_line": 3853
+    },
+    {
+      "content_id": "DP2-06",
+      "chapter": 2,
+      "source_line": 4057
+    },
+    {
+      "content_id": "DP2-07",
+      "chapter": 2,
+      "source_line": 4113
+    },
+    {
+      "content_id": "DP2-08",
+      "chapter": 2,
+      "source_line": 4199
+    },
+    {
+      "content_id": "DP2-09",
+      "chapter": 2,
+      "source_line": 4254
+    },
+    {
+      "content_id": "DP2-10",
+      "chapter": 2,
+      "source_line": 4328
+    },
+    {
+      "content_id": "DP3-01",
+      "chapter": 3,
+      "source_line": 4707
+    },
+    {
+      "content_id": "DP3-02",
+      "chapter": 3,
+      "source_line": 4835
+    },
+    {
+      "content_id": "DP3-03",
+      "chapter": 3,
+      "source_line": 4979
+    },
+    {
+      "content_id": "DP3-04",
+      "chapter": 3,
+      "source_line": 5071
+    },
+    {
+      "content_id": "DP3-05",
+      "chapter": 3,
+      "source_line": 5215
+    },
+    {
+      "content_id": "DP3-06",
+      "chapter": 3,
+      "source_line": 5364
+    },
+    {
+      "content_id": "DP3-07",
+      "chapter": 3,
+      "source_line": 5570
+    },
+    {
+      "content_id": "DP3-08",
+      "chapter": 3,
+      "source_line": 5879
+    },
+    {
+      "content_id": "DP3-09",
+      "chapter": 3,
+      "source_line": 5990
+    },
+    {
+      "content_id": "DP3-10",
+      "chapter": 3,
+      "source_line": 6140
+    },
+    {
+      "content_id": "DP4-01",
+      "chapter": 4,
+      "source_line": 6472
+    },
+    {
+      "content_id": "DP4-02",
+      "chapter": 4,
+      "source_line": 6630
+    },
+    {
+      "content_id": "DP4-03",
+      "chapter": 4,
+      "source_line": 6727
+    },
+    {
+      "content_id": "DP4-04",
+      "chapter": 4,
+      "source_line": 6848
+    },
+    {
+      "content_id": "DP4-05",
+      "chapter": 4,
+      "source_line": 6968
+    },
+    {
+      "content_id": "DP4-06",
+      "chapter": 4,
+      "source_line": 7070
+    },
+    {
+      "content_id": "DP4-07",
+      "chapter": 4,
+      "source_line": 7213
+    },
+    {
+      "content_id": "DP4-08",
+      "chapter": 4,
+      "source_line": 7311
+    },
+    {
+      "content_id": "DP4-09",
+      "chapter": 4,
+      "source_line": 7531
+    },
+    {
+      "content_id": "DP4-10",
+      "chapter": 4,
+      "source_line": 7709
+    },
+    {
+      "content_id": "DP4-11",
+      "chapter": 4,
+      "source_line": 7776
+    },
+    {
+      "content_id": "DP5-01",
+      "chapter": 5,
+      "source_line": 8088
+    },
+    {
+      "content_id": "DP5-02",
+      "chapter": 5,
+      "source_line": 8259
+    },
+    {
+      "content_id": "DP5-03",
+      "chapter": 5,
+      "source_line": 8412
+    },
+    {
+      "content_id": "DP5-04",
+      "chapter": 5,
+      "source_line": 8637
+    },
+    {
+      "content_id": "DP5-05",
+      "chapter": 5,
+      "source_line": 8698
+    },
+    {
+      "content_id": "DP5-06",
+      "chapter": 5,
+      "source_line": 8909
+    },
+    {
+      "content_id": "DP5-07",
+      "chapter": 5,
+      "source_line": 9100
+    },
+    {
+      "content_id": "DP5-08",
+      "chapter": 5,
+      "source_line": 9238
+    },
+    {
+      "content_id": "DP5-09",
+      "chapter": 5,
+      "source_line": 9308
+    },
+    {
+      "content_id": "DP5-10",
+      "chapter": 5,
+      "source_line": 9417
+    },
+    {
+      "content_id": "DP5-11",
+      "chapter": 5,
+      "source_line": 9502
+    },
+    {
+      "content_id": "DP5-12",
+      "chapter": 5,
+      "source_line": 9554
+    },
+    {
+      "content_id": "DP6-01",
+      "chapter": 6,
+      "source_line": 9838
+    },
+    {
+      "content_id": "DP6-02",
+      "chapter": 6,
+      "source_line": 9946
+    },
+    {
+      "content_id": "DP6-03",
+      "chapter": 6,
+      "source_line": 10048
+    },
+    {
+      "content_id": "DP6-04",
+      "chapter": 6,
+      "source_line": 10287
+    },
+    {
+      "content_id": "DP6-05",
+      "chapter": 6,
+      "source_line": 10392
+    },
+    {
+      "content_id": "DP6-06",
+      "chapter": 6,
+      "source_line": 10547
+    },
+    {
+      "content_id": "DP6-07",
+      "chapter": 6,
+      "source_line": 10637
+    },
+    {
+      "content_id": "DP6-08",
+      "chapter": 6,
+      "source_line": 10742
+    },
+    {
+      "content_id": "DP6-09",
+      "chapter": 6,
+      "source_line": 10951
+    },
+    {
+      "content_id": "DP6-10",
+      "chapter": 6,
+      "source_line": 11072
+    }
+  ],
+  "events": [
+    {
+      "content_id": "EV1-01",
+      "chapter": 1,
+      "source_line": 2429
+    },
+    {
+      "content_id": "EV1-02",
+      "chapter": 1,
+      "source_line": 3191
+    },
+    {
+      "content_id": "EV1-03",
+      "chapter": 1,
+      "source_line": 3241
+    },
+    {
+      "content_id": "EV2-01",
+      "chapter": 2,
+      "source_line": 3954
+    },
+    {
+      "content_id": "EV3-01",
+      "chapter": 3,
+      "source_line": 5748
+    },
+    {
+      "content_id": "EV4-01",
+      "chapter": 4,
+      "source_line": 7157
+    },
+    {
+      "content_id": "EV4-02",
+      "chapter": 4,
+      "source_line": 7404
+    },
+    {
+      "content_id": "EV4-03",
+      "chapter": 4,
+      "source_line": 7593
+    },
+    {
+      "content_id": "EV4-04",
+      "chapter": 4,
+      "source_line": 7665
+    },
+    {
+      "content_id": "EV5-01",
+      "chapter": 5,
+      "source_line": 8520
+    },
+    {
+      "content_id": "EV5-02",
+      "chapter": 5,
+      "source_line": 9010
+    },
+    {
+      "content_id": "EV5-03",
+      "chapter": 5,
+      "source_line": 9599
+    },
+    {
+      "content_id": "EV6-01",
+      "chapter": 6,
+      "source_line": 10158
+    },
+    {
+      "content_id": "EV6-02",
+      "chapter": 6,
+      "source_line": 10467
+    }
+  ]
+}

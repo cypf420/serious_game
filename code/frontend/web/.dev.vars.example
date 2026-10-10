@@ -1,0 +1,3 @@
+# Copy to .dev.vars when the backend does not use the default local address.
+# This value is read only by the server-side Cloudflare Worker binding.
+GAME_BACKEND_URL=http://127.0.0.1:8100

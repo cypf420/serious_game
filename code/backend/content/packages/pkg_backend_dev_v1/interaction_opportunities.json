@@ -1,0 +1,733 @@
+{
+  "schema_version": 2,
+  "conversation_contexts": {
+    "opp_d02_wu_xiuying_first_talk": {
+      "opening_narrative": "专班名单刚定下来，你带着新摸出的派系图下村核实。坡道上，吴秀英拎着一篮刚摘的青菜迎面走来。旁人见了这位教过村里三代人的老教师都客气三分；她没有躲你，只淡淡打了个招呼。你意识到，她正是能帮你读懂柳林村人情脉络的人，于是停下脚步，请她说几句村里的实情。",
+      "conversation_goal": "弄清周氏宗族、散姓和关键村民之间的关系，并听取她对搬迁工作的真实顾虑。"
+    },
+    "opp_d03_zhou_dashan_first_talk": {
+      "opening_narrative": "吴秀英点破村里的派系之后，你决定先见掌握村务和周氏宗族话语权的周大山。村委会院里刚散完一场议事，他让其他人先走，把搪瓷茶缸往桌上一放，示意你坐。你们都清楚，搬迁若绕开他，后面的三十六户只会更加难谈。",
+      "conversation_goal": "了解村委会和周氏宗族的正式立场，试探祖坟、祠堂、集体利益与签约之间的真实阻力。"
+    },
+    "opp_31_zhang_li_contact": {
+      "opening_narrative": "市委巡察组已经进驻云溪。你带着阶段材料来到巡察组临时办公室，请求就搬迁进度、干部作风和程序风险单独说明情况。张立合上卷宗，让工作人员带上门，显然准备把每一句话都放到证据和程序的尺子上衡量。",
+      "conversation_goal": "说明当前工作并核实巡察关注点；只能用事实、材料和合法程序争取他的判断。"
+    },
+    "opp_16_zhao_jianguo_contact": {
+      "opening_narrative": "补偿盘子、部门配合和本地关系网逐渐缠到一起，你绕不开分管资金与项目的赵建国。你约他在县政府小会议室碰面。他端着茶坐下，仍是一副老同志替年轻干部把关的口吻，等你先说明来意。",
+      "conversation_goal": "就预算、项目推进和部门协作交换意见，并试探他对旧账与本地关系网的态度。"
+    },
+    "opp_18_qian_wei_contact": {
+      "opening_narrative": "宏达方面再次催问开工时间和补偿边界。你没有在酒桌上见钱伟，而是把他请到政府接待室正式谈。钱伟带着项目材料准时出现，笑容周全，桌上的每个数字却都牵着企业的工期和利益。",
+      "conversation_goal": "核实企业诉求、资金边界与环保责任，判断钱伟是在合作、试探还是施压。"
+    },
+    "opp_20_liu_san_contact": {
+      "opening_narrative": "走访记录与村账之间出现了几处对不上的地方。为避开周大山和村委会其他人的视线，你让人私下通知刘三，傍晚在镇上的一间空办公室见面。刘三进门前回头看了两次，坐下后一直攥着杯沿。",
+      "conversation_goal": "从经手账目的人口中核对补偿、村账和资金流向，同时判断他最害怕什么。"
+    },
+    "opp_26_chen_mo_contact": {
+      "opening_narrative": "关于清江污染和村民体检单的消息开始从官方渠道之外冒出来。你通过吴秀英留下的线索联系上陈默，约在县城一间不起眼的茶馆见面。他把手机扣在桌上，没有开录音，先问你究竟想查清问题，还是只想控制报道。",
+      "conversation_goal": "确认记者掌握的信息边界，讨论证据核验与公共披露风险，但不能要求他放弃独立判断。"
+    },
+    "opp_22_shi_wenbin_contact": {
+      "opening_narrative": "环保站的公开报表和你听到的河道情况并不完全一致。石文斌既是环保站职工，又是柳林村人，你没有把他叫到单位问话，而是在下班后约到河堤边。远处就是宏达厂区，他站得离你半步远，显然仍在掂量该以哪一种身份开口。",
+      "conversation_goal": "核实监测流程与河道异常，给他足够安全感，让他只谈自己亲历和经手的事实。"
+    },
+    "opp_03_zhou_kuiyuan_contact": {
+      "opening_narrative": "摸清周氏宗族的分量后，你到祠堂边拜访负责族中礼仪和祖坟事务的周奎元。他刚给香案掸完灰，没有请你进正堂，只在廊下摆了两张竹椅。对他而言，这场搬迁首先不是价钱，而是香火和体面往哪里安放。",
+      "conversation_goal": "了解祖坟、祠堂和祭祀安排的底线，寻找不把宗族体面简单折成现金的解决办法。"
+    },
+    "opp_03_zhou_mancang_contact": {
+      "opening_narrative": "走访中有人告诉你，周家并非所有人都只听族长一句话，周满仓尤其认账不认人。你带着公开补偿口径来到他家院坝。他搬来凳子，却先把计算器和一叠旧票据摆到桌上，意思很明白：账算不清，别的话都不用谈。",
+      "conversation_goal": "把补偿算法、先后次序和公开标准讲清楚，以可核对的账争取他的判断。"
+    },
+    "opp_03_he_tiezhu_contact": {
+      "opening_narrative": "何铁柱是村里态度最硬的一户。你没有让镇干部把他叫来，而是亲自走到他家。院门开着，他坐在门槛上擦一枚旧军功章，见你进来没有起身，只把旁边的矮凳踢出半尺。你知道，官话和催签在这里都不会奏效。",
+      "conversation_goal": "先听清他拒签背后的家庭与健康顾虑，以事实和担当回应，而不是逼他表态。"
+    },
+    "opp_03_tan_laoliu_contact": {
+      "opening_narrative": "谭老六多次在走访名单旁写下旧案两个字。你决定在矛盾被他带到县外之前亲自听一遍。信访接待室里，他抱着一只磨破边的文件袋坐在最靠门的位置，见你进来就把多年积下的材料拍在桌上。",
+      "conversation_goal": "听清旧案诉求并区分事实、怨气和现实条件，避免用压制或空头承诺把矛盾继续推高。"
+    },
+    "opp_03_ma_changshun_contact": {
+      "opening_narrative": "村口小卖部是柳林村消息最快的地方。你以普通走访的方式进店，马长顺正给几名村民找零钱；人散后，他把柜台边的折叠椅递给你。谁家在观望、谁家刚改口，他未必最权威，却往往最先听见。",
+      "conversation_goal": "了解村中近期风向和普遍顾虑，同时辨别哪些只是传言，避免把闲话当成证据。"
+    },
+    "opp_03_ning_dehai_contact": {
+      "opening_narrative": "宁德海是退休老党员，家里又有市局工作的子女，在村里说话既有分量也格外谨慎。你带着政策文件登门时，他先把党徽摆正，才请你坐下。他关心的不只是自家补偿，更在意这件事政治上、程序上能不能说得过去。",
+      "conversation_goal": "从政策、程序和党员责任切入，听取他对带头签约及村内稳定的真实判断。"
+    },
+    "opp_03_yuan_guilan_contact": {
+      "opening_narrative": "走访名单显示袁桂兰家是低保困难户，家中还有长期需要照护的病人。你没有带大队人马，只和工作人员提着政策材料登门。屋里药味很重，她一边招呼你坐，一边下意识把一叠缴费单压在桌布下面。",
+      "conversation_goal": "弄清搬迁对照护、医疗和基本生活的具体影响，让困难得到可兑现的制度回应。"
+    },
+    "opp_03_yang_bo_contact": {
+      "opening_narrative": "杨波刚从外地返乡，既懂村里的人情，也习惯在网上比较不同地方的补偿方案。你在村口碰见他修摩托，便留下来聊。他擦了擦手上的油，先问你的方案敢不敢放到网上让所有人看。",
+      "conversation_goal": "了解年轻返乡户对公开、公平和未来生计的期待，并判断网络舆论可能如何发酵。"
+    },
+    "opp_03_lao_juetou_contact": {
+      "opening_narrative": "名单上老倔头始终没有留下明确意见。你走到他的老屋时，他正坐在檐下抽烟，听见脚步也没有抬头。屋墙裂缝和院里收好的农具说明他不是没看见现实，只是不愿让别人替他决定最后住在哪里。",
+      "conversation_goal": "耐心确认他对祖屋、子女和安置房的真实顾虑；少说官话，让可验证的安排替你说话。"
+    },
+    "opp_03_miao_xiwang_contact": {
+      "opening_narrative": "旧协议和统一补偿口径发生冲突时，苗喜旺成了绕不开的人。你在他从县城做工回来后上门，把两套标准都摊在桌上。他知道自己曾经多拿，也担心一旦重签，孩子后续的检查和生活没人负责。",
+      "conversation_goal": "讲清旧约与重签规则，同时听取他对家庭生计和孩子健康安排的具体要求。"
+    },
+    "opp_03_deng_shouben_contact": {
+      "opening_narrative": "邓守本无儿无女，祖屋几乎是他与过去唯一的联系。你到访时，他正在给门轴上油，院里安静得只剩木门的吱呀声。他没有赶你走，却也没有接你递来的政策册，只等你说明为什么一定要动这间屋。",
+      "conversation_goal": "理解祖屋对独居老人的意义，讨论晚年安置与尊严，而不是只重复补偿金额。"
+    },
+    "opp_33_jiang_chongyue_contact": {
+      "opening_narrative": "巡察压力和搬迁风险同时上升，若要公开处理干部、项目或环评问题，县委书记蒋崇岳的态度无法绕开。你带着风险清单和备选方案走进他的办公室。他没有寒暄，只让你把最坏情况和代价先讲清楚。",
+      "conversation_goal": "用可验证的风险比较说明行动或不行动的后果，争取县委层面的授权或默许。"
+    },
+    "opp_03_zheng_xiangdong_contact": {
+      "opening_narrative": "一天的走访和会议告一段落，郑向东抱着新收的材料回到县长办公室。他把文件按来源排开，等你决定先从哪条线梳理。作为秘书，他能复述已掌握的信息和提醒日程，但不会替你把未经证实的猜测当结论。",
+      "conversation_goal": "复盘已经掌握的事实、线索和待办，厘清下一步问题；不得要求他凭空推断未知内幕。"
+    },
+    "opp_07_sun_qiang_contact": {
+      "opening_narrative": "镇里报来的进度与村里实际反应出现落差，你把属地负责人孙强叫来单谈。会议结束后其他人先离开，他留下来整理杯子，显然知道这次不能再用一张笼统的情况正常应付过去。",
+      "conversation_goal": "核实基层执行中的真实阻力、资源缺口和推诿环节，明确可以兑现的支持与责任。"
+    },
+    "opp_16_feng_jingzhi_contact": {
+      "opening_narrative": "补偿、安置和应急支出开始同时挤压县里的资金盘子。你让财政局长冯敬之带齐测算表到办公室。他把每笔钱的来源、用途和风险标了不同颜色，坐下第一句话就是先说清楚总盘子还剩多少。",
+      "conversation_goal": "核实预算边界与资金合规路径，比较不同方案的真实财政代价。"
+    },
+    "opp_46_he_xingbang_contact": {
+      "opening_narrative": "进入后半程后，村民健康问题已不能再被当作零散传言处理。你约分管卫健的贺兴邦带着能够公开核验的材料来汇报。他进门后先确认办公室没有无关人员，才把文件夹放到你面前。",
+      "conversation_goal": "核实检查、复查、救治和费用安排，明确哪些健康信息已经具备合法处理依据。"
+    },
+    "opp_31_luo_jian_contact": {
+      "opening_narrative": "一批化验传真经县卫生院流转，时间和留底情况需要交叉确认。你找到经手这些材料的罗健，在档案室旁的小办公室核对。他把传真登记本摊开，只愿意回答自己亲手接收、复印和送出的部分。",
+      "conversation_goal": "确认化验材料的传递链和留底情况，不迫使经手人猜测自己不知道的幕后决定。"
+    },
+    "opp_46_ke_qinian_contact": {
+      "opening_narrative": "环保问题逐渐进入必须正式回答的阶段。你把环保站站长柯启年叫来，要求他带上公开报表、原始台账和监测流程说明。文件放上桌后，他先解释程序，再观察你究竟准备查到哪一步。",
+      "conversation_goal": "核对公开数据与原始记录的差异，追问监测责任和后续整改，但不预设未经证实的结论。"
+    },
+    "opp_59_gu_keming_contact": {
+      "opening_narrative": "市生态环境局迎检组在第五十九日抵达云溪。正式检查间隙，你请求与组长顾克明单独沟通当前风险和材料准备。临时会议室里，他把验收清单放在中间，明确表示只认现场、数据和闭环记录。",
+      "conversation_goal": "围绕环保验收标准、现场风险和整改证据沟通，不能把巡察组与环保迎检组混为一谈。"
+    },
+    "opp_59_cui_guanglin_contact": {
+      "opening_narrative": "旧信访材料可能解释谭老六反复提及的历史争议。你依程序来到信访办卷宗室，请崔广林调出对应登记。老同志戴上眼镜，把借阅手续推到你面前；签完字后，他才从柜里取出那只旧档案盒。",
+      "conversation_goal": "只围绕卷宗中已有的登记、处理过程和缺口核实事实，不要求档案管理员替任何人推断动机。"
+    },
+    "opp_01_wang_fang_contact": {
+      "opening_narrative": "王芳承担县电视台的公开报道任务，但她不是可由玩家随时发起自由会谈的角色。她只会在对应新闻场景中出现，玩家可从报道内容判断宣传口径。",
+      "conversation_goal": "该人物为环境角色，不开放直接自由对话。"
+    },
+    "opp_d53_tan_laoliu_paid_recovery": {
+      "opening_narrative": "此前的强压已经让谭老六彻底关上了门，但旧案卷宗中的缺口如今有了可以核对的依据。你带着明确的处理路径再次来到信访接待室，没有让人催他签字，只把能够兑现的步骤逐项放到桌上。他盯着材料看了很久，终于肯再听一次。",
+      "conversation_goal": "承认旧案中已坐实的问题，说明可兑现的补救程序，争取在不抹去历史责任的前提下恢复沟通。"
+    },
+    "opp_d55_yuan_guilan_paid_recovery": {
+      "opening_narrative": "复查费用由县里垫付、赔付换谅解的安排已经有了正式依据，你再次来到袁桂兰家。这一次你带来的不是口头安慰，而是办理清单、联系人和时间表。她把上次压在桌布下的缴费单重新拿了出来。",
+      "conversation_goal": "逐项确认医疗复查、困难救助和搬迁后的照护安排，让承诺能够被她当场核对。"
+    },
+    "opp_d69_zhou_mancang_restart": {
+      "opening_narrative": "此前错误的推进顺序让周满仓冷了心，常规走访已经无法重开谈判。第六十九日，你带着重新核过的账和纠正方案登门，先承认顺序上的问题，再把每一项计算依据摆出来。他没有请你进屋，却把院门留着，给了这场谈话最后一次机会。",
+      "conversation_goal": "纠正此前失序的处理方式，以完整、可核验的账重新建立谈判基础。"
+    }
+  },
+  "opportunities": [
+    {
+      "opportunity_id": "opp_d02_wu_xiuying_first_talk",
+      "npc_id": "npc_wu_xiuying",
+      "entry_type": "story_followup",
+      "day_min": 2,
+      "day_max": 2,
+      "action_id": "home_visit",
+      "availability_mode": "free",
+      "requires_flags": [
+        "flag_clan_map"
+      ],
+      "closes_on_flags": [
+        "flag_wu_first_talk_completed"
+      ],
+      "allowed_fact_ids": [
+        "fact_clan_power_map",
+        "fact_wu_independent_voice"
+      ],
+      "completion_flags": [
+        "flag_wu_first_talk_completed"
+      ],
+      "completion_fact_ids": [
+        "fact_wu_independent_voice"
+      ],
+      "completion_blocks": [
+        {
+          "block_id": "d02_wu_departure",
+          "kind": "narration",
+          "text": "说完，她拎着菜篮子径自走了，背影不高，脊梁却挺得笔直。你望着她走远，心里头那张一直理不清的派系图忽然就有了个下笔的地方。你隐隐觉着，这个不肯随波逐流的老太太，往后兴许是你在柳林村为数不多能说得上几句真话的人。"
+        }
+      ]
+    },
+    {
+      "opportunity_id": "opp_d03_zhou_dashan_first_talk",
+      "npc_id": "npc_zhou_dashan",
+      "entry_type": "stage_handoff",
+      "day_min": 3,
+      "day_max": 15,
+      "action_id": "heart_to_heart",
+      "availability_mode": "free",
+      "requires_flags": [
+        "flag_wu_first_talk_completed"
+      ],
+      "allowed_fact_ids": [
+        "fact_clan_power_map"
+      ]
+    },
+    {
+      "opportunity_id": "opp_31_zhang_li_contact",
+      "npc_id": "npc_zhang_li",
+      "entry_type": "story_window",
+      "day_min": 31,
+      "day_max": 89,
+      "action_id": "liaise_zhang_li",
+      "availability_mode": "free",
+      "allowed_fact_ids": [
+        "fact_connected_invoices",
+        "fact_false_signing",
+        "fact_two_million_fee",
+        "fact_inspection_anchors"
+      ]
+    },
+    {
+      "opportunity_id": "opp_16_zhao_jianguo_contact",
+      "npc_id": "npc_zhao_jianguo",
+      "entry_type": "story_window",
+      "day_min": 16,
+      "day_max": 89,
+      "action_id": "interview_cadre",
+      "availability_mode": "free",
+      "allowed_fact_ids": [
+        "fact_connected_invoices",
+        "fact_false_signing",
+        "fact_two_million_fee",
+        "fact_inspection_anchors"
+      ]
+    },
+    {
+      "opportunity_id": "opp_18_qian_wei_contact",
+      "npc_id": "npc_qian_wei",
+      "entry_type": "story_window",
+      "day_min": 18,
+      "day_max": 60,
+      "action_id": "interview_cadre",
+      "availability_mode": "free",
+      "allowed_fact_ids": [
+        "fact_connected_invoices",
+        "fact_false_signing",
+        "fact_two_million_fee",
+        "fact_inspection_anchors"
+      ]
+    },
+    {
+      "opportunity_id": "opp_20_liu_san_contact",
+      "npc_id": "npc_liu_san",
+      "entry_type": "story_window",
+      "day_min": 20,
+      "day_max": 58,
+      "action_id": "private_testimony",
+      "availability_mode": "free",
+      "allowed_fact_ids": [
+        "fact_connected_invoices",
+        "fact_original_vouchers",
+        "fact_identical_reports",
+        "fact_liu_old_ledger",
+        "fact_shi_usb",
+        "fact_eia_original",
+        "fact_water_sample",
+        "fact_lead_census",
+        "fact_lead_287",
+        "fact_false_signing",
+        "fact_two_million_fee",
+        "fact_shell_house"
+      ]
+    },
+    {
+      "opportunity_id": "opp_26_chen_mo_contact",
+      "npc_id": "npc_chen_mo",
+      "entry_type": "story_window",
+      "day_min": 26,
+      "day_max": 83,
+      "action_id": "contact_reporter",
+      "availability_mode": "free",
+      "allowed_fact_ids": [
+        "fact_connected_invoices",
+        "fact_original_vouchers",
+        "fact_identical_reports",
+        "fact_liu_old_ledger",
+        "fact_shi_usb",
+        "fact_eia_original",
+        "fact_water_sample",
+        "fact_lead_census",
+        "fact_lead_287",
+        "fact_false_signing",
+        "fact_two_million_fee",
+        "fact_shell_house"
+      ]
+    },
+    {
+      "opportunity_id": "opp_22_shi_wenbin_contact",
+      "npc_id": "npc_shi_wenbin",
+      "entry_type": "story_window",
+      "day_min": 22,
+      "day_max": 45,
+      "action_id": "private_testimony",
+      "availability_mode": "free",
+      "allowed_fact_ids": [
+        "fact_connected_invoices",
+        "fact_original_vouchers",
+        "fact_identical_reports",
+        "fact_liu_old_ledger",
+        "fact_shi_usb",
+        "fact_eia_original",
+        "fact_water_sample",
+        "fact_lead_census",
+        "fact_lead_287",
+        "fact_false_signing",
+        "fact_two_million_fee",
+        "fact_shell_house"
+      ]
+    },
+    {
+      "opportunity_id": "opp_03_zhou_kuiyuan_contact",
+      "npc_id": "npc_zhou_kuiyuan",
+      "entry_type": "story_window",
+      "day_min": 3,
+      "day_max": 89,
+      "action_id": "home_visit",
+      "availability_mode": "free",
+      "allowed_fact_ids": [
+        "fact_clan_power_map",
+        "fact_lead_287",
+        "fact_grave_protocol",
+        "fact_zhou_ledger_order",
+        "fact_total_households"
+      ]
+    },
+    {
+      "opportunity_id": "opp_03_zhou_mancang_contact",
+      "npc_id": "npc_zhou_mancang",
+      "entry_type": "story_window",
+      "day_min": 3,
+      "day_max": 89,
+      "action_id": "home_visit",
+      "availability_mode": "free",
+      "allowed_fact_ids": [
+        "fact_clan_power_map",
+        "fact_lead_287",
+        "fact_grave_protocol",
+        "fact_zhou_ledger_order",
+        "fact_total_households"
+      ]
+    },
+    {
+      "opportunity_id": "opp_03_he_tiezhu_contact",
+      "npc_id": "npc_he_tiezhu",
+      "entry_type": "story_window",
+      "day_min": 3,
+      "day_max": 89,
+      "action_id": "home_visit",
+      "availability_mode": "free",
+      "allowed_fact_ids": [
+        "fact_clan_power_map",
+        "fact_lead_287",
+        "fact_grave_protocol",
+        "fact_zhou_ledger_order",
+        "fact_total_households"
+      ]
+    },
+    {
+      "opportunity_id": "opp_03_tan_laoliu_contact",
+      "npc_id": "npc_tan_laoliu",
+      "entry_type": "story_window",
+      "day_min": 3,
+      "day_max": 89,
+      "action_id": "home_visit",
+      "availability_mode": "free",
+      "allowed_fact_ids": [
+        "fact_clan_power_map",
+        "fact_lead_287",
+        "fact_grave_protocol",
+        "fact_zhou_ledger_order",
+        "fact_total_households"
+      ]
+    },
+    {
+      "opportunity_id": "opp_03_ma_changshun_contact",
+      "npc_id": "npc_ma_changshun",
+      "entry_type": "story_window",
+      "day_min": 3,
+      "day_max": 89,
+      "action_id": "home_visit",
+      "availability_mode": "free",
+      "allowed_fact_ids": [
+        "fact_clan_power_map",
+        "fact_lead_287",
+        "fact_grave_protocol",
+        "fact_zhou_ledger_order",
+        "fact_total_households"
+      ]
+    },
+    {
+      "opportunity_id": "opp_03_ning_dehai_contact",
+      "npc_id": "npc_ning_dehai",
+      "entry_type": "story_window",
+      "day_min": 3,
+      "day_max": 89,
+      "action_id": "home_visit",
+      "availability_mode": "free",
+      "allowed_fact_ids": [
+        "fact_clan_power_map",
+        "fact_lead_287",
+        "fact_grave_protocol",
+        "fact_zhou_ledger_order",
+        "fact_total_households"
+      ]
+    },
+    {
+      "opportunity_id": "opp_03_yuan_guilan_contact",
+      "npc_id": "npc_yuan_guilan",
+      "entry_type": "story_window",
+      "day_min": 3,
+      "day_max": 89,
+      "action_id": "home_visit",
+      "availability_mode": "free",
+      "allowed_fact_ids": [
+        "fact_clan_power_map",
+        "fact_lead_287",
+        "fact_grave_protocol",
+        "fact_zhou_ledger_order",
+        "fact_total_households"
+      ]
+    },
+    {
+      "opportunity_id": "opp_03_yang_bo_contact",
+      "npc_id": "npc_yang_bo",
+      "entry_type": "story_window",
+      "day_min": 3,
+      "day_max": 89,
+      "action_id": "home_visit",
+      "availability_mode": "free",
+      "allowed_fact_ids": [
+        "fact_clan_power_map",
+        "fact_lead_287",
+        "fact_grave_protocol",
+        "fact_zhou_ledger_order",
+        "fact_total_households"
+      ]
+    },
+    {
+      "opportunity_id": "opp_03_lao_juetou_contact",
+      "npc_id": "npc_lao_juetou",
+      "entry_type": "story_window",
+      "day_min": 3,
+      "day_max": 89,
+      "action_id": "home_visit",
+      "availability_mode": "free",
+      "allowed_fact_ids": [
+        "fact_clan_power_map",
+        "fact_lead_287",
+        "fact_grave_protocol",
+        "fact_zhou_ledger_order",
+        "fact_total_households"
+      ]
+    },
+    {
+      "opportunity_id": "opp_03_miao_xiwang_contact",
+      "npc_id": "npc_miao_xiwang",
+      "entry_type": "story_window",
+      "day_min": 3,
+      "day_max": 89,
+      "action_id": "home_visit",
+      "availability_mode": "free",
+      "allowed_fact_ids": [
+        "fact_clan_power_map",
+        "fact_lead_287",
+        "fact_grave_protocol",
+        "fact_zhou_ledger_order",
+        "fact_total_households"
+      ]
+    },
+    {
+      "opportunity_id": "opp_03_deng_shouben_contact",
+      "npc_id": "npc_deng_shouben",
+      "entry_type": "story_window",
+      "day_min": 3,
+      "day_max": 89,
+      "action_id": "home_visit",
+      "availability_mode": "free",
+      "allowed_fact_ids": [
+        "fact_clan_power_map",
+        "fact_lead_287",
+        "fact_grave_protocol",
+        "fact_zhou_ledger_order",
+        "fact_total_households"
+      ]
+    },
+    {
+      "opportunity_id": "opp_33_jiang_chongyue_contact",
+      "npc_id": "npc_jiang_chongyue",
+      "entry_type": "story_window",
+      "day_min": 33,
+      "day_max": 87,
+      "action_id": "meet_party_secretary",
+      "availability_mode": "limited",
+      "allowed_fact_ids": [
+        "fact_connected_invoices",
+        "fact_false_signing",
+        "fact_two_million_fee",
+        "fact_inspection_anchors"
+      ]
+    },
+    {
+      "opportunity_id": "opp_03_zheng_xiangdong_contact",
+      "npc_id": "npc_zheng_xiangdong",
+      "entry_type": "story_window",
+      "day_min": 3,
+      "day_max": 89,
+      "action_id": "zheng_clue_summary",
+      "availability_mode": "limited",
+      "allowed_fact_ids": [
+        "fact_connected_invoices",
+        "fact_false_signing",
+        "fact_two_million_fee",
+        "fact_inspection_anchors"
+      ]
+    },
+    {
+      "opportunity_id": "opp_07_sun_qiang_contact",
+      "npc_id": "npc_sun_qiang",
+      "entry_type": "story_window",
+      "day_min": 7,
+      "day_max": 45,
+      "action_id": "interview_cadre",
+      "availability_mode": "limited",
+      "allowed_fact_ids": [
+        "fact_connected_invoices",
+        "fact_false_signing",
+        "fact_two_million_fee",
+        "fact_inspection_anchors"
+      ]
+    },
+    {
+      "opportunity_id": "opp_16_feng_jingzhi_contact",
+      "npc_id": "npc_feng_jingzhi",
+      "entry_type": "story_window",
+      "day_min": 16,
+      "day_max": 80,
+      "action_id": "interview_cadre",
+      "availability_mode": "limited",
+      "allowed_fact_ids": [
+        "fact_connected_invoices",
+        "fact_original_vouchers",
+        "fact_identical_reports",
+        "fact_liu_old_ledger",
+        "fact_shi_usb",
+        "fact_eia_original",
+        "fact_water_sample",
+        "fact_lead_census",
+        "fact_lead_287",
+        "fact_false_signing",
+        "fact_two_million_fee",
+        "fact_shell_house"
+      ]
+    },
+    {
+      "opportunity_id": "opp_46_he_xingbang_contact",
+      "npc_id": "npc_he_xingbang",
+      "entry_type": "story_window",
+      "day_min": 46,
+      "day_max": 83,
+      "action_id": "interview_cadre",
+      "availability_mode": "limited",
+      "allowed_fact_ids": [
+        "fact_connected_invoices",
+        "fact_original_vouchers",
+        "fact_identical_reports",
+        "fact_liu_old_ledger",
+        "fact_shi_usb",
+        "fact_eia_original",
+        "fact_water_sample",
+        "fact_lead_census",
+        "fact_lead_287",
+        "fact_false_signing",
+        "fact_two_million_fee",
+        "fact_shell_house"
+      ]
+    },
+    {
+      "opportunity_id": "opp_31_luo_jian_contact",
+      "npc_id": "npc_luo_jian",
+      "entry_type": "story_window",
+      "day_min": 31,
+      "day_max": 45,
+      "action_id": "cross_validate_clues",
+      "availability_mode": "limited",
+      "allowed_fact_ids": [
+        "fact_connected_invoices",
+        "fact_original_vouchers",
+        "fact_identical_reports",
+        "fact_liu_old_ledger",
+        "fact_shi_usb",
+        "fact_eia_original",
+        "fact_water_sample",
+        "fact_lead_census",
+        "fact_lead_287",
+        "fact_false_signing",
+        "fact_two_million_fee",
+        "fact_shell_house"
+      ]
+    },
+    {
+      "opportunity_id": "opp_46_ke_qinian_contact",
+      "npc_id": "npc_ke_qinian",
+      "entry_type": "story_window",
+      "day_min": 46,
+      "day_max": 60,
+      "action_id": "interview_cadre",
+      "availability_mode": "limited",
+      "allowed_fact_ids": [
+        "fact_connected_invoices",
+        "fact_false_signing",
+        "fact_two_million_fee",
+        "fact_inspection_anchors"
+      ]
+    },
+    {
+      "opportunity_id": "opp_59_gu_keming_contact",
+      "npc_id": "npc_gu_keming",
+      "entry_type": "story_window",
+      "day_min": 59,
+      "day_max": 60,
+      "action_id": "interview_cadre",
+      "availability_mode": "limited",
+      "allowed_fact_ids": [
+        "fact_connected_invoices",
+        "fact_false_signing",
+        "fact_two_million_fee",
+        "fact_inspection_anchors"
+      ]
+    },
+    {
+      "opportunity_id": "opp_59_cui_guanglin_contact",
+      "npc_id": "npc_cui_guanglin",
+      "entry_type": "story_window",
+      "day_min": 59,
+      "day_max": 60,
+      "action_id": "interview_cadre",
+      "availability_mode": "limited",
+      "allowed_fact_ids": [
+        "fact_connected_invoices",
+        "fact_false_signing",
+        "fact_two_million_fee",
+        "fact_inspection_anchors"
+      ]
+    },
+    {
+      "opportunity_id": "opp_01_wang_fang_contact",
+      "npc_id": "npc_wang_fang",
+      "entry_type": "story_window",
+      "day_min": 1,
+      "day_max": 90,
+      "action_id": "home_visit",
+      "availability_mode": "closed",
+      "allowed_fact_ids": [
+        "fact_clan_power_map",
+        "fact_lead_287",
+        "fact_grave_protocol",
+        "fact_zhou_ledger_order",
+        "fact_total_households"
+      ]
+    },
+    {
+      "opportunity_id": "opp_d53_tan_laoliu_paid_recovery",
+      "npc_id": "npc_tan_laoliu",
+      "entry_type": "scripted_recovery",
+      "day_min": 53,
+      "day_max": 60,
+      "action_id": "home_visit",
+      "availability_mode": "free",
+      "requires_flags": [
+        "谭老六被强压",
+        "旧账缺口已坐实"
+      ],
+      "closes_on_flags": [
+        "谭老六已入账",
+        "谭老六永久关闭"
+      ],
+      "completion_effects": {
+        "metric_deltas": {},
+        "ledger_deltas": {
+          "signed_households": [
+            3,
+            3
+          ]
+        },
+        "open_flags": [
+          "谭老六已安抚",
+          "谭老六已入账"
+        ],
+        "close_flags": []
+      }
+    },
+    {
+      "opportunity_id": "opp_d55_yuan_guilan_paid_recovery",
+      "npc_id": "npc_yuan_guilan",
+      "entry_type": "scripted_recovery",
+      "day_min": 55,
+      "day_max": 60,
+      "action_id": "welfare_medical_safety_net",
+      "availability_mode": "free",
+      "requires_flags": [
+        "赔付换谅解在册",
+        "复查费县垫"
+      ],
+      "closes_on_flags": [
+        "袁桂兰已入账"
+      ],
+      "completion_effects": {
+        "metric_deltas": {},
+        "ledger_deltas": {
+          "signed_households": [
+            2,
+            2
+          ]
+        },
+        "open_flags": [
+          "困难户帮扶",
+          "袁桂兰已入账"
+        ],
+        "close_flags": []
+      }
+    },
+    {
+      "opportunity_id": "opp_d69_zhou_mancang_restart",
+      "npc_id": "npc_zhou_mancang",
+      "entry_type": "scripted_recovery",
+      "day_min": 69,
+      "day_max": 69,
+      "action_id": "home_visit",
+      "availability_mode": "free",
+      "requires_flags": [
+        "周满仓已冷"
+      ],
+      "closes_on_flags": [
+        "周满仓顺序已错",
+        "周满仓已入账",
+        "周满仓重启已付费"
+      ],
+      "completion_flags": [
+        "周满仓重启已付费"
+      ],
+      "completion_decision_id": "dp5_04_recovery",
+      "allowed_fact_ids": [
+        "fact_zhou_ledger_order"
+      ]
+    }
+  ],
+  "notes": "M2 为 29 名 NPC 登记故事窗口，并增加谭老六、袁桂兰、周满仓三条母稿指定的付费恢复入口；王芳为环境人物，不开放直接对话。"
+}

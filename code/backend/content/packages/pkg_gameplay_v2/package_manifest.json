@@ -1,0 +1,13 @@
+{
+  "package_id": "pkg_gameplay_v2",
+  "title": "浊流之上",
+  "package_version": "1.2.0-gameplay-closure",
+  "source_version": "最终剧本_20260723",
+  "content_hash": "sha256:1c45123f269f6ebd4ed2a0a8c13cba3b6d15b175100705ecaede1c67fc64a421",
+  "status": "draft",
+  "gameplay_schema_version": 3,
+  "script_schema_version": 2,
+  "rules_schema_version": 3,
+  "notes": "单一叙事舞台与当日未读队列；晨报、开场、决策门控和场景标识按玩家阅读顺序投影；补齐 D12-D26 及后续短缺剧情，剧情决定固定为零精力。",
+  "source_sha256": "sha256:f05f266483b832bddc226d46685afcffc41e2dadcc14a631782487570f3bdda7"
+}

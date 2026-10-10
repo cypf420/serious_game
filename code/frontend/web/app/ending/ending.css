@@ -1,0 +1,19 @@
+.ending-open-button { cursor: pointer; }
+.ending-close { position: absolute; top: 12px; right: 12px; z-index: 1; width: 36px; height: 36px; border: 0; border-radius: 50%; color: #813c30; background: #f5ead4; font-size: 27px; line-height: 1; cursor: pointer; }
+.ending-backdrop { position: fixed; inset: 0; z-index: 1800; display: grid; place-items: center; padding: 2dvh 0; background: rgba(30, 23, 19, .72); backdrop-filter: blur(4px); }
+.ending-card { box-sizing: border-box; width: 78vw; height: min(850px, 92dvh); max-height: 92dvh; min-height: 0; display: flex; flex-direction: column; overflow: hidden; position: relative; padding: clamp(18px, 3vw, 46px) clamp(22px, 4vw, 70px) 20px; color: #45382b; background: radial-gradient(ellipse at 18% 12%, rgba(255,255,255,.5), transparent 55%), repeating-linear-gradient(0deg, rgba(101,73,36,.018) 0, rgba(101,73,36,.018) 1px, transparent 1px, transparent 4px), #f0e2c6; border: 1px solid #c6aa79; box-shadow: 0 24px 90px #0006, inset 0 0 70px #ad814c28; border-radius: 5px; outline: none; }
+.ending-card::before { content: ""; pointer-events: none; position: absolute; inset: 9px; border: 1px solid #b5915b6b; border-radius: 2px; }
+.ending-card-header { flex: 0 0 auto; text-align: center; border-bottom: 1px solid #a2824c55; padding-bottom: 14px; }
+.ending-eyebrow { font-size: 12px; letter-spacing: .28em; margin: 0 0 7px; color: #836d50; }
+.ending-card h1 { font-family: "Noto Serif SC", "Source Han Serif SC", "Songti SC", SimSun, serif; color: #922b25; font-size: clamp(38px, 5.6vw, 88px); font-weight: 900; line-height: 1.16; letter-spacing: .06em; text-wrap: balance; margin: 0; }
+.ending-card h2 { font-family: "Noto Serif SC", "Songti SC", SimSun, serif; font-size: clamp(16px, 1.8vw, 27px); font-weight: 500; color: #715138; margin: 9px 0 0; text-wrap: balance; }
+.ending-metrics { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 28px; margin: 15px 0 0; font-size: 13px; color: #79644a; }
+.ending-metrics strong { color: #873c2a; font-size: 16px; font-variant-numeric: tabular-nums; }
+.ending-reading { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; padding-top: 15px; }
+.ending-reading > * { flex: 1 1 auto; min-height: 0; }
+.ending-actions { flex: 0 0 auto; display: flex; justify-content: center; gap: 12px; padding: 14px 0 0; border-top: 1px solid #a2824c55; background: transparent; color: inherit; letter-spacing: normal; }
+.ending-actions button { cursor: pointer; min-height: 40px; padding: 9px 24px; border: 1px solid #b3976a; border-radius: 4px; background: #f8efdd; color: #694b31; font: inherit; font-size: 14px; }
+.ending-actions .ending-review { color: #fff4df; background: #813c30; border-color: #813c30; }
+.ending-card button:focus-visible, .ending-open-button:focus-visible { outline: 3px solid #b16c2c; outline-offset: 3px; }
+@media (max-width: 640px) { .ending-card { width: 96vw; padding: 19px 17px 16px; } .ending-card h1 { font-size: clamp(34px, 9vw, 54px); } .ending-card-header { padding-bottom: 10px; } .ending-eyebrow { font-size: 10px; } .ending-metrics { gap: 6px 15px; margin-top: 10px; font-size: 12px; } .ending-actions { padding-top: 10px; } }
+@media (max-height: 600px) { .ending-card { padding-top: 15px; padding-bottom: 13px; } .ending-eyebrow { display: none; } .ending-card h1 { font-size: clamp(28px, 5vw, 46px); } .ending-card h2 { font-size: 16px; margin-top: 4px; } .ending-metrics { margin-top: 6px; } .ending-card-header { padding-bottom: 8px; } .ending-reading { padding-top: 8px; } .ending-actions { padding-top: 8px; } }

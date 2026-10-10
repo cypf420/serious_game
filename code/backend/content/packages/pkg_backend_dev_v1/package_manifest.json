@@ -1,0 +1,12 @@
+{
+  "package_id": "pkg_backend_dev_v1",
+  "title": "浊流之上",
+  "package_version": "0.3.0-player-briefing",
+  "source_version": "最终剧本_20260715",
+  "content_hash": "sha256:4ae93f107ad2e3136fc73fc54cb356d707fac7fccfbe3de4655585f367939c17",
+  "status": "published",
+  "script_schema_version": 2,
+  "rules_schema_version": 2,
+  "notes": "D1-D90 可运行包；补齐五份县长卷宗、公开补偿口径、资源工具、知识正文及角色政策边界。",
+  "source_sha256": "sha256:8a1a5fad0221ec922846dcefbcc4e2c026181fe21c95e8b440a34849fc1464e1"
+}

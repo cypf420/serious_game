@@ -1,0 +1,187 @@
+{
+  "schema_version": 2,
+  "facts": [
+    {
+      "fact_id": "fact_clan_power_map",
+      "title": "柳林村宗族权力图",
+      "category": "fact",
+      "text": "柳林村共36户，周姓11户集中住在村中心；刘、吴、杨等散姓多在村边和河湾下游。周氏宗族掌握村内主要话语权，吴秀英连接宗族核心与边缘散户。",
+      "source_label": "D2走访吴秀英并结合开局村庄社会卷宗核实",
+      "related_npc_ids": ["npc_wu_xiuying", "npc_zhou_dashan", "npc_liu_san", "npc_yang_bo"],
+      "use_hint": "可用于选择走访顺序、判断意见领袖与宗族路线，并在相关会谈中追问村内利益分配。",
+      "disclosure_tier": 2,
+      "source_line": 2555
+    },
+    {
+      "fact_id": "fact_wu_independent_voice",
+      "title": "吴秀英的独立立场",
+      "category": "fact",
+      "text": "吴秀英不怕周大山，也看不惯他那套论资排辈、按姓分肥的老规矩。",
+      "source_label": "D2与吴秀英交谈",
+      "related_npc_ids": ["npc_wu_xiuying", "npc_zhou_dashan", "npc_yuan_guilan"],
+      "use_hint": "可用于判断吴秀英能否作为独立意见领袖，并追问散姓户、困难户与公开补偿诉求。",
+      "disclosure_tier": 2,
+      "source_line": 2622
+    },
+    {
+      "fact_id": "fact_connected_invoices",
+      "title": "三张连号发票",
+      "category": "clue",
+      "text": "三张发票开在同一天，抬头是三家不同的公司，金额加起来八十七万。",
+      "source_label": "财政账目核查",
+      "related_npc_ids": ["npc_zhao_jianguo", "npc_liu_san", "npc_qian_wei"],
+      "use_hint": "可与拨付凭证、村账和经办人陈述交叉印证，尚不能单独证明资金去向。",
+      "source_line": 3429
+    },
+    {
+      "fact_id": "fact_original_vouchers",
+      "title": "四十一张原始凭证",
+      "category": "evidence",
+      "text": "四十一张原始凭证还在财政局的档案袋里。",
+      "source_label": "县财政档案调阅",
+      "related_npc_ids": ["npc_zhao_jianguo", "npc_liu_san"],
+      "use_hint": "可核对前期经费的时间、抬头、审批与实际收款方，构成资金链证据。",
+      "source_line": 3545
+    },
+    {
+      "fact_id": "fact_identical_reports",
+      "title": "三份一模一样的报告",
+      "category": "evidence",
+      "text": "三份一模一样的报告指向同一批被改写的监测口径。",
+      "source_label": "环保材料交叉核验",
+      "related_npc_ids": ["npc_shi_wenbin", "npc_qian_wei"],
+      "use_hint": "可与原始监测数据和第三方检测结果比对，判断报告是否被复制或改写。",
+      "source_line": 3754
+    },
+    {
+      "fact_id": "fact_liu_old_ledger",
+      "title": "刘三的老账底稿",
+      "category": "evidence",
+      "text": "刘三答应把前年那本账的底稿留一份。",
+      "source_label": "刘三私下提供",
+      "related_npc_ids": ["npc_liu_san", "npc_zhou_dashan", "npc_zhao_jianguo"],
+      "use_hint": "可核对村级账、财政拨付和实际领取情况，但需保护来源并验证真伪。",
+      "source_line": 3709
+    },
+    {
+      "fact_id": "fact_shi_usb",
+      "title": "石文斌的优盘",
+      "category": "evidence",
+      "text": "全书的优盘只有一件，属于石文斌。",
+      "source_label": "石文斌提供或剧情封存",
+      "related_npc_ids": ["npc_shi_wenbin", "npc_qian_wei"],
+      "use_hint": "可用于保存和核验环保原始材料；应记录取得、保管和复制过程。",
+      "source_line": 4308
+    },
+    {
+      "fact_id": "fact_eia_original",
+      "title": "环评原始数据",
+      "category": "evidence",
+      "text": "环评的原始数据可以与公示版本交叉印证。",
+      "source_label": "环保原始材料",
+      "related_npc_ids": ["npc_shi_wenbin", "npc_qian_wei"],
+      "use_hint": "可与正式环评、公示报告和第三方检测比对，验证是否存在删改。",
+      "source_line": 6144
+    },
+    {
+      "fact_id": "fact_water_sample",
+      "title": "封存水样",
+      "category": "evidence",
+      "text": "玩家手中的水样取自冲沟之前，具备证据效力。",
+      "source_label": "依程序取样并封存",
+      "related_npc_ids": ["npc_shi_wenbin", "npc_he_tiezhu", "npc_qian_wei"],
+      "use_hint": "可送第三方检测并与企业或环保部门数据交叉印证。",
+      "source_line": 6328
+    },
+    {
+      "fact_id": "fact_lead_census",
+      "title": "血铅普查总表",
+      "category": "evidence",
+      "text": "受检 107、超一百微克每升 41、超两百 11、最高 287。",
+      "source_label": "血铅普查原始总表",
+      "related_npc_ids": ["npc_he_tiezhu", "npc_shi_wenbin", "npc_qian_wei"],
+      "use_hint": "可证明健康风险的范围与严重程度，并支撑医疗处置和责任调查。",
+      "source_line": 6450
+    },
+    {
+      "fact_id": "fact_lead_287",
+      "title": "血铅二八七",
+      "category": "evidence",
+      "text": "何铁柱七岁孙子的检测值为 287 微克每升。",
+      "source_label": "何家体检材料",
+      "related_npc_ids": ["npc_he_tiezhu", "npc_shi_wenbin"],
+      "use_hint": "可用于核实何家的健康诉求；属于敏感个人健康信息，公开和转交需谨慎。",
+      "source_line": 5643
+    },
+    {
+      "fact_id": "fact_false_signing",
+      "title": "真假签约台账",
+      "category": "evidence",
+      "text": "账面签约户数与真实签约户数必须分开。",
+      "source_label": "签约台账复核",
+      "related_npc_ids": ["npc_sun_qiang", "npc_zhou_dashan", "npc_liu_san"],
+      "use_hint": "可用于验收前清理口头承诺、虚报或程序不完整的签约，D90只认真实签约。",
+      "source_line": 4154
+    },
+    {
+      "fact_id": "fact_grave_protocol",
+      "title": "迁坟四件事",
+      "category": "fact",
+      "text": "择地、择日、起灵、祭祀延续，四件事一件不缺。",
+      "source_label": "宗族与村民会谈",
+      "related_npc_ids": ["npc_zhou_kuiyuan", "npc_zhou_dashan", "npc_wu_xiuying"],
+      "use_hint": "可用于制定迁坟协商方案，避免把文化与祭祀诉求简化成单一报价。",
+      "source_line": 3411
+    },
+    {
+      "fact_id": "fact_zhou_ledger_order",
+      "title": "周满仓的三环顺序",
+      "category": "fact",
+      "text": "先摊台账、再摆原始检测数据、最后才谈钱。",
+      "source_label": "周满仓提出的谈判顺序",
+      "related_npc_ids": ["npc_zhou_mancang", "npc_liu_san", "npc_shi_wenbin"],
+      "use_hint": "可作为公开协商或听证的议程设计，让事实与账目先于补偿讨价。",
+      "source_line": 7909
+    },
+    {
+      "fact_id": "fact_two_million_fee",
+      "title": "两百万前期协调费",
+      "category": "evidence",
+      "text": "两百万前期协调费的凭证需要说明真实去处。",
+      "source_label": "开局财政与项目卷宗，后续凭证核验",
+      "related_npc_ids": ["npc_zhao_jianguo", "npc_qian_wei", "npc_liu_san"],
+      "use_hint": "可追问经手人、审批链、收款方与实际用途；金额异常本身不等于已经定罪。",
+      "source_line": 10287
+    },
+    {
+      "fact_id": "fact_shell_house",
+      "title": "样板房与毛坯房",
+      "category": "evidence",
+      "text": "验收组看的样板房不能代替真正的毛坯房。",
+      "source_label": "安置房现场与验收材料比对",
+      "related_npc_ids": ["npc_qian_wei", "npc_sun_qiang"],
+      "use_hint": "可用于要求验收抽查真实交付房源、配套和质量，而非只看展示样板。",
+      "source_line": 9955
+    },
+    {
+      "fact_id": "fact_inspection_anchors",
+      "title": "三组检查时点",
+      "category": "fact",
+      "text": "市委巡察组第 31 日进驻、第 45 日撤离，环保迎检组第 59 日进驻。",
+      "source_label": "正式工作日程",
+      "related_npc_ids": ["npc_zhang_li", "npc_gu_keming"],
+      "use_hint": "可用于安排材料准备和对接窗口，避免把巡察组与环保迎检组混为同一机构。",
+      "source_line": 6326
+    },
+    {
+      "fact_id": "fact_total_households",
+      "title": "三十六户总盘",
+      "category": "fact",
+      "text": "全村总盘 36 户，不许改。目标线 30 户。",
+      "source_label": "开局上级交办与村庄社会卷宗",
+      "related_npc_ids": ["npc_sun_qiang", "npc_zhou_dashan", "npc_zheng_xiangdong"],
+      "use_hint": "可用于核对签约进度和D90达标线；口头意向与虚报不得计入真实签约。",
+      "source_line": 3404
+    }
+  ]
+}

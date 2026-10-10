@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "base_package_id": "pkg_gameplay_v3",
+  "base_package_version": "3.5.17-fixed-story-continuity",
+  "base_file_hashes": {
+    "acceptance_route_profiles.json": "87e8d64ee0c446b0999d9ae3e546005139003c095e78a5ede483af8c5aaafe31",
+    "action_rules.json": "d6fedde8ce5f7aec594947f988fcc8ef1f2d63544d67139dd94490d556e96571",
+    "archive_investigations.json": "10f56222a10335ac9c4889cb954252821867376de0e59bc2ce8c694e8d658586",
+    "content_catalog.json": "3612b83e1efbe0cc5ba68f77c11f4fde1a290976bc40f54d9ec84c88c0495ded",
+    "decisions.json": "50427beeadedf4f2bd50a4e79984cd39510fe44b50d3fac1c12c658c42b0e4cc",
+    "ending_rules.json": "d2f13c875f848a0f0f2c4184ee67907852ffc9ad7beeed71e46378dbb49dccc0",
+    "event_rules.json": "7ca39de7f22eef133edc574db603601819952aea81870e247a9dd937e090f291",
+    "facts.json": "7674a6e0995a1ae142af1a49168c7de2c719c42014f0762b7b3ba1ea298d3cb1",
+    "flags.json": "74b4478b85663700989a5a42f651a0cc045bb469060c1902c61a9b75b6b20930",
+    "governance_config.json": "702aa1690b74359ab252dba8e82f3b657ea049ca46954785942e5cbca389d660",
+    "households.json": "668cd6edb369a40d77752065cb7ec3d5e193d5166429df0d67a1d12af7434234",
+    "household_signatories.json": "f221b65162f0c4f03fb84c1b5634ae2db6a807bd5647611ed7174e386538169a",
+    "interaction_opportunities.json": "4808f57cf8f480bfc6ff3ba07f37bc5c93eb1ec6ac55b7b6026d8d383a0ec5c8",
+    "map_locations.json": "7c749110765b939c952299694499e13f7098a84b6b5ee457a23b6318ab999d1a",
+    "npc_demands.json": "b3e7d657ce6da3171dd4fa7cc44c601319eb9efed51984abaf722a591c5e6dc3",
+    "npc_profiles.json": "730d79cc663b769fce0b5e03c0ef18fb04a94d2cd3bf8fa4cd630fa188638020",
+    "numbers.json": "5524c1c3707aa3b3d79f2eec20f047928bcf3157f74d829eef94f8e5132b927c",
+    "origins.json": "1547320e2c2d808fb54dfd27ebd6b7c756c4f00b9dc1df40fca1e003f675b990",
+    "package_manifest.json": "e1c6b784e7ab79a3f3eca839445da4fc915d0c5ead8b08b1805ae9c7d3de1310",
+    "public_briefing.json": "c2361b6e399b78a459650b7effe749b7f5754c092b55bea10675999265601a86",
+    "resource_actions.json": "54b0d532f938435923300f59740dc82210bcd46d29d403e751ccb2de56e678e1",
+    "social_rules.json": "65462fe8895365c29630405efb14d793ef60013b276dc02f5ccc6a2cf96eec55",
+    "story_acceptance_matrix.json": "d0b4333266eb5771ffca1a05e55f95959be860ba4d8cbdce1184ff6f444099d8",
+    "story_beats.json": "5df629148d4690f10925e3407fe3bf2004ef8ab833af11a0c296d9f86c00ec39",
+    "story_calendar.json": "4e6dff0d6978a64b23b0e4ccb8b5e81362b75e3a9684e3b156072db5c2b90142",
+    "prompt_templates/role_turn_system.md": "a296550bc15fc1b452a7d7352b901f447c978424ee78cf8623af5beb73d28130"
+  },
+  "approval": "用户在本对话明确确认：我认为剧本这样可以，就这样改吧。",
+  "operations": [
+    {
+      "file": "story_beats.json",
+      "pointer": "/beats/14/opening_blocks/3/text",
+      "op": "replace",
+      "before": "夜色已经落在柳林村的屋脊上。现在去惊动他们、暗中摸清往来，还是先把肯递话的人护住，会把下一章的路带向不同方向。",
+      "after": "马长顺带来的口信，等着你作出回应。",
+      "category": "copy",
+      "node_id": "beat_d15_m2",
+      "issue_ids": [
+        "feedback-15"
+      ]
+    }
+  ],
+  "result_package_version": "3.5.18-feedback15-approved-copy",
+  "result_content_hash": "sha256:c4795211286ca05dafd97e91b0f4ff513f2b78e536dfc5d9f0a0454063d6932a",
+  "result_portable_hash": "sha256:5114f297d78abe6489ff303a572dfaac5a34f1d3dcf56b9b29ac17fc20c03402",
+  "authority_day15_before": "8e56a660ee906d00a6660f937e2a022079a9a42742dd271a7fb16cb89229a169",
+  "authority_day15_after": "a9f6ff77d78db8bd394123763430f7d3cf59f5766cb9b0f102ba78073d41c610",
+  "regeneration": "Apply this registered one-field copy revision after the existing baseline builder; do not rerun a broad story rewrite.",
+  "save_compatibility": "Old saves keep the old version/hash; no migration or compatibility bypass is authorized."
+}
