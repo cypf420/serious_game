@@ -11,6 +11,7 @@ import { EndingExperience } from "./ending/EndingExperience";
 import { BackgroundMusic, MusicToggle } from "./audio/BackgroundMusic";
 import { selectMusicScene } from "./audio/music-scene";
 import { PagedReading } from "./reading/PagedReading";
+import { DialogueTranscriptReading } from "./reading/DialogueTranscriptReading";
 import { actionPresentation, meetingAction, participantCountLabel } from "./lib/action-presentation";
 import { TutorialProvider, TutorialButton, ActionTutorialButton } from "./tutorial/TutorialProvider";
 import type { TutorialContext } from "./tutorial/types";
@@ -1155,8 +1156,19 @@ export default function GameShell() {
                   const requirements = nextSteps(option.next_steps).length ? [] : decisionUnlockRequirements(option);
                   const locked = option.available === false;
                   return <section className={locked ? "decision-option locked" : "decision-option"} key={option.option_id || index}><button onClick={() => submitDecision(option)} disabled={busy || locked}><span>{chineseIndex(index)}</span><div><b>{playerText(option.text || option.label, `方案${chineseIndex(index)}`)}</b>{option.description && <small>{playerText(option.description)}</small>}</div><i>{locked ? "条件不足" : "采纳"}</i></button>{locked && option.unavailable_reason && <p className="decision-blocked-reason">{playerText(option.unavailable_reason)}</p>}{locked && requirements.length > 0 && <div className="decision-unlock-guidance"><b>证据条件尚未满足</b><ul>{requirements.map(requirement => <li key={`${requirement.archiveName}:${requirement.reason}`}>《{requirement.archiveName}》{requirement.reason ? `：${requirement.reason}` : "：请核对当前要求的材料状态。"}</li>)}</ul><button type="button" onClick={() => void loadPanel("actions")}>前往查档</button></div>}{locked && <NextStepGuidance steps={option.next_steps} busy={busy} onOpen={openNextStep} />}</section>;
-                })}</div>}</div> : <p>{stageText}{conversationStreamingReply && !conversationStreamingReply.complete && <i className="stream-cursor" aria-hidden="true" />}</p>}
-                <nav data-tutorial-id="narrative-controls" className="narrative-controls" aria-label="剧情阅读控制">
+                })}</div>}</div> : <PagedReading readingKey={conversationStreamingReply ? `stream:${conversationStreamingReply.stream_id}` : `${sessionId}:${narrative.rebuildCount}:${sourceLine?.id}:${segmentIndex}`} streaming={Boolean(conversationStreamingReply)} text={stageText} className="dialogue-reading" narrative
+                  onPreviousBoundary={narrative.currentIndex > 0 || segmentIndex > 0 ? () => {
+                    if (segmentIndex > 0) { setSegmentSelection({ key: segmentKey, index: segmentIndex - 1 }); return; }
+                    const previous = playerLines[narrative.currentIndex - 1];
+                    if (previous) setSegmentSelection({ key: `${sessionId}:${narrative.rebuildCount}:${previous.id}:${previous.text}`, index: dialogueSegments(previous).length - 1 });
+                    dispatchNarrative({ type: "PREVIOUS" });
+                  } : undefined}
+                  previousBoundaryDisabled={busy}
+                  onNextBoundary={hasMoreSegments || narrative.currentIndex < playerLines.length - 1 || commands.can_continue_story ? () => void nextNarrative() : undefined}
+                  nextBoundaryDisabled={busy}
+                  controlsExtra={<>{conversationStreamingReply && !conversationStreamingReply.complete && <small role="status">正在回应…</small>}<button type="button" className="history-toggle" onClick={() => setShowHistory(value => !value)}>{showHistory ? "关闭回看" : "剧情回看"}</button></>}
+                />}
+                {decisionReady && <nav data-tutorial-id="narrative-controls" className="narrative-controls" aria-label="剧情阅读控制">
                   <button onClick={() => {
                     if (segmentIndex > 0) { setSegmentSelection({ key: segmentKey, index: segmentIndex - 1 }); return; }
                     const previous = playerLines[narrative.currentIndex - 1];
@@ -1165,7 +1177,7 @@ export default function GameShell() {
                   }} disabled={narrative.currentIndex <= 0 && segmentIndex === 0}>上一段</button>
                   <button onClick={() => void nextNarrative()} disabled={busy || (!hasMoreSegments && narrative.currentIndex >= playerLines.length - 1 && !commands.can_continue_story)}>下一段</button>
                   <button className="history-toggle" onClick={() => setShowHistory(value => !value)}>{showHistory ? "关闭回看" : "剧情回看"}</button>
-                </nav>
+                </nav>}
               </div>
             </section>}
             {sessionId && showHistory && <section className="history-drawer" aria-label="剧情回看"><header><h3>剧情回看</h3><button onClick={() => setShowHistory(false)}>关闭</button></header><div>{visibleHistoryLines.map(line => <article key={line.id}><small>第 {line.storyDay || "?"} 日 · {line.speaker ? playerText(line.speaker) : "旁白"}</small><span>{playerText(line.text)}</span></article>)}</div></section>}
@@ -1221,7 +1233,7 @@ export default function GameShell() {
     {governanceRecordOpen && <Modal title={governanceRecordOpen.document ? "决议文件详情" : actionPresentation(meetingAction(governanceRecordOpen.meeting, governance || panelData)).result} onClose={() => { if (!busy) setGovernanceRecordOpen(null); }}><div data-tutorial-id={governanceRecordOpen.document ? "document" : "action-result"}><TutorialButton label={governanceRecordOpen.document ? "文件操作指南" : "记录阅读指南"} /><GovernanceRecordDetail key={`${governanceRecordOpen.document?.document_id || governanceRecordOpen.meeting?.meeting_id}:${governanceRecordOpen.document?.version || governanceRecordOpen.document?.status || "meeting"}`} record={governanceRecordOpen} governance={governance || panelData || {}} busy={busy} onAction={performDocumentAction} /></div></Modal>}
     {archiveReadingOpen && <Modal title="档案查阅结果" className="archive-reading-modal" onClose={() => setArchiveReadingOpen(null)}><ArchiveReading result={archiveReadingOpen} /></Modal>}
     {contractProposalOpen && <Modal title="确认逐户合同提议" onClose={() => { if (!busy) setContractProposalOpen(null); }}><ContractBatchProposal proposal={contractProposalOpen} busy={busy} onConfirm={confirmContractBatch} /></Modal>}
-    {contractOpen && <Modal title={`逐户合同 · ${playerText(contractOpen.signatory_name, contractOpen.household_id || "待确认")}`} className="contract-modal" onClose={() => { if (!busy && (!contractDirty.current || window.confirm("方案有修改尚未保存，确定放弃修改并关闭？"))) { contractDirty.current = false; setContractOpen(null); } }}><div data-tutorial-id="contract"><TutorialButton label="合同操作指南" />{savedSyncNotice}<ContractWorkspace key={`${contractOpen.contract_id}:${contractOpen.current_version}:${contractOpen.status}`} onTutorialStageChange={setContractTutorialState} onNextStep={openNextStep} contract={contractOpen} governance={governance || panelData || {}} state={state} busy={busy} api={api} sessionId={sessionId} onPerform={performContractAction} onDirtyChange={dirty => { contractDirty.current = dirty; }} onContinue={() => { contractDirty.current = false; setContractOpen(null); setPanel("scene"); }} onOpenContract={openContractDetail} /></div></Modal>}
+    {contractOpen && <Modal title={`逐户合同 · ${playerText(contractOpen.signatory_name, contractOpen.household_id || "待确认")}`} className="contract-modal" onClose={() => { if (!busy && (!contractDirty.current || window.confirm("方案有修改尚未保存，确定放弃修改并关闭？"))) { contractDirty.current = false; setContractOpen(null); } }}><div data-tutorial-id="contract"><TutorialButton label="合同操作指南" />{savedSyncNotice}<ContractWorkspace key={`${contractOpen.contract_id}:${contractOpen.current_version}`} onTutorialStageChange={setContractTutorialState} onNextStep={openNextStep} contract={contractOpen} governance={governance || panelData || {}} state={state} busy={busy} api={api} sessionId={sessionId} onPerform={performContractAction} onDirtyChange={dirty => { contractDirty.current = dirty; }} onContinue={() => { contractDirty.current = false; setContractOpen(null); setPanel("scene"); }} onOpenContract={openContractDetail} /></div></Modal>}
     {progressBroadcastOpen && progressBroadcast && <Modal title={playerText(progressBroadcast.title, "云溪县十日督办播报")} className="progress-broadcast-modal" onClose={() => setProgressBroadcastOpen(false)}><ProgressBroadcast broadcast={progressBroadcast} onReplay={() => void playProgressCue(progressBroadcastTone)} /></Modal>}
     {consentOpen && <Modal title="角色模型与数据授权" onClose={consentGranted ? () => setConsentOpen(false) : undefined}><ConsentPanel info={consentInfo} aiSummary={aiView.summary} granted={consentGranted} busy={busy} error={consentError} onSign={signModelConsent} onWithdraw={confirmWithdrawModelConsent} /></Modal>}
     {confirmRequest && <Modal title={confirmRequest.title} onClose={() => { if (!busy) setConfirmRequest(null); }}><div className="confirm-panel"><p>{confirmRequest.message}</p><div><button disabled={busy} onClick={() => setConfirmRequest(null)}>返回</button><button className={confirmRequest.danger ? "danger" : "primary"} disabled={busy} onClick={() => { const action = confirmRequest.action; setConfirmRequest(null); void action(); }}>{confirmRequest.confirmLabel}</button></div></div></Modal>}
@@ -1316,6 +1328,8 @@ function GovernanceActionScene({ action, overview, streamingReplies }: { action:
     <div className="gal-portrait" aria-label={`${targetName}立绘`}><CharacterPortrait character={targetCharacter} fallbackName={targetName} priority /></div>
     <div className="gal-dialogue has-speaker">
       <header><span>{speakerName || targetName}</span><small>{narration ? "现场记录" : targetCharacter?.role || title}{latestEntry?.live ? latestEntry.complete ? " · 回应完成" : " · 正在回应" : ""}</small></header>
+      <DialogueTranscriptReading key={String(action.action_instance_id)} entries={timeline.map(entry => ({ ...entry, speaker: entry.speaker_type === "player" ? "你" : entry.speaker_type === "system" ? "县长手记" : playerText(entry.npc_name, resolveCharacter(entry.npc_id)?.name || targetName), text: playerText(entry.text, "对方暂未表态。") }))} opening="你已经到达现场。先说明来意，再围绕事实、诉求与可行安排展开交流。" />
+      <details className="dialogue-full-record"><summary>完整记录与引用文件</summary>
       <div className="governance-action-timeline" ref={timelineRef} onScroll={event => {
         const element = event.currentTarget;
         const atBottom = element.scrollHeight - element.scrollTop - element.clientHeight < 36;
@@ -1331,6 +1345,7 @@ function GovernanceActionScene({ action, overview, streamingReplies }: { action:
           return <article className={`${player ? "player" : system ? "system" : "npc"}${entry.live ? " live" : ""}`} key={`${entry.speaker_type}-${entry.npc_id || "player"}-${entry.conversation_id || entry.action_instance_id || ""}-${entry.turn_id || entry.reply_id || ""}-${entry.stream_id || ""}-${index}`}><strong>{name}</strong><p>{playerText(entry.text, "对方暂未表态。")}{entry.live && !entry.complete && <i className="stream-cursor" aria-hidden="true" />}</p><ReferenceAttachments references={entry.references} /></article>;
         })}
       </div>
+      </details>
       {hasNewDialogue && <button type="button" className="new-dialogue-button governance-new-dialogue" onClick={jumpToLatest}>有新回复</button>}
     </div>
   </section>;
@@ -1347,8 +1362,11 @@ function LeadershipMeetingScene({ action, meeting, overview, streamingReplies }:
   return <section className="governance-scene leadership-meeting-scene leadership-meeting-room" style={action.variant_id === "clan_leader_campaign" ? { backgroundImage: 'linear-gradient(rgba(17,14,11,.62), rgba(17,14,11,.62)), url("/scenes/c05-s02.webp")' } : undefined} data-primary-scene="leadership_meeting" data-testid="leadership-meeting-scene">
     <header><div><small>{isFollowup ? "夜间后续会议" : `正在进行 · ${title}`}</small><h3>{playerText(action.topic, title)}</h3></div><span>第 {action.story_day || "待定"} 日</span></header>
     {targets.length > 0 && <p className="scene-participants">在场：{targets.join("、")}</p>}
+    <DialogueTranscriptReading key={String(action.action_instance_id)} entries={(mergeGovernanceTimeline(transcript, streamingReplies) as Dict[]).map(entry => ({ ...entry, speaker: entry.speaker_type === "player" ? "你" : playerText(entry.npc_name, resolveCharacter(entry.npc_id)?.name || "参会人员"), text: playerText(entry.text, "对方暂未表态。") }))} opening={`人员已经到齐。先说明本次${presentation.noun}议题，听取各方意见后再${presentation.finish}。`} />
+    <details className="dialogue-full-record"><summary>完整记录与引用文件</summary>
     {transcript.length ? <div className="scene-transcript">{transcript.map((entry, index) => <article className={entry.speaker_type === "player" ? "player" : "npc"} key={index}><strong>{entry.speaker_type === "player" ? "你" : entry.npc_name || "参会人员"}</strong><p>{playerText(entry.text, "对方暂未表态。")}</p><ReferenceAttachments references={entry.references} /></article>)}</div> : <div className="scene-opening"><span>议</span><p>人员已经到齐。先说明本次{presentation.noun}议题，听取各方意见后再{presentation.finish}。</p></div>}
     {streamingReplies.length > 0 && <NpcStreamingReplies replies={streamingReplies} />}
+    </details>
   </section>;
 }
 
@@ -1413,6 +1431,8 @@ function ForcedGroupConversationScene({ conversation, streamingReplies }: { conv
     <div className="forced-group-workspace">
       <aside className="forced-group-speaker" aria-label={`${speakerName}立绘`}><div><CharacterPortrait character={speaker} fallbackName={speakerName} /></div><strong>{speakerName}</strong><span>{speaker?.role || "在场人物"}</span></aside>
       <div className="forced-group-timeline-wrap">
+        <DialogueTranscriptReading key={String(conversation.conversation_id)} entries={timeline.map(entry => ({ ...entry, speaker: entry.speaker_type === "player" ? "你" : playerText(entry.npc_name, resolveCharacter(entry.npc_id)?.name || "在场人物"), text: playerText(entry.text, "……") }))} opening={playerText(conversation.opening_narrative, "来访者已经到场。请直接回应他们最在意的问题。")} />
+        <details className="dialogue-full-record"><summary>完整记录与引用文件</summary>
         <div className="forced-group-timeline" ref={timelineRef} onScroll={event => {
           const element = event.currentTarget;
           const atBottom = element.scrollHeight - element.scrollTop - element.clientHeight < 36;
@@ -1427,6 +1447,7 @@ function ForcedGroupConversationScene({ conversation, streamingReplies }: { conv
             return <button type="button" className={`${player ? "player" : "npc"}${entry.live ? " live" : ""}`} key={`${entry.speaker_type}-${entry.npc_id || "player"}-${index}`} onClick={() => !player && setSpeakerSelection(speakerSelectionForTimelineEntry(entry, timeline.length)!)} disabled={player}><strong>{name}</strong><p>{playerText(entry.text, "……")}{entry.live && !entry.complete && <i className="stream-cursor" aria-hidden="true" />}</p><ReferenceAttachments references={entry.references} />{!player && entry.dialogue_act && <small>{({ press: "继续追问", challenge: "指出矛盾", soften: "态度动摇", settle: "暂时接受", reopen: "重新追问", close: "确认收束" } as Record<string, string>)[String(entry.dialogue_act)] || "回应"}</small>}</button>;
           })}
         </div>
+        </details>
         {hasNewDialogue && <button type="button" className="new-dialogue-button" onClick={jumpToLatest}>有新发言</button>}
       </div>
     </div>
@@ -1736,7 +1757,18 @@ function ContractWorkspace({ onTutorialStageChange, onNextStep, contract, govern
   const [acknowledged, setAcknowledged] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [operationError, setOperationError] = useState("");
+  const resultRef = useRef<HTMLDivElement>(null);
+  const submittedContract = useRef<string | null>(null);
+  const lastOperation = useRef<"save" | "review">("save");
   const currentFeedback = contract.review_reason && Number(contract.review_version) === Number(contract.current_version);
+  useEffect(() => {
+    if (busy || !submittedContract.current) return;
+    if (submittedContract.current !== String(contract.contract_id)) { submittedContract.current = null; return; }
+    if (!currentFeedback && status !== "signed" && !operationError) return;
+    submittedContract.current = null;
+    resultRef.current?.scrollIntoView({ block: "start", behavior: "instant" });
+    resultRef.current?.focus({ preventScroll: true });
+  }, [busy, contract.contract_id, currentFeedback, status, operationError]);
   const tutorialStage = status === "signed" ? "signed" : contract.legacy_draft ? "legacy" : editing ? "terms" : currentFeedback ? "feedback" : "preview";
   useEffect(() => { onTutorialStageChange({ id: String(contract.contract_id), stage: tutorialStage }); }, [contract.contract_id, tutorialStage, onTutorialStageChange]);
   const showExistingReply = !busy && !dirty && !editing && !contract.legacy_draft && !contract.can_review && Boolean(currentFeedback);
@@ -1778,6 +1810,7 @@ function ContractWorkspace({ onTutorialStageChange, onNextStep, contract, govern
     };
     setFieldErrors({});
     setOperationError("");
+    lastOperation.current = "save";
     void onPerform(async () => {
       try {
         const result = await api.write(sessionId, `/governance/contracts/${encodeURIComponent(String(contract.contract_id))}/terms`, "PUT", payload) as Dict;
@@ -1792,11 +1825,16 @@ function ContractWorkspace({ onTutorialStageChange, onNextStep, contract, govern
   }
 
   function submitReview() {
+    if (busy || submitBlockedReason) return;
+    lastOperation.current = "review";
     setOperationError("");
     void onPerform(async () => {
       try {
-        return await api.write(sessionId, `/governance/contracts/${encodeURIComponent(String(contract.contract_id))}/review`, "POST", { state_version: state.state_version, expected_contract_version: Number(contract.current_version) }) as Dict;
+        const result = await api.write(sessionId, `/governance/contracts/${encodeURIComponent(String(contract.contract_id))}/review`, "POST", { state_version: state.state_version, expected_contract_version: Number(contract.current_version) }) as Dict;
+        submittedContract.current = String(contract.contract_id);
+        return result;
       } catch (error) {
+        submittedContract.current = String(contract.contract_id);
         setOperationError(error instanceof Error ? error.message : "提交失败，请重试。");
         if (error instanceof ApiError && error.details.field_errors) {
           setFieldErrors(error.details.field_errors as Record<string, string>);
@@ -1813,7 +1851,6 @@ function ContractWorkspace({ onTutorialStageChange, onNextStep, contract, govern
     <div className="contract-progress"><span className={editing ? "active" : "done"}>一 填写方案</span><span className={!editing && status !== "signed" ? "active" : contract.current_version ? "done" : ""}>二 预览合同</span><span className={status === "signed" ? "done" : ""}>三 提交签约</span></div>
     {breakdown && <details className="compensation-breakdown"><summary>查看基础补偿计算明细（万元）</summary><p>{breakdown.source}</p><ul>{arr(breakdown.rows).map((row, index) => <li key={index}>{row.label}：{row.quantity} {row.unit} × {row.rate} 万元/{row.unit} = {Number(row.amount).toFixed(4)} 万元</li>)}</ul><p>向上取整补差：{Number(breakdown.rounding_adjustment).toFixed(4)} 万元；政策建议基础额：{breakdown.suggested_base_total} 万元。</p><p>过渡补偿按 {breakdown.transition_population} 人 × 等待月数 × {breakdown.transition_rate} 万元/人/月计算；未选安置房不产生等待交房补偿。</p>{breakdown.saved_total != null && <p>已保存方案：基础 {breakdown.saved_base_amount ?? "未单列"} 万元；过渡 {breakdown.saved_transition_amount ?? "未单列"} 万元；总额 {breakdown.saved_total} 万元。未保存的编辑不计入此明细。</p>}</details>}
     <p className="contract-hold">资源状态：{playerText(contract.resource_hold_status, "尚未扣除资源")}</p>
-    {currentFeedback && <div data-tutorial-id="contract-feedback" tabIndex={-1} className="contract-review"><b>对方的签约答复 · 方案第{contract.review_version}版</b><p>{playerText(contract.review_reason)}</p></div>}
     {values(contract.remaining_conditions).length > 0 && <section className="contract-review"><b>当前尚需办理</b><ul>{values(contract.remaining_conditions).map((condition, index) => <li key={index}>{playerText(condition)}</li>)}</ul></section>}
     <NextStepGuidance steps={contract.next_steps} busy={busy} onOpen={onNextStep} />
     {history.length > 0 && <details className="contract-review"><summary>协商记录 · 历次答复</summary>{history.map((item, index) => <article key={index}><b>针对方案第{item.version || "先前"}版</b>{Number(item.version) !== Number(contract.current_version) && <small> · 当前方案已更新</small>}<p>{playerText(item.reason)}</p></article>)}</details>}
@@ -1841,10 +1878,13 @@ function ContractWorkspace({ onTutorialStageChange, onNextStep, contract, govern
       {operationError && <p role="alert">{playerText(operationError)}</p>}
       <button data-tutorial-id="contract-save" disabled={busy || (contract.legacy_draft && !acknowledged)}>{busy ? "正在处理…" : "保存方案并预览合同"}</button>
     </form>}
-    {!editing && operationError && <p role="alert">{playerText(operationError)}</p>}
     {contract.contract_text && !contract.legacy_draft && <section data-tutorial-id="contract-preview" className="contract-text-section"><header><div><small>当前方案第{contract.current_version}版{dirty ? "（尚未包含未保存的修改）" : ""}</small><h3>合同预览</h3></div></header><pre className="contract-body">{String(contract.contract_text)}</pre>{editable && !editing && <button className="secondary" disabled={busy} onClick={() => setEditing(true)}>修改方案</button>}</section>}
     {contract.term_sheet && status !== "signed" && <section data-tutorial-id="contract-deduction" className="contract-deduction-preview" aria-label="当前方案扣除预览"><h3>签订成功时扣除</h3><p>现金 {displayValue(terms.cash_amount, 0)} 万元{terms.housing_resource_id ? ` · ${playerText(resources.find(item => item.resource_id === terms.housing_resource_id)?.name, "所选房源")} 1 套` : ""}{Object.entries(terms.service_allocations || {}).filter(([, amount]) => Number(amount) > 0).map(([id, amount]) => ` · ${playerText(resources.find(item => item.resource_id === id)?.name, "所选服务")} ×${amount}`).join("")}</p><small>以上为已生成合同的条款。对方接受后立即扣除；拒绝或继续协商不扣除。</small></section>}
-    <div className="contract-final-actions">{editable && contract.current_version > 0 && <div><p>对方接受后合同立即生效，并扣除约定款项和资源。</p><p className="contract-effort" role="note">{playerText(contract.review_cost_hint, "有效提交签约每次消耗 1 点精力，接受或拒签均计费；关联对话不另扣。重复请求、输入校验失败或技术失败不计费。")}{typeof contract.review_cost_action_points === "number" ? ` 本次提交需 ${contract.review_cost_action_points} 点精力。` : ""}</p>{submitBlockedReason && <p id="contract-submit-status" role="status">{submitBlockedReason}</p>}{operationError && editing && <p className="contract-submit-error">保存未成功：{playerText(operationError)}</p>}{editing && <button type="button" className="secondary" onClick={event => { event.currentTarget.closest(".contract-workspace")?.querySelector(".contract-terms-form")?.scrollIntoView({ block: "start", behavior: "smooth" }); }}>返回方案检查</button>}<button data-tutorial-id="contract-submit" aria-describedby={submitBlockedReason ? "contract-submit-status" : undefined} disabled={!showExistingReply && Boolean(submitBlockedReason)} onClick={showExistingReply ? event => { const feedback = event.currentTarget.closest(".contract-workspace")?.querySelector<HTMLElement>('[data-tutorial-id="contract-feedback"]'); feedback?.scrollIntoView({ block: "center", behavior: "instant" }); feedback?.focus({ preventScroll: true }); } : submitReview}>{showExistingReply ? "查看本次答复" : busy ? "正在处理…" : dirty || editing ? "请先保存方案" : "提交签约"}</button></div>}{status === "signed" && <div data-tutorial-id="contract-signed" className="signed-contract-seal"><b>已签署</b><span>第 {contract.signed_day} 日</span></div>}</div>
+    <div className="contract-final-actions">{editable && contract.current_version > 0 && <div><p>对方接受后合同立即生效，并扣除约定款项和资源。</p><p className="contract-effort" role="note">{playerText(contract.review_cost_hint, "有效提交签约每次消耗 1 点精力，接受或拒签均计费；关联对话不另扣。重复请求、输入校验失败或技术失败不计费。")}{typeof contract.review_cost_action_points === "number" ? ` 本次提交需 ${contract.review_cost_action_points} 点精力。` : ""}</p>{submitBlockedReason && <p id="contract-submit-status" role="status">{submitBlockedReason}</p>}{operationError && editing && <p className="contract-submit-error">保存未成功：{playerText(operationError)}</p>}{editing && <button type="button" className="secondary" onClick={event => { event.currentTarget.closest(".contract-workspace")?.querySelector(".contract-terms-form")?.scrollIntoView({ block: "start", behavior: "smooth" }); }}>返回方案检查</button>}<button data-tutorial-id="contract-submit" aria-describedby={submitBlockedReason ? "contract-submit-status" : undefined} disabled={!showExistingReply && Boolean(submitBlockedReason)} onClick={showExistingReply ? event => { const feedback = event.currentTarget.closest(".contract-workspace")?.querySelector<HTMLElement>('[data-tutorial-id="contract-feedback"]'); feedback?.scrollIntoView({ block: "center", behavior: "instant" }); feedback?.focus({ preventScroll: true }); } : submitReview}>{showExistingReply ? "查看本次答复" : busy ? "正在处理…" : dirty || editing ? "请先保存方案" : "提交签约"}</button></div>}{status === "signed" && <div data-tutorial-id="contract-signed" className="signed-contract-seal"><b>已签署</b><span>2026年 · 第 {contract.signed_day} 日</span></div>}</div>
+    {(operationError || currentFeedback || status === "signed") && <div ref={resultRef} data-tutorial-id={operationError ? undefined : "contract-feedback"} tabIndex={-1} className={`contract-result ${operationError ? "submission-error" : status === "signed" ? "success" : "failure"}`} role={operationError ? "alert" : "status"} aria-live="polite" aria-atomic="true">
+      <h3>{operationError ? lastOperation.current === "review" ? "提交失败，请重试" : "方案保存未成功" : status === "signed" ? "签约成功" : status === "rejected" ? "签约失败" : "本次签约未成功"}</h3>
+      {operationError ? <p>{playerText(operationError)}</p> : <><b>对方的签约答复 · 方案第{contract.review_version || contract.current_version}版</b>{status === "signed" && <p>签署日期：2026年 · 第 {contract.signed_day} 日。约定款项与资源已按合同结算。</p>}{["counteroffered", "explanation_requested"].includes(status) && <p>当前{friendlyStatus(status)}，可继续协商或修改方案后再次提交。</p>}{(editing || dirty) && <p>此答复针对已保存方案，不包含尚未保存的修改。</p>}<p>{playerText(contract.review_reason, "本户合同已生效。")}</p></>}
+    </div>}
   </div>;
 }
 

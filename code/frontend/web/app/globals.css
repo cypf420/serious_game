@@ -806,6 +806,13 @@ button:not(:disabled), select:not(:disabled), summary, .choice-card:not(:has(inp
 .contract-tabs { display: flex; gap: 5px; overflow-x: auto; padding-bottom: 5px; }.contract-tabs button { min-width: 82px; display: grid; gap: 3px; background: transparent; color: #66543b; }.contract-tabs button.active { background: #5b4430; color: #f0ddb7; }.contract-tabs small { font-size: 8px; }
 .contract-progress { display: grid; grid-template-columns: repeat(4,1fr); gap: 4px; }.contract-progress span { border: 1px solid #ad9a78; color: #88795f; padding: 7px; text-align: center; font-size: 10px; }.contract-progress span.active { border-color: #8e3d32; color: #7b372e; }.contract-progress span.done { border-color: #667453; background: rgba(78,105,60,.1); color: #4e683c; }
 .contract-hold { margin: 0; color: #705d41; font-size: 11px; }.contract-review p { margin: 6px 0; color: #654d38; line-height: 1.65; }.contract-review pre { overflow-x: auto; white-space: pre-wrap; font-size: 10px; }
+.contract-workspace > .contract-result { border: 2px solid #b02f2f; border-left-width: 6px; padding: 16px; background: #f6e5df; color: #652b26; overflow-wrap: anywhere; scroll-margin: 16px; }
+.contract-workspace > .contract-result.success { border-color: #287443; background: #e7efdf; color: #214b30; }
+.contract-result h3 { margin: 0 0 12px; color: #b02f2f; font-size: clamp(28px, 4vw, 36px); line-height: 1.3; }
+.contract-result.success h3 { color: #287443; }
+.contract-result p { margin: 8px 0 0; font-size: 14px; line-height: 1.8; white-space: pre-wrap; }
+.contract-result:focus { outline: 2px solid #83683d; outline-offset: 3px; }
+
 .contract-terms-form, .contract-text-section { display: grid; gap: 11px; border: 1px solid #a5906b; background: rgba(255,255,255,.15); padding: 14px; }.contract-terms-form h3, .contract-text-section h3 { margin: 0; color: #493927; }.contract-field-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 9px; }.contract-terms-form label { display: grid; gap: 5px; color: #695a45; font-size: 10px; }.contract-terms-form input, .contract-terms-form select, .contract-text-section textarea { width: 100%; border: 1px solid #9b8763; background: rgba(255,255,255,.38); color: #433625; padding: 8px; }.contract-terms-form fieldset { border: 1px solid #b4a17f; margin: 0; padding: 10px; }.contract-terms-form legend { color: #604b31; font-size: 11px; font-weight: 700; }.service-allocation-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 7px; max-height: 210px; overflow-y: auto; }.contract-check-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 7px; }.contract-check-grid label { display: flex; align-items: flex-start; gap: 6px; }.contract-check-grid input { width: auto; margin-top: 1px; }
 .contract-resource-hint { margin: 0 0 8px; color: #765f41; font-size: 10px; line-height: 1.5; }
 .service-resource-label { align-content: start; padding: 7px; border: 1px solid rgba(123,96,57,.22); background: rgba(255,255,255,.16); }
@@ -1324,4 +1331,63 @@ footer { grid-column: 1 / -1; display: flex; align-items: center; justify-conten
   .metric-strip.metric-strip strong { font-size: 17px; }
   .metric-strip.metric-strip em { font-size: 10px; white-space: normal; }
   .metric-strip > .metric-signing { grid-column: 1 / -1; grid-row: 3; padding: 12px; border-left: 0; border-top: 1px solid #6b5839; }
+}
+
+/* Fixed dialogue rows: only these scenes use the bounded reading layout. */
+.story-scroll > .leadership-meeting-scene { height: 100%; min-height: 0; display: flex; flex-direction: column; margin: 0; }
+.leadership-meeting-scene > .dialogue-transcript-reading, .leadership-meeting-scene > .dialogue-full-record { margin: 8px 18px; }
+.story-scroll:has(> [data-primary-scene]):not(:has(.decision-stage-inline)) { overflow: hidden; position: relative; }
+.story-scroll > .gal-stage:is([data-primary-scene="narrative"], [data-primary-scene="conversation"]):not(:has(.decision-stage-inline)) {
+  height: 100%; min-height: 0; grid-template-rows: minmax(0, 1fr); padding: 12px 18px;
+}
+.story-scroll > .gal-stage:is([data-primary-scene="narrative"], [data-primary-scene="conversation"]):not(:has(.decision-stage-inline)) .gal-portrait { grid-row: 1; min-height: 0; margin-bottom: -12px; }
+.story-scroll > .gal-stage:is([data-primary-scene="narrative"], [data-primary-scene="conversation"]):not(:has(.decision-stage-inline)) .gal-dialogue { grid-row: 1; height: 100%; min-height: 0; display: flex; flex-direction: column; }
+.gal-dialogue > .dialogue-reading, .dialogue-transcript-reading > .dialogue-reading { flex: 1; min-height: 0; }
+.dialogue-reading { gap: 6px; }
+.dialogue-reading .reading-viewport { height: 0; min-height: 32px; scrollbar-gutter: stable; }
+.dialogue-reading .reading-text { font-family: "STSong", "SimSun", serif; font-size: 16px; line-height: 1.85; }
+.dialogue-reading .reading-controls { gap: 6px; }
+.dialogue-reading .reading-controls button { min-height: 36px; padding: 6px 10px; }
+.story-scroll > .history-drawer { position: absolute; inset: 8px; z-index: 5; max-height: none; margin: 0; background: #282118; }
+.dialogue-transcript-reading { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 4px; color: #eee1c2; }
+.dialogue-transcript-reading > header { flex: none; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; font-size: 14px; line-height: 1.2; }
+.dialogue-transcript-reading > header b { color: #e7c984; }
+.dialogue-transcript-reading > header small { color: #c8b896; }
+.dialogue-full-record { flex: none; min-height: 0; margin-top: 8px; color: #eadbbd; font-size: 13px; }
+.dialogue-full-record summary { padding: 6px 0; cursor: pointer; }
+.dialogue-full-record[open] { position: absolute; inset: 8px; z-index: 6; display: flex; flex-direction: column; margin: 0; padding: 12px; background: #282118; border: 1px solid #a88b5c; overflow: hidden; }
+.dialogue-full-record[open] > summary { flex: none; }
+.dialogue-full-record[open] > div { flex: 1; min-height: 0; overflow-y: auto; }
+.dialogue-full-record .governance-action-timeline, .dialogue-full-record .forced-group-timeline { height: auto; max-height: none; }
+.forced-group-timeline-wrap:has(> .dialogue-transcript-reading) { display: flex; flex-direction: column; padding: 10px; }
+.story-scroll > .forced-group-gal-stage { height: 100%; min-height: 0; }
+.forced-group-speaker > div { min-height: 0; }
+.story-card:has(.forced-group-gal-stage) .gal-conversation-bar > .group-compact { display: none; }
+.forced-group-gal-stage .forced-group-header p { max-height: 32px; overflow-y: auto; }
+.forced-group-gal-stage .forced-group-participants button { padding: 4px 8px; }
+@media (min-width: 781px) {
+  .app-shell:has(.forced-group-gal-stage) { height: 100dvh; min-height: 0; overflow: hidden; grid-template-rows: 78px minmax(0, 1fr) 30px; }
+  .main-grid:has(.forced-group-gal-stage) { height: auto; min-height: 0; }
+  .story-card:has(.forced-group-gal-stage) { grid-template-rows: 54px minmax(0, 1fr) auto; }
+  .forced-group-header { padding: 8px 12px; gap: 8px; }
+  .forced-group-header h3 { font-size: 17px; margin: 2px 0; }
+  .forced-group-participants { padding: 5px 10px; }
+  .forced-group-workspace { padding: 8px; gap: 8px; }
+}
+@media (max-width: 780px) {
+  .story-card:has([data-primary-scene]):not(:has(.decision-stage-inline)) { height: max(460px, calc(100dvh - 176px)); min-height: 0; grid-template-rows: 48px minmax(0, 1fr) auto; }
+  .story-scroll > .gal-stage:is([data-primary-scene="narrative"], [data-primary-scene="conversation"]):not(:has(.decision-stage-inline)) { padding: 8px; grid-template-rows: 64px minmax(0, 1fr); }
+  .story-scroll > .gal-stage:is([data-primary-scene="narrative"], [data-primary-scene="conversation"]):not(:has(.decision-stage-inline)) .gal-portrait { width: 64px; height: 76px; min-height: 0; justify-self: end; margin: 0; }
+  .story-scroll > .gal-stage:is([data-primary-scene="narrative"], [data-primary-scene="conversation"]):not(:has(.decision-stage-inline)) .gal-dialogue { grid-row: 2; grid-column: 1 / -1; margin: 0; padding: 10px; }
+  .story-scroll > .gal-stage[data-primary-scene="narrative"]:not(:has(.gal-portrait)):not(:has(.decision-stage-inline)) { grid-template-rows: minmax(0, 1fr); }
+  .story-scroll > .gal-stage[data-primary-scene="narrative"]:not(:has(.gal-portrait)):not(:has(.decision-stage-inline)) .gal-dialogue { grid-row: 1; }
+  .story-scroll > .governance-gal-stage { height: 100%; }
+  .forced-group-header { padding: 8px; gap: 4px; }
+  .forced-group-header h3 { font-size: 16px; }
+  .forced-group-header p { max-height: 48px; overflow-y: auto; }
+  .forced-group-header > span { display: none; }
+  .forced-group-participants { padding: 4px 8px; }
+  .forced-group-participants button { min-width: 110px; padding: 4px 8px; }
+  .forced-group-workspace { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); padding: 8px; }
+  .forced-group-speaker { display: none; }
 }

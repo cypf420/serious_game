@@ -9,6 +9,7 @@ from dataclasses import asdict
 import re
 
 TEMPLATE_AUTHOR = "contract_template_v2"
+CONTRACT_YEAR = 2026
 
 
 def scheme_values(terms: dict) -> dict:
@@ -34,16 +35,16 @@ def resource_name(pool: dict) -> str:
 def render_contract(session, package, contract, terms: dict) -> str:
     policy = session.administrative_documents[terms["policy_document_id"]]
     pools = {p["resource_id"]: p for p in (package.governance_config or {}).get("resource_pools", [])}
-    lines = ["柳林村搬迁补偿安置合同", f"签约人：{contract.signatory_name}",
+    lines = [f"柳林村搬迁补偿安置合同\n合同年份：{CONTRACT_YEAR}年（日期按游戏日序记录）", f"签约人：{contract.signatory_name}",
              f"家庭登记号：{contract.household_id}", f"依据补偿方案：{policy.title}", "",
              f"一、现金补偿：{terms['cash_amount']}万元，签署当日付款。",
-             f"二、搬离日期：第{terms['move_out_day']}日。"]
+             f"二、搬离日期：{CONTRACT_YEAR}年第{terms['move_out_day']}日。"]
     automatic = terms.get("automatic_arrangement")
     if automatic:
         lines.insert(6, f"其中：基础补偿{automatic['base_cash_amount']}万元，自动计入过渡补偿{automatic['transition_cash_amount']}万元。")
     housing = selected_housing(package, terms)
     if housing:
-        lines.append(f"三、安置住房：{housing['name']}，共1套；交房日期：第{terms['housing_delivery_day']}日。")
+        lines.append(f"三、安置住房：{housing['name']}，共1套；交房日期：{CONTRACT_YEAR}年第{terms['housing_delivery_day']}日。")
         if housing["attributes"].get("accessible") is True:
             lines.append("所选住房具备无障碍条件；本约定不表示已经完成实地看房或交付。")
     else:
