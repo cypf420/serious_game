@@ -22,7 +22,13 @@ def snapshot_semantic_differences(
     transaction failed to publish a matching automatic snapshot.
     """
     current = encode_session(session)
-    stored = snapshot.session_payload
+    stored = dict(snapshot.session_payload)
+    if stored.get("schema_version", 1) <= 12:
+        # Compare legacy snapshots using the defaults added in schema 13.
+        # The original payload and its integrity hash remain untouched.
+        stored.setdefault("player_gender", "male")
+        stored.setdefault("signing_reward_receipts", {})
+        stored["schema_version"] = 13
     keys = set(current) | set(stored)
     return tuple(
         sorted(

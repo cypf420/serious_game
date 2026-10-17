@@ -9,6 +9,7 @@ import type { TutorialContext, TutorialDefinition, TutorialRecord } from "./type
 import "./tutorial.css";
 
 type TutorialControls = {
+  overlayActive: boolean;
   openDirectory: () => void;
   start: (definition: TutorialDefinition) => void;
   context: TutorialContext;
@@ -182,7 +183,7 @@ export function TutorialProvider({ context, onNavigate, children }: {
     }
     start(definition);
   };
-  return <Controls.Provider value={{ openDirectory: () => setDirectory(true), start, context, canAuto, dismiss }}>
+  return <Controls.Provider value={{ overlayActive: Boolean(active || directory), openDirectory: () => setDirectory(true), start, context, canAuto, dismiss }}>
     {children}
     {intro && <aside className="tutorial-invitation" aria-label="赴任指南邀请"><b>赴任指南</b><p>用八个小步骤认识案头。操作与决定始终由你掌握。</p><button type="button" onClick={() => start(BASIC_TUTORIAL)}>开始赴任指南</button><button type="button" onClick={() => dismiss(BASIC_TUTORIAL)}>稍后再看</button></aside>}
     {sceneInvite && <aside className="tutorial-invitation" aria-label="场景操作帮助"><b>{sceneDefinition.title}</b><button type="button" onClick={() => start(sceneDefinition)}>查看操作提示</button><button type="button" onClick={() => dismiss(sceneDefinition)}>知道了</button></aside>}
@@ -202,6 +203,10 @@ export function TutorialProvider({ context, onNavigate, children }: {
       </>}
     </div></div>}
   </Controls.Provider>;
+}
+
+export function useTutorialOverlayActive(): boolean {
+  return useContext(Controls)?.overlayActive || false;
 }
 
 export function TutorialButton({ label = "赴任指南" }: { label?: string }) {

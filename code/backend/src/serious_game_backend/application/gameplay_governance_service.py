@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from serious_game_backend.domain.player_profile import player_identity
+
 from serious_game_backend.application.reference_documents import (catalog, public_catalog, resolve_references, hearing_facts, current_reference_audience, meeting_reference_materials)
 from serious_game_backend.application.character_facts import household_knowledge
 
@@ -786,6 +788,7 @@ class GameplayGovernanceService:
             unresolved_demands = stage_unresolved_demands(session, package, npc_id)
             turn = self._npc_turns.run(
                 RoleTurnContext(
+                    player_identity=player_identity(session),
                     session_id=session.session_id,
                     account_id=session.account_id,
                     operation_id=(
@@ -1396,6 +1399,7 @@ class GameplayGovernanceService:
                 else "宗族议事参与者：根据本人身份说明诉求、可接受的安排及仍需核实的问题"
             )
             raw_result = self._gateway.run_night_turn(NightAgentContext(
+                    player_identity=player_identity(session),
                     session_id=session.session_id,
                     account_id=session.account_id,
                     operation_id=(
@@ -3786,6 +3790,7 @@ class GameplayGovernanceService:
                                   if contract.signatory_npc_id and d.npc_id == contract.signatory_npc_id],
 
             })
+        fields["player_identity"] = player_identity(session)
         fields["actor_context"] = actor_context
         return GovernanceLLMContext(**fields)
 

@@ -39,6 +39,7 @@ export const CHARACTERS: readonly Character[] = [
   character("npc_zhou_mancang", "周满仓", "周氏族人"),
   character("npc_shi_wenbin", "石文斌", "县环保站职工"),
   character("player_li_zhiyuan", "李致远", "云溪县县长、县委副书记", ["李县长"]),
+  character("player_li_lin", "李琳", "云溪县县长、县委副书记"),
   character("npc_jiang_chongyue", "蒋崇岳", "县委书记"),
   character("npc_deng_shouben", "邓守本", "柳林村独身老汉"),
   character("npc_miao_xiwang", "苗喜旺", "柳林村早签户"),
@@ -64,4 +65,8 @@ export function resolveCharacter(...references: unknown[]): Character | null {
     if (match) return match;
   }
   return null;
+}
+
+export function resolvePlayerCharacter(gender?: string): Character {
+  return CHARACTER_LOOKUP.get(gender === "female" ? "player_li_lin" : "player_li_zhiyuan")!;
 }

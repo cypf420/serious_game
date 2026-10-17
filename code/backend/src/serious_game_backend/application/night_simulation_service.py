@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from serious_game_backend.domain.player_profile import player_identity
+
 from dataclasses import replace
 import secrets
 
@@ -60,6 +62,7 @@ class NightSimulationService:
             for profile in package.npc_profiles
             if profile.npc_id in fields.get("counterpart_ids", ()) and profile.role_setting.strip()
         }
+        fields["player_identity"] = player_identity(session)
         return NightAgentContext(**fields)
 
     def run_night(self, session: GameSession, package: ScriptPackage) -> dict:

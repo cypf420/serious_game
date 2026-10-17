@@ -6,6 +6,7 @@ from serious_game_backend.application.ending_prose import revise_ending_prose
 from serious_game_backend.domain.enums import SessionStatus
 from serious_game_backend.domain.errors import ContentValidationError
 from serious_game_backend.domain.game_session import GameSession
+from serious_game_backend.domain.player_profile import player_display_text
 from serious_game_backend.domain.script_package import ScriptPackage
 
 
@@ -295,7 +296,7 @@ class EndingService:
         )
         for key in ("main_text", "sub_text"):
             if isinstance(result.get(key), str):
-                result[key] = EndingService._render_sub_text(result[key], signed)
+                result[key] = player_display_text(session, EndingService._render_sub_text(result[key], signed))
         return result
 
     @staticmethod

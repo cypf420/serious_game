@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+from serious_game_backend.domain.player_profile import player_identity, player_profile
 from serious_game_backend.application.story_prose_round_two import secretary_opportunity
 
 from serious_game_backend.application.character_facts import household_knowledge
@@ -623,6 +625,7 @@ class ActionService:
         beat = package.story_day(session.game_state.story_day)
         turn = self._npc_turns.run(
             RoleTurnContext(
+                player_identity=player_identity(session),
                 session_id=session.session_id,
                 account_id=account_id,
                 operation_id=operation_id,
@@ -659,7 +662,7 @@ class ActionService:
                     "households": household_knowledge(package, profile.npc_id),
                     "hearing_progress": hearing_facts(session, profile.npc_id),
                     "compensation_evidence": luo_copy_context(session, profile.npc_id, command.player_text),
-                    "player_identity": "李致远，云溪县县长",
+                    "player_identity": player_identity(session),
                     "story_day": session.game_state.story_day,
                     "story_title": beat.title if beat is not None else "",
                     "origin": package.origins[session.origin_id].title,
@@ -964,7 +967,7 @@ class ActionService:
                 session.append_narrative(
                     story_day=session.game_state.story_day,
                     kind="player_dialogue",
-                    speaker="李致远",
+                    speaker=player_profile(session)["name"],
                     text=draft["player_text"],
                 )
                 session.append_narrative(

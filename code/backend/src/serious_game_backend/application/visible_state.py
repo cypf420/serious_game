@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from serious_game_backend.domain.game_session import GameSession
+from serious_game_backend.domain.player_profile import player_profile, signing_rewards
 from serious_game_backend.domain.script_package import MetricBand, ScriptPackage
 from serious_game_backend.application.npc_demand_service import NPCDemandService
 from serious_game_backend.application.ending_service import EndingService
@@ -69,6 +70,8 @@ class VisibleStateProjector:
             }
         return {
             "session_id": session.session_id,
+            "player_profile": player_profile(session),
+            "signing_rewards": signing_rewards(session),
             "state_version": session.state_version,
             "status": session.status.value,
             "onboarding": {

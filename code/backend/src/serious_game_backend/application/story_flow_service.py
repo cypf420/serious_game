@@ -5,6 +5,7 @@ from dataclasses import replace
 from serious_game_backend.domain.errors import ActionUnavailableError, ContentValidationError
 from serious_game_backend.domain.events import PendingDecision, VisibleDecisionOption
 from serious_game_backend.domain.game_session import GameSession
+from serious_game_backend.domain.player_profile import player_display_text
 from serious_game_backend.domain.script_package import ScriptPackage
 from serious_game_backend.domain.story import DecisionOptionDefinition, StoryDayDefinition
 from serious_game_backend.application.player_text_policy import player_visible_sentence
@@ -262,13 +263,13 @@ class StoryFlowService:
                     "cursor": item.cursor,
                     "story_day": item.story_day,
                     "kind": item.kind,
-                    "speaker": item.speaker,
-                    "text": (
+                    "speaker": player_display_text(session, item.speaker),
+                    "text": player_display_text(session, (
                         ending_text
                         if ending_text is not None and item.kind == "ending"
                         and item.content_instance_id == "ending:final"
                         else item.text
-                    ),
+                    )),
                     "content_instance_id": item.content_instance_id,
                     "block_id": item.block_id,
                     "beat_id": item.beat_id,
@@ -603,7 +604,7 @@ class StoryFlowService:
 
     @classmethod
     def session_public_text(cls, text: str, session: GameSession) -> str:
-        clean = cls._without_internal_markers(text)
+        clean = player_display_text(session, cls._without_internal_markers(text))
         if session.package_id == "pkg_gameplay_v3":
             return player_visible_sentence(clean)
         return clean

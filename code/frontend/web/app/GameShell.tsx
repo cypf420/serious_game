@@ -12,12 +12,13 @@ import { BackgroundMusic, MusicToggle } from "./audio/BackgroundMusic";
 import { selectMusicScene } from "./audio/music-scene";
 import { PagedReading } from "./reading/PagedReading";
 import { DialogueTranscriptReading } from "./reading/DialogueTranscriptReading";
+import { AutoSigningReward, SigningRewardCard, SigningRewardAlbum, type SigningReward } from "./achievements/SigningRewards";
 import { actionPresentation, meetingAction, participantCountLabel } from "./lib/action-presentation";
 import { TutorialProvider, TutorialButton, ActionTutorialButton } from "./tutorial/TutorialProvider";
 import type { TutorialContext } from "./tutorial/types";
 import { FormEvent, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { ApiError, GameApi, type NpcStreamEvent } from "./lib/api";
-import { resolveCharacter, type Character } from "./lib/characters";
+import { resolveCharacter, resolvePlayerCharacter, type Character } from "./lib/characters";
 import { initialNarrativeState, narrativeItemFromFeed, narrativeReducer, pendingDecisionIsReady, narrativeReadingComplete, type NarrativeItem } from "./lib/narrative-model";
 import { resolveSceneForView } from "./lib/scene-resolver";
 import { actionPointCost, actionPointLabel, activeInteractionMode, aiConfigurationErrorMessage, aiConfigurationMode, aiConfigurationView, archiveInvestigationGroups, archivePlayerSections, archiveReadGains, budgetEnvelopeChoices, canonicalActionEntry, canonicalActionFamilies, contractBatchTabs, conversationContractWorkflow, conversationTimelineUpdate, createActivityLatch, createSingleFlight, decisionUnlockRequirements, governanceActionButtonLabel, governanceActionProgressLabels, governanceDisplayTitle, governanceCancelMessage, governanceFinishMessage, initialNpcStreamState, investigationLeadView, meetingEvidenceArchives, mergeGovernanceTimeline, peopleRelationshipView, personDiscoveryPresentation, primaryScenePlan, qualitativeRelationshipLabel, reduceNpcStream, requiresAIConfiguration, resourceInventoryView, reviewEndingView, sessionEntry, speakerSelectionForTimelineEntry, submitGovernanceAction, toPlayerText, withAIActivity } from "./lib/player-ui";
@@ -226,6 +227,11 @@ export default function GameShell() {
   const [aiSuccess, setAiSuccess] = useState("");
   const [showApiKey, setShowApiKey] = useState(false);
   const [sessionId, setSessionId] = useState("");
+  const [newPlayerGender, setNewPlayerGender] = useState<"male" | "female">("male");
+  const [rewardOpen, setRewardOpen] = useState<SigningReward | null>(null);
+  const [rewardAlbumOpen, setRewardAlbumOpen] = useState(false);
+  const rewardSession = useRef("");
+  useEffect(() => { rewardSession.current = sessionId; }, [sessionId]);
   const [tutorialGeneration, setTutorialGeneration] = useState(0);
   const [tutorialEntry, setTutorialEntry] = useState<TutorialContext["entryKind"]>(null);
   const [tutorialResult, setTutorialResult] = useState<"morning" | "action-result" | null>(null);
@@ -263,6 +269,7 @@ export default function GameShell() {
   const [contractTutorialState, setContractTutorialState] = useState<{ id: string; stage: import("./tutorial/types").ContractTutorialStage } | null>(null);
   const contractDirty = useRef(false);
   const [progressBroadcastOpen, setProgressBroadcastOpen] = useState(false);
+  const [settledBroadcastKey, setSettledBroadcastKey] = useState("");
   const [endingVisible, setEndingVisible] = useState(false);
   const [confirmRequest, setConfirmRequest] = useState<ConfirmRequest | null>(null);
   const [conversationInput, setConversationInput] = useState("");
@@ -322,14 +329,15 @@ export default function GameShell() {
   useEffect(() => {
     if (!sessionId || !progressBroadcastId) return;
     const storageKey = `qingjiang-progress-broadcast:${sessionId}:${progressBroadcastId}`;
+    let alreadyShown = false;
     try {
-      if (window.sessionStorage.getItem(storageKey)) return;
-      window.sessionStorage.setItem(storageKey, "shown");
+      alreadyShown = Boolean(window.sessionStorage.getItem(storageKey));
+      if (!alreadyShown) window.sessionStorage.setItem(storageKey, "shown");
     } catch { /* private browsing still receives the in-session broadcast */ }
     const timer = window.setTimeout(() => {
-      setProgressBroadcastOpen(true);
-      void playProgressCue(progressBroadcastTone);
-    }, 120);
+      if (!alreadyShown) { setProgressBroadcastOpen(true); void playProgressCue(progressBroadcastTone); }
+      setSettledBroadcastKey(storageKey);
+    }, alreadyShown ? 0 : 120);
     return () => window.clearTimeout(timer);
   }, [sessionId, progressBroadcastId, progressBroadcastTone]);
 
@@ -353,6 +361,7 @@ export default function GameShell() {
     api.clearCsrf(csrfCookieName);
     api.setAccountId("");
     setAccount(""); setSessionId(""); setState({}); setCommands({});
+    setRewardOpen(null); setRewardAlbumOpen(false);
     dispatchNarrative({ type: "CLEAR" }); setShowHistory(false);
     setPanel("scene"); setPanelData(null); setGovernance(null);
     setSessionOpen(false); setSavedSessionsOpen(false); setSavedSessions([]); setPendingSync(null);
@@ -618,9 +627,10 @@ export default function GameShell() {
       return;
     }
     if (kind !== "review" && modelConsentRequired && !consentGranted) { setConsentOpen(true); setSessionOpen(false); return; }
+    setRewardOpen(null); setRewardAlbumOpen(false);
     setBusy(true); setNotice("");
     try {
-      const result = kind === "new" ? await api.newSession(value) : await api.session(value || "");
+      const result = kind === "new" ? await api.newSession(value, newPlayerGender) : await api.session(value || "");
       const id = String(result.session_id || get(result, "state.session_id") || value || "");
       if (!id) throw new ApiError("没有找到可继续的游戏进度。", "SESSION_NOT_FOUND", 404);
       setTutorialEntry(kind); setTutorialResult(null); setTutorialGeneration(value => value + 1);
@@ -644,6 +654,29 @@ export default function GameShell() {
       } else fail(error);
     }
     finally { setBusy(false); }
+  }
+
+  async function receiveSigningReward(threshold: number, automatic = false) {
+    if (!sessionId || busy) return;
+    const receivingSession = sessionId;
+    await performSingleFlightRef.current(async () => {
+      const release = activityLatchRef.current.acquire();
+      try {
+        const result = await api.write(receivingSession, `/signing-rewards/${threshold}/acknowledge`, "POST", { state_version: state.state_version });
+        if (rewardSession.current !== receivingSession) return false;
+        const rewards = result.signing_rewards as SigningReward[];
+        setState(current => current.session_id === receivingSession && Number(current.state_version) <= Number(result.state_version) ? { ...current, state_version: result.state_version, signing_rewards: rewards } : current);
+        const reward = rewards.find(item => item.threshold === threshold);
+        if (reward && (!automatic || result.claimed_now)) { setRewardAlbumOpen(false); setRewardOpen(reward); }
+        return true;
+      } catch (error) {
+        if (rewardSession.current === receivingSession) {
+          if ((error as ApiError)?.code === "STATE_VERSION_CONFLICT") await refresh(0, receivingSession, false, true, "latest");
+          else fail(error);
+        }
+        return false;
+      } finally { release(); }
+    });
   }
 
   async function showSavedSessions() {
@@ -1065,7 +1098,8 @@ export default function GameShell() {
   const latestStreamingReply = streamingReplies.length ? streamingReplies[streamingReplies.length - 1] : null;
   const thinkingNpcs = Object.entries(npcStream.thinking).map(([streamId, identity]) => ({ stream_id: streamId, ...identity }));
   const conversationStreamingReply = state.active_conversation ? latestStreamingReply : null;
-  const lineCharacter = currentLine?.speaker ? resolveCharacter(currentLine.speaker) : null;
+  const currentPlayer = resolvePlayerCharacter(state.player_profile?.gender);
+  const lineCharacter = currentLine?.speaker ? ["李县长", "李致远", "李琳", "player_li_zhiyuan", "player_li_lin"].includes(currentLine.speaker) ? currentPlayer : resolveCharacter(currentLine.speaker) : null;
   const conversationOpening = currentLine?.kind === "conversation_opening" && Boolean(state.active_conversation);
   const stageCharacter = conversationStreamingReply
     ? resolveCharacter(conversationStreamingReply.npc_id, conversationStreamingReply.npc_name)
@@ -1096,7 +1130,7 @@ export default function GameShell() {
     readOnly: tutorialEntry === "review" || state.status === "ended" || state.status === "completed",
     blocked: busy || Boolean(aiActivity) || npcStream.requestPending || thinkingNpcs.length > 0
       || authOpen || consentOpen || sessionOpen || Boolean(confirmRequest) || progressBroadcastOpen
-      || Boolean(characterProfileOpen) || Boolean(contractProposalOpen) || meetingResolutionOpen,
+      || Boolean(characterProfileOpen) || Boolean(contractProposalOpen) || meetingResolutionOpen || Boolean(rewardOpen) || rewardAlbumOpen,
     contractStage: contractOpen && contractTutorialState && contractTutorialState.id === contractOpen.contract_id ? contractTutorialState.stage : null,
     contractId: contractOpen?.contract_id,
     form: formOpen?.item || null,
@@ -1108,11 +1142,18 @@ export default function GameShell() {
       : readingCommands.can_end_day ? "end-day" : null,
   };
 
+  const rewardCatalog = (state.signing_rewards || []) as SigningReward[];
+  const nextReward = rewardCatalog.find(item => item.earned && !item.acknowledged)?.threshold;
+  const rewardAutoBlocked = tutorialContext.blocked || Boolean(contractOpen || archiveReadingOpen || governanceRecordOpen || formOpen || endingVisible || state.active_group_conversation || activeMeeting || pendingSync || conversationInput.trim() || referenceIds.length)
+    || Boolean(progressBroadcastId && settledBroadcastKey !== `qingjiang-progress-broadcast:${sessionId}:${progressBroadcastId}`);
+
   return <BackgroundMusic scene={musicScene}><TutorialProvider key={`${api.accountId}:${sessionId}:${tutorialGeneration}`} context={tutorialContext} onNavigate={name => loadPanel(name as PanelName)}><main className="app-shell">
+    <AutoSigningReward key={sessionId} sessionId={sessionId} threshold={nextReward} stateVersion={Number(state.state_version || 0)} blocked={rewardAutoBlocked} onReceive={receiveSigningReward} />
     <header className="topbar">
       <div className="brand"><span className="seal">清</span><div><h1>浊流之上</h1><p>县域治理情境模拟</p></div></div>
       <div className="top-status">
         <MusicToggle />
+        {sessionId && <button aria-label="签约纪念册" disabled={busy} onClick={() => setRewardAlbumOpen(true)}>签约纪念</button>}
         <TutorialButton />
         {sessionId && <EndingExperience ending={currentEnding} accountId={api.accountId} sessionId={sessionId} blocked={tutorialContext.blocked || Boolean(contractOpen || archiveReadingOpen || governanceRecordOpen || formOpen)} onVisibilityChange={setEndingVisible} onReview={() => { void loadPanel("review"); }} />}
         <span className={connected ? "online" : "offline"}><i />{connected ? "游戏已就绪" : "正在连接"}</span>
@@ -1191,7 +1232,7 @@ export default function GameShell() {
         <aside data-tutorial-id="today" className="context-panel" ref={contextRef}>
           <div className="panel-head"><div><small>云溪县政府 · 案头</small><h2>{PANEL_TITLES[panel]}</h2></div>{busy && <span className="sync-state" aria-live="polite">正在整理</span>}</div>
           <div className="panel-body">
-            {sessionId && <PlayerIdentityCard />}
+            {sessionId && <PlayerIdentityCard gender={state.player_profile?.gender} />}
             {panel === "scene" && <SceneSummary state={state} commands={readingCommands} requiredOpportunity={(commands.required_opportunity || state.required_opportunity || get(commands, "current_required_opportunity")) as Dict | null} governanceAction={activeGovernanceAction} decisionReady={decisionReady} onNavigate={loadPanel} onEndDay={confirmEndDay} />}
             {panel === "actions" && <ActionPanel data={panelData} onRun={item => { setNotice(""); setFormOpen({ title: governanceDisplayTitle(item, "安排治理行动"), kind: "resource", item }); }} />}
             {panel === "opportunities" && <OpportunityPanel signingOnly={signingOnly} data={panelData} activeConversation={state.active_conversation || null} onOpenProfile={setCharacterProfileOpen} onContinue={() => void loadPanel("scene")} onStart={item => openCanonicalAction(item, `与 ${playerText(item.npc_name, "对方")} 会谈`)} />}
@@ -1225,7 +1266,7 @@ export default function GameShell() {
         onReview={() => { setAuthOpen(false); setSessionOpen(true); void showSavedSessions(); }}
       /> : authRequired ? account ? <div className="account-card"><small>当前账号</small><strong>{account}</strong><p>你的游戏进度已绑定当前账号，重新登录后仍可继续。</p><div className={`ai-config-summary ${aiView.configured ? "active" : ""}`}><small>当前 AI 接口</small><b>{aiView.summary}</b></div>{authError && <div className="notice">{authError}</div>}<button className="secondary" onClick={() => { setAuthStep("ai"); setAiError(""); setAiSuccess(""); void loadAIConfiguration(false); }} disabled={busy}>AI 接口设置</button>{modelConsentRequired && <button className="secondary" onClick={() => setConsentOpen(true)} disabled={busy}>模型与数据授权</button>}<button onClick={logoutAccount} disabled={busy}>退出登录</button></div> : <form className="stack-form" onSubmit={authenticate}><div className="auth-tabs"><button type="button" className={authMode === "login" ? "active" : ""} onClick={() => { setAuthMode("login"); setAuthError(""); }}>登录</button>{selfRegistration && <button type="button" className={authMode === "register" ? "active" : ""} onClick={() => { setAuthMode("register"); setAuthError(""); }}>注册</button>}</div><p>{authMode === "login" ? "登录后可继续这个账号的历史进度。" : "创建账号后即可保留多条游戏进度。"}</p>{authError && <div className="notice">{authError}</div>}<label>用户名<input name="username" minLength={authMode === "register" ? 3 : 1} maxLength={32} autoComplete="username" required autoFocus /></label><label>密码<input name="password" type="password" minLength={authMode === "register" ? 8 : 1} maxLength={256} autoComplete={authMode === "register" ? "new-password" : "current-password"} required /></label><button disabled={busy}>{busy ? "正在处理…" : authMode === "login" ? "登录并继续" : "注册并开始"}</button></form> : <div className="account-card"><small>当前身份</small><strong>本地试玩</strong><p>无需注册。游戏进度会保存在这台电脑上。</p><button onClick={() => setAuthStep("ai")}>配置 AI 接口</button></div>}
     </Modal>}
-    {sessionOpen && <Modal title="进入云溪县" onClose={() => { setSessionOpen(false); setSavedSessionsOpen(false); }}><div className="session-actions"><button onClick={() => openSession("new")} disabled={!aiView.configured}>开始新游戏<span>{aiView.configured ? "从上任第一天开始一条新的九十天时间线" : "请先测试并启用 AI 接口"}</span></button><button onClick={showSavedSessions} className={savedSessionsOpen ? "selected" : ""}>查看已有进度<span>可继续当前版本，或复盘已退役剧本</span></button></div>{savedSessionsOpen && <div className="saved-session-list" aria-live="polite">{busy && !savedSessions.length && <div className="form-loading">正在整理存档…</div>}{savedSessionsError && <div className="notice">{savedSessionsError}</div>}{!busy && !savedSessionsError && !savedSessions.length && <div className="empty-state"><p>还没有保存过的游戏，可以从新游戏开始。</p></div>}{savedSessions.map((saved, index) => { const entry = sessionEntry(saved); const needsAI = entry.openKind === "load" && !aiView.configured; return <button key={saved.session_id} className={entry.mode === "review" ? "review-only" : entry.mode === "unavailable" ? "unavailable" : ""} disabled={entry.openKind === null || needsAI} onClick={() => { if (entry.openKind && !needsAI) openSession(entry.openKind, String(saved.session_id)); }}><span><b>进度{chineseIndex(index)} · {entry.label}</b><small>第 {saved.story_day || 1} 日 · {needsAI ? "配置 AI 接口后可继续" : entry.mode === "review" ? "仅可复盘" : entry.mode === "unavailable" ? entry.unavailableReason : friendlyStatus(saved.status)}</small></span><time>{saved.updated_at ? new Date(saved.updated_at).toLocaleString("zh-CN", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }) : ""}</time></button>; })}</div>}</Modal>}
+    {sessionOpen && <Modal title="进入云溪县" onClose={() => { setSessionOpen(false); setSavedSessionsOpen(false); }}><fieldset className="player-gender-choice"><legend>新游戏县长身份</legend><p>身份选定后，本局固定。此选择仅对新游戏生效。</p><div>{(["male", "female"] as const).map(gender => { const character = resolvePlayerCharacter(gender); return <label key={gender} className={newPlayerGender === gender ? "selected" : ""}><input type="radio" name="new-player-gender" value={gender} checked={newPlayerGender === gender} onChange={() => setNewPlayerGender(gender)} disabled={busy} /><div className="player-choice-portrait"><CharacterPortrait character={character} fallbackName={character.name} /></div><b>{character.name}</b><span>{gender === "female" ? "女县长" : "男县长"}</span></label>; })}</div></fieldset><div className="session-actions"><button onClick={() => openSession("new")} disabled={!aiView.configured}>开始新游戏<span>{aiView.configured ? "从上任第一天开始一条新的九十天时间线" : "请先测试并启用 AI 接口"}</span></button><button onClick={showSavedSessions} className={savedSessionsOpen ? "selected" : ""}>查看已有进度<span>可继续当前版本，或复盘已退役剧本</span></button></div>{savedSessionsOpen && <div className="saved-session-list" aria-live="polite">{busy && !savedSessions.length && <div className="form-loading">正在整理存档…</div>}{savedSessionsError && <div className="notice">{savedSessionsError}</div>}{!busy && !savedSessionsError && !savedSessions.length && <div className="empty-state"><p>还没有保存过的游戏，可以从新游戏开始。</p></div>}{savedSessions.map((saved, index) => { const entry = sessionEntry(saved); const needsAI = entry.openKind === "load" && !aiView.configured; return <button key={saved.session_id} className={entry.mode === "review" ? "review-only" : entry.mode === "unavailable" ? "unavailable" : ""} disabled={entry.openKind === null || needsAI} onClick={() => { if (entry.openKind && !needsAI) openSession(entry.openKind, String(saved.session_id)); }}><span><b>进度{chineseIndex(index)} · {entry.label}</b><small>第 {saved.story_day || 1} 日 · {needsAI ? "配置 AI 接口后可继续" : entry.mode === "review" ? "仅可复盘" : entry.mode === "unavailable" ? entry.unavailableReason : friendlyStatus(saved.status)}</small></span><time>{saved.updated_at ? new Date(saved.updated_at).toLocaleString("zh-CN", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }) : ""}</time></button>; })}</div>}</Modal>}
     {!contractOpen && savedSyncNotice}
     {formOpen && <Modal title={formOpen.title} onClose={() => setFormOpen(null)}><TutorialButton label="填写指南" /><ContextForm config={formOpen} state={state} api={api} sessionId={sessionId} notice={notice} onPerform={perform} onArchivesRead={setArchiveReadingOpen} onOpenProfile={setCharacterProfileOpen} /></Modal>}
     {meetingResolutionOpen && activeMeeting && <Modal title={`确认${actionPresentation(activeGovernanceAction).conclusion}`} onClose={() => { if (!busy) setMeetingResolutionOpen(false); }}><MeetingResolutionForm meeting={activeMeeting} governance={governance || {}} state={state} busy={busy} notice={notice} onOpenProfile={setCharacterProfileOpen} onCancel={() => setMeetingResolutionOpen(false)} onSubmit={submitMeetingResolution} /></Modal>}
@@ -1234,6 +1275,8 @@ export default function GameShell() {
     {archiveReadingOpen && <Modal title="档案查阅结果" className="archive-reading-modal" onClose={() => setArchiveReadingOpen(null)}><ArchiveReading result={archiveReadingOpen} /></Modal>}
     {contractProposalOpen && <Modal title="确认逐户合同提议" onClose={() => { if (!busy) setContractProposalOpen(null); }}><ContractBatchProposal proposal={contractProposalOpen} busy={busy} onConfirm={confirmContractBatch} /></Modal>}
     {contractOpen && <Modal title={`逐户合同 · ${playerText(contractOpen.signatory_name, contractOpen.household_id || "待确认")}`} className="contract-modal" onClose={() => { if (!busy && (!contractDirty.current || window.confirm("方案有修改尚未保存，确定放弃修改并关闭？"))) { contractDirty.current = false; setContractOpen(null); } }}><div data-tutorial-id="contract"><TutorialButton label="合同操作指南" />{savedSyncNotice}<ContractWorkspace key={`${contractOpen.contract_id}:${contractOpen.current_version}`} onTutorialStageChange={setContractTutorialState} onNextStep={openNextStep} contract={contractOpen} governance={governance || panelData || {}} state={state} busy={busy} api={api} sessionId={sessionId} onPerform={performContractAction} onDirtyChange={dirty => { contractDirty.current = dirty; }} onContinue={() => { contractDirty.current = false; setContractOpen(null); setPanel("scene"); }} onOpenContract={openContractDetail} /></div></Modal>}
+    {rewardAlbumOpen && <Modal title="签约纪念册" className="signing-rewards-modal" onClose={() => setRewardAlbumOpen(false)}><SigningRewardAlbum rewards={rewardCatalog} busy={busy} onOpen={threshold => void receiveSigningReward(threshold)} /></Modal>}
+    {rewardOpen && <Modal title={rewardOpen.title} className="signing-rewards-modal" onClose={() => setRewardOpen(null)}><SigningRewardCard reward={rewardOpen} playerName={currentPlayer.name} /></Modal>}
     {progressBroadcastOpen && progressBroadcast && <Modal title={playerText(progressBroadcast.title, "云溪县十日督办播报")} className="progress-broadcast-modal" onClose={() => setProgressBroadcastOpen(false)}><ProgressBroadcast broadcast={progressBroadcast} onReplay={() => void playProgressCue(progressBroadcastTone)} /></Modal>}
     {consentOpen && <Modal title="角色模型与数据授权" onClose={consentGranted ? () => setConsentOpen(false) : undefined}><ConsentPanel info={consentInfo} aiSummary={aiView.summary} granted={consentGranted} busy={busy} error={consentError} onSign={signModelConsent} onWithdraw={confirmWithdrawModelConsent} /></Modal>}
     {confirmRequest && <Modal title={confirmRequest.title} onClose={() => { if (!busy) setConfirmRequest(null); }}><div className="confirm-panel"><p>{confirmRequest.message}</p><div><button disabled={busy} onClick={() => setConfirmRequest(null)}>返回</button><button className={confirmRequest.danger ? "danger" : "primary"} disabled={busy} onClick={() => { const action = confirmRequest.action; setConfirmRequest(null); void action(); }}>{confirmRequest.confirmLabel}</button></div></div></Modal>}
@@ -1242,7 +1285,7 @@ export default function GameShell() {
 
 function characterPublicIntroduction(character: Character) {
   const role = character.role;
-  if (character.id === "player_li_zhiyuan") return "云溪县新任县长、县委副书记，也是本次柳林村整体搬迁治理工作的主要决策者。";
+  if (["player_li_zhiyuan", "player_li_lin"].includes(character.id)) return "云溪县新任县长、县委副书记，也是本次柳林村整体搬迁治理工作的主要决策者。";
   if (/县长|书记|局长|干部|组长|站长|科/.test(role)) return `${character.name}以${role}身份进入当前治理进程。其职责、掌握的材料和能够作出的承诺，需要通过正式会谈逐步核实。`;
   if (/记者/.test(role)) return `${character.name}是${role}，关注柳林村搬迁中的公共事实、程序透明与社会影响。其尚未公开的线索不会在人物档案中提前显示。`;
   if (/法人|公司/.test(role)) return `${character.name}以${role}身份与搬迁及相关项目发生联系。其利益关系和具体主张，需要以会谈、合同与卷宗为准。`;
@@ -1271,8 +1314,8 @@ function CharacterChoiceCard({ character, fallbackName, inputId, type, name, val
   </div>;
 }
 
-function PlayerIdentityCard() {
-  const player = resolveCharacter("player_li_zhiyuan");
+function PlayerIdentityCard({ gender }: { gender?: string }) {
+  const player = resolvePlayerCharacter(gender);
   return <section className="player-identity-card" data-testid="player-identity-card"><div className="player-portrait"><CharacterPortrait character={player} fallbackName="李致远" /></div><div><small>你的身份</small><h3>{player?.name || "李致远"}</h3><p>{player?.role || "云溪县县长"}</p></div></section>;
 }
 

@@ -3,6 +3,7 @@ from __future__ import annotations
 from serious_game_backend.application.ports import RoleLLMGateway
 from serious_game_backend.domain.errors import RoleLLMResponseError
 from serious_game_backend.domain.game_session import GameSession
+from serious_game_backend.domain.player_profile import player_identity
 from serious_game_backend.domain.llm import GovernanceLLMContext
 
 
@@ -53,6 +54,7 @@ class InputReviewService:
             return True, "面对面交流中的正常问候。"
         result = self._gateway.run_governance_task(
             GovernanceLLMContext(
+                player_identity=player_identity(session),
                 session_id=session.session_id,
                 account_id=session.account_id,
                 operation_id=operation_id,

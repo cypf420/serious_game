@@ -131,6 +131,7 @@ class RoleTurnContext:
     conversation_goal: str = ""
     visible_world_context: dict = field(default_factory=dict)
     player_reference_materials: dict = field(default_factory=dict)
+    player_identity: str = "云溪县县长李致远"
 
 
 @dataclass(frozen=True, slots=True)
@@ -206,6 +207,7 @@ class NightAgentContext:
     followup_required: bool = False
     model_id: str = ""
     prompt_version: str = "night-agent-v1"
+    player_identity: str = "云溪县县长李致远"
 
 
 @dataclass(frozen=True, slots=True)
@@ -246,6 +248,7 @@ class GovernanceLLMContext:
     payload: dict
     prompt_version: str = "governance-workflow-v1"
     actor_context: dict = field(default_factory=dict)
+    player_identity: str = "云溪县县长李致远"
 
 
 @dataclass(frozen=True, slots=True)

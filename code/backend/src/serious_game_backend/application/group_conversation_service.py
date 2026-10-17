@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from serious_game_backend.domain.player_profile import player_identity
+
 from dataclasses import asdict
 import json
 from threading import Event
@@ -262,6 +264,7 @@ class GroupConversationService:
                     + ("\n玩家引用的真实文件：" + json.dumps(references, ensure_ascii=False) if references else "")
                 )
                 raw_result = self._gateway.run_night_turn(NightAgentContext(
+                    player_identity=player_identity(session),
                     session_id=session.session_id,
                     account_id=session.account_id,
                     operation_id=(

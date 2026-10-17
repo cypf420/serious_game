@@ -74,11 +74,15 @@ class GameSessionService:
         package_id: str,
         client_request_id: str,
         origin_id: str,
+        player_gender: str = "male",
     ) -> GameSession:
+        if player_gender not in {"male", "female"}:
+            raise ContentValidationError("请选择男县长或女县长")
         payload = {
             "package_id": package_id,
             "client_request_id": client_request_id,
             "origin_id": origin_id,
+            **({"player_gender": player_gender} if player_gender != "male" else {}),
         }
         request_hash = canonical_request_hash(payload)
         existing = self._requests.get(account_id, client_request_id)
@@ -156,6 +160,7 @@ class GameSessionService:
             random_seed=secrets.token_hex(32),
             game_state=GameState.new_game(package.initial_state),
             origin_id=origin_id,
+            player_gender=player_gender,
             timeline_id=f"timeline_{secrets.token_hex(16)}",
             environment=self._environment,
             consent_record_id=(consent.consent_record_id if consent else None),

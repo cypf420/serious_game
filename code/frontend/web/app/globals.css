@@ -1391,3 +1391,34 @@ footer { grid-column: 1 / -1; display: flex; align-items: center; justify-conten
   .forced-group-workspace { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); padding: 8px; }
   .forced-group-speaker { display: none; }
 }
+
+.player-gender-choice { margin: 16px 0; padding: 14px; border: 1px solid #9b825e; color: #55432d; }
+.player-gender-choice legend { padding: 0 8px; font-size: 17px; font-weight: 700; }
+.player-gender-choice > p { margin: 0 0 12px; font-size: 13px; line-height: 1.7; }
+.player-gender-choice > div { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.player-gender-choice label { position: relative; display: grid; justify-items: center; gap: 6px; padding: 10px; border: 2px solid #a28e6a; background: rgba(255,255,255,.15); cursor: pointer; }
+.player-gender-choice label.selected { border-color: #8e3d32; background: rgba(142,61,50,.08); }
+.player-gender-choice input { position: absolute; z-index: 1; top: 12px; left: 12px; width: 18px; height: 18px; accent-color: #8e3d32; }
+.player-gender-choice label:focus-within { outline: 2px solid #765225; outline-offset: 3px; }
+.player-choice-portrait { position: relative; width: 100%; height: clamp(130px, 24dvh, 220px); }
+.player-gender-choice b { font: 700 22px "STKaiti", "KaiTi", serif; }
+.player-gender-choice span { font-size: 13px; }
+.signing-rewards-modal { width: min(640px, calc(100vw - 24px)); }
+.signing-reward-card { display: grid; justify-items: center; gap: 12px; padding-top: 16px; }
+.signing-reward-card > p { margin: 0; color: #675137; font-size: 13px; }
+.signing-reward-card > button { min-height: 44px; padding: 10px 16px; background: #763a2e; border: 1px solid #6b3127; color: #f7e7c4; cursor: pointer; }
+.signing-reward-banner { width: min(100%, 340px); margin: 0; padding: 24px; border: 5px double #d8b775; background: #7b3028; color: #f4dfaa; text-align: center; box-shadow: 0 8px 24px #42271933; }
+.signing-reward-banner small { font-size: 12px; letter-spacing: .15em; }
+.signing-reward-banner h3 { margin: 20px 0 8px; color: #f4dfaa; font: 700 34px "STKaiti", "KaiTi", serif; }
+.signing-reward-banner > strong { display: block; font: 700 72px "STKaiti", "KaiTi", serif; line-height: 1.35; }
+.signing-reward-banner > strong span { margin-left: 8px; font-size: 24px; }
+.signing-reward-banner > p { margin: 12px 0 24px; font-size: 18px; }
+.signing-reward-banner figcaption { font-size: 11px; color: #e7c88f; }
+.signing-reward-art { max-width: 100%; max-height: 56dvh; object-fit: contain; }
+.signing-reward-album { display: grid; gap: 16px; padding-top: 16px; color: #614e35; }
+.signing-reward-album > p { margin: 0; font-size: 14px; line-height: 1.7; }
+.signing-reward-album > div { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.signing-reward-album button { display: grid; gap: 8px; min-height: 120px; padding: 16px 10px; color: #65442c; background: #f0e1be; border: 1px solid #9b825e; cursor: pointer; }
+.signing-reward-album button b { font: 700 28px "STKaiti", "KaiTi", serif; }
+.signing-reward-album button span { font-size: 14px; }.signing-reward-album button small { font-size: 12px; }
+.signing-reward-album button:disabled { color: #827762; background: #d9cdae; cursor: default; }

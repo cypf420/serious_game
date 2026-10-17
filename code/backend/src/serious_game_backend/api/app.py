@@ -46,6 +46,7 @@ from serious_game_backend.api.schemas import (
     RetentionRunBody,
     SubjectRequestBody,
     StartSessionRequest,
+    SigningRewardReceiptRequest,
 )
 from serious_game_backend.application.package_lock import (
     locked_package_access,
@@ -181,6 +182,10 @@ def create_app(settings: Settings | None = None, container: Container | None = N
         if request.method.upper() in {"GET", "HEAD", "OPTIONS"}:
             return None
         if not request.url.path.startswith("/api/game/session"):
+            return None
+        if re.fullmatch(r"/api/game/session/[^/]+/signing-rewards/(1|6|18|36)/acknowledge", request.url.path):
+            # Cosmetic collection never invokes a model; authentication and
+            # ownership/version checks still run through their normal paths.
             return None
         if runtime.player_llm_configs.status(scope_id).active:
             return None
@@ -1081,9 +1086,19 @@ def create_app(settings: Settings | None = None, container: Container | None = N
             package_id=package_id,
             client_request_id=body.client_request_id,
             origin_id="mayor",
+            player_gender=body.player_gender,
         )
         package = require_locked_package(runtime.packages, session)
         return runtime.projector.project(session, package)
+
+    @app.post("/api/game/session/{session_id}/signing-rewards/{threshold}/acknowledge")
+    async def acknowledge_signing_reward(session_id: str, threshold: int,
+                                         body: SigningRewardReceiptRequest,
+                                         x_account_id: str | None = Header(default=None)) -> dict:
+        return runtime.saves.acknowledge_signing_reward(
+            account_id=current_account_id(x_account_id), session_id=session_id,
+            state_version=body.state_version, threshold=threshold,
+        )
 
     @app.get("/api/game/origins")
     async def list_origins(

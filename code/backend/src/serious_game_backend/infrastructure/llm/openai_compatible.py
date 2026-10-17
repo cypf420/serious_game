@@ -446,7 +446,7 @@ class OpenAICompatibleRoleLLMGateway(RoleLLMGateway):
             isinstance(context, NightAgentContext)
             and context.phase in {"player_group_dialogue", "resolved_group_followup"}
         ):
-            data["player_identity"] = "云溪县县长李致远"
+            data["player_identity"] = context.player_identity
         for key in (
             "session_id", "account_id", "operation_id", "prompt_version",
             "forbidden_fact_signatures", "forbidden_fact_markers",
@@ -498,7 +498,7 @@ class OpenAICompatibleRoleLLMGateway(RoleLLMGateway):
             ),
             context=secretary_context or (
                 self._character_context(context) +
-                "玩家身份：云溪县县长李致远；你正在与县长本人交谈，不要询问其是谁或把他当成村民。\n"
+                f"玩家身份：{context.player_identity}；你正在与县长本人交谈，不要询问其是谁或将县长当成村民。\n"
                 f"会谈目标：{context.conversation_goal}\n"
                 f"玩家本轮发言：{context.player_text}\n"
                 f"已进行轮次：{context.conversation_turn_count}\n"
@@ -675,7 +675,7 @@ class OpenAICompatibleRoleLLMGateway(RoleLLMGateway):
             "玩家本轮发言": context.player_text,
         }
         if context.phase in {"player_group_dialogue", "resolved_group_followup"}:
-            data["玩家身份"] = "云溪县县长李致远"
+            data["玩家身份"] = context.player_identity
             # This field is now assembled solely from actual hearing/documents.
             data["已提供材料"] = context.reference_context
         return json.dumps(data, ensure_ascii=False)

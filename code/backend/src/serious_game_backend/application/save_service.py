@@ -19,6 +19,7 @@ from serious_game_backend.domain.errors import (
     StateVersionConflictError,
 )
 from serious_game_backend.domain.operation import OperationRecord, utc_now_iso
+from serious_game_backend.domain.player_profile import SIGNING_MILESTONES, signing_rewards
 from serious_game_backend.infrastructure.repositories.codec import decode_session
 from serious_game_backend.infrastructure.repositories.snapshot_codec import (
     build_snapshot,
@@ -37,6 +38,26 @@ class SaveService:
         self._sessions = sessions
         self._operations = operations
         self._snapshots = snapshots
+
+    def acknowledge_signing_reward(self, *, account_id: str, session_id: str,
+                                   state_version: int, threshold: int) -> dict:
+        session = self._owned_session(account_id, session_id)
+        if threshold not in SIGNING_MILESTONES:
+            raise ContentValidationError("未知签约纪念档位")
+        # A stable milestone key makes retries and multiple tabs idempotent.
+        if str(threshold) in session.signing_reward_receipts:
+            return {"claimed_now": False, "state_version": session.state_version,
+                    "signing_rewards": signing_rewards(session)}
+        session = self._writable_session(account_id, session_id, state_version)
+        if session.audited_signed_households() < threshold:
+            raise ContentValidationError("实际签约户数尚未达到该档位")
+        session.signing_reward_receipts[str(threshold)] = {"received_day": session.game_state.story_day}
+        session.state_version += 1
+        session.touch()
+        self._snapshots.commit_session_snapshot(session, expected_version=state_version,
+                                               snapshot_type="checkpoint", reason="signing_reward_received")
+        return {"claimed_now": True, "state_version": session.state_version,
+                "signing_rewards": signing_rewards(session)}
 
     def list_manual_saves(self, *, account_id: str, session_id: str) -> dict:
         session = self._owned_session(account_id, session_id)
@@ -217,6 +238,9 @@ class SaveService:
             research_subject_id=current.research_subject_id,
             experiment_id=current.experiment_id,
             experiment_group_id=current.experiment_group_id,
+            player_gender=current.player_gender,
+            signing_reward_receipts={**restored_value.signing_reward_receipts,
+                                     **current.signing_reward_receipts},
             timeline_id=f"timeline_{secrets.token_hex(16)}",
             loaded_from_snapshot_id=source.snapshot_id,
             state_version=current.state_version + 1,

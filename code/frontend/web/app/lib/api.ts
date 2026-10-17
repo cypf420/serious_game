@@ -220,9 +220,10 @@ export class GameApi {
     return this.request<Record<string, unknown>>("POST", "/api/consent/withdraw", { reason });
   }
   origins() { return this.request<{ origins?: Record<string, unknown>[] }>("GET", "/api/game/origins"); }
-  newSession(originId?: string) {
+  newSession(originId?: string, playerGender: "male" | "female" = "male") {
     return this.request<Record<string, unknown>>("POST", "/api/game/session", {
       client_request_id: this.key("new"),
+      player_gender: playerGender,
       ...(originId ? { origin_id: originId } : {}),
     });
   }

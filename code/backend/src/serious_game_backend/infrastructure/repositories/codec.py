@@ -73,7 +73,7 @@ def encode_session(session: GameSession) -> dict:
             ),
         }
     return {
-        "schema_version": 12,
+        "schema_version": 13,
         "session_id": session.session_id,
         "account_id": session.account_id,
         "package_id": session.package_id,
@@ -81,6 +81,8 @@ def encode_session(session: GameSession) -> dict:
         "package_content_hash": session.package_content_hash,
         "random_seed": session.random_seed,
         "origin_id": session.origin_id,
+        "player_gender": session.player_gender,
+        "signing_reward_receipts": {key: dict(item) for key, item in session.signing_reward_receipts.items()},
         "timeline_id": session.timeline_id,
         "loaded_from_snapshot_id": session.loaded_from_snapshot_id,
         "environment": session.environment,
@@ -239,6 +241,8 @@ def decode_session(value: dict) -> GameSession:
         random_seed=str(value["random_seed"]),
         game_state=_decode_current_game_state(value["game_state"]),
         origin_id=str(value["origin_id"]),
+        player_gender=str(value.get("player_gender", "male")),
+        signing_reward_receipts={str(key): dict(item) for key, item in value.get("signing_reward_receipts", {}).items()},
         timeline_id=str(
             value.get("timeline_id") or f"timeline_{value['session_id']}"
         ),

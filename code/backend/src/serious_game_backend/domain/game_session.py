@@ -42,6 +42,8 @@ class GameSession:
     random_seed: str
     game_state: GameState
     origin_id: str
+    player_gender: str = "male"
+    signing_reward_receipts: dict[str, dict] = field(default_factory=dict)
     timeline_id: str = ""
     loaded_from_snapshot_id: str | None = None
     environment: str = "sandbox"

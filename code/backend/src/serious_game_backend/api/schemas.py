@@ -13,9 +13,15 @@ class StartSessionRequest(BaseModel):
 
     client_request_id: str = Field(min_length=8, max_length=128)
     package_id: str | None = Field(default=None, min_length=1, max_length=128)
+    player_gender: Literal["male", "female"] = "male"
     # Kept as a tolerated legacy field so older clients can still start a game.
     # New games always use the fixed mayor identity selected by the server.
     origin_id: str | None = Field(default=None, min_length=1, max_length=64)
+
+
+class SigningRewardReceiptRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    state_version: int = Field(ge=1)
 
 
 class ActionRequest(BaseModel):
