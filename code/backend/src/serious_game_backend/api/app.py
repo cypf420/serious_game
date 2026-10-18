@@ -183,7 +183,7 @@ def create_app(settings: Settings | None = None, container: Container | None = N
             return None
         if not request.url.path.startswith("/api/game/session"):
             return None
-        if re.fullmatch(r"/api/game/session/[^/]+/signing-rewards/(1|6|18|36)/acknowledge", request.url.path):
+        if re.fullmatch(r"/api/game/session/[^/]+/signing-rewards/(1|3|6|10|18|30|36)/acknowledge", request.url.path):
             # Cosmetic collection never invokes a model; authentication and
             # ownership/version checks still run through their normal paths.
             return None

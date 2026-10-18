@@ -1,7 +1,15 @@
 """Fixed player identities and cosmetic signing milestones."""
 from __future__ import annotations
 
-SIGNING_MILESTONES = (1, 6, 18, 36)
+SIGNING_MILESTONES = (1, 3, 10, 18, 30, 36)
+SIGNING_REWARD_TITLES = {
+    1: "新官上任试试水~",
+    3: "新手村毕业",
+    10: "先天签约圣体",
+    18: "优势即将在我",
+    30: "来都来了，再签六户",
+    36: "县长so easy！",
+}
 
 
 def player_profile(session) -> dict:
@@ -32,7 +40,7 @@ def signing_rewards(session) -> list[dict]:
     return [{
         "reward_id": f"signing_{threshold}",
         "threshold": threshold,
-        "title": f"签约 {threshold} 户纪念",
+        "title": SIGNING_REWARD_TITLES[threshold],
         "earned": signed >= threshold,
         "acknowledged": str(threshold) in session.signing_reward_receipts,
         "received_day": session.signing_reward_receipts.get(str(threshold), {}).get("received_day"),

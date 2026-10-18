@@ -42,7 +42,10 @@ class SaveService:
     def acknowledge_signing_reward(self, *, account_id: str, session_id: str,
                                    state_version: int, threshold: int) -> dict:
         session = self._owned_session(account_id, session_id)
-        if threshold not in SIGNING_MILESTONES:
+        # The retired 6-household award stays in existing saves. Only replay an
+        # already-recorded receipt; never issue it as a new six-tier award.
+        legacy_receipt = threshold == 6 and "6" in session.signing_reward_receipts
+        if threshold not in SIGNING_MILESTONES and not legacy_receipt:
             raise ContentValidationError("未知签约纪念档位")
         # A stable milestone key makes retries and multiple tabs idempotent.
         if str(threshold) in session.signing_reward_receipts:

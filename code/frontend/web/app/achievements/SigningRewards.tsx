@@ -5,8 +5,14 @@ import { useTutorialOverlayActive } from "../tutorial/TutorialProvider";
 
 export type SigningReward = { reward_id: string; threshold: number; title: string; earned: boolean; acknowledged: boolean; received_day: number | null };
 
-// Replace these same-origin image paths when the four approved banners arrive.
-const REWARD_IMAGES: Partial<Record<number, string>> = {};
+const REWARD_IMAGES: Partial<Record<number, string>> = {
+  1: "/achievements/signing-1.png",
+  3: "/achievements/signing-3.png",
+  10: "/achievements/signing-10.png",
+  18: "/achievements/signing-18.png",
+  30: "/achievements/signing-30.png",
+  36: "/achievements/signing-36.png",
+};
 
 export function AutoSigningReward({ sessionId, threshold, stateVersion, blocked, onReceive }: {
   sessionId: string; threshold?: number; stateVersion: number; blocked: boolean;
@@ -32,26 +38,19 @@ export function SigningRewardCard({ reward, playerName }: { reward: SigningRewar
     setDownloading(true); setError("");
     try {
       await document.fonts.ready;
-      const canvas = document.createElement("canvas"); canvas.width = 1080; canvas.height = 1440;
+      if (!image) throw new Error("该成就图片暂不可用，请刷新后重试。");
+      const canvas = document.createElement("canvas"); canvas.width = 1920; canvas.height = 1080;
       const ctx = canvas.getContext("2d");
       if (!ctx) throw new Error("当前浏览器无法生成纪念图片，请更换浏览器后重试。");
-      ctx.fillStyle = "#f5ead0"; ctx.fillRect(0, 0, 1080, 1440);
-      if (image) {
-        const artwork = new window.Image(); artwork.src = image; await artwork.decode();
-        const scale = Math.min(1000 / artwork.width, 1100 / artwork.height);
-        ctx.drawImage(artwork, (1080 - artwork.width * scale) / 2, 40, artwork.width * scale, artwork.height * scale);
-      } else {
-        ctx.fillStyle = "#7b3028"; ctx.fillRect(80, 70, 920, 1060);
-        ctx.strokeStyle = "#d8b775"; ctx.lineWidth = 8; ctx.strokeRect(105, 95, 870, 1010);
-        ctx.fillStyle = "#f4dfaa"; ctx.textAlign = "center";
-        ctx.font = '44px "Microsoft YaHei", sans-serif'; ctx.fillText("浊流之上 · 云溪县", 540, 240);
-        ctx.font = 'bold 88px "Microsoft YaHei", sans-serif'; ctx.fillText("签约纪念", 540, 480);
-        ctx.font = 'bold 132px "Microsoft YaHei", sans-serif'; ctx.fillText(`${reward.threshold} 户`, 540, 710);
-        ctx.font = '32px "Microsoft YaHei", sans-serif'; ctx.fillText("临时样式 · 正式锦旗待替换", 540, 990);
-      }
-      ctx.textAlign = "center"; ctx.fillStyle = "#4a3424";
-      ctx.font = 'bold 52px "Microsoft YaHei", sans-serif'; ctx.fillText(`${playerName}县长`, 540, 1230);
-      ctx.font = '32px "Microsoft YaHei", sans-serif'; ctx.fillText(`2026年 · 游戏第 ${reward.received_day ?? "—"} 日领取`, 540, 1320);
+      const artwork = new window.Image(); artwork.src = image;
+      try { await artwork.decode(); }
+      catch { throw new Error("成就图片加载失败，请检查连接后重试。"); }
+      ctx.drawImage(artwork, 0, 0, canvas.width, canvas.height);
+      // The supplied artwork leaves its bottom edge clear of the achievement.
+      ctx.fillStyle = "rgba(18, 52, 41, .92)"; ctx.fillRect(0, 1008, 1920, 72);
+      ctx.fillStyle = "#f4dfaa"; ctx.textAlign = "left";
+      ctx.font = '28px "Microsoft YaHei", sans-serif'; ctx.fillText(`${playerName}县长 · ${reward.title}`, 48, 1054);
+      ctx.textAlign = "right"; ctx.fillText(`2026年 · 游戏第 ${reward.received_day ?? "—"} 日领取`, 1872, 1054);
       const blob = await new Promise<Blob>((resolve, reject) => canvas.toBlob(value => value ? resolve(value) : reject(new Error("图片生成失败，请重试。")), "image/png"));
       const url = URL.createObjectURL(blob); const link = document.createElement("a");
       link.href = url; link.download = `浊流之上-${playerName}-签约${reward.threshold}户纪念.png`;
@@ -60,7 +59,8 @@ export function SigningRewardCard({ reward, playerName }: { reward: SigningRewar
     finally { setDownloading(false); }
   }
   return <div className="signing-reward-card">
-    {image ? <Image className="signing-reward-art" src={image} alt={reward.title} width={1080} height={1440} unoptimized /> : <figure className="signing-reward-banner" aria-label={`${reward.title}，临时样式`}><small>浊流之上 · 云溪县</small><h3>签约纪念</h3><strong>{reward.threshold}<span>户</span></strong><p>{playerName}县长</p><figcaption>临时样式 · 正式锦旗待替换</figcaption></figure>}
+    {image ? <Image className="signing-reward-art" src={image} alt={`${reward.threshold}户成就：${reward.title}`} width={1920} height={1080} unoptimized onError={() => setError("成就图片加载失败，请刷新后重试。")} /> : <p role="alert">该成就图片暂不可用，请刷新后重试。</p>}
+    <p>{playerName}县长 · 累计签约 {reward.threshold} 户</p>
     <p>2026年 · 游戏第 {reward.received_day ?? "—"} 日领取</p>
     <button type="button" disabled={downloading} onClick={() => void download()}>{downloading ? "正在生成图片…" : "下载纪念图片（PNG）"}</button>
     {error && <p role="alert">{error}</p>}
@@ -68,5 +68,5 @@ export function SigningRewardCard({ reward, playerName }: { reward: SigningRewar
 }
 
 export function SigningRewardAlbum({ rewards, busy, onOpen }: { rewards: SigningReward[]; busy: boolean; onOpen: (threshold: number) => void }) {
-  return <div className="signing-reward-album"><p>按实际签约户数获得纪念，可随时再次查看和下载。</p><div>{rewards.map(reward => <button type="button" key={reward.reward_id} disabled={busy || (!reward.earned && !reward.acknowledged)} onClick={() => onOpen(reward.threshold)}><b>{reward.threshold} 户</b><span>{reward.title}</span><small>{reward.acknowledged ? "已领取 · 查看与下载" : reward.earned ? "已达到 · 领取纪念" : "尚未达到"}</small></button>)}</div><small>当前使用临时样式，正式锦旗素材到齐后更新。</small></div>;
+  return <div className="signing-reward-album"><p>按实际签约户数解锁六项成就，可随时再次查看和下载。</p><div>{rewards.map(reward => <button type="button" key={reward.reward_id} disabled={busy || (!reward.earned && !reward.acknowledged)} onClick={() => onOpen(reward.threshold)}><b>{reward.threshold} 户</b><span>{reward.title}</span><small>{reward.acknowledged ? "已领取 · 查看与下载" : reward.earned ? "已达到 · 领取成就" : "尚未达到"}</small></button>)}</div></div>;
 }
