@@ -99,6 +99,7 @@ from serious_game_backend.domain.errors import (
     InsufficientActionPointsError,
     NotFoundError,
     PermissionDeniedError,
+    RoleLLMResponseError,
     SessionEndedError,
     StateVersionConflictError,
 )
@@ -1563,26 +1564,15 @@ class GameplayGovernanceService:
             "参会领导：",
             meeting_role,
         )
-        if text and not any(
+        if not text:
+            raise RoleLLMResponseError("会议角色未返回有效回复，本轮未提交，请重试。")
+        if any(
             marker.lower() in text.lower()
             for marker in private_markers
             if marker
         ):
-            return text
-        if is_lead:
-            return "我先把现有事实、办理依据、可行方案和主要风险逐项说明。"
-        member_fallbacks = (
-            "我赞成先把责任人和办理期限写清，再按程序核对材料。",
-            "我建议同步安排群众沟通和信息公开，避免形成新的误解。",
-            "现有依据还要交叉核验，决议不能超出已经确认的事实。",
-            "执行安排要落到具体岗位，同时保留复核和纠偏入口。",
-            "资源承诺必须与可用范围一致，不能留下无法兑现的口子。",
-            "镇村两级的衔接要写具体，不能只留下原则性要求。",
-            "我更关注后续风险，公开说明前应准备好可核验的台账。",
-        )
-        return member_fallbacks[
-            (max(1, participant_index) - 1) % len(member_fallbacks)
-        ]
+            raise RoleLLMResponseError("会议角色回复包含内部提示，本轮未提交，请重试。")
+        return text
 
     def resolve_meeting(
         self,
