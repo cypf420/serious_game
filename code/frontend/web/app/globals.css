@@ -1424,3 +1424,5 @@ footer { grid-column: 1 / -1; display: flex; align-items: center; justify-conten
 .signing-reward-album button b { font: 700 28px "STKaiti", "KaiTi", serif; }
 .signing-reward-album button span { font-size: 14px; }.signing-reward-album button small { font-size: 12px; }
 .signing-reward-album button:disabled { color: #827762; background: #d9cdae; cursor: default; }
+.contract-final-actions .contract-submit-blocked { padding: 10px 12px; border-left: 3px solid #8f3e30; background: #ead7b9; color: #6d2d24; }
+.contract-final-actions [data-tutorial-id="contract-submit"]:disabled { background: #ddd3bf; border-color: #a99a7e; color: #635948; opacity: 1; cursor: not-allowed; }

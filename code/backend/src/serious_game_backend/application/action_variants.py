@@ -368,6 +368,24 @@ def default_npc_location(npc_id: str) -> str:
     return "loc_county_government"
 
 
+def required_story_energy_recovery(
+    session: GameSession,
+    package: ScriptPackage,
+    opportunity: InteractionOpportunity | None,
+) -> bool:
+    """Keep a required story conversation reachable after optional work used all AP."""
+    if opportunity is None or session.game_state.action_points != 0:
+        return False
+    beat = package.story_day(session.game_state.story_day)
+    return bool(
+        beat is not None
+        and (set(beat.end_day_requires_flags) - session.flags).intersection(
+            opportunity.completion_flags
+        )
+        and NPCRelationshipService._base_opportunity_available(opportunity, session)
+    )
+
+
 def canonical_opportunity_descriptor(
     session: GameSession,
     package: ScriptPackage,
@@ -395,6 +413,12 @@ def canonical_opportunity_descriptor(
         if not variant_availability(session, variant)[0]:
             continue
         descriptor = public_variant(session, package, variant)
+        if required_story_energy_recovery(session, package, opportunity):
+            descriptor.update(
+                cost_action_points=0,
+                required_story_energy_recovery=True,
+                cost_reason="精力已用完，当前必需剧情会谈仍可继续；普通走访和签约按原规则扣费。",
+            )
         if opportunity.npc_id not in {
             item["target_id"] for item in descriptor["target_choices"]
         }:

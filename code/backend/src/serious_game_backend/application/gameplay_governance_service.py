@@ -48,6 +48,7 @@ from serious_game_backend.application.action_cost_policy import quote_cost
 from serious_game_backend.application.action_variants import (
     canonical_map_entry_descriptor,
     canonical_opportunity_descriptor,
+    required_story_energy_recovery,
     find_variant,
     governance_action_permission,
     available_location_choices,
@@ -474,6 +475,15 @@ class GameplayGovernanceService:
         cost_result = self._governance_action_cost(
             session, package, cost_definition, target_npc_ids=target_ids
         )
+        # The opportunity has already passed canonical route validation. Never
+        # waive a routine visit or contract submission through this recovery path.
+        if required_story_energy_recovery(session, package, opportunity):
+            cost_result = replace(
+                cost_result,
+                final_cost=0,
+                discount=cost_result.discount + cost_result.final_cost,
+                reasons=(*cost_result.reasons, "精力已用完，继续当前必需剧情会谈"),
+            )
         cost = cost_result.final_cost
         if session.game_state.action_points < cost:
             raise InsufficientActionPointsError(
