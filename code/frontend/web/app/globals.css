@@ -1287,16 +1287,6 @@ footer { grid-column: 1 / -1; display: flex; align-items: center; justify-conten
   .conversation-bar:is(.gal-conversation-bar, .governance-bar) > :is(header, .governance-inline-notice, .conversation-notice) { grid-column: 1 / -1; }
   .gal-conversation-bar > .conversation-compact { margin: 0; }
 
-  /* Give the existing reading regions the space released by their composers. */
-  .story-scroll > .gal-stage[data-primary-scene="conversation"] {
-    height: 100%; min-height: 100%; grid-template-rows: minmax(0, 1fr); padding: 12px 18px;
-  }
-  .story-scroll > .gal-stage[data-primary-scene="conversation"] .gal-portrait { grid-row: 1; min-height: 0; margin-bottom: -12px; }
-  .story-scroll > .gal-stage[data-primary-scene="conversation"] .gal-dialogue {
-    grid-row: 1; height: 100%; min-height: 0; display: flex; flex-direction: column;
-  }
-  .story-scroll > .gal-stage[data-primary-scene="conversation"] .gal-dialogue > :is(header, nav) { flex: none; }
-  .story-scroll > .gal-stage[data-primary-scene="conversation"] .gal-dialogue > p { flex: 1; min-height: 0; max-height: none; overflow-y: auto; }
   .story-scroll > .forced-group-gal-stage { height: 100%; min-height: 0; }
   .story-scroll > .forced-group-gal-stage .forced-group-timeline { max-height: none; }
   .story-scroll > .leadership-meeting-scene {
@@ -1336,32 +1326,26 @@ footer { grid-column: 1 / -1; display: flex; align-items: center; justify-conten
 /* Fixed dialogue rows: only these scenes use the bounded reading layout. */
 .story-scroll > .leadership-meeting-scene { height: 100%; min-height: 0; display: flex; flex-direction: column; margin: 0; }
 .leadership-meeting-scene > .dialogue-transcript-reading, .leadership-meeting-scene > .dialogue-full-record { margin: 8px 18px; }
-.story-scroll:has(> [data-primary-scene]):not(:has(.decision-stage-inline)) { overflow: hidden; position: relative; }
-.story-scroll:has(> [data-primary-scene="narrative"], > [data-primary-scene="conversation"]):not(:has(.decision-stage-inline)) { display: flex; flex-direction: column; }
-.story-scroll:has(> [data-primary-scene="narrative"], > [data-primary-scene="conversation"]):not(:has(.decision-stage-inline)) > .notice { flex: none; margin: 0 12px 8px; }
-.story-scroll:has(> [data-primary-scene="narrative"], > [data-primary-scene="conversation"]):not(:has(.decision-stage-inline)) > [data-primary-scene] { flex: 1; min-height: 0; }
-.story-scroll > .gal-stage:is([data-primary-scene="narrative"], [data-primary-scene="conversation"]):not(:has(.decision-stage-inline)) {
-  height: auto; min-height: 0; grid-template-rows: minmax(0, 1fr) minmax(min(134px, 100%), 1fr); padding: 12px 18px;
-}
-.story-scroll > .gal-stage:is([data-primary-scene="narrative"], [data-primary-scene="conversation"]):not(:has(.decision-stage-inline)) .gal-portrait { grid-row: 1 / 3; min-height: 0; margin-bottom: -12px; }
-.story-scroll > .gal-stage:is([data-primary-scene="narrative"], [data-primary-scene="conversation"]):not(:has(.decision-stage-inline)) .gal-dialogue { grid-row: 2; height: 100%; min-height: 0; display: flex; flex-direction: column; padding: 10px 14px; }
-.story-scroll > .gal-stage:is([data-primary-scene="narrative"], [data-primary-scene="conversation"]):not(:has(.decision-stage-inline)) .gal-dialogue > header { flex: none; margin-bottom: 4px; }
-.gal-dialogue > .dialogue-reading, .dialogue-transcript-reading > .dialogue-reading { flex: 1; min-height: 0; }
-.paged-reading.dialogue-reading { gap: 6px; }
-.dialogue-reading .reading-viewport { height: 0; min-height: 32px; scrollbar-gutter: stable; }
-.dialogue-reading .reading-text { font-family: "STSong", "SimSun", serif; font-size: 16px; line-height: 1.85; }
-.dialogue-reading .reading-controls { gap: 6px; }
-.dialogue-reading .reading-controls button { min-height: 36px; padding: 6px 10px; }
+/* Pagination changes the text inside the original dialogue box, not its geometry. */
+.story-scroll:has(> .gal-stage:is([data-primary-scene="narrative"], [data-primary-scene="conversation"])):not(:has(.decision-stage-inline)) { display: flex; flex-direction: column; position: relative; }
+.story-scroll:has(> .gal-stage:is([data-primary-scene="narrative"], [data-primary-scene="conversation"])):not(:has(.decision-stage-inline)) > .notice { flex: none; }
+.story-scroll > .gal-stage:is([data-primary-scene="narrative"], [data-primary-scene="conversation"]):not(:has(.decision-stage-inline)) { flex: 1 0 auto; height: auto; min-height: 0; grid-template-rows: minmax(0, 1fr) auto; }
+.story-scroll > .gal-stage:is([data-primary-scene="narrative"], [data-primary-scene="conversation"]):not(:has(.decision-stage-inline)) .gal-portrait { min-height: 0; }
+.gal-dialogue > .dialogue-reading { flex: none; }
+.dialogue-transcript-reading > .dialogue-reading { flex: 1; min-height: 0; }
+.paged-reading.dialogue-reading { gap: 10px; }
+.gal-dialogue > .dialogue-reading .reading-viewport { flex: none; height: 54px; min-height: 0; overflow: hidden; }
+.dialogue-transcript-reading .reading-viewport { height: 0; min-height: 32px; }
+.gal-dialogue > .dialogue-reading .reading-text { font-family: "STSong", "SimSun", serif; font-size: clamp(15px, 1.2vw, 17px); line-height: 1.9; text-align: justify; }
+.dialogue-reading .reading-controls { justify-content: flex-start; gap: 10px; }
 .dialogue-reading .reading-controls .history-toggle { margin: 0; }
-@media (min-width: 781px) and (max-height: 680px) {
-  .app-shell:has(.gal-stage:is([data-primary-scene="narrative"], [data-primary-scene="conversation"])) .metric-strip > div { padding: 4px 10px; }
-  .app-shell:has(.gal-stage:is([data-primary-scene="narrative"], [data-primary-scene="conversation"])) .metric-strip strong { font-size: 16px; margin-top: 0; }
-  .app-shell:has(.gal-stage:is([data-primary-scene="narrative"], [data-primary-scene="conversation"])) .metric-strip :is(small, em) { font-size: 10px; }
-  .story-card:has([data-primary-scene="narrative"], [data-primary-scene="conversation"]):not(:has(.decision-stage-inline)) { grid-template-rows: 40px minmax(0, 1fr) auto; }
-  .story-card:has([data-primary-scene="narrative"], [data-primary-scene="conversation"]) .story-head h2 { font-size: 18px; margin: 0; }
-  .story-scroll:has(> [data-primary-scene="narrative"], > [data-primary-scene="conversation"]) > .notice { padding: 4px 8px; margin-bottom: 4px; font-size: 12px; line-height: 1.4; }
-  .story-scroll > .gal-stage:is([data-primary-scene="narrative"], [data-primary-scene="conversation"]):not(:has(.decision-stage-inline)) .gal-dialogue { padding: 4px 10px; }
-  .story-scroll > .gal-stage:is([data-primary-scene="narrative"], [data-primary-scene="conversation"]):not(:has(.decision-stage-inline)) .gal-dialogue > header { margin-bottom: 0; }
+@media (max-height: 820px) and (min-width: 781px) {
+  .gal-dialogue > .dialogue-reading .reading-viewport { height: 34px; }
+  .gal-dialogue > .dialogue-reading .reading-text { font-size: 14px; line-height: 1.65; }
+}
+@media (max-width: 780px) {
+  .gal-dialogue > .dialogue-reading .reading-viewport { height: 72px; }
+  .gal-dialogue > .dialogue-reading .reading-text { font-size: 15px; line-height: 1.75; }
 }
 .story-scroll > .history-drawer { position: absolute; inset: 8px; z-index: 5; max-height: none; margin: 0; background: #282118; }
 .dialogue-transcript-reading { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 4px; color: #eee1c2; }
@@ -1390,10 +1374,6 @@ footer { grid-column: 1 / -1; display: flex; align-items: center; justify-conten
   .forced-group-workspace { padding: 8px; gap: 8px; }
 }
 @media (max-width: 780px) {
-  .story-card:has([data-primary-scene]):not(:has(.decision-stage-inline)) { height: max(460px, calc(100dvh - 176px)); min-height: 0; grid-template-rows: 48px minmax(0, 1fr) auto; }
-  .story-scroll > .gal-stage:is([data-primary-scene="narrative"], [data-primary-scene="conversation"]):not(:has(.decision-stage-inline)) { padding: 8px; grid-template-rows: minmax(0, 1fr) minmax(180px, 1fr); }
-  .story-scroll > .gal-stage:is([data-primary-scene="narrative"], [data-primary-scene="conversation"]):not(:has(.decision-stage-inline)) .gal-portrait { width: 64px; height: 76px; min-height: 0; justify-self: end; margin: 0; }
-  .story-scroll > .gal-stage:is([data-primary-scene="narrative"], [data-primary-scene="conversation"]):not(:has(.decision-stage-inline)) .gal-dialogue { grid-row: 2; grid-column: 1 / -1; margin: 0; padding: 10px; }
   .story-scroll > .governance-gal-stage { height: 100%; }
   .forced-group-header { padding: 8px; gap: 4px; }
   .forced-group-header h3 { font-size: 16px; }
