@@ -1334,14 +1334,30 @@ footer { grid-column: 1 / -1; display: flex; align-items: center; justify-conten
 .gal-dialogue > .dialogue-reading { flex: none; }
 .dialogue-transcript-reading > .dialogue-reading { flex: 1; min-height: 0; }
 .paged-reading.dialogue-reading { gap: 10px; }
-.gal-dialogue > .dialogue-reading .reading-viewport { flex: none; height: 54px; min-height: 0; overflow: hidden; }
+.gal-dialogue > .dialogue-reading .reading-viewport { flex: none; height: 76px; min-height: 0; overflow: hidden; }
 .dialogue-transcript-reading .reading-viewport { height: 0; min-height: 32px; }
 .gal-dialogue > .dialogue-reading .reading-text { font-family: "STSong", "SimSun", serif; font-size: clamp(15px, 1.2vw, 17px); line-height: 1.9; text-align: justify; }
 .dialogue-reading .reading-controls { justify-content: flex-start; gap: 10px; }
 .dialogue-reading .reading-controls .history-toggle { margin: 0; }
 @media (max-height: 820px) and (min-width: 781px) {
-  .gal-dialogue > .dialogue-reading .reading-viewport { height: 34px; }
+  .gal-dialogue > .dialogue-reading .reading-viewport { height: 56px; }
   .gal-dialogue > .dialogue-reading .reading-text { font-size: 14px; line-height: 1.65; }
+}
+@media (min-width: 781px) {
+  .gal-dialogue > .paged-reading.dialogue-reading { gap: 4px; }
+  .gal-dialogue > .dialogue-reading .reading-controls { gap: 6px; }
+  .gal-dialogue > .dialogue-reading .reading-controls button { min-height: 24px; padding: 2px 7px; font-size: 12px; line-height: 18px; }
+  .story-scroll > .gal-stage:is([data-primary-scene="narrative"], [data-primary-scene="conversation"]):not(:has(.decision-stage-inline)) { --speaker-offset: clamp(80px, 17vw, 230px); --portrait-width: min(320px, 32vw); }
+  .story-scroll > .gal-stage:is([data-primary-scene="narrative"], [data-primary-scene="conversation"]):not(:has(.decision-stage-inline)) .gal-portrait { grid-column: 1 / -1; justify-self: start; margin-left: calc(var(--speaker-offset) - var(--portrait-width)); margin-right: 0; }
+  .story-scroll > .gal-stage:is([data-primary-scene="narrative"], [data-primary-scene="conversation"]):not(:has(.decision-stage-inline)) .gal-portrait .character-portrait { object-position: right bottom !important; }
+}
+@media (max-height: 820px) and (min-width: 781px) {
+  .story-scroll > .gal-stage:is([data-primary-scene="narrative"], [data-primary-scene="conversation"]):not(:has(.decision-stage-inline)) { --speaker-offset: calc(clamp(70px, 14vw, 190px) + 64px); --portrait-width: min(230px, 27vw); }
+}
+/* Reduce each page's text capacity when the dialogue composer leaves less room. */
+@media (max-height: 760px) and (min-width: 781px) {
+  .gal-dialogue > .dialogue-reading .reading-viewport { height: calc(14px * 1.65 * 2); }
+  .gal-stage[data-primary-scene="conversation"] .gal-dialogue > .dialogue-reading .reading-viewport { height: calc(14px * 1.65); }
 }
 @media (max-width: 780px) {
   .gal-dialogue > .dialogue-reading .reading-viewport { height: 72px; }
